@@ -1,4 +1,4 @@
-package com.github.displace.sdp2022
+package com.github.blecoeur.bootcamp
 
 import org.junit.Test
 
