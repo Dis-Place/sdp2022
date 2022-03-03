@@ -1,3 +1,0 @@
-#SDP-bootcamp
-
-dummy
