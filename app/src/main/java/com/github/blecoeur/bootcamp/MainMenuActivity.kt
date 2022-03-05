@@ -13,7 +13,9 @@ class MainMenuActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main_menu)
 
         val message = intent.getStringExtra(EXTRA_MESSAGE)
-        val welcomeTextView =  findViewById<TextView>(R.id.WelcomeText).apply { text = "Welcome " + message +"!" }
+        val welcomeTextView =  findViewById<TextView>(R.id.WelcomeText).apply { text =
+            "Welcome $message!"
+        }
     }
 
 
