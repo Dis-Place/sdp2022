@@ -14,12 +14,17 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
     }
 
-    fun sendMessage(view: View) {
+    fun startAppUse(view: View) {
         val nameText = findViewById<EditText>(R.id.mainName)
         val name = nameText.text.toString()
 
         val intent =
-            Intent(this, GreetingActivity::class.java).apply { putExtra(EXTRA_MESSAGE, name) }
+            Intent(this, MainMenuActivity::class.java).apply { putExtra(EXTRA_MESSAGE, name) }
         startActivity(intent)
     }
+
+    fun quitApp(view: View) {
+
+    }
+
 }

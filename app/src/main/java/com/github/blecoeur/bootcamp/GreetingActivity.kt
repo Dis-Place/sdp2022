@@ -1,6 +1,7 @@
 package com.github.blecoeur.bootcamp
 
 import android.os.Bundle
+import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import java.lang.IllegalArgumentException
@@ -14,5 +15,9 @@ class GreetingActivity : AppCompatActivity() {
 
         val textView =
             findViewById<TextView>(R.id.greetingMessage).apply { text = "Hello " + message +"!" }
+    }
+
+    fun pipo(view: View){
+
     }
 }
