@@ -24,7 +24,7 @@ class MainMenuActivityTest {
     fun testingInput() {
         val intent = Intent(ApplicationProvider.getApplicationContext(), MainMenuActivity::class.java).apply { putExtra(
             EXTRA_MESSAGE, "Baptou") }
-        val scenario = ActivityScenario.launch<GreetingActivity>(intent)
+        val scenario = ActivityScenario.launch<MainMenuActivity>(intent)
         try {
             Espresso.onView(ViewMatchers.withId(R.id.WelcomeText))
                 .check(ViewAssertions.matches(ViewMatchers.withText("Welcome Baptou!")))
