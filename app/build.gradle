@@ -54,12 +54,17 @@ tasks.withType(Test) {
     jacoco.excludes = ['jdk.internal.*']
 }
 
+
+jacoco {
+    toolVersion = "0.8.7"
+    reportsDirectory = layout.buildDirectory.dir('$buildDir/reports/jacoco')
+}
+
+
 task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest', 'createDebugCoverageReport']) {
     reports {
         xml.enabled = true
         html.enabled = true
-		xml.destination = "${buildDir}/jacocoTestReport.xml"
-		html.destination = "${buildDir}/reports/jacoco"
     }
 
     def fileFilter = [
