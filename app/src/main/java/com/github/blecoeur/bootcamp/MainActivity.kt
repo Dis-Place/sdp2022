@@ -18,8 +18,9 @@ class MainActivity : AppCompatActivity() {
         val nameText = findViewById<EditText>(R.id.mainName)
         val name = nameText.text.toString()
 
-        val intent =
-            Intent(this, GreetingActivity::class.java).apply { putExtra(EXTRA_MESSAGE, name) }
+        val intent = Intent(this, AccountSettingsActivity::class.java)
+            //Intent(this, GreetingActivity::class.java).apply { putExtra(EXTRA_MESSAGE, name) }
         startActivity(intent)
+
     }
 }
