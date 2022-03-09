@@ -1,21 +1,30 @@
 package com.github.blecoeur.bootcamp
 
+import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.View
-import android.widget.EditText
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
+
 
 class MainMenuActivity : AppCompatActivity() {
+
+    //preferences setup : using a dummy name
+    val myPreferences = "myPrefs"
+    lateinit var sharedpreferences: SharedPreferences;
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main_menu)
-
-        val message = intent.getStringExtra(EXTRA_MESSAGE)
+        //load the username from the preferences
+        sharedpreferences = getSharedPreferences(myPreferences, Context.MODE_PRIVATE)
+        var message = sharedpreferences.getString("userNameKey", "NOT FOUND")
         val welcomeTextView =  findViewById<TextView>(R.id.WelcomeText).apply { text =
             "Welcome $message!"
         }
+
     }
 
 
