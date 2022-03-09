@@ -3,7 +3,6 @@ package com.github.displace.sdp2022
 import android.os.Bundle
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import java.lang.IllegalArgumentException
 
 class GreetingActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
