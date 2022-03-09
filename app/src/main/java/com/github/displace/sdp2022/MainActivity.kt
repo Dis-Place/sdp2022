@@ -15,10 +15,7 @@ private lateinit var db: FirebaseDatabase
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        db = FirebaseDatabase.getInstance("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/")
-
         setContentView(R.layout.activity_main)
-        analytics = FirebaseAnalytics.getInstance(this)
     }
 
     fun sendMessage(view: View) {
@@ -26,9 +23,7 @@ class MainActivity : AppCompatActivity() {
         val name = nameText.text.toString()
 
         val intent =
-            Intent(this, GreetingActivity::class.java).apply { putExtra(EXTRA_MESSAGE, name) }
-        db.getReference("user").child(name).setValue(User(name, 0))
-        analytics.logEvent("button_clicked", null)
+            Intent(this, DummyLoginActivity::class.java).apply { putExtra(EXTRA_MESSAGE, name) }
         startActivity(intent)
     }
 }
