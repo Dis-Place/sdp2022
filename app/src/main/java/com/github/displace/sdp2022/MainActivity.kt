@@ -6,13 +6,17 @@ import android.view.View
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.database.FirebaseDatabase
 
 const val EXTRA_MESSAGE = "com.github.displace.sdp2022.MESSAGE"
 private lateinit var analytics: FirebaseAnalytics
+private lateinit var db: FirebaseDatabase
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        db = FirebaseDatabase.getInstance("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/")
+
         setContentView(R.layout.activity_main)
         analytics = FirebaseAnalytics.getInstance(this)
     }
@@ -23,6 +27,7 @@ class MainActivity : AppCompatActivity() {
 
         val intent =
             Intent(this, GreetingActivity::class.java).apply { putExtra(EXTRA_MESSAGE, name) }
+        db.getReference("user").child(name).setValue(User(name, 0))
         analytics.logEvent("button_clicked", null)
         startActivity(intent)
     }
