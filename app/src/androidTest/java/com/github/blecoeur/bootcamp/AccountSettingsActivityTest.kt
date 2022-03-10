@@ -138,7 +138,6 @@ class AccountSettingsActivityTest {
         scenario.use {
 
             // Only clicks on the correct button but doesn't check if the picture is updated
-
             onView(withId(R.id.profilePicUpdate)).perform(click())
             onView(withText("Camera")).inRoot(isDialog()).check(matches(isDisplayed())).perform(
                 click())
