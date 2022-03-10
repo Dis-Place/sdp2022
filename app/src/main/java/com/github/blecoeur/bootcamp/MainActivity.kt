@@ -7,6 +7,12 @@ import android.os.Bundle
 import android.view.View
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.database.FirebaseDatabase
+
+const val EXTRA_MESSAGE = "com.github.displace.sdp2022.MESSAGE"
+private lateinit var analytics: FirebaseAnalytics
+private lateinit var db: FirebaseDatabase
 
 class MainActivity : AppCompatActivity() {
 
@@ -28,9 +34,13 @@ class MainActivity : AppCompatActivity() {
         editor.putString("userNameKey",name)
         editor.commit()
 
-        val intent =
-            Intent(this, MainMenuActivity::class.java)
+        val intent = Intent(this, MainMenuActivity::class.java)
         startActivity(intent)
     }
 
+    fun openMap(view: View) {
+        val intent =
+            Intent(this, DemoMapActivity::class.java).apply { }
+        startActivity(intent)
+    }
 }
