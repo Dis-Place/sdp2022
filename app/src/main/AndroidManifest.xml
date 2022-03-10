@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-<<<<<<< HEAD
     package="com.github.blecoeur.bootcamp">
-=======
-    package="com.github.displace.sdp2022">
->>>>>>> database_setup
 
     <application
         android:allowBackup="true"
@@ -13,15 +9,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Bootcamp">
-<<<<<<< HEAD
-=======
         <activity
             android:name=".SearchDummyUser"
             android:exported="false" />
         <activity
             android:name=".DummyLoginActivity"
             android:exported="false" />
->>>>>>> database_setup
         <activity
             android:name=".NewsActivity"
             android:exported="false"

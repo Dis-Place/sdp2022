@@ -10,13 +10,10 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.database.FirebaseDatabase
 
-<<<<<<< HEAD:app/src/main/java/com/github/blecoeur/bootcamp/MainActivity.kt
-=======
 const val EXTRA_MESSAGE = "com.github.displace.sdp2022.MESSAGE"
 private lateinit var analytics: FirebaseAnalytics
 private lateinit var db: FirebaseDatabase
 
->>>>>>> database_setup:app/src/main/java/com/github/displace/sdp2022/MainActivity.kt
 class MainActivity : AppCompatActivity() {
 
     //preferences setup : using a dummy name
@@ -37,12 +34,7 @@ class MainActivity : AppCompatActivity() {
         editor.putString("userNameKey",name)
         editor.commit()
 
-        val intent =
-<<<<<<< HEAD:app/src/main/java/com/github/blecoeur/bootcamp/MainActivity.kt
-            Intent(this, MainMenuActivity::class.java)
-=======
-            Intent(this, DummyLoginActivity::class.java).apply { putExtra(EXTRA_MESSAGE, name) }
->>>>>>> database_setup:app/src/main/java/com/github/displace/sdp2022/MainActivity.kt
+        val intent = Intent(this, MainMenuActivity::class.java)
         startActivity(intent)
     }
 
