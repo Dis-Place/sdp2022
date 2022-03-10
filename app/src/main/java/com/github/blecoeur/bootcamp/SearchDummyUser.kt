@@ -1,4 +1,4 @@
-package com.github.displace.sdp2022
+package com.github.blecoeur.bootcamp
 
 import android.os.Bundle
 import android.view.View
