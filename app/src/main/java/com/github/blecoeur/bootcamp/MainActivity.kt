@@ -19,7 +19,7 @@ class MainActivity : AppCompatActivity() {
         val name = nameText.text.toString()
 
         val intent =
-            Intent(this, GreetingActivity::class.java).apply { putExtra(EXTRA_MESSAGE, name) }
+            Intent(this, ProfileActivity::class.java)
         startActivity(intent)
     }
 }
