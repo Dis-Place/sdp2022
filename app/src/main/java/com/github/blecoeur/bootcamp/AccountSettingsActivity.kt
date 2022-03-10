@@ -6,7 +6,6 @@ import android.app.AlertDialog
 import android.content.ContentValues
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Color
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -22,10 +21,8 @@ class AccountSettingsActivity : AppCompatActivity() {
         const val IMAGE_GALLERY_REQUEST = 300
         const val IMAGE_CAMERA_REQUEST = 400
     }
-
     /*var firebaseAuth: FirebaseAuth? = null
     var firebaseUser: FirebaseUser? = null*/
-
     private val storagePermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) {
             accepted: Boolean ->
         if(accepted) {
@@ -34,7 +31,6 @@ class AccountSettingsActivity : AppCompatActivity() {
             Toast.makeText(this, "Please enable Storage permissions", Toast.LENGTH_LONG).show()
         }
     }
-
     private val cameraPermissionsLauncher = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
         permissions ->
         var granted = true
@@ -47,12 +43,10 @@ class AccountSettingsActivity : AppCompatActivity() {
             Toast.makeText(this, "Please enable Camera & Storage permissions", Toast.LENGTH_LONG).show()
         }
     }
-
-    private var processingAlert: AlertDialog? = null
     private var profilePic: ImageView? = null
-
     private var imageUri: Uri? = null
-
+    private var actualPassword: TextView? = null
+    
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_account_settings)
@@ -64,9 +58,8 @@ class AccountSettingsActivity : AppCompatActivity() {
 
         profilePic = findViewById(R.id.profilePic)
 
-        /*firebaseAuth = FirebaseAuth.getInstance()
-        firebaseUser = firebaseAuth?.currentUser*/
-
+        actualPassword = findViewById(R.id.actualPassword)
+        actualPassword?.text = "password"
 
         profilePicUpdate.setOnClickListener {
             selectPic()
@@ -189,14 +182,14 @@ class AccountSettingsActivity : AppCompatActivity() {
         startActivityForResult(cameraIntent, IMAGE_CAMERA_REQUEST)
         /*val startCamera = registerForActivityResult(ActivityResultContracts.GetContent()) {
             uri ->
-            profilepic?.setImageURI(uri)
+            profilePic?.setImageURI(uri)
         }*/
         /*val startCamera = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult(),
             ActivityResultCallback<ActivityResult> {
                 result -> //onActivityResult(IMAGE_CAMERA_REQUEST, result)
                     if(result.resultCode == RESULT_OK) {
-                        profilepic?.setImageURI(imageUri)
+                        profilePic?.setImageURI(imageUri)
                     }
                 /*override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
                     super.onActivityResult(requestCode, resultCode, data)
@@ -240,15 +233,15 @@ class AccountSettingsActivity : AppCompatActivity() {
             }
             if(requestCode == IMAGE_CAMERA_REQUEST) {
                 val photo: Bitmap = result.data?.extras?.get("data") as Bitmap
-                profilepic?.setImageBitmap(photo)
+                profilePic?.setImageBitmap(photo)
                 //uploadProfilePhoto(imageUri)
             }
         }
     } */          // fix try for deprecation
 
-    private fun uploadProfilePhoto(imageUri: Uri?) {
+    /*private fun uploadProfilePhoto(imageUri: Uri?) {
         TODO("Not yet implemented")
-    }
+    }*/
 
     private fun showChangePasswordDialog() {
         val view = LayoutInflater.from(this).inflate(R.layout.password_update_dialog, null)
@@ -266,22 +259,30 @@ class AccountSettingsActivity : AppCompatActivity() {
             val newP = newPassword.text.toString().trim()
 
             dialogPassword.dismiss()
-            if(TextUtils.isEmpty(oldP)) {
-                Toast.makeText(this, "Current Password can't be empty", Toast.LENGTH_LONG).show()
-            } else if(TextUtils.isEmpty(newP)) {
-                Toast.makeText(this, "New Password can't be empty", Toast.LENGTH_LONG).show()
-            } else {
-                updatePassword(oldP, newP)
+            when {
+                TextUtils.isEmpty(oldP) -> {
+                    Toast.makeText(this, "Current Password can't be empty", Toast.LENGTH_LONG).show()
+                }
+                TextUtils.isEmpty(newP) -> {
+                    Toast.makeText(this, "New Password can't be empty", Toast.LENGTH_LONG).show()
+                }
+                else -> {
+                    updatePassword(oldP, newP)
+                }
             }
         }
     }
 
     private fun updatePassword(oldP: String, newP: String) {
-
+        if(oldP != actualPassword?.text) {
+            Toast.makeText(this, "Incorrect password", Toast.LENGTH_LONG).show()
+        } else {
+            actualPassword?.text = newP
+        }
     }
 
     private fun changeUsername() {
-        TODO("Not yet implemented")
+        // TODO Not yet implemented
     }
 
 
