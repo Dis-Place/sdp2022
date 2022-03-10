@@ -1,10 +1,10 @@
 package com.github.displace.sdp2022
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.EditText
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.database.FirebaseDatabase
 
 
@@ -14,10 +14,11 @@ class SearchDummyUser : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search_dummy_user)
 
-        db = FirebaseDatabase.getInstance("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/")
+        db =
+            FirebaseDatabase.getInstance("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/")
     }
 
-    fun searchAge(view: View){
+    fun searchAge(view: View) {
         val ageText = findViewById<TextView>(R.id.dummySearchAgeTextView)
         val nameText = findViewById<EditText>(R.id.dummySearchName)
 
@@ -26,7 +27,7 @@ class SearchDummyUser : AppCompatActivity() {
                 ageText.apply { text = it.child("age").value.toString() + " years old" }
             else
                 ageText.apply { text = "Sorry, this user does not exist" }
-        }.addOnFailureListener{
+        }.addOnFailureListener {
             ageText.apply { text = "Sorry, the database request failed" }
         }
     }

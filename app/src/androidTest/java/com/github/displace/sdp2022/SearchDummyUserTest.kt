@@ -1,6 +1,5 @@
 package com.github.displace.sdp2022
 
-import android.view.View
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.action.ViewActions.click
@@ -11,23 +10,21 @@ import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.ktx.Firebase
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
-private const val NAME = "Jean Valjean"
-
 @RunWith(AndroidJUnit4::class)
 class SearchDummyUserTest {
     @get:Rule
     val testRule = ActivityScenarioRule(SearchDummyUser::class.java)
-    val db = FirebaseDatabase.getInstance("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/")
+    val db =
+        FirebaseDatabase.getInstance("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/")
 
     @Before
-    fun setupDb(){
+    fun setupDb() {
         db.getReference("users").child("John Cena").setValue(DummyUser("John Cena", 12))
 
     }
@@ -55,9 +52,8 @@ class SearchDummyUserTest {
     }
 
 
-
     @After
-    fun cleanDb(){
+    fun cleanDb() {
         db.getReference("users").child("John Cena").removeValue()
     }
 }
