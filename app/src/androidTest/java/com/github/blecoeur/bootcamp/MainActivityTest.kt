@@ -26,7 +26,7 @@ class MainActivityTest {
 
     @Test
     fun testingInput() {
-        Intents.init()
+        //Intents.init()
         onView(ViewMatchers.withId(R.id.mainName))
             .perform(ViewActions.replaceText("baptou gaming")).perform(
                 ViewActions.closeSoftKeyboard()
@@ -35,7 +35,7 @@ class MainActivityTest {
 
         //intended(IntentMatchers.hasExtra(EXTRA_MESSAGE, "baptou gaming"))
 
-        Intents.release()
+        //Intents.release()
     }
 
     @Test
