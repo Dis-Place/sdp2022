@@ -33,4 +33,9 @@ class MainActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
+    fun openMap(view: View) {
+        val intent =
+            Intent(this, DemoMapActivity::class.java).apply { }
+        startActivity(intent)
+    }
 }
