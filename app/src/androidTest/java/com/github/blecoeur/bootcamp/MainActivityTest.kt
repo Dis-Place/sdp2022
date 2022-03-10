@@ -1,8 +1,12 @@
 package com.github.blecoeur.bootcamp
 
+
 import android.content.Intent
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
+
+import androidx.test.espresso.Espresso
+
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.action.ViewActions.click
@@ -27,18 +31,25 @@ class MainActivityTest {
     @get:Rule
     val testRule = ActivityScenarioRule(MainActivity::class.java)
 
+    //the communication between the activities is done through the preferences, Intents are no longer used
     @Test
     fun testingInput() {
-        Intents.init()
+    //    Intents.init()
         onView(ViewMatchers.withId(R.id.mainName))
             .perform(ViewActions.replaceText("baptou gaming")).perform(
                 ViewActions.closeSoftKeyboard()
             )
         onView(ViewMatchers.withId(R.id.mainGoButton)).perform(click())
 
-        intended(IntentMatchers.hasExtra(EXTRA_MESSAGE, "baptou gaming"))
+        onView(ViewMatchers.withId(R.id.WelcomeText)).check(
+            ViewAssertions.matches(
+                ViewMatchers.withText("Welcome baptou gaming!")
+            )
+        )
 
-        Intents.release()
+    //    intended(IntentMatchers.hasExtra(EXTRA_MESSAGE, "baptou gaming"))
+
+    //    Intents.release()
     }
 
     @Test
