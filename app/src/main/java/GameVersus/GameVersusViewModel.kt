@@ -9,7 +9,7 @@ import androidx.lifecycle.MutableLiveData
 
 class GameVersusViewModel {
 
-    //Uniquement pour pouvoir tester et tant que l'on a pas les vrai commande pour faire du reseau
+    //Test class until we got a real server side
 
     class ClientServerCommandTest {
 
@@ -44,10 +44,11 @@ class GameVersusViewModel {
 
     private val reseau = ClientServerCommandTest()
 
-    // On doit ajouter les UI bindings
+    // Add the ui bidding
 
-    private var gameState : GameVersus? = null // essayer de mettre MutableLiveData mais sans api compliqué
+    private var gameState : GameVersus? = null // try MutableLiveData but without api it's quite hard
 
+    //handle the 3 different possibility
     fun handleEvent(event: GameEvent) {
         when (event) {
             is GameEvent.OnStart -> SetGoal(event.Goal,event.Photo,event.PlayerId)
@@ -56,11 +57,13 @@ class GameVersusViewModel {
         }
     }
 
+    //Set the goal at the start of the game (each player set the goal of the other)
     fun SetGoal(goal : Coordinate, photo: List<Double>, playerId : Int) {
         reseau.SendDataToOther(goal,photo,playerId)
         gameState = reseau.GetData(playerId)
     }
 
+    //When someone tap on the screen the location he think the goal is
     fun TryLocation(UserId: Int, test : Coordinate) {
         println("user : " + UserId + " tried to find the goal")
         if(gameState == null){
@@ -79,6 +82,7 @@ class GameVersusViewModel {
         }
     }
 
+    //End the game and add a lose the the one who surrended
     fun OnSurrend(UserId: Int) {
         println("user : " + UserId + " Surrended")
         println("fin du match")

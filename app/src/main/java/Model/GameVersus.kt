@@ -2,6 +2,8 @@ package Model
 
 import GameComponents.Coordinate
 
+//model of a gameversus
+
 class GameVersus(val goal : Coordinate,
                  val Photo : List<Double>,
                  val nbTry : Int,

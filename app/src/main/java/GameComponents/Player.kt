@@ -1,6 +1,6 @@
 package GameComponents
 
-//modelisation d'un joueur
+//model of a player
 
 class Player : Coordinate{
     private var Id = 0; //Son id liée a un compte

@@ -1,6 +1,6 @@
 package GameComponents
 
-//definition des different event qui peuvent survenir durant une partie de versus
+//definition of the possible event during a gameversus
 
 sealed class GameEvent{
     data class OnPointSelected(val PlayerId : Int, val test : Coordinate) : GameEvent() //Essaie d'un des deux joueur

@@ -1,6 +1,6 @@
 package GameComponents
 
-// modelisation d'une coordonée
+// modelisation of a coordiante
 
 interface Coordinate {
     var pos : List<Double>
