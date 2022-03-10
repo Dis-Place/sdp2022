@@ -2,6 +2,7 @@ package com.github.blecoeur.bootcamp
 
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions
+import androidx.test.espresso.action.ViewActions.clearText
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.Intents.intended
@@ -24,10 +25,15 @@ class DummyLoginTest {
     fun testSendingUserHandleErrorsCorrectly() {
         Intents.init()
         val nanString = "Jean Michel Dupont"
-        onView(ViewMatchers.withId(R.id.dummyName)).perform(ViewActions.replaceText(NAME))
-            .perform(ViewActions.closeSoftKeyboard())
-        onView(ViewMatchers.withId(R.id.dummyAge)).perform(ViewActions.replaceText(nanString))
-            .perform(ViewActions.closeSoftKeyboard())
+        onView(ViewMatchers.withId(R.id.dummyName)).perform(
+            click(), clearText(),
+            ViewActions.replaceText(NAME),
+            ViewActions.closeSoftKeyboard()
+        )
+        onView(ViewMatchers.withId(R.id.dummyAge)).perform(
+            click(), clearText(),
+            ViewActions.replaceText(nanString), ViewActions.closeSoftKeyboard()
+        )
         onView(ViewMatchers.withId(R.id.dummyButtonSendUser)).perform(click())
 
         intended(IntentMatchers.hasExtra(EXTRA_USER, DummyUser(NAME, 0)))
@@ -38,10 +44,19 @@ class DummyLoginTest {
     @Test
     fun testSendingUserWorksCorrectly() {
         Intents.init()
-        onView(ViewMatchers.withId(R.id.dummyName)).perform(ViewActions.replaceText(NAME))
-            .perform(ViewActions.closeSoftKeyboard())
-        onView(ViewMatchers.withId(R.id.dummyAge)).perform(ViewActions.replaceText("12"))
-            .perform(ViewActions.closeSoftKeyboard())
+
+        onView(ViewMatchers.withId(R.id.dummyName)).perform(
+            click(),
+            clearText(),
+            ViewActions.replaceText(NAME),
+            ViewActions.closeSoftKeyboard()
+        )
+        onView(ViewMatchers.withId(R.id.dummyAge)).perform(
+            click(),
+            clearText(),
+            ViewActions.replaceText("12"),
+            ViewActions.closeSoftKeyboard()
+        )
         onView(ViewMatchers.withId(R.id.dummyButtonSendUser)).perform(click())
 
         intended(IntentMatchers.hasExtra(EXTRA_USER, DummyUser(NAME, 12)))
