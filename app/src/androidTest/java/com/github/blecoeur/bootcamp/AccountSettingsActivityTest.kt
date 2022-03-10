@@ -11,7 +11,6 @@ import android.view.View
 import android.widget.ImageView
 import androidx.annotation.DrawableRes
 import androidx.core.graphics.drawable.toBitmap
-import androidx.test.InstrumentationRegistry.getTargetContext
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import androidx.test.espresso.Espresso.onView
@@ -34,9 +33,9 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
-//@RunWith(AndroidJUnit4::class)
+@RunWith(AndroidJUnit4::class)
 class AccountSettingsActivityTest {
-    /*
+
     @Test
     fun passwordIsUpdated() {
         val intent = Intent(getApplicationContext(), AccountSettingsActivity::class.java)
@@ -131,5 +130,5 @@ class AccountSettingsActivityTest {
             onView(withText("Gallery")).inRoot(isDialog()).check(matches(isDisplayed())).perform(
                 click())
         }
-    }*/
+    }
 }
