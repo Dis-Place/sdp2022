@@ -6,6 +6,7 @@ import android.app.AlertDialog
 import android.content.ContentValues
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -21,8 +22,6 @@ class AccountSettingsActivity : AppCompatActivity() {
         const val IMAGE_GALLERY_REQUEST = 300
         const val IMAGE_CAMERA_REQUEST = 400
     }
-    /*var firebaseAuth: FirebaseAuth? = null
-    var firebaseUser: FirebaseUser? = null*/
     private val storagePermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) {
             accepted: Boolean ->
         if(accepted) {
@@ -46,6 +45,7 @@ class AccountSettingsActivity : AppCompatActivity() {
     private var profilePic: ImageView? = null
     private var imageUri: Uri? = null
     private var actualPassword: TextView? = null
+    private var processingAlert: AlertDialog? = null
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,7 +74,126 @@ class AccountSettingsActivity : AppCompatActivity() {
         }
     }
 
-    /*fun setProgressDialog(progressMessage: String) {
+    private fun selectPic() {
+        val options = arrayOf("Camera", "Gallery")
+
+        val dialogBuilder = AlertDialog.Builder(this)
+        dialogBuilder.setTitle("Pick Image From")
+        dialogBuilder.setItems(options) { _, pos ->
+            if (pos == 0) {
+                if (cameraPermissions()) {
+                    selectPicFromCamera()
+                } else {
+                    requestCameraPermissions()
+                }
+
+            } else if (pos == 1) {
+                if(storagePermissions()) {
+                    selectPicFromGallery()
+                } else {
+                    requestStoragePermissions()
+                }
+            }
+        }
+        dialogBuilder.create().show()
+    }
+
+    private fun cameraPermissions(): Boolean {
+        return (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+                == PackageManager.PERMISSION_GRANTED)
+                &&
+                (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                == PackageManager.PERMISSION_GRANTED)
+    }
+
+    private fun requestCameraPermissions() {
+        cameraPermissionsLauncher.launch(arrayOf(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE))
+    }
+
+    private fun selectPicFromCamera() {
+        val contentValues = ContentValues()
+        contentValues.put(MediaStore.Images.Media.TITLE, "Temp_pic")
+        contentValues.put(MediaStore.Images.Media.DESCRIPTION, "Temp Description")
+        imageUri = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
+        val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
+        startActivityForResult(cameraIntent, IMAGE_CAMERA_REQUEST)
+    }
+
+    private fun storagePermissions(): Boolean {
+        return (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            == (PackageManager.PERMISSION_GRANTED))
+    }
+
+    private fun requestStoragePermissions() {
+        storagePermissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+    }
+
+    private fun selectPicFromGallery() {
+        val galleryIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+        galleryIntent.type = "image/*"
+        startActivityForResult(galleryIntent, IMAGE_GALLERY_REQUEST)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if(resultCode == Activity.RESULT_OK) {
+            if (requestCode == IMAGE_CAMERA_REQUEST) {
+                profilePic?.setImageURI(imageUri)
+            } else if(requestCode == IMAGE_GALLERY_REQUEST) {
+                profilePic?.setImageURI(data?.data)
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data)
+    }
+
+    /*private fun uploadProfilePhoto(imageUri: Uri?) {
+        TODO("Not yet implemented")
+    }*/
+
+    private fun showChangePasswordDialog() {
+        val view = LayoutInflater.from(this).inflate(R.layout.password_update_dialog, null)
+        val oldPassword = view.findViewById<EditText>(R.id.oldPasswordLog)
+        val newPassword = view.findViewById<EditText>(R.id.newPasswordLog)
+        val editPassword = view.findViewById<Button>(R.id.passwordUpdateButton)
+
+        val dialogBuilder = AlertDialog.Builder(this)
+        dialogBuilder.setView(view)
+        val dialogPassword = dialogBuilder.create()
+        dialogPassword.show()
+
+        editPassword.setOnClickListener {
+            val oldP = oldPassword.text.toString().trim()
+            val newP = newPassword.text.toString().trim()
+
+            dialogPassword.dismiss()
+            when {
+                TextUtils.isEmpty(oldP) -> {
+                    Toast.makeText(this, "Current Password can't be empty", Toast.LENGTH_LONG).show()
+                }
+                TextUtils.isEmpty(newP) -> {
+                    Toast.makeText(this, "New Password can't be empty", Toast.LENGTH_LONG).show()
+                }
+                else -> {
+                    updatePassword(oldP, newP)
+                }
+            }
+        }
+    }
+
+    private fun updatePassword(oldP: String, newP: String) {
+        if(oldP != actualPassword?.text) {
+            Toast.makeText(this, "Incorrect password", Toast.LENGTH_LONG).show()
+        } else {
+            actualPassword?.text = newP
+        }
+    }
+
+    private fun changeUsername() {
+        // TODO Not yet implemented
+    }
+
+    // Unused code for a progress dialog
+    fun setProgressDialog(progressMessage: String) {
         // Creating a Linear Layout
         val llPadding = 30
         val ll = LinearLayout(this)
@@ -129,162 +248,6 @@ class AccountSettingsActivity : AppCompatActivity() {
             // Disabling screen touch to avoid exiting the Dialog
             window.setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
         }
-    }*/
-
-    private fun selectPic() {
-        val options = arrayOf("Camera", "Gallery")
-
-        val dialogBuilder = AlertDialog.Builder(this)
-        dialogBuilder.setTitle("Pick Image From")
-        dialogBuilder.setItems(options) { _, pos ->
-            if (pos == 0) {
-                if (cameraPermissions()) {
-                    selectPicFromCamera()
-                } else {
-                    requestCameraPermissions()
-                }
-
-            } else if (pos == 1) {
-                if(storagePermissions()) {
-                    selectPicFromGallery()
-                } else {
-                    requestStoragePermissions()
-                }
-            }
-        }
-        dialogBuilder.create().show()
     }
-
-    private fun cameraPermissions(): Boolean {
-
-        return (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
-                == PackageManager.PERMISSION_GRANTED)
-                &&
-                (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                == PackageManager.PERMISSION_GRANTED)
-
-    }
-
-    private fun requestCameraPermissions() {
-
-        cameraPermissionsLauncher.launch(arrayOf(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE))
-            //ActivityCompat.requestPermissions(this, cameraPermission, CAMERA_REQUEST)
-
-    }
-
-    private fun selectPicFromCamera() {
-        val contentValues = ContentValues()
-        contentValues.put(MediaStore.Images.Media.TITLE, "Temp_pic")
-        contentValues.put(MediaStore.Images.Media.DESCRIPTION, "Temp Description")
-        imageUri = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
-        val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
-        startActivityForResult(cameraIntent, IMAGE_CAMERA_REQUEST)
-        /*val startCamera = registerForActivityResult(ActivityResultContracts.GetContent()) {
-            uri ->
-            profilePic?.setImageURI(uri)
-        }*/
-        /*val startCamera = registerForActivityResult(
-            ActivityResultContracts.StartActivityForResult(),
-            ActivityResultCallback<ActivityResult> {
-                result -> //onActivityResult(IMAGE_CAMERA_REQUEST, result)
-                    if(result.resultCode == RESULT_OK) {
-                        profilePic?.setImageURI(imageUri)
-                    }
-                /*override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-                    super.onActivityResult(requestCode, resultCode, data)
-                }*/
-            })*/
-        //startCamera.launch(cameraIntent)
-    }
-
-    private fun storagePermissions(): Boolean {
-        return (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-            == (PackageManager.PERMISSION_GRANTED))
-    }
-
-    private fun requestStoragePermissions() {
-        storagePermissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-        //ActivityCompat.requestPermissions(this, storagePermission, STORAGE_REQUEST)
-    }
-
-    private fun selectPicFromGallery() {
-        val galleryIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-        galleryIntent.type = "image/*"
-        startActivityForResult(galleryIntent, IMAGE_GALLERY_REQUEST)
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if(resultCode == Activity.RESULT_OK) {
-            if (requestCode == IMAGE_CAMERA_REQUEST) {
-                profilePic?.setImageURI(imageUri)
-            } else if(requestCode == IMAGE_GALLERY_REQUEST) {
-                profilePic?.setImageURI(data?.data)
-            }
-        }
-        super.onActivityResult(requestCode, resultCode, data)
-    }
-
-    /*fun onActivityResult(requestCode: Int, result: ActivityResult) {
-        if(result.resultCode == Activity.RESULT_OK) {
-            if(requestCode == IMAGE_GALLERY_REQUEST) {
-                imageUri = result.data?.data
-                uploadProfilePhoto(imageUri)
-            }
-            if(requestCode == IMAGE_CAMERA_REQUEST) {
-                val photo: Bitmap = result.data?.extras?.get("data") as Bitmap
-                profilePic?.setImageBitmap(photo)
-                //uploadProfilePhoto(imageUri)
-            }
-        }
-    } */          // fix try for deprecation
-
-    /*private fun uploadProfilePhoto(imageUri: Uri?) {
-        TODO("Not yet implemented")
-    }*/
-
-    private fun showChangePasswordDialog() {
-        val view = LayoutInflater.from(this).inflate(R.layout.password_update_dialog, null)
-        val oldPassword = view.findViewById<EditText>(R.id.oldPasswordLog)
-        val newPassword = view.findViewById<EditText>(R.id.newPasswordLog)
-        val editPassword = view.findViewById<Button>(R.id.passwordUpdateButton)
-
-        val dialogBuilder = AlertDialog.Builder(this)
-        dialogBuilder.setView(view)
-        val dialogPassword = dialogBuilder.create()
-        dialogPassword.show()
-
-        editPassword.setOnClickListener {
-            val oldP = oldPassword.text.toString().trim()
-            val newP = newPassword.text.toString().trim()
-
-            dialogPassword.dismiss()
-            when {
-                TextUtils.isEmpty(oldP) -> {
-                    Toast.makeText(this, "Current Password can't be empty", Toast.LENGTH_LONG).show()
-                }
-                TextUtils.isEmpty(newP) -> {
-                    Toast.makeText(this, "New Password can't be empty", Toast.LENGTH_LONG).show()
-                }
-                else -> {
-                    updatePassword(oldP, newP)
-                }
-            }
-        }
-    }
-
-    private fun updatePassword(oldP: String, newP: String) {
-        if(oldP != actualPassword?.text) {
-            Toast.makeText(this, "Incorrect password", Toast.LENGTH_LONG).show()
-        } else {
-            actualPassword?.text = newP
-        }
-    }
-
-    private fun changeUsername() {
-        // TODO Not yet implemented
-    }
-
-
 
 }

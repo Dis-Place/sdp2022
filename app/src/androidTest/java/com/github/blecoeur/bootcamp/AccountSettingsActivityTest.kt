@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.View
+import android.view.WindowManager
 import android.widget.ImageView
 import androidx.annotation.DrawableRes
 import androidx.core.graphics.drawable.toBitmap
@@ -22,10 +23,13 @@ import androidx.test.espresso.intent.Intents.intending
 import androidx.test.espresso.intent.matcher.IntentMatchers.hasAction
 import androidx.test.espresso.intent.matcher.IntentMatchers.toPackage
 import androidx.test.espresso.matcher.RootMatchers.isDialog
+import androidx.test.espresso.matcher.RootMatchers.withDecorView
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.GrantPermissionRule
+import com.google.android.material.internal.ContextUtils.getActivity
+import org.hamcrest.Matchers.not
 import org.hamcrest.Description
 import org.hamcrest.TypeSafeMatcher
 import org.junit.Rule
@@ -49,7 +53,7 @@ class AccountSettingsActivityTest {
         }
     }
 
-    @Test       // not ended (Toast)
+    @Test
     fun passwordNotUpdatedIfOldPasswordIncorrect() {
         val intent = Intent(getApplicationContext(), AccountSettingsActivity::class.java)
         val scenario: ActivityScenario<AccountSettingsActivity> = ActivityScenario.launch(intent)
@@ -59,11 +63,11 @@ class AccountSettingsActivityTest {
             onView(withId(R.id.newPasswordLog)).perform(replaceText("word"), closeSoftKeyboard())
             onView(withId(R.id.passwordUpdateButton)).perform(click())
             onView(withId(R.id.actualPassword)).check(matches(withText("password")))
-            // insert Toast.maketext check
+            // needs a Toast.maketext check
         }
     }
 
-    @Test       // not ended (Toast)
+    @Test
     fun passwordNotUpdateIfOldPasswordEmpty() {
         val intent = Intent(getApplicationContext(), AccountSettingsActivity::class.java)
         val scenario: ActivityScenario<AccountSettingsActivity> = ActivityScenario.launch(intent)
@@ -73,11 +77,11 @@ class AccountSettingsActivityTest {
             onView(withId(R.id.newPasswordLog)).perform(replaceText("word"), closeSoftKeyboard())
             onView(withId(R.id.passwordUpdateButton)).perform(click())
             onView(withId(R.id.actualPassword)).check(matches(withText("password")))
-            // insert Toast.maketext check
+            // needs a Toast.maketext check
         }
     }
 
-    @Test       // not ended (Toast)
+    @Test
     fun passwordNotUpdateIfNewPasswordEmpty() {
         val intent = Intent(getApplicationContext(), AccountSettingsActivity::class.java)
         val scenario: ActivityScenario<AccountSettingsActivity> = ActivityScenario.launch(intent)
@@ -87,36 +91,29 @@ class AccountSettingsActivityTest {
             onView(withId(R.id.newPasswordLog)).perform(replaceText(""), closeSoftKeyboard())
             onView(withId(R.id.passwordUpdateButton)).perform(click())
             onView(withId(R.id.actualPassword)).check(matches(withText("password")))
-            // insert Toast.maketext check
+            // needs a Toast.maketext check
         }
     }
 
-    @get:Rule var cameraPermissionRule = GrantPermissionRule.grant(android.Manifest.permission.CAMERA, android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
-    @Test
-    fun pictureUpdatesCorrectlyFromCamera() {
-        Intents.init()
+    fun pictureDoesntUpdateWithoutCameraPermissions() {
         val intent = Intent(getApplicationContext(), AccountSettingsActivity::class.java)
         val scenario: ActivityScenario<AccountSettingsActivity> = ActivityScenario.launch(intent)
+
         scenario.use {
-
-            /*val resultData = Intent()
-            resultData.putExtra("data", R.drawable.common_google_signin_btn_icon_dark)
-            val result = Instrumentation.ActivityResult(Activity.RESULT_OK, resultData)
-
-            // Set up result stubbing when an intent sent to "contacts" is seen.
-            intending(hasAction(MediaStore.ACTION_IMAGE_CAPTURE)).respondWith(result)*/
-
-            // We can also validate that an intent resolving to the "camera" activity has been sent out by our app
-
-
-            // User action that results in "contacts" activity being launched.
-            // Launching activity expects phoneNumber to be returned and displayed.
-            //onView(withId(R.id.pickButton)).perform(click())
-
+            // Only clicks on the correct button but doesn't check if the picture changes or not
             onView(withId(R.id.profilePicUpdate)).perform(click())
-            onView(withText("Camera")).inRoot(isDialog()).check(matches(isDisplayed())).perform(
-                click())
+            onView(withText("Camera")).inRoot(isDialog()).check(matches(isDisplayed())).perform(click())
+        }
+    }
 
+    fun pictureDoesntUpdateWithoutStoragePermissions() {
+        val intent = Intent(getApplicationContext(), AccountSettingsActivity::class.java)
+        val scenario: ActivityScenario<AccountSettingsActivity> = ActivityScenario.launch(intent)
+
+        scenario.use {
+            // Only clicks on the correct button but doesn't check if the picture changes or not
+            onView(withId(R.id.profilePicUpdate)).perform(click())
+            onView(withText("Gallery")).inRoot(isDialog()).check(matches(isDisplayed())).perform(click())
         }
     }
 
@@ -126,9 +123,36 @@ class AccountSettingsActivityTest {
         val intent = Intent(getApplicationContext(), AccountSettingsActivity::class.java)
         val scenario: ActivityScenario<AccountSettingsActivity> = ActivityScenario.launch(intent)
         scenario.use {
+            // Only clicks on the correct button but doesn't check if the picture is updated
             onView(withId(R.id.profilePicUpdate)).perform(click())
             onView(withText("Gallery")).inRoot(isDialog()).check(matches(isDisplayed())).perform(
                 click())
         }
+    }
+
+    @get:Rule var cameraPermissionRule = GrantPermissionRule.grant(android.Manifest.permission.CAMERA, android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+    @Test
+    fun pictureUpdatesCorrectlyFromCamera() {
+        val intent = Intent(getApplicationContext(), AccountSettingsActivity::class.java)
+        val scenario: ActivityScenario<AccountSettingsActivity> = ActivityScenario.launch(intent)
+        scenario.use {
+
+            // Only clicks on the correct button but doesn't check if the picture is updated
+
+            onView(withId(R.id.profilePicUpdate)).perform(click())
+            onView(withText("Camera")).inRoot(isDialog()).check(matches(isDisplayed())).perform(
+                click())
+
+        }
+    }
+
+    @Test
+    fun changeUsernameDoesNothing(){
+        val intent = Intent(getApplicationContext(), AccountSettingsActivity::class.java)
+        val scenario: ActivityScenario<AccountSettingsActivity> = ActivityScenario.launch(intent)
+        scenario.use {
+            onView(withId(R.id.usernameUpdate)).perform(click())
+        }
+
     }
 }
