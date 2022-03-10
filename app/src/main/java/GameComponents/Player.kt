@@ -3,13 +3,13 @@ package GameComponents
 //model of a player
 
 class Player : Coordinate{
-    private var Id = 0; //Son id liée a un compte
+    private var Id = 0; //An id link to an account
 
-    override var pos: List<Double> //Sa position qui devra etre updaté regulierement
+    override var pos: List<Double> //His localisation updated regulary
         get() = pos
         set(value) {pos = value}
 
-    fun SetId(newId: Int) { //Uniquement lors de la creation ou connection a son compte
+    fun SetId(newId: Int) { //Uniquely want the account is created or when he log in
         Id = newId
     }
 
