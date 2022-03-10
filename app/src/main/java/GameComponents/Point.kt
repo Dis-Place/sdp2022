@@ -1,7 +1,7 @@
 package GameComponents
 //model of a point
-class Point(val x: Double,val y: Double) : Coordinate {
+class Point(var x: Double,var y: Double) : Coordinate {
     override var pos: List<Double>
         get() = listOf(x,y)
-        set(value) {}
+        set(value) {x=value[0]; y=value[1]}
 }

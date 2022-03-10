@@ -1,6 +1,7 @@
 package com.github.blecoeur.bootcamp
 
 import GameComponents.GameEvent
+import GameComponents.Player
 import GameComponents.Point
 import GameVersus.GameVersusViewModel
 import org.junit.Test
@@ -22,7 +23,7 @@ class ExampleUnitTest {
     val mod = GameVersusViewModel()
 
     @Test
-    fun GameViewLauch() {
+    fun GameViewLaunch() {
         try {
             mod.OnSurrend(3)
         }catch (error: Error){
@@ -55,5 +56,15 @@ class ExampleUnitTest {
     fun GameViewOnSurrend(){
         mod.handleEvent(GameEvent.OnStart(Point(6.0,6.0),listOf(3.0,3.0,3.0),3))
         mod.handleEvent(GameEvent.OnSurrend(3))
+    }
+
+    @Test
+    fun PlayerTest(){
+        val play = Player(3.0,2.0)
+        println(play.pos[0])
+        println(play.pos[1])
+        play.pos = listOf(4.0,5.0)
+        println(play.pos[0])
+        println(play.pos[1])
     }
 }
