@@ -22,4 +22,10 @@ class MainActivity : AppCompatActivity() {
             Intent(this, GreetingActivity::class.java).apply { putExtra(EXTRA_MESSAGE, name) }
         startActivity(intent)
     }
+
+    fun openMap(view: View) {
+        val intent =
+            Intent(this, DemoMapActivity::class.java).apply { }
+        startActivity(intent)
+    }
 }
