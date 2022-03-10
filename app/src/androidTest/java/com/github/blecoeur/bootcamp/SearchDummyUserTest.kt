@@ -26,7 +26,6 @@ class SearchDummyUserTest {
     @Before
     fun setupDb() {
         db.getReference("users").child("John Cena").setValue(DummyUser("John Cena", 12))
-
     }
 
     @Test
