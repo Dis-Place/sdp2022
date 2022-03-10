@@ -1,5 +1,7 @@
 package com.github.blecoeur.bootcamp
 
+import android.content.Context
+import android.content.Intent
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.action.ViewActions.clearText
@@ -10,9 +12,11 @@ import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+
 
 private const val NAME = "Jean Valjean"
 
@@ -23,6 +27,9 @@ class DummyLoginTest {
 
     @Test
     fun testSendingUserHandleErrorsCorrectly() {
+        val context: Context = InstrumentationRegistry.getInstrumentation().getTargetContext()
+        context.sendBroadcast(Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS))
+
         Intents.init()
         val nanString = "Jean Michel Dupont"
         onView(ViewMatchers.withId(R.id.dummyName)).perform(
@@ -43,6 +50,9 @@ class DummyLoginTest {
 
     @Test
     fun testSendingUserWorksCorrectly() {
+        val context: Context = InstrumentationRegistry.getInstrumentation().getTargetContext()
+        context.sendBroadcast(Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS))
+
         Intents.init()
 
         onView(ViewMatchers.withId(R.id.dummyName)).perform(
