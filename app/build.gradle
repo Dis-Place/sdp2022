@@ -55,6 +55,8 @@ dependencies {
     implementation 'com.google.firebase:firebase-storage-ktx'
     androidTestImplementation 'junit:junit:4.12'
     androidTestImplementation 'junit:junit:4.12'
+    implementation 'org.osmdroid:osmdroid-android:6.1.10'
+    implementation 'androidx.preference:preference-ktx:1.2.0'
 }
 
 tasks.withType(Test) {

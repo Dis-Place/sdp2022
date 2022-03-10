@@ -1,5 +1,10 @@
 package com.github.blecoeur.bootcamp
 
+import android.content.Intent
+import androidx.test.core.app.ActivityScenario
+import androidx.test.core.app.ApplicationProvider
+
+import androidx.test.espresso.Espresso
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.action.ViewActions.click
@@ -40,6 +45,15 @@ class MainActivityTest {
     //    intended(IntentMatchers.hasExtra(EXTRA_MESSAGE, "baptou gaming"))
 
     //    Intents.release()
+    }
+
+    @Test
+    fun mapButtonGoesToDemoMapActivity() {
+        val intent = Intent(ApplicationProvider.getApplicationContext(), MainActivity::class.java)
+        val scenario = ActivityScenario.launch<MainActivity>(intent)
+        onView(ViewMatchers.withId(R.id.mapButton)).perform(click())
+        onView(ViewMatchers.withId(R.id.map)).check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
+        scenario.close()
     }
 
 }
