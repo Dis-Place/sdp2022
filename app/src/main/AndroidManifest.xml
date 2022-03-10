@@ -15,9 +15,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Bootcamp">
         <activity
-            android:name=".LocationActivity"
-            android:exported="false" />
-        <activity
             android:name=".DemoMapActivity"
             android:exported="false" />
         <activity
