@@ -52,5 +52,11 @@ class MainMenuActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
+    //send the user to the database demonstration
+    fun databaseDemoButton(view: View){
+        val intent = Intent(this, DummyLoginActivity::class.java)
+        startActivity(intent)
+    }
+
 
 }
