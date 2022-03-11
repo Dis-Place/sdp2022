@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
+import com.github.blecoeur.bootcamp.profile.ProfileActivity
 
 const val EXTRA_MESSAGE = "com.github.blecoeur.bootcamp.MESSAGE"
 

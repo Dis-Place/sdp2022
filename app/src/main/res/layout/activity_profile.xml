@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ProfileActivity">
+    tools:context=".profile.ProfileActivity">
 
     <TextView
         android:id="@+id/textView3"
@@ -88,6 +88,35 @@
                     android:id="@+id/recyclerAch"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:layout_weight="1">
+
+                </androidx.recyclerview.widget.RecyclerView>
+
+                <TextView
+                    android:id="@+id/textView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Statistics"
+                    android:textAlignment="center" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerStats"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1" />
+
+                <TextView
+                    android:id="@+id/textView2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="History"
+                    android:textAlignment="center" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerHist"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
                     android:layout_weight="1" />
             </LinearLayout>
         </ScrollView>
@@ -104,11 +133,11 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/textView14"
+                    android:id="@+id/Messages"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="TextView"
+                    android:text="Messages"
                     android:textAlignment="center" />
             </LinearLayout>
         </ScrollView>
@@ -129,8 +158,22 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="TextView"
+                    android:text="Friends"
                     android:textAlignment="center" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recyclerFriend"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        tools:itemCount="10" />
+
+                </LinearLayout>
             </LinearLayout>
         </ScrollView>
     </LinearLayout>
@@ -152,7 +195,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:onClick="button"
+            android:onClick="profileButton"
             android:text="PROFILE" />
 
         <Button
@@ -160,6 +203,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:onClick="inboxButton"
             android:text="INBOX" />
 
         <Button
@@ -167,7 +211,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:onClick="button2"
+            android:onClick="friendsButton"
             android:text="FRIENDS" />
 
     </LinearLayout>
