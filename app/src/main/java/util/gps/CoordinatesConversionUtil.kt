@@ -16,7 +16,7 @@ object CoordinatesConversionUtil {
 
     fun isValid(coordinates: Coordinate): Boolean {
         return coordinates.pos.size == 2
-                && coordinates.pos[0] in Constants.MIN_LONGITUDE..Constants.MAX_LONGITUDE
-                && coordinates.pos[1] in Constants.MIN_LATITUDE..Constants.MAX_LATITUDE
+                && coordinates.pos[0] in Constants.MIN_LATITUDE..Constants.MAX_LATITUDE
+                && coordinates.pos[1] in Constants.MIN_LONGITUDE..Constants.MAX_LONGITUDE
     }
 }
