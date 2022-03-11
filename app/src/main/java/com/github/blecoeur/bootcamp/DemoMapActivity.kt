@@ -17,7 +17,7 @@ import org.osmdroid.views.overlay.Marker
 class DemoMapActivity : AppCompatActivity() {
 
     private val ZOOM = 16.0
-    private val EPFL_POS = GeoPoint(46.52,6.57)
+    private val EPFL_POS = GeoPoint(46.52048,6.56782)
 
     /**
      * @param savedInstanceState
