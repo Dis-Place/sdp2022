@@ -13,25 +13,24 @@ import androidx.test.espresso.ViewAssertion
 import androidx.test.espresso.assertion.ViewAssertions
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers
-import androidx.test.espresso.matcher.ViewMatchers.withId
-import androidx.test.espresso.matcher.ViewMatchers.withText
+import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class GreetingActivityTest {
+class DemoMapActivityTest {
+
+    /***
+     * checks if the mapview is displayed
+     */
     @Test
-    fun testGreetingMessage()
+    fun mapIsDisplayedProperly()
     {
-        val intent = Intent(getApplicationContext(), GreetingActivity::class.java).apply { putExtra(
-            EXTRA_MESSAGE, "Baptou") }
-        val scenario = ActivityScenario.launch<GreetingActivity>(intent)
-        try {
-            onView(withId(R.id.greetingMessage)).check(matches(withText("Hello Baptou!")))
-        }finally {
-            scenario.close()
-        }
+        val intent = Intent(getApplicationContext(), DemoMapActivity::class.java)
+        val scenario = launch<DemoMapActivity>(intent)
+        onView(withId(R.id.map)).check(matches(isDisplayed()))
+        scenario.close()
     }
 
 }

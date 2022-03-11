@@ -47,6 +47,7 @@ class ProfileActivity : AppCompatActivity() {
 
         /*Set the default at the start*/
         activityStart()
+
     }
 
     private fun activityStart(){
