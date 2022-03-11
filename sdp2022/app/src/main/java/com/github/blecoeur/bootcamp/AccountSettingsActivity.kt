@@ -25,7 +25,7 @@ class AccountSettingsActivity : AppCompatActivity() {
     private val storagePermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) {
             accepted: Boolean ->
         if(accepted) {
-            selectPicFromGallery()
+            //selectPicFromGallery()
         } else {
             Toast.makeText(this, "Please enable Storage permissions", Toast.LENGTH_LONG).show()
         }
@@ -37,7 +37,7 @@ class AccountSettingsActivity : AppCompatActivity() {
             granted = granted && v
         }
         if(granted) {
-            selectPicFromCamera()
+           // selectPicFromCamera()         // wasn't tested enough, removed temporarily
         } else {
             Toast.makeText(this, "Please enable Camera & Storage permissions", Toast.LENGTH_LONG).show()
         }
@@ -82,14 +82,14 @@ class AccountSettingsActivity : AppCompatActivity() {
         dialogBuilder.setItems(options) { _, pos ->
             if (pos == 0) {
                 if (cameraPermissions()) {
-                    selectPicFromCamera()
+                    //selectPicFromCamera()             // wasn't tested enough, removed temporarily
                 } else {
                     requestCameraPermissions()
                 }
 
             } else if (pos == 1) {
                 if(storagePermissions()) {
-                    selectPicFromGallery()
+                    //selectPicFromGallery()          // wasn't tested enough, removed temporarily
                 } else {
                     requestStoragePermissions()
                 }
@@ -110,7 +110,8 @@ class AccountSettingsActivity : AppCompatActivity() {
         cameraPermissionsLauncher.launch(arrayOf(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE))
     }
 
-    private fun selectPicFromCamera() {
+    // wasn't tested enough, removed temporarily
+  /*  private fun selectPicFromCamera() {
         val contentValues = ContentValues()
         contentValues.put(MediaStore.Images.Media.TITLE, "Temp_pic")
         contentValues.put(MediaStore.Images.Media.DESCRIPTION, "Temp Description")
@@ -118,7 +119,7 @@ class AccountSettingsActivity : AppCompatActivity() {
         val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
         startActivityForResult(cameraIntent, IMAGE_CAMERA_REQUEST)
-    }
+    } */
 
     private fun storagePermissions(): Boolean {
         return (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -193,7 +194,7 @@ class AccountSettingsActivity : AppCompatActivity() {
     }
 
     // Unused code for a progress dialog
-    fun setProgressDialog(progressMessage: String) {
+   /* fun setProgressDialog(progressMessage: String) {
         // Creating a Linear Layout
         val llPadding = 30
         val ll = LinearLayout(this)
@@ -248,6 +249,6 @@ class AccountSettingsActivity : AppCompatActivity() {
             // Disabling screen touch to avoid exiting the Dialog
             window.setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
         }
-    }
+    }*/
 
 }
