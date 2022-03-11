@@ -1,4 +1,4 @@
-package com.github.blecoeur.bootcamp
+package com.github.displace.sdp2022
 
 import GameComponents.GameEvent
 import GameComponents.Player
