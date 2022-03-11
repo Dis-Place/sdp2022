@@ -1,9 +1,6 @@
 package com.github.displace.sdp2022
 
-import GameComponents.GameEvent
 import GameComponents.Player
-import GameComponents.Point
-import GameVersus.GameVersusViewModel
 import org.junit.Test
 
 import org.junit.Assert.*
@@ -14,14 +11,14 @@ import java.lang.Error
  *
  * See [testing documentation](http://d.android.com/tools/testing).
  */
-
+class ExampleUnitTest {
     @Test
     fun PlayerTest(){
         val play = Player(3.0,2.0)
-        println(play.pos[0])
-        println(play.pos[1])
+        assertEquals(3.0,play.pos[0],0.0)
+        assertEquals(2.0,play.pos[1],0.0)
         play.pos = listOf(4.0,5.0)
-        println(play.pos[0])
-        println(play.pos[1])
+        assertEquals(4.0,play.pos[0],0.0)
+        assertEquals(5.0,play.pos[1],0.0)
     }
 }
