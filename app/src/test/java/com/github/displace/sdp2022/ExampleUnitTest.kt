@@ -61,10 +61,20 @@ class ExampleUnitTest {
     @Test
     fun PlayerTest(){
         val play = Player(3.0,2.0)
-        println(play.pos[0])
-        println(play.pos[1])
+        assertEquals(3.0,play.pos[0],0.0)
+        assertEquals(2.0,play.pos[1],0.0)
         play.pos = listOf(4.0,5.0)
-        println(play.pos[0])
-        println(play.pos[1])
+        assertEquals(4.0,play.pos[0],0.0)
+        assertEquals(5.0,play.pos[1],0.0)
+    }
+
+    @Test
+    fun PointTest(){
+        val play = Point(3.0,2.0)
+        assertEquals(3.0,play.pos[0],0.0)
+        assertEquals(2.0,play.pos[1],0.0)
+        play.pos = listOf(4.0,5.0)
+        assertEquals(4.0,play.pos[0],0.0)
+        assertEquals(5.0,play.pos[1],0.0)
     }
 }
