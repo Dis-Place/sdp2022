@@ -29,7 +29,7 @@ class AccountSettingsActivity : AppCompatActivity() {
         if(accepted) {
             selectPicFromGallery()
         } else {
-            Toast.makeText(this, "Please enable Storage permissions", Toast.LENGTH_LONG).show()
+            showToastText("Please enable Storage permissions")
         }
     }
     private val cameraPermissionsLauncher = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
@@ -41,7 +41,7 @@ class AccountSettingsActivity : AppCompatActivity() {
         if(granted) {
             selectPicFromCamera()
         } else {
-            Toast.makeText(this, "Please enable Camera & Storage permissions", Toast.LENGTH_LONG).show()
+            showToastText("Please enable Camera & Storage permissions")
         }
     }
     private var profilePic: ImageView? = null
@@ -168,17 +168,25 @@ class AccountSettingsActivity : AppCompatActivity() {
 
             dialogPassword.dismiss()
             when {
-                TextUtils.isEmpty(oldP) -> {
-                    Toast.makeText(this, "Current Password can't be empty", Toast.LENGTH_LONG).show()
+                checkIfEmpty(oldP) -> {
+                    showToastText("Current Password can't be empty")
                 }
-                TextUtils.isEmpty(newP) -> {
-                    Toast.makeText(this, "New Password can't be empty", Toast.LENGTH_LONG).show()
+                checkIfEmpty(newP) -> {
+                    showToastText("New Password can't be empty")
                 }
                 else -> {
                     updatePassword(oldP, newP)
                 }
             }
         }
+    }
+
+    private fun checkIfEmpty(string: String): Boolean {
+        return TextUtils.isEmpty(string)
+    }
+
+    private fun showToastText(string: String) {
+        Toast.makeText(this, string, Toast.LENGTH_LONG).show()
     }
 
     private fun updatePassword(oldP: String, newP: String) {
