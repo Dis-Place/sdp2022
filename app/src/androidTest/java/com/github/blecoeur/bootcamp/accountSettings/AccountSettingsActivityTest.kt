@@ -1,21 +1,12 @@
-package com.github.blecoeur.bootcamp
+package com.github.blecoeur.bootcamp.accountSettings
 
 import android.app.Activity
 import android.app.Instrumentation
 import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.net.Uri
-import android.os.Bundle
-import android.os.Parcelable
 import android.provider.MediaStore
-import android.view.View
-import android.view.WindowManager
-import android.widget.ImageView
-import androidx.annotation.DrawableRes
-import androidx.core.graphics.drawable.toBitmap
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import androidx.test.espresso.Espresso.onView
@@ -24,29 +15,15 @@ import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.Intents.*
 import androidx.test.espresso.intent.matcher.IntentMatchers.hasAction
-import androidx.test.espresso.intent.matcher.IntentMatchers.toPackage
-import androidx.test.espresso.intent.rule.IntentsTestRule
-import androidx.test.espresso.matcher.BoundedMatcher
-import androidx.test.espresso.matcher.RootMatchers.isDialog
-import androidx.test.espresso.matcher.RootMatchers.withDecorView
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.test.platform.app.InstrumentationRegistry
-import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
 import androidx.test.rule.GrantPermissionRule
-import androidx.test.uiautomator.UiDevice
-import androidx.test.uiautomator.UiSelector
-import com.google.android.material.internal.ContextUtils.getActivity
-import org.hamcrest.Matchers.not
-import org.hamcrest.Matchers.`is`
-import org.hamcrest.Description
-import org.hamcrest.TypeSafeMatcher
+import com.github.blecoeur.bootcamp.AccountSettingsActivity
+import com.github.blecoeur.bootcamp.R
 import org.junit.Rule
 
 import org.junit.Test
 import org.junit.runner.RunWith
-import java.io.File
-import java.lang.Thread.sleep
 
 @RunWith(AndroidJUnit4::class)
 class AccountSettingsActivityTest {
