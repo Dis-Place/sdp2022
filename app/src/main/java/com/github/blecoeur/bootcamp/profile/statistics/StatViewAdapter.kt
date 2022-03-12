@@ -15,7 +15,7 @@ class StatViewAdapter(val context : Context, val data : List<Statistic> ) : Recy
         val parentContext = parent.context
         val inflater = LayoutInflater.from(parentContext)
 
-        val photoView: View = inflater.inflate(R.layout.ach, parent, false)
+        val photoView: View = inflater.inflate(R.layout.stat, parent, false)
         val viewHolder : StatViewHolder = StatViewHolder(photoView)
         return viewHolder
     }

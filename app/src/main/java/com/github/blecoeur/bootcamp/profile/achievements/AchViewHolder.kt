@@ -9,8 +9,8 @@ import com.github.blecoeur.bootcamp.R
 
 public class AchViewHolder(itemview : View) : RecyclerView.ViewHolder(itemview) {
 
-    val name: TextView = itemview.findViewById(R.id.statName)
-    val date: TextView = itemview.findViewById(R.id.statValue)
+    val name: TextView = itemview.findViewById(R.id.achName)
+    val date: TextView = itemview.findViewById(R.id.achDate)
     val icon: ImageView = itemview.findViewById(R.id.achIcon)
 
     lateinit var userName : String

@@ -6,13 +6,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.github.blecoeur.bootcamp.R
+import com.github.blecoeur.bootcamp.profile.ProfileDbConnection
 import com.github.blecoeur.bootcamp.profile.achievements.AchViewHolder
 import com.github.blecoeur.bootcamp.profile.statistics.StatViewHolder
 
-class FriendViewAdapter(val context : Context, val data : List<Friend>, val dbAdapter : DBFriendAdapter): RecyclerView.Adapter<FriendViewHolder>() {
+class FriendViewAdapter(val context : Context, val data : List<Friend>, val dbAdapter : ProfileDbConnection): RecyclerView.Adapter<FriendViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FriendViewHolder {
-        //  TODO("Not yet implemented")
         val parentContext = parent.context
         val inflater = LayoutInflater.from(parentContext)
 
@@ -22,7 +22,6 @@ class FriendViewAdapter(val context : Context, val data : List<Friend>, val dbAd
     }
 
     override fun onBindViewHolder(holder: FriendViewHolder, position: Int) {
-        //    TODO("Not yet implemented")
         val index = holder.adapterPosition
         holder.friendNameView.text = data[index].name
         holder.friend = data[index]
@@ -30,7 +29,6 @@ class FriendViewAdapter(val context : Context, val data : List<Friend>, val dbAd
     }
 
     override fun getItemCount(): Int {
-        //   TODO("Not yet implemented")
         return data.size
     }
 

@@ -1,5 +1,6 @@
 package com.github.blecoeur.bootcamp.profile
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.ScrollView
@@ -8,42 +9,52 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.github.blecoeur.bootcamp.R
 import com.github.blecoeur.bootcamp.profile.achievements.AchViewAdapter
-import com.github.blecoeur.bootcamp.profile.achievements.DBAchAdapter
-import com.github.blecoeur.bootcamp.profile.friends.DBFriendAdapter
 import com.github.blecoeur.bootcamp.profile.friends.FriendViewAdapter
-import com.github.blecoeur.bootcamp.profile.statistics.DBStatAdapter
+import com.github.blecoeur.bootcamp.profile.history.HistoryViewAdapter
+import com.github.blecoeur.bootcamp.profile.messages.MsgViewAdapter
+import com.github.blecoeur.bootcamp.profile.settings.AccountSettingsActivity
 import com.github.blecoeur.bootcamp.profile.statistics.StatViewAdapter
 
 
 class ProfileActivity : AppCompatActivity() {
 
-    private val dbAchAccess : DBAchAdapter = DBAchAdapter()
-    private val dbStatsAccess : DBStatAdapter = DBStatAdapter()
-    private val dbHistAccess : DBAchAdapter = DBAchAdapter()
-    private val dbMsgsAccess : DBAchAdapter = DBAchAdapter()
-    private val dbFriendsAccess : DBFriendAdapter = DBFriendAdapter()
+    private val dbAccess : ProfileDbConnection = MockDB();
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile)
 
+        /* Active user Information */
+
         /* Achievements */
         val achRecyclerView = findViewById<RecyclerView>(R.id.recyclerAch)
-        val achAdapter = AchViewAdapter( applicationContext , dbAchAccess.getAchList(3))
+        val achAdapter = AchViewAdapter( applicationContext , dbAccess.getAchList(3, "0"))
         achRecyclerView.adapter = achAdapter
         achRecyclerView.layoutManager = LinearLayoutManager(applicationContext);
 
         /* Statistics */
         val statRecyclerView = findViewById<RecyclerView>(R.id.recyclerStats)
-        val statAdapter = StatViewAdapter( applicationContext , dbStatsAccess.getStatList(3))
+        val statAdapter = StatViewAdapter( applicationContext , dbAccess.getStatsList(3, "0"))
         statRecyclerView.adapter = statAdapter
         statRecyclerView.layoutManager = LinearLayoutManager(applicationContext);
 
         /* Friends */
         val friendRecyclerView = findViewById<RecyclerView>(R.id.recyclerFriend)
-        val friendAdapter = FriendViewAdapter( applicationContext , dbFriendsAccess.getFriendList(3), dbFriendsAccess )
+        val friendAdapter = FriendViewAdapter( applicationContext , dbAccess.getFriendsList(3, "0"), dbAccess )
         friendRecyclerView.adapter = friendAdapter
         friendRecyclerView.layoutManager = LinearLayoutManager(applicationContext);
+
+        /* Messages */
+        val messageRecyclerView = findViewById<RecyclerView>(R.id.recyclerMsg)
+        val messageAdapter = MsgViewAdapter( applicationContext , dbAccess.getMsgList(3, "0"), dbAccess )
+        messageRecyclerView.adapter = messageAdapter
+        messageRecyclerView.layoutManager = LinearLayoutManager(applicationContext);
+
+        /* Games History */
+        val historyRecyclerView = findViewById<RecyclerView>(R.id.recyclerHist)
+        val historyAdapter = HistoryViewAdapter( applicationContext , dbAccess.getHistList(3, "0") )
+        historyRecyclerView.adapter = historyAdapter
+        historyRecyclerView.layoutManager = LinearLayoutManager(applicationContext);
 
         /*Set the default at the start*/
         activityStart()
@@ -72,5 +83,15 @@ class ProfileActivity : AppCompatActivity() {
         findViewById<ScrollView>(R.id.FriendsScroll).visibility = View.VISIBLE
     }
 
+    fun settingsButton(view : View){
+        val intent = Intent(this, AccountSettingsActivity::class.java)
+        startActivity(intent)
+    }
 
+
+    /*
+    TODO IN THIS ACTIVITY
+    - See someone else's profile : needs to go back to active user profile (little button to go back) : only see the PROFILE part of it
+    - Make dialog window to write a message to someone
+     */
 }
