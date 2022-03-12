@@ -1,0 +1,179 @@
+package com.github.blecoeur.bootcamp
+
+import android.app.Activity
+import android.app.Instrumentation
+import android.content.ContentResolver
+import android.content.Context
+import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.net.Uri
+import android.os.Bundle
+import android.os.Parcelable
+import android.provider.MediaStore
+import android.view.View
+import android.view.WindowManager
+import android.widget.ImageView
+import androidx.annotation.DrawableRes
+import androidx.core.graphics.drawable.toBitmap
+import androidx.test.core.app.ActivityScenario
+import androidx.test.core.app.ApplicationProvider.getApplicationContext
+import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.action.ViewActions.*
+import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.intent.Intents
+import androidx.test.espresso.intent.Intents.*
+import androidx.test.espresso.intent.matcher.IntentMatchers.hasAction
+import androidx.test.espresso.intent.matcher.IntentMatchers.toPackage
+import androidx.test.espresso.intent.rule.IntentsTestRule
+import androidx.test.espresso.matcher.BoundedMatcher
+import androidx.test.espresso.matcher.RootMatchers.isDialog
+import androidx.test.espresso.matcher.RootMatchers.withDecorView
+import androidx.test.espresso.matcher.ViewMatchers.*
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry
+import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
+import androidx.test.rule.GrantPermissionRule
+import androidx.test.uiautomator.UiDevice
+import androidx.test.uiautomator.UiSelector
+import com.google.android.material.internal.ContextUtils.getActivity
+import org.hamcrest.Matchers.not
+import org.hamcrest.Matchers.`is`
+import org.hamcrest.Description
+import org.hamcrest.TypeSafeMatcher
+import org.junit.Rule
+
+import org.junit.Test
+import org.junit.runner.RunWith
+import java.io.File
+import java.lang.Thread.sleep
+
+@RunWith(AndroidJUnit4::class)
+class AccountSettingsActivityTest {
+
+    @Test
+    fun passwordIsUpdated() {
+        val intent = Intent(getApplicationContext(), AccountSettingsActivity::class.java)
+        val scenario: ActivityScenario<AccountSettingsActivity> = ActivityScenario.launch(intent)
+        scenario.use {
+            onView(withId(R.id.passwordUpdate)).perform(click())
+            onView(withId(R.id.oldPasswordLog)).perform(replaceText("password"), closeSoftKeyboard())
+            onView(withId(R.id.newPasswordLog)).perform(replaceText("pwd"), closeSoftKeyboard())
+            onView(withId(R.id.passwordUpdateButton)).perform(click())
+            onView(withId(R.id.actualPassword)).check(matches(withText("pwd")))
+        }
+    }
+
+    @Test
+    fun passwordNotUpdatedIfOldPasswordIncorrect() {
+        val intent = Intent(getApplicationContext(), AccountSettingsActivity::class.java)
+        val scenario: ActivityScenario<AccountSettingsActivity> = ActivityScenario.launch(intent)
+        scenario.use {
+            onView(withId(R.id.passwordUpdate)).perform(click())
+            onView(withId(R.id.oldPasswordLog)).perform(replaceText("pass"), closeSoftKeyboard())
+            onView(withId(R.id.newPasswordLog)).perform(replaceText("word"), closeSoftKeyboard())
+            onView(withId(R.id.passwordUpdateButton)).perform(click())
+            onView(withId(R.id.actualPassword)).check(matches(withText("password")))
+            // needs a Toast.maketext check
+            //onView(withText("Incorrect password")).inRoot(withDecorView(not(getActivity(getApplicationContext())?.window?.decorView))).check(matches(isDisplayed()))
+        }
+    }
+
+    @Test
+    fun passwordNotUpdateIfOldPasswordEmpty() {
+        val intent = Intent(getApplicationContext(), AccountSettingsActivity::class.java)
+        val scenario: ActivityScenario<AccountSettingsActivity> = ActivityScenario.launch(intent)
+        scenario.use {
+            onView(withId(R.id.passwordUpdate)).perform(click())
+            onView(withId(R.id.oldPasswordLog)).perform(replaceText(""), closeSoftKeyboard())
+            onView(withId(R.id.newPasswordLog)).perform(replaceText("word"), closeSoftKeyboard())
+            onView(withId(R.id.passwordUpdateButton)).perform(click())
+            onView(withId(R.id.actualPassword)).check(matches(withText("password")))
+            // needs a Toast.maketext check
+        }
+    }
+
+    @Test
+    fun passwordNotUpdateIfNewPasswordEmpty() {
+        val intent = Intent(getApplicationContext(), AccountSettingsActivity::class.java)
+        val scenario: ActivityScenario<AccountSettingsActivity> = ActivityScenario.launch(intent)
+        scenario.use {
+            onView(withId(R.id.passwordUpdate)).perform(click())
+            onView(withId(R.id.oldPasswordLog)).perform(replaceText("password"), closeSoftKeyboard())
+            onView(withId(R.id.newPasswordLog)).perform(replaceText(""), closeSoftKeyboard())
+            onView(withId(R.id.passwordUpdateButton)).perform(click())
+            onView(withId(R.id.actualPassword)).check(matches(withText("password")))
+            // needs a Toast.maketext check
+        }
+    }
+
+    @get:Rule val permissionRule = GrantPermissionRule.grant(android.Manifest.permission.CAMERA, android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+    @Test
+    fun pictureUpdatesCorrectlyFromGallery() {
+        val intent = Intent(getApplicationContext(), AccountSettingsActivity::class.java)
+        val scenario: ActivityScenario<AccountSettingsActivity> = ActivityScenario.launch(intent)
+        scenario.use {
+            val resultData = Intent()
+            resultData.data = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://"
+                    + getApplicationContext<Context?>().resources.getResourcePackageName(R.drawable.ic_launcher_foreground)
+                    + '/' + getApplicationContext<Context?>().resources.getResourceTypeName(R.drawable.ic_launcher_foreground)
+                    + '/' + getApplicationContext<Context?>().resources.getResourceEntryName(R.drawable.ic_launcher_foreground))
+
+            Intents.init()
+            try {
+                val expectedIntent = hasAction(Intent.ACTION_PICK)
+                val response = Instrumentation.ActivityResult(Activity.RESULT_OK, resultData)
+                intending(expectedIntent).respondWith(response)
+                onView(withId(R.id.profilePicUpdate)).perform(click())
+                onView(withText("Gallery")).perform(click())
+                /*sleep(3000)
+                val device = UiDevice.getInstance(getInstrumentation())
+                val allowPermissions = device.findObject(UiSelector().clickable(true).checkable(false).textMatches("Allow"))
+                if(allowPermissions.exists()) {
+                    allowPermissions.click()
+                }*/
+                intended(expectedIntent)
+                // check that image is correctly updated
+            } finally {
+                Intents.release()
+            }
+        }
+
+    }
+
+    @Test
+    fun pictureUpdatesCorrectlyFromCamera() {
+        val intent = Intent(getApplicationContext(), AccountSettingsActivity::class.java)
+        val scenario: ActivityScenario<AccountSettingsActivity> = ActivityScenario.launch(intent)
+        scenario.use {
+            val resultData = Intent()
+            resultData.data = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://"
+                    + getApplicationContext<Context?>().resources.getResourcePackageName(R.drawable.ic_launcher_foreground)
+                    + '/' + getApplicationContext<Context?>().resources.getResourceTypeName(R.drawable.ic_launcher_foreground)
+                    + '/' + getApplicationContext<Context?>().resources.getResourceEntryName(R.drawable.ic_launcher_foreground))
+
+            Intents.init()
+            try {
+                val expectedIntent = hasAction(MediaStore.ACTION_IMAGE_CAPTURE)
+                val response = Instrumentation.ActivityResult(Activity.RESULT_OK, resultData)
+                intending(expectedIntent).respondWith(response)
+                onView(withId(R.id.profilePicUpdate)).perform(click())
+                onView(withText("Camera")).perform(click())
+                intended(expectedIntent)
+                // check that image is correctly updated
+            } finally {
+                Intents.release()
+            }
+        }
+    }
+
+    @Test
+    fun changeUsernameDoesNothing(){
+        val intent = Intent(getApplicationContext(), AccountSettingsActivity::class.java)
+        val scenario: ActivityScenario<AccountSettingsActivity> = ActivityScenario.launch(intent)
+        scenario.use {
+            onView(withId(R.id.usernameUpdate)).perform(click())
+        }
+
+    }
+}
