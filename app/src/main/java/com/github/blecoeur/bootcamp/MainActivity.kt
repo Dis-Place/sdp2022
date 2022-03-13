@@ -7,7 +7,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
-import com.github.blecoeur.bootcamp.profile.ProfileActivity
+import com.github.blecoeur.bootcamp.profile.MockDB
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.database.FirebaseDatabase
 
@@ -27,6 +27,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun startAppUse(view: View) {
+
+        //set application data : start DB connection
+        val app = applicationContext as MyApplication
+        app.setProfileDb(MockDB())
+        app.getProfileDb().setDbId(4561)
+
         val nameText = findViewById<EditText>(R.id.mainName)
         val name = nameText.text.toString()
         //load the username in the preferences for later use

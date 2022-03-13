@@ -18,8 +18,12 @@ interface ProfileDbConnection {
 
     fun getFriendsList(size : Int, id : String) : List<Friend>;
     fun sendInvite(f : Friend);
-    fun sendMessage(msg : String ,f : Friend);
+    fun sendMessage(msg : String ,id : String);
 
     fun getProfileInfo( id : String) : Friend;
 
+    fun getActiveUser() : Friend;
+
+    fun setDbId(id : Int)
+    fun getDbId() : Int
 }

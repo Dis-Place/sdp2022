@@ -19,6 +19,7 @@ class MainMenuActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main_menu)
+
         //load the username from the preferences
         sharedpreferences = getSharedPreferences(myPreferences, Context.MODE_PRIVATE)
         var message = sharedpreferences.getString("userNameKey", "NOT FOUND")

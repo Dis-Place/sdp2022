@@ -2,11 +2,13 @@ package com.github.blecoeur.bootcamp.profile
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.ScrollView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.github.blecoeur.bootcamp.MyApplication
 import com.github.blecoeur.bootcamp.R
 import com.github.blecoeur.bootcamp.profile.achievements.AchViewAdapter
 import com.github.blecoeur.bootcamp.profile.friends.FriendViewAdapter
@@ -18,13 +20,18 @@ import com.github.blecoeur.bootcamp.profile.statistics.StatViewAdapter
 
 class ProfileActivity : AppCompatActivity() {
 
-    private val dbAccess : ProfileDbConnection = MockDB();
+    private lateinit var dbAccess : ProfileDbConnection
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile)
 
         /* Active user Information */
+        val app = applicationContext as MyApplication
+        dbAccess = app.getProfileDb()
+        Log.d("test","username is : " + dbAccess.getDbId() )
+
 
         /* Achievements */
         val achRecyclerView = findViewById<RecyclerView>(R.id.recyclerAch)
@@ -88,6 +95,9 @@ class ProfileActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
+    fun msg(){
+
+    }
 
     /*
     TODO IN THIS ACTIVITY
