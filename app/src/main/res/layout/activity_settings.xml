@@ -23,6 +23,7 @@
         android:layout_height="64dp"
         android:layout_marginStart="18dp"
         android:layout_marginTop="84dp"
+        android:onClick="darkModeOnOff"
         android:text="  Dark Mode"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -33,6 +34,7 @@
         android:layout_height="64dp"
         android:layout_marginStart="18dp"
         android:layout_marginTop="148dp"
+        android:onClick="offlineModeOnOff"
         android:text="  Offline Mode"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -43,6 +45,7 @@
         android:layout_height="64dp"
         android:layout_marginStart="18dp"
         android:layout_marginTop="212dp"
+        android:onClick="soundOnOff"
         android:text="  Sound"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
