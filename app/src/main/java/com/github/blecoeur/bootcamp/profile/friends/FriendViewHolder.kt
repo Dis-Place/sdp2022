@@ -15,19 +15,27 @@ public class FriendViewHolder(itemview : View) : RecyclerView.ViewHolder(itemvie
     val messageButton = itemView.findViewById<ImageButton>(R.id.messageButton)
     val inviteButton = itemView.findViewById<ImageButton>(R.id.inviteButton)
 
-    lateinit var dbAdapter : ProfileDbConnection;
-    lateinit var friend : Friend;
+    lateinit var dbAdapter: ProfileDbConnection;
+    lateinit var friend: Friend;
 
-    init{
-        messageButton.setOnClickListener{ v ->
-            val intent = Intent(v.context, SendMessageActivity::class.java).apply{
-                putExtra("MessageReceiverID",friend.ID)
-                putExtra("MessageReceiverName",friend.name)
+    init {
+        messageButton.setOnClickListener { v ->
+            val intent = Intent(v.context, SendMessageActivity::class.java).apply {
+                putExtra("MessageReceiverID", friend.ID)
+                putExtra("MessageReceiverName", friend.name)
             }
             v.context.startActivity(intent)
         }
 
-        inviteButton.setOnClickListener{ v -> dbAdapter.sendInvite(friend) }
-    }
+        inviteButton.setOnClickListener { v -> dbAdapter.sendInvite(friend) }
 
+        itemview.setOnClickListener { v ->
+            val intent = Intent(v.context, FriendProfile::class.java).apply {
+                putExtra("FriendId", friend.ID)
+                putExtra("FriendUsername", friend.name)
+            }
+            v.context.startActivity(intent)
+        }
+
+    }
 }

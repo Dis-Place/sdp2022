@@ -8,6 +8,7 @@ import android.view.View
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import com.github.blecoeur.bootcamp.profile.MockDB
+import com.github.blecoeur.bootcamp.profile.friends.Friend
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.database.FirebaseDatabase
 
@@ -30,17 +31,20 @@ class MainActivity : AppCompatActivity() {
 
         //set application data : start DB connection
         val app = applicationContext as MyApplication
-        app.setProfileDb(MockDB())
+        app.setDb(MockDB())
         app.getProfileDb().setDbId(4561)
 
         val nameText = findViewById<EditText>(R.id.mainName)
         val name = nameText.text.toString()
         //load the username in the preferences for later use
         sharedpreferences = getSharedPreferences(myPreferences, Context.MODE_PRIVATE)
+
+        app.setActiveUser( Friend(name,"0") )
+/*
         val editor = sharedpreferences.edit()
         editor.putString("userNameKey",name)
         editor.commit()
-
+*/
         val intent = Intent(this, MainMenuActivity::class.java)
         startActivity(intent)
     }

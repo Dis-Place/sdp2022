@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
-import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions
@@ -61,7 +60,7 @@ class MainMenuActivityTest {
     fun testProfileButton(){
         Espresso.onView(withId(R.id.mainGoButton)).perform(click())
         Espresso.onView(withId(R.id.profileButton)).perform(click())
-        Espresso.onView(withId(R.id.textView3)).check(matches(withText("PROFILE")))
+        Espresso.onView(withId(R.id.profileUsername)).check(matches(withText("PROFILE")))
     }
     @Test
     fun testSettingsButton(){

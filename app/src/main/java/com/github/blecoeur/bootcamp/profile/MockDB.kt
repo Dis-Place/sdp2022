@@ -1,18 +1,24 @@
 package com.github.blecoeur.bootcamp.profile
 
+import com.github.blecoeur.bootcamp.news.News
+import com.github.blecoeur.bootcamp.news.NewsDbConnection
 import com.github.blecoeur.bootcamp.profile.achievements.Achievement
 import com.github.blecoeur.bootcamp.profile.friends.Friend
 import com.github.blecoeur.bootcamp.profile.history.History
 import com.github.blecoeur.bootcamp.profile.messages.Message
 import com.github.blecoeur.bootcamp.profile.statistics.Statistic
 
-class MockDB : ProfileDbConnection {
+class MockDB : ProfileDbConnection, NewsDbConnection {
 
     var id : Int = 0;
 
     private var dummyStatList : List<Statistic>  = listOf( Statistic("stat1",0)  ,
         Statistic("stat2",0) ,
         Statistic("stat3",0) )
+
+    private var dummyStatListFriend : List<Statistic>  = listOf( Statistic("stat1",1)  ,
+        Statistic("stat2",1) ,
+        Statistic("stat3",1) )
 
     private var dummyAchList : List<Achievement>  = listOf( Achievement("ach1","today")  ,
         Achievement("ach1","today") ,
@@ -38,6 +44,9 @@ class MockDB : ProfileDbConnection {
     }
 
     override fun getStatsList(size: Int, id: String): List<Statistic> {
+        if(id != "0"){
+            return dummyStatListFriend.take(size)
+        }
         return dummyStatList.take(size)
     }
 
@@ -70,6 +79,10 @@ class MockDB : ProfileDbConnection {
 
     override fun getDbId() : Int{
         return id
+    }
+
+    override fun getNewsList(size: Int): List<News> {
+        return listOf(News("WEEKLY UPDATE","Profiles and News are now also available!", "14/03/2022"))
     }
 
 }

@@ -16,6 +16,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Bootcamp">
         <activity
+            android:name=".profile.friends.FriendProfile"
+            android:exported="false" />
+        <activity
             android:name=".profile.messages.SendMessageActivity"
             android:exported="false"
             android:parentActivityName=".profile.ProfileActivity">
@@ -41,7 +44,7 @@
             android:name=".DemoMapActivity"
             android:exported="false" />
         <activity
-            android:name=".NewsActivity"
+            android:name=".news.NewsActivity"
             android:exported="false"
             android:parentActivityName=".MainMenuActivity">
 
