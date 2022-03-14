@@ -14,7 +14,7 @@ class RealTimeDatabase: Database {
         return this
     }
 
-    override fun update(reference: String, key: String, obj: Object): Object {
+    override fun update(reference: String, key: String, obj: Any): Any {
         db.getReference(reference).child(key).setValue(obj).addOnSuccessListener {
             Log.i("firebase", "Updated value $key")
         }.addOnFailureListener {
@@ -23,7 +23,7 @@ class RealTimeDatabase: Database {
         return obj
     }
 
-    override fun insert(reference: String, key: String, obj: Object): Object {
+    override fun insert(reference: String, key: String, obj: Any): Any {
         db.getReference(reference).child(key).setValue(obj).addOnSuccessListener {
             Log.i("firebase", "Inserted value $key")
         }.addOnFailureListener{
@@ -40,7 +40,7 @@ class RealTimeDatabase: Database {
         }
     }
 
-    override fun get(reference: String, key: String): Object? {
+    override fun get(reference: String, key: String): Any? {
         return db.getReference(reference).child(key).get().addOnSuccessListener {
             Log.i("firebase", "Got value ${it.value}")
         }.addOnFailureListener {
