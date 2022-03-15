@@ -1,16 +1,18 @@
 package com.github.blecoeur.bootcamp
 
 import android.app.AlertDialog
-import android.net.Uri
+import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
 import android.util.Log
 import android.widget.ImageView
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.ktx.storage
+import java.io.ByteArrayOutputStream
 import java.io.File
 
-class ImageDatabase : Database {
+class ImageDatabase: Database {
     private lateinit var storage: FirebaseStorage
     private lateinit var imageRef: StorageReference
 
@@ -27,9 +29,12 @@ class ImageDatabase : Database {
     override fun insert(reference: String, key: String, obj: Any): Any {
         val imageView: ImageView = obj as ImageView
 
-        val file = Uri.fromFile(File(reference))
+        val bitmap = (imageView.drawable as BitmapDrawable).bitmap
+        val baos = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100,baos)
+        val data = baos.toByteArray()
 
-        val uploadTask = imageRef.child(key).putFile(file).addOnSuccessListener {
+        val uploadTask = imageRef.child(key).putBytes(data).addOnSuccessListener {
             Log.i("firebase", "Uploaded image $key")
         }.addOnFailureListener {
             Log.e("firebase", "Failed to upload image $key", it)
