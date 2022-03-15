@@ -32,7 +32,6 @@ class MainActivity : AppCompatActivity() {
         //set application data : start DB connection
         val app = applicationContext as MyApplication
         app.setDb(MockDB())
-        app.getProfileDb().setDbId(4561)
 
         val nameText = findViewById<EditText>(R.id.mainName)
         val name = nameText.text.toString()
@@ -40,11 +39,7 @@ class MainActivity : AppCompatActivity() {
         sharedpreferences = getSharedPreferences(myPreferences, Context.MODE_PRIVATE)
 
         app.setActiveUser( Friend(name,"0") )
-/*
-        val editor = sharedpreferences.edit()
-        editor.putString("userNameKey",name)
-        editor.commit()
-*/
+
         val intent = Intent(this, MainMenuActivity::class.java)
         startActivity(intent)
     }

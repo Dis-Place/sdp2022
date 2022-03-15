@@ -24,6 +24,4 @@ interface ProfileDbConnection {
 
     fun getActiveUser() : Friend;
 
-    fun setDbId(id : Int)
-    fun getDbId() : Int
 }

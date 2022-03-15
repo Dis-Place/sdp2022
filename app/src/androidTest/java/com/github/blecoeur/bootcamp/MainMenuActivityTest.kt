@@ -14,6 +14,8 @@ import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
+import com.github.blecoeur.bootcamp.profile.MockDB
+import com.github.blecoeur.bootcamp.profile.friends.Friend
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -28,23 +30,17 @@ class MainMenuActivityTest {
      */
     @Test
     fun testingInput() {
-        val myPreferences = "myPrefs"
+
+        val app = ApplicationProvider.getApplicationContext()  as MyApplication
+        app.setDb( MockDB() )
+        app.setActiveUser(Friend("Baptou","0"))
 
         val intent = Intent(ApplicationProvider.getApplicationContext(), MainMenuActivity::class.java)
-
-
-        val context = getInstrumentation().targetContext
-        val sharedpreferences = context.getSharedPreferences(myPreferences, Context.MODE_PRIVATE)
-
-        val editor = sharedpreferences.edit()
-        editor.putString("userNameKey","Baptou")
-        editor.commit()
-
         val scenario = ActivityScenario.launch<MainMenuActivity>(intent)
 
         try {
             Espresso.onView(withId(R.id.WelcomeText))
-                .check(ViewAssertions.matches(ViewMatchers.withText("Welcome Baptou!")))
+                .check(matches(withText("Welcome Baptou!")))
         }finally {
             scenario.close()
         }
@@ -60,7 +56,7 @@ class MainMenuActivityTest {
     fun testProfileButton(){
         Espresso.onView(withId(R.id.mainGoButton)).perform(click())
         Espresso.onView(withId(R.id.profileButton)).perform(click())
-        Espresso.onView(withId(R.id.profileUsername)).check(matches(withText("PROFILE")))
+        Espresso.onView(withId(R.id.profileUsername)).check(matches(withText("Name")))
     }
     @Test
     fun testSettingsButton(){
@@ -74,10 +70,5 @@ class MainMenuActivityTest {
         Espresso.onView(withId(R.id.newsButton)).perform(click())
         Espresso.onView(withId(R.id.textView)).check(matches(withText("NEWS")))
     }
-    @Test
-    fun leaveAndComeBack(){ //how to test the upward navigation???
-        Espresso.onView(withId(R.id.mainGoButton)).perform(click())
-        Espresso.onView(withId(R.id.newsButton)).perform(click())
-        Espresso.onView(withId(R.id.textView)).check(matches(withText("NEWS")))
-    }
+
 }

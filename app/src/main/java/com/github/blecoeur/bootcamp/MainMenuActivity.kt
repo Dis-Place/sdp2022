@@ -12,10 +12,6 @@ import com.github.blecoeur.bootcamp.profile.ProfileActivity
 
 class MainMenuActivity : AppCompatActivity() {
 
-    //preferences setup : using a dummy name
-    val myPreferences = "myPrefs"
-    lateinit var sharedpreferences: SharedPreferences;
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main_menu)

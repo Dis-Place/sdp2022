@@ -73,14 +73,6 @@ class MockDB : ProfileDbConnection, NewsDbConnection {
         return Friend("ACTIVE","0")
     }
 
-    override fun setDbId(id : Int) {
-        this.id = id
-    }
-
-    override fun getDbId() : Int{
-        return id
-    }
-
     override fun getNewsList(size: Int): List<News> {
         return listOf(News("WEEKLY UPDATE","Profiles and News are now also available!", "14/03/2022"))
     }
