@@ -7,13 +7,10 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.github.blecoeur.bootcamp.R
 
-public class AchViewHolder(itemview : View) : RecyclerView.ViewHolder(itemview) {
+class AchViewHolder(itemview : View) : RecyclerView.ViewHolder(itemview) {
 
     val name: TextView = itemview.findViewById(R.id.achName)
     val date: TextView = itemview.findViewById(R.id.achDate)
-    val icon: ImageView = itemview.findViewById(R.id.achIcon)
-
-    lateinit var userName : String
 
     init{
         itemview.setOnClickListener { v ->

@@ -7,16 +7,14 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.github.blecoeur.bootcamp.R
 import com.github.blecoeur.bootcamp.profile.ProfileDbConnection
-import com.github.blecoeur.bootcamp.profile.friends.FriendViewHolder
 
-class MsgViewAdapter( val context : Context, val data : List<Message>, val dbAdapter : ProfileDbConnection) : RecyclerView.Adapter<MsgViewHolder>() {
+class MsgViewAdapter(val context : Context, private val data : List<Message>, private val dbAdapter : ProfileDbConnection) : RecyclerView.Adapter<MsgViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MsgViewHolder {
         val parentContext = parent.context
         val inflater = LayoutInflater.from(parentContext)
 
         val photoView: View = inflater.inflate(R.layout.msg, parent, false)
-        val viewHolder : MsgViewHolder = MsgViewHolder(photoView)
-        return viewHolder
+        return MsgViewHolder(photoView)
     }
 
     override fun onBindViewHolder(holder: MsgViewHolder, position: Int) {

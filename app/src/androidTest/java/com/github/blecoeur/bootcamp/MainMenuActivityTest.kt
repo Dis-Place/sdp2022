@@ -1,19 +1,15 @@
 package com.github.blecoeur.bootcamp
 
-import android.content.Context
 import android.content.Intent
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.action.ViewActions.click
-import androidx.test.espresso.assertion.ViewAssertions
 import androidx.test.espresso.assertion.ViewAssertions.matches
-import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
 import com.github.blecoeur.bootcamp.profile.MockDB
 import com.github.blecoeur.bootcamp.profile.friends.Friend
 import org.junit.Rule
@@ -38,11 +34,9 @@ class MainMenuActivityTest {
         val intent = Intent(ApplicationProvider.getApplicationContext(), MainMenuActivity::class.java)
         val scenario = ActivityScenario.launch<MainMenuActivity>(intent)
 
-        try {
+        scenario.use { scenario ->
             Espresso.onView(withId(R.id.WelcomeText))
                 .check(matches(withText("Welcome Baptou!")))
-        }finally {
-            scenario.close()
         }
     }
 

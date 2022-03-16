@@ -1,7 +1,7 @@
 package com.github.blecoeur.bootcamp
 
+import android.annotation.SuppressLint
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
@@ -12,13 +12,14 @@ import com.github.blecoeur.bootcamp.profile.ProfileActivity
 
 class MainMenuActivity : AppCompatActivity() {
 
+    @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main_menu)
 
         //load the username from the application
         val app = applicationContext as MyApplication
-        var message = app.getActiveUser().name
+        val message = app.getActiveUser().name
         val welcomeTextView =  findViewById<TextView>(R.id.WelcomeText).apply { text =
             "Welcome $message!"
         }

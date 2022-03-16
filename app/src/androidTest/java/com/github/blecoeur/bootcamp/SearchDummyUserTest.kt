@@ -3,10 +3,8 @@ package com.github.blecoeur.bootcamp
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.action.ViewActions.click
-import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.matcher.ViewMatchers
-import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.firebase.database.FirebaseDatabase
@@ -20,7 +18,7 @@ import org.junit.runner.RunWith
 class SearchDummyUserTest {
     @get:Rule
     val testRule = ActivityScenarioRule(SearchDummyUser::class.java)
-    val db =
+    private val db =
         FirebaseDatabase.getInstance("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/")
 
     @Before

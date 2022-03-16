@@ -15,11 +15,11 @@ class MsgViewHolder (itemview : View) : RecyclerView.ViewHolder(itemview) {
     val date : TextView = itemview.findViewById(R.id.msgDate)
     val sender : TextView = itemview.findViewById(R.id.msgSender)
 
-    val replyButton : ImageButton = itemview.findViewById(R.id.replyButton)
+    private val replyButton : ImageButton = itemview.findViewById(R.id.replyButton)
 
 
-    lateinit var dbAdapter : ProfileDbConnection;
-    lateinit var friend : Friend;
+    lateinit var dbAdapter : ProfileDbConnection
+    lateinit var friend : Friend
 
     init{
         replyButton.setOnClickListener{ v ->

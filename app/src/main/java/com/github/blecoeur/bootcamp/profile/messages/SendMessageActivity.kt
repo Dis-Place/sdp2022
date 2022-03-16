@@ -1,5 +1,6 @@
 package com.github.blecoeur.bootcamp.profile.messages
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -12,16 +13,17 @@ import com.github.blecoeur.bootcamp.profile.ProfileActivity
 
 class SendMessageActivity : AppCompatActivity() {
 
-    lateinit var receiverId : String
-    lateinit var receiverName : String
+    private lateinit var receiverId : String
+    private lateinit var receiverName : String
 
+    @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_send_message)
 
         receiverId = intent.getStringExtra("MessageReceiverID").toString()
         receiverName = intent.getStringExtra("MessageReceiverName").toString()
-        findViewById<TextView>(R.id.receiverName).text = "Message to : " + receiverName
+        findViewById<TextView>(R.id.receiverName).text = "Message to : $receiverName"
 
     }
 

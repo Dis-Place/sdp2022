@@ -6,17 +6,15 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.github.blecoeur.bootcamp.R
-import com.github.blecoeur.bootcamp.profile.friends.FriendViewHolder
 
-class HistoryViewAdapter(val context : Context, val data : List<History>): RecyclerView.Adapter<HistoryViewHolder>() {
+class HistoryViewAdapter(val context : Context, private val data : List<History>): RecyclerView.Adapter<HistoryViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HistoryViewHolder {
         val parentContext = parent.context
         val inflater = LayoutInflater.from(parentContext)
 
         val photoView: View = inflater.inflate(R.layout.hist, parent, false)
-        val viewHolder : HistoryViewHolder = HistoryViewHolder(photoView)
-        return viewHolder
+        return HistoryViewHolder(photoView)
     }
 
     override fun onBindViewHolder(holder: HistoryViewHolder, position: Int) {

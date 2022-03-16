@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.github.blecoeur.bootcamp.R
 
-class NewsViewAdapter (val context : Context, val data : List<News> ) : RecyclerView.Adapter<NewsViewHolder>() {
+class NewsViewAdapter (val context : Context, private val data : List<News> ) : RecyclerView.Adapter<NewsViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NewsViewHolder {
         //  TODO("Not yet implemented")
@@ -15,8 +15,7 @@ class NewsViewAdapter (val context : Context, val data : List<News> ) : Recycler
         val inflater = LayoutInflater.from(parentContext)
 
         val photoView: View = inflater.inflate(R.layout.news, parent, false)
-        val viewHolder : NewsViewHolder = NewsViewHolder(photoView)
-        return viewHolder
+        return NewsViewHolder(photoView)
     }
 
     override fun onBindViewHolder(holder: NewsViewHolder, position: Int) {

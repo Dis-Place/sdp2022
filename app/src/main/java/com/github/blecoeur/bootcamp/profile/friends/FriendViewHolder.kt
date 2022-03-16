@@ -9,14 +9,14 @@ import com.github.blecoeur.bootcamp.R
 import com.github.blecoeur.bootcamp.profile.ProfileDbConnection
 import com.github.blecoeur.bootcamp.profile.messages.SendMessageActivity
 
-public class FriendViewHolder(itemview : View) : RecyclerView.ViewHolder(itemview) {
+class FriendViewHolder(itemview : View) : RecyclerView.ViewHolder(itemview) {
 
-    val friendNameView = itemView.findViewById<TextView>(R.id.friendName)
-    val messageButton = itemView.findViewById<ImageButton>(R.id.messageButton)
-    val inviteButton = itemView.findViewById<ImageButton>(R.id.inviteButton)
+    val friendNameView: TextView = itemView.findViewById(R.id.friendName)
+    private val messageButton: ImageButton = itemView.findViewById(R.id.messageButton)
+    private val inviteButton: ImageButton = itemView.findViewById(R.id.inviteButton)
 
-    lateinit var dbAdapter: ProfileDbConnection;
-    lateinit var friend: Friend;
+    lateinit var dbAdapter: ProfileDbConnection
+    lateinit var friend: Friend
 
     init {
         messageButton.setOnClickListener { v ->

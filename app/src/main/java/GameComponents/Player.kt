@@ -3,7 +3,7 @@ package GameComponents
 //model of a player
 
 class Player(var x:Double, var y:Double) : Coordinate{
-    private var Id = 0; //An id link to an account
+    private var Id = 0 //An id link to an account
 
     override var pos: List<Double> //His localisation updated regulary
         get() = listOf(x,y)

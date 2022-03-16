@@ -36,32 +36,31 @@ class ProfileActivity : AppCompatActivity() {
         val achRecyclerView = findViewById<RecyclerView>(R.id.recyclerAch)
         val achAdapter = AchViewAdapter( applicationContext , dbAccess.getAchList(3, app.getActiveUser().ID))
         achRecyclerView.adapter = achAdapter
-        achRecyclerView.layoutManager = LinearLayoutManager(applicationContext);
+        achRecyclerView.layoutManager = LinearLayoutManager(applicationContext)
 
         /* Statistics */
         val statRecyclerView = findViewById<RecyclerView>(R.id.recyclerStats)
         val statAdapter = StatViewAdapter( applicationContext , dbAccess.getStatsList(3, app.getActiveUser().ID))
         statRecyclerView.adapter = statAdapter
-        statRecyclerView.layoutManager = LinearLayoutManager(applicationContext);
+        statRecyclerView.layoutManager = LinearLayoutManager(applicationContext)
 
         /* Games History */
         val historyRecyclerView = findViewById<RecyclerView>(R.id.recyclerHist)
         val historyAdapter = HistoryViewAdapter( applicationContext , dbAccess.getHistList(3,  app.getActiveUser().ID) )
         historyRecyclerView.adapter = historyAdapter
-        historyRecyclerView.layoutManager = LinearLayoutManager(applicationContext);
+        historyRecyclerView.layoutManager = LinearLayoutManager(applicationContext)
 
         /* Friends */
         val friendRecyclerView = findViewById<RecyclerView>(R.id.recyclerFriend)
         val friendAdapter = FriendViewAdapter( applicationContext , dbAccess.getFriendsList(3, app.getActiveUser().ID), dbAccess )
         friendRecyclerView.adapter = friendAdapter
-        friendRecyclerView.layoutManager = LinearLayoutManager(applicationContext);
+        friendRecyclerView.layoutManager = LinearLayoutManager(applicationContext)
 
         /* Messages */
         val messageRecyclerView = findViewById<RecyclerView>(R.id.recyclerMsg)
         val messageAdapter = MsgViewAdapter( applicationContext , dbAccess.getMsgList(3,  app.getActiveUser().ID), dbAccess )
         messageRecyclerView.adapter = messageAdapter
-        messageRecyclerView.layoutManager = LinearLayoutManager(applicationContext);
-
+        messageRecyclerView.layoutManager = LinearLayoutManager(applicationContext)
 
 
         /*Set the default at the start*/

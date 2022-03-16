@@ -9,7 +9,7 @@ import com.github.blecoeur.bootcamp.profile.friends.Friend
 class MyApplication : Application() {
 
     //the database
-    private lateinit var db : MockDB;
+    private lateinit var db : MockDB
     private lateinit var activeUser : Friend
 
     fun setDb( db : MockDB) {

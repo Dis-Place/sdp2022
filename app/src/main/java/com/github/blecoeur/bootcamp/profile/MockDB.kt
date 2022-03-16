@@ -10,7 +10,7 @@ import com.github.blecoeur.bootcamp.profile.statistics.Statistic
 
 class MockDB : ProfileDbConnection, NewsDbConnection {
 
-    var id : Int = 0;
+    var id : Int = 0
 
     private var dummyStatList : List<Statistic>  = listOf( Statistic("stat1",0)  ,
         Statistic("stat2",0) ,

@@ -7,7 +7,7 @@ import com.github.blecoeur.bootcamp.R
 
 class HistoryViewHolder (itemview : View) : RecyclerView.ViewHolder(itemview) {
 
-    val map : TextView = itemView.findViewById<TextView>(R.id.histMap)
-    val date : TextView = itemView.findViewById<TextView>(R.id.histDate)
-    val result : TextView = itemView.findViewById<TextView>(R.id.histResult)
+    val map : TextView = itemView.findViewById(R.id.histMap)
+    val date : TextView = itemView.findViewById(R.id.histDate)
+    val result : TextView = itemView.findViewById(R.id.histResult)
 }

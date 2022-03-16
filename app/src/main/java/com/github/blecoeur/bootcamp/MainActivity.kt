@@ -19,8 +19,8 @@ private lateinit var db: FirebaseDatabase
 class MainActivity : AppCompatActivity() {
 
     //preferences setup : using a dummy name
-    val myPreferences = "myPrefs"
-    lateinit var sharedpreferences: SharedPreferences;
+    private val myPreferences = "myPrefs"
+    private lateinit var sharedpreferences: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

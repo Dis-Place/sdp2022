@@ -32,19 +32,19 @@ class FriendProfile : AppCompatActivity() {
         val achRecyclerView = findViewById<RecyclerView>(R.id.friendRecyclerAch)
         val achAdapter = AchViewAdapter( applicationContext , dbAccess.getAchList(3,friendId))
         achRecyclerView.adapter = achAdapter
-        achRecyclerView.layoutManager = LinearLayoutManager(applicationContext);
+        achRecyclerView.layoutManager = LinearLayoutManager(applicationContext)
 
         /* Statistics */
         val statRecyclerView = findViewById<RecyclerView>(R.id.friendRecyclerStats)
         val statAdapter = StatViewAdapter( applicationContext , dbAccess.getStatsList(3, friendId))
         statRecyclerView.adapter = statAdapter
-        statRecyclerView.layoutManager = LinearLayoutManager(applicationContext);
+        statRecyclerView.layoutManager = LinearLayoutManager(applicationContext)
 
         /* Games History */
         val historyRecyclerView = findViewById<RecyclerView>(R.id.friendRecyclerHist)
         val historyAdapter = HistoryViewAdapter( applicationContext , dbAccess.getHistList(3,  friendId) )
         historyRecyclerView.adapter = historyAdapter
-        historyRecyclerView.layoutManager = LinearLayoutManager(applicationContext);
+        historyRecyclerView.layoutManager = LinearLayoutManager(applicationContext)
 
     }
 }

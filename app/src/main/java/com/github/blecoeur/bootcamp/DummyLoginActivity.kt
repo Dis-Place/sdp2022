@@ -25,10 +25,10 @@ class DummyLoginActivity : AppCompatActivity() {
 
         val name = nameText.text.toString()
         var age: Int
-        try {
-            age = ageText.text.toString().toInt()
+        age = try {
+            ageText.text.toString().toInt()
         } catch (exception: NumberFormatException) {
-            age = 0
+            0
         }
 
         val user = DummyUser(name, age)

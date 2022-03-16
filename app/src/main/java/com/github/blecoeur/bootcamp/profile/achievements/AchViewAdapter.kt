@@ -8,17 +8,16 @@ import androidx.recyclerview.widget.RecyclerView
 import com.github.blecoeur.bootcamp.R
 
 
-public class AchViewAdapter(val context : Context, val data : List<Achievement> ) : RecyclerView.Adapter<AchViewHolder>() {
+class AchViewAdapter(val context : Context, private val data : List<Achievement> ) : RecyclerView.Adapter<AchViewHolder>() {
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AchViewHolder {
-      //  TODO("Not yet implemented")
+        //  TODO("Not yet implemented")
         val parentContext = parent.context
         val inflater = LayoutInflater.from(parentContext)
 
         val photoView: View = inflater.inflate(R.layout.ach, parent, false)
-        val viewHolder : AchViewHolder = AchViewHolder(photoView)
-        return viewHolder
+        return AchViewHolder(photoView)
     }
 
     override fun onBindViewHolder(holder: AchViewHolder, position: Int) {

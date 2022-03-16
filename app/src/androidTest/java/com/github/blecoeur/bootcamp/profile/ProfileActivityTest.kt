@@ -7,13 +7,11 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.UiController
 import androidx.test.espresso.ViewAction
-import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions
 import androidx.test.espresso.contrib.RecyclerViewActions
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
-import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.blecoeur.bootcamp.MainActivity
@@ -35,8 +33,8 @@ class ProfileActivityTest {
 
     @Test
     fun startToProfileTest(){
-        Espresso.onView(ViewMatchers.withId(R.id.mainGoButton)).perform(ViewActions.click())
-        Espresso.onView(ViewMatchers.withId(R.id.profileButton)).perform(ViewActions.click())
+        Espresso.onView(ViewMatchers.withId(R.id.mainGoButton)).perform(click())
+        Espresso.onView(ViewMatchers.withId(R.id.profileButton)).perform(click())
         Espresso.onView(ViewMatchers.withId(R.id.profileUsername)).check(
             ViewAssertions.matches(
                 ViewMatchers.withText("Name")
@@ -53,11 +51,9 @@ class ProfileActivityTest {
         val intent = Intent(ApplicationProvider.getApplicationContext(), ProfileActivity::class.java)
         val scenario = ActivityScenario.launch<ProfileActivity>(intent)
 
-        try {
+        scenario.use { scenario ->
             Espresso.onView(ViewMatchers.withId(R.id.inboxButton)).perform(click())
             Espresso.onView(ViewMatchers.withId(R.id.InboxScroll)).check(ViewAssertions.matches(isDisplayed()))
-        }finally {
-            scenario.close()
         }
     }
 
@@ -70,11 +66,9 @@ class ProfileActivityTest {
         val intent = Intent(ApplicationProvider.getApplicationContext(), ProfileActivity::class.java)
         val scenario = ActivityScenario.launch<ProfileActivity>(intent)
 
-        try {
+        scenario.use { scenario ->
             Espresso.onView(ViewMatchers.withId(R.id.innerProfileButton)).perform(click())
             Espresso.onView(ViewMatchers.withId(R.id.ProfileScroll)).check(ViewAssertions.matches(isDisplayed()))
-        }finally {
-            scenario.close()
         }
     }
 
@@ -87,11 +81,9 @@ class ProfileActivityTest {
         val intent = Intent(ApplicationProvider.getApplicationContext(), ProfileActivity::class.java)
         val scenario = ActivityScenario.launch<ProfileActivity>(intent)
 
-        try {
+        scenario.use { scenario ->
             Espresso.onView(ViewMatchers.withId(R.id.friendsButton)).perform(click())
             Espresso.onView(ViewMatchers.withId(R.id.FriendsScroll)).check(ViewAssertions.matches(isDisplayed()))
-        }finally {
-            scenario.close()
         }
     }
 
@@ -104,11 +96,9 @@ class ProfileActivityTest {
         val intent = Intent(ApplicationProvider.getApplicationContext(), ProfileActivity::class.java)
         val scenario = ActivityScenario.launch<ProfileActivity>(intent)
 
-        try {
+        scenario.use { scenario ->
             Espresso.onView(ViewMatchers.withId(R.id.profileSettingsButton)).perform(click())
             Espresso.onView(ViewMatchers.withId(R.id.textView3)).check(ViewAssertions.matches(isDisplayed()))
-        }finally {
-            scenario.close()
         }
     }
 
@@ -120,7 +110,7 @@ class ProfileActivityTest {
 
         val intent = Intent(ApplicationProvider.getApplicationContext(), ProfileActivity::class.java)
         val scenario = ActivityScenario.launch<ProfileActivity>(intent)
-        try {
+        scenario.use { scenario ->
             Espresso.onView(ViewMatchers.withId(R.id.inboxButton)).perform(click())
             Espresso.onView(ViewMatchers.withId(R.id.recyclerMsg)).perform(RecyclerViewActions.actionOnItemAtPosition<MsgViewHolder>(0, clickInInnerObject(R.id.replyButton) ))
             Espresso.onView(ViewMatchers.withId(R.id.sendButton)).perform(click())
@@ -129,8 +119,6 @@ class ProfileActivityTest {
                     ViewMatchers.withText("Baptou")
                 )
             )
-        }finally {
-            scenario.close()
         }
     }
 
@@ -142,7 +130,7 @@ class ProfileActivityTest {
 
         val intent = Intent(ApplicationProvider.getApplicationContext(), ProfileActivity::class.java)
         val scenario = ActivityScenario.launch<ProfileActivity>(intent)
-        try {
+        scenario.use { scenario ->
             Espresso.onView(ViewMatchers.withId(R.id.friendsButton)).perform(click())
             Espresso.onView(ViewMatchers.withId(R.id.recyclerFriend)).perform(RecyclerViewActions.actionOnItemAtPosition<MsgViewHolder>(0, clickInInnerObject(R.id.messageButton) ))
             Espresso.onView(ViewMatchers.withId(R.id.sendButton)).perform(click())
@@ -151,8 +139,6 @@ class ProfileActivityTest {
                     ViewMatchers.withText("Baptou")
                 )
             )
-        }finally {
-            scenario.close()
         }
     }
 
@@ -165,17 +151,15 @@ class ProfileActivityTest {
         val intent = Intent(ApplicationProvider.getApplicationContext(), ProfileActivity::class.java)
         val scenario = ActivityScenario.launch<ProfileActivity>(intent)
 
-        try {
+        scenario.use { scenario ->
             Espresso.onView(ViewMatchers.withId(R.id.friendsButton)).perform(click())
             Espresso.onView(ViewMatchers.withId(R.id.recyclerFriend)).perform(RecyclerViewActions.actionOnItemAtPosition<FriendViewHolder>(0,click()))
             Espresso.onView(ViewMatchers.withId(R.id.friendUsername)).check(ViewAssertions.matches(isDisplayed()))
-        }finally {
-            scenario.close()
         }
     }
 
 
-    fun clickInInnerObject(id: Int): ViewAction {
+    private fun clickInInnerObject(id: Int): ViewAction {
         return object : ViewAction {
             override fun getConstraints(): Matcher<View>? {
                 return null

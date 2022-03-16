@@ -6,8 +6,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.github.blecoeur.bootcamp.MyApplication
 import com.github.blecoeur.bootcamp.R
-import com.github.blecoeur.bootcamp.profile.ProfileDbConnection
-import com.github.blecoeur.bootcamp.profile.achievements.AchViewAdapter
 
 class NewsActivity : AppCompatActivity() {
 
@@ -23,7 +21,7 @@ class NewsActivity : AppCompatActivity() {
         val newsRecyclerView = findViewById<RecyclerView>(R.id.recyclerNews)
         val newsAdapter = NewsViewAdapter( applicationContext , dbAccess.getNewsList(3))
         newsRecyclerView.adapter = newsAdapter
-        newsRecyclerView.layoutManager = LinearLayoutManager(applicationContext);
+        newsRecyclerView.layoutManager = LinearLayoutManager(applicationContext)
 
     }
 }
