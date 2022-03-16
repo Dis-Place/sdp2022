@@ -16,6 +16,10 @@ class ImageDatabase: Database {
     private lateinit var storage: FirebaseStorage
     private lateinit var imageRef: StorageReference
 
+    private fun getChild(key: String): StorageReference {
+        return imageRef.child(key)
+    }
+
     override fun instantiate(url: String): Database {
         storage = Firebase.storage(url)
         imageRef = storage.reference.child("images")
@@ -34,7 +38,7 @@ class ImageDatabase: Database {
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100,baos)
         val data = baos.toByteArray()
 
-        val uploadTask = imageRef.child(key).putBytes(data).addOnSuccessListener {
+        val uploadTask = getChild(key).putBytes(data).addOnSuccessListener {
             Log.i("firebase", "Uploaded image $key")
         }.addOnFailureListener {
             Log.e("firebase", "Failed to upload image $key", it)
@@ -52,7 +56,7 @@ class ImageDatabase: Database {
     }
 
     override fun delete(reference: String, key: String) {
-        imageRef.child(reference).child(key).delete().addOnSuccessListener {
+        getChild(reference).child(key).delete().addOnSuccessListener {
             Log.i("firebase", "Successfully deleted image $key")
         }.addOnFailureListener {
             Log.e("firebase", "Error while deleting image $key", it)
@@ -66,7 +70,7 @@ class ImageDatabase: Database {
 
     fun getOnMemory(reference: String, key: String): Any {
         val TWENTY_MEGA_BYTE: Long = 20 * 1024 * 1024
-        val uploadTask = imageRef.child(reference).getBytes(TWENTY_MEGA_BYTE).addOnSuccessListener {
+        val uploadTask = getChild(reference).getBytes(TWENTY_MEGA_BYTE).addOnSuccessListener {
             Log.i("firebase", "Successfully downloaded image $key")
         }.addOnFailureListener {
             Log.e("firebase", "Error while downloading the image $key", it)
@@ -78,7 +82,7 @@ class ImageDatabase: Database {
     fun getOnLocalFile(reference: String, key: String): Any {
         val localFile = File.createTempFile(key, "jpg")
 
-        imageRef.child(reference).getFile(localFile).addOnSuccessListener {
+        getChild(reference).getFile(localFile).addOnSuccessListener {
             Log.i("firebase", "Image $key was successfully downloaded ")
         }.addOnFailureListener {
             Log.e("firebase", "Error whole downloading image $key", it)

@@ -1,10 +1,25 @@
 package com.github.blecoeur.bootcamp
 
 import android.util.Log
+import com.google.android.gms.tasks.Task
+import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 
-class RealTimeDatabase: Database {
+/**
+ * Implementation of the database
+ */
+class RealTimeDatabase : Database {
+
     private lateinit var db: FirebaseDatabase
+
+    private fun firebaseSetValue(reference: String, key: String, obj: Any): Task<Void> {
+        return getRefAndChild(reference, key).setValue(obj)
+    }
+
+    private fun getRefAndChild(reference: String, key: String): DatabaseReference{
+        return db.getReference(reference).child(key)
+    }
+
     override fun instantiate(url: String): Database {
         //get the instance of the database
         db = FirebaseDatabase.getInstance(url)
@@ -15,7 +30,7 @@ class RealTimeDatabase: Database {
     }
 
     override fun update(reference: String, key: String, obj: Any): Any {
-        db.getReference(reference).child(key).setValue(obj).addOnSuccessListener {
+        firebaseSetValue(reference, key, obj).addOnSuccessListener {
             Log.i("firebase", "Updated value $key")
         }.addOnFailureListener {
             Log.e("firebase", "Error updating data", it)
@@ -24,24 +39,24 @@ class RealTimeDatabase: Database {
     }
 
     override fun insert(reference: String, key: String, obj: Any): Any {
-        db.getReference(reference).child(key).setValue(obj).addOnSuccessListener {
+        firebaseSetValue(reference, key, obj).addOnSuccessListener {
             Log.i("firebase", "Inserted value $key")
-        }.addOnFailureListener{
+        }.addOnFailureListener {
             Log.e("firebase", "Error inserting data", it)
         }
         return obj
     }
 
     override fun delete(reference: String, key: String) {
-        db.getReference(reference).child(key).removeValue().addOnSuccessListener {
+        getRefAndChild(reference, key).removeValue().addOnSuccessListener {
             Log.i("firebase", "Removed value $key")
-        }.addOnFailureListener{
+        }.addOnFailureListener {
             Log.e("firebase", "Error deleting data", it)
         }
     }
 
     override fun get(reference: String, key: String): Any? {
-        return db.getReference(reference).child(key).get().addOnSuccessListener {
+        return getRefAndChild(reference, key).get().addOnSuccessListener {
             Log.i("firebase", "Got value ${it.value}")
         }.addOnFailureListener {
             Log.e("firebase", "Error getting data", it)
