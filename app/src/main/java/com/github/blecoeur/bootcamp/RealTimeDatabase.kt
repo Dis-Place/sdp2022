@@ -4,6 +4,7 @@ import android.util.Log
 import com.google.android.gms.tasks.Task
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import java.util.*
 
 /**
  * Implementation of the database
@@ -30,37 +31,21 @@ class RealTimeDatabase : Database {
     }
 
     override fun update(reference: String, key: String, obj: Any): Any {
-        firebaseSetValue(reference, key, obj).addOnSuccessListener {
-            Log.i("firebase", "Updated value $key")
-        }.addOnFailureListener {
-            Log.e("firebase", "Error updating data", it)
-        }
+        firebaseSetValue(reference, key, obj)
         return obj
     }
 
     override fun insert(reference: String, key: String, obj: Any): Any {
-        firebaseSetValue(reference, key, obj).addOnSuccessListener {
-            Log.i("firebase", "Inserted value $key")
-        }.addOnFailureListener {
-            Log.e("firebase", "Error inserting data", it)
-        }
+        firebaseSetValue(reference, key, obj)
         return obj
     }
 
     override fun delete(reference: String, key: String) {
-        getRefAndChild(reference, key).removeValue().addOnSuccessListener {
-            Log.i("firebase", "Removed value $key")
-        }.addOnFailureListener {
-            Log.e("firebase", "Error deleting data", it)
-        }
+        getRefAndChild(reference, key).removeValue()
     }
 
     override fun get(reference: String, key: String): Any? {
-        return getRefAndChild(reference, key).get().addOnSuccessListener {
-            Log.i("firebase", "Got value ${it.value}")
-        }.addOnFailureListener {
-            Log.e("firebase", "Error getting data", it)
-        }.result.getValue(Object::class.java)
+        return getRefAndChild(reference, key).get().result.getValue(Any::class.java)
     }
 
 

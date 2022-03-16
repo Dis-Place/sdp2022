@@ -38,10 +38,7 @@ class ImageDatabase: Database {
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100,baos)
         val data = baos.toByteArray()
 
-        val uploadTask = getChild(key).putBytes(data).addOnSuccessListener {
-            Log.i("firebase", "Uploaded image $key")
-        }.addOnFailureListener {
-            Log.e("firebase", "Failed to upload image $key", it)
+        val uploadTask = getChild(key).putBytes(data).addOnFailureListener {
             val alertDialogBuilder: AlertDialog.Builder = AlertDialog.Builder(imageView.context)
             with(alertDialogBuilder) {
                 setTitle("Error uploading the image")
@@ -56,11 +53,7 @@ class ImageDatabase: Database {
     }
 
     override fun delete(reference: String, key: String) {
-        getChild(reference).child(key).delete().addOnSuccessListener {
-            Log.i("firebase", "Successfully deleted image $key")
-        }.addOnFailureListener {
-            Log.e("firebase", "Error while deleting image $key", it)
-        }
+        getChild(reference).child(key).delete()
     }
 
     @Deprecated("Not enough specific", ReplaceWith("getOnLocalFile or getOnMemory"))
@@ -70,11 +63,7 @@ class ImageDatabase: Database {
 
     fun getOnMemory(reference: String, key: String): Any {
         val TWENTY_MEGA_BYTE: Long = 20 * 1024 * 1024
-        val uploadTask = getChild(reference).getBytes(TWENTY_MEGA_BYTE).addOnSuccessListener {
-            Log.i("firebase", "Successfully downloaded image $key")
-        }.addOnFailureListener {
-            Log.e("firebase", "Error while downloading the image $key", it)
-        }
+        val uploadTask = getChild(reference).getBytes(TWENTY_MEGA_BYTE)
 
         return uploadTask.result as Any
     }
@@ -82,11 +71,7 @@ class ImageDatabase: Database {
     fun getOnLocalFile(reference: String, key: String): Any {
         val localFile = File.createTempFile(key, "jpg")
 
-        getChild(reference).getFile(localFile).addOnSuccessListener {
-            Log.i("firebase", "Image $key was successfully downloaded ")
-        }.addOnFailureListener {
-            Log.e("firebase", "Error whole downloading image $key", it)
-        }
+        getChild(reference).getFile(localFile)
         return localFile as Any
     }
 

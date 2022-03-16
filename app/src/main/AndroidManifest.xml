@@ -25,12 +25,6 @@
             android:name=".AccountSettingsActivity"
             android:exported="false" />
         <activity
-            android:name=".SearchDummyUser"
-            android:exported="false" />
-        <activity
-            android:name=".DummyLoginActivity"
-            android:exported="false" />
-        <activity
             android:name=".DemoMapActivity"
             android:exported="false" />
         <activity
