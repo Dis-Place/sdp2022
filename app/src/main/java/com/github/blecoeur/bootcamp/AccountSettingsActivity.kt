@@ -150,14 +150,14 @@ class AccountSettingsActivity : AppCompatActivity() {
             .build()
 
         mockSignInLauncher.launch(signInIntent)
-    }
+    }*/
 
     private fun onSignInResult(result: FirebaseAuthUIAuthenticationResult) {
         val response = result.idpResponse
         if(result.resultCode == RESULT_OK) {
             firebaseUser = FirebaseAuth.getInstance().currentUser
         }
-    }*/
+    }
 
     private fun selectPic() {
         val options = arrayOf("Camera", "Gallery")
