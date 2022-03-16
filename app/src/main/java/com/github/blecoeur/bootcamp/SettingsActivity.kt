@@ -12,5 +12,6 @@ class SettingsActivity : AppCompatActivity() {
 
     fun darkModeOnOff(view: View) {}
     fun offlineModeOnOff(view: View) {}
-    fun soundOnOff(view: View) {}
+    fun musicOnOff(view: View) {}
+    fun sFXOnOff(view: View) {}
 }

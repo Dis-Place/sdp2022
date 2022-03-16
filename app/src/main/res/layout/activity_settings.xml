@@ -40,13 +40,24 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Switch
-        android:id="@+id/soundSwitch"
+        android:id="@+id/musicSwitch"
         android:layout_width="167dp"
         android:layout_height="64dp"
         android:layout_marginStart="18dp"
         android:layout_marginTop="212dp"
-        android:onClick="soundOnOff"
-        android:text="  Sound"
+        android:onClick="musicOnOff"
+        android:text="  Music"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Switch
+        android:id="@+id/sFXSwitch"
+        android:layout_width="167dp"
+        android:layout_height="64dp"
+        android:layout_marginStart="18dp"
+        android:layout_marginTop="276dp"
+        android:onClick="sFXOnOff"
+        android:text="  SFX"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

@@ -49,19 +49,36 @@ class SettingsActivityTest {
     }
 
     @Test
-    fun soundSwitchIsDisplayedTest() {
+    fun musicSwitchIsDisplayedTest() {
         val intent = Intent(ApplicationProvider.getApplicationContext(), SettingsActivity::class.java)
         val scenario = ActivityScenario.launch<SettingsActivity>(intent)
-        Espresso.onView(ViewMatchers.withId(R.id.soundSwitch)).check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
+        Espresso.onView(ViewMatchers.withId(R.id.musicSwitch)).check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
         scenario.close()
     }
 
     @Test
-    fun soundModeSwitchIsDisplayedAfterClickTest() {
+    fun musicSwitchIsDisplayedAfterClickTest() {
         val intent = Intent(ApplicationProvider.getApplicationContext(), SettingsActivity::class.java)
         val scenario = ActivityScenario.launch<SettingsActivity>(intent)
-        Espresso.onView(ViewMatchers.withId(R.id.soundSwitch)).perform(ViewActions.click())
-        Espresso.onView(ViewMatchers.withId(R.id.soundSwitch)).check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
+        Espresso.onView(ViewMatchers.withId(R.id.musicSwitch)).perform(ViewActions.click())
+        Espresso.onView(ViewMatchers.withId(R.id.musicSwitch)).check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
+        scenario.close()
+    }
+
+    @Test
+    fun sFXSwitchIsDisplayedTest() {
+        val intent = Intent(ApplicationProvider.getApplicationContext(), SettingsActivity::class.java)
+        val scenario = ActivityScenario.launch<SettingsActivity>(intent)
+        Espresso.onView(ViewMatchers.withId(R.id.sFXSwitch)).check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
+        scenario.close()
+    }
+
+    @Test
+    fun sFXSwitchIsDisplayedAfterClickTest() {
+        val intent = Intent(ApplicationProvider.getApplicationContext(), SettingsActivity::class.java)
+        val scenario = ActivityScenario.launch<SettingsActivity>(intent)
+        Espresso.onView(ViewMatchers.withId(R.id.sFXSwitch)).perform(ViewActions.click())
+        Espresso.onView(ViewMatchers.withId(R.id.sFXSwitch)).check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
         scenario.close()
     }
 }
