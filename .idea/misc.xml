@@ -3,26 +3,22 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/EPFL/B3 S2/SDP/sdp2022/app/src/main/res/layout/ach.xml" value="0.2935897435897436" />
-        <entry key="..\:/EPFL/B3 S2/SDP/sdp2022/app/src/main/res/layout/activity_account_settings.xml" value="0.29743589743589743" />
-        <entry key="..\:/EPFL/B3 S2/SDP/sdp2022/app/src/main/res/layout/activity_friend_profile.xml" value="0.23461538461538461" />
+        <entry key="..\:/EPFL/B3 S2/SDP/sdp2022/app/src/main/res/layout/activity_friend_profile.xml" value="0.5" />
         <entry key="..\:/EPFL/B3 S2/SDP/sdp2022/app/src/main/res/layout/activity_greeting.xml" value="0.358695652173913" />
         <entry key="..\:/EPFL/B3 S2/SDP/sdp2022/app/src/main/res/layout/activity_main.xml" value="0.358695652173913" />
         <entry key="..\:/EPFL/B3 S2/SDP/sdp2022/app/src/main/res/layout/activity_main_menu.xml" value="0.358695652173913" />
         <entry key="..\:/EPFL/B3 S2/SDP/sdp2022/app/src/main/res/layout/activity_news.xml" value="0.358695652173913" />
-        <entry key="..\:/EPFL/B3 S2/SDP/sdp2022/app/src/main/res/layout/activity_news2.xml" value="0.2871376811594203" />
         <entry key="..\:/EPFL/B3 S2/SDP/sdp2022/app/src/main/res/layout/activity_play.xml" value="0.358695652173913" />
-        <entry key="..\:/EPFL/B3 S2/SDP/sdp2022/app/src/main/res/layout/activity_profile.xml" value="0.5" />
-        <entry key="..\:/EPFL/B3 S2/SDP/sdp2022/app/src/main/res/layout/activity_send_message.xml" value="0.33" />
+        <entry key="..\:/EPFL/B3 S2/SDP/sdp2022/app/src/main/res/layout/activity_profile.xml" value="0.358695652173913" />
+        <entry key="..\:/EPFL/B3 S2/SDP/sdp2022/app/src/main/res/layout/activity_send_message.xml" value="0.13829787234042554" />
         <entry key="..\:/EPFL/B3 S2/SDP/sdp2022/app/src/main/res/layout/activity_settings.xml" value="0.358695652173913" />
-        <entry key="..\:/EPFL/B3 S2/SDP/sdp2022/app/src/main/res/layout/friend.xml" value="0.18717948717948718" />
-        <entry key="..\:/EPFL/B3 S2/SDP/sdp2022/app/src/main/res/layout/friends_invite.xml" value="0.29743589743589743" />
-        <entry key="..\:/EPFL/B3 S2/SDP/sdp2022/app/src/main/res/layout/friends_message.xml" value="0.29743589743589743" />
-        <entry key="..\:/EPFL/B3 S2/SDP/sdp2022/app/src/main/res/layout/friends_username.xml" value="0.29743589743589743" />
-        <entry key="..\:/EPFL/B3 S2/SDP/sdp2022/app/src/main/res/layout/hist.xml" value="0.21068376068376068" />
-        <entry key="..\:/EPFL/B3 S2/SDP/sdp2022/app/src/main/res/layout/msg.xml" value="0.25" />
-        <entry key="..\:/EPFL/B3 S2/SDP/sdp2022/app/src/main/res/layout/news.xml" value="0.2871376811594203" />
-        <entry key="..\:/EPFL/B3 S2/SDP/sdp2022/app/src/main/res/layout/stat.xml" value="0.29743589743589743" />
+        <entry key="..\:/EPFL/B3 S2/SDP/sdp2022/app/src/main/res/layout/friend.xml" value="0.1" />
+        <entry key="..\:/EPFL/B3 S2/SDP/sdp2022/app/src/main/res/layout/msg.xml" value="0.24954710144927536" />
+        <entry key="..\:/Users/Franck/Desktop/EPFL/BA6/SDP/Displace_hopeful/sdp2022/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.271" />
+        <entry key="..\:/Users/Franck/Desktop/EPFL/BA6/SDP/Displace_hopeful/sdp2022/app/src/main/res/drawable/ic_launcher_background.xml" value="0.163" />
+        <entry key="..\:/Users/Franck/Desktop/EPFL/BA6/SDP/Displace_hopeful/sdp2022/app/src/main/res/layout/activity_account_settings.xml" value="0.3374094202898551" />
+        <entry key="..\:/Users/Franck/Desktop/EPFL/BA6/SDP/Displace_hopeful/sdp2022/app/src/main/res/layout/activity_profile.xml" value="0.3374094202898551" />
+        <entry key="..\:/Users/Franck/Desktop/EPFL/BA6/SDP/Displace_hopeful/sdp2022/app/src/main/res/layout/password_update_dialog.xml" value="0.3374094202898551" />
         <entry key="..\:/Users/bapti/AndroidStudioProjects/Bootcamp/app/src/main/res/layout/activity_greeting.xml" value="0.29030797101449274" />
         <entry key="..\:/Users/bapti/AndroidStudioProjects/Bootcamp/app/src/main/res/layout/activity_main.xml" value="0.24094202898550723" />
         <entry key="..\:/Users/bapti/BA6/SDP/sdp2022/app/src/main/res/layout/activity_main_menu.xml" value="0.1859375" />
