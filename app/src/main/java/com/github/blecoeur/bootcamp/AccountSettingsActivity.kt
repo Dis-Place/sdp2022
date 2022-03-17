@@ -51,13 +51,6 @@ class AccountSettingsActivity : AppCompatActivity() {
         }
     }
 
-    /*private val mockSignInLauncher = registerForActivityResult(
-        FirebaseAuthUIActivityResultContract()
-    ) {
-            res ->
-        this.onSignInResult(res)
-    }*/
-
     private lateinit var username: TextView
     private lateinit var profilePic: ImageView
     private var imageUri: Uri? = null
@@ -93,11 +86,6 @@ class AccountSettingsActivity : AppCompatActivity() {
 
         if(firebaseAuth?.currentUser == null) {
             showToastText("Not signed in")
-            //mockSignIn()
-            //user = firebaseUser?.let { User(it) }
-
-            //showToastText("No User connected")
-            //finish()
         } else {
             firebaseUser = firebaseAuth?.currentUser
             firebaseUser?.let {
@@ -333,21 +321,6 @@ class AccountSettingsActivity : AppCompatActivity() {
                 actualPassword.text = newP
             }
         }
-
-        /*if(oldP != actualPassword?.text) {
-            showToastText("Incorrect password")
-        } else {
-            actualPassword?.text = newP
-            if(firebaseUser != null) {
-                firebaseUser!!.updatePassword(newP).addOnCompleteListener{task ->
-
-                    if(task.isSuccessful) {
-                        sendLog("User password updated.")
-                    }
-
-                }
-            }
-        }*/
     }
 
     private fun changeUsername() {
