@@ -6,8 +6,14 @@ import gameVersus.GameVersusViewModel
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import org.osmdroid.views.CustomZoomButtonsController
+import org.osmdroid.views.MapView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import android.content.res.Configuration
+import androidx.preference.PreferenceManager
+import org.osmdroid.config.Configuration.*
+import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 
 
 class GameVersusViewActivity : AppCompatActivity() {
@@ -18,8 +24,9 @@ class GameVersusViewActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_game_versus)
 
+        setContentView(R.layout.activity_game_versus)
+        getInstance().load(this, PreferenceManager.getDefaultSharedPreferences(this))
         val map = findViewById<MapView>(R.id.map)
         map.getZoomController().setVisibility(CustomZoomButtonsController.Visibility.ALWAYS);
 
