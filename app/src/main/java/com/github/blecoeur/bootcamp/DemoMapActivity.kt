@@ -1,17 +1,14 @@
 package com.github.blecoeur.bootcamp
 
-import android.content.res.Configuration
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.PreferenceManager
-import org.osmdroid.config.Configuration.*
+import org.osmdroid.config.Configuration.getInstance
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.CustomZoomButtonsController
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
-
-
 
 
 class DemoMapActivity : AppCompatActivity() {
@@ -30,7 +27,7 @@ class DemoMapActivity : AppCompatActivity() {
         getInstance().load(this, PreferenceManager.getDefaultSharedPreferences(this))
         setContentView(R.layout.activity_demo_map)
         val map = findViewById<MapView>(R.id.map)
-        map.getZoomController().setVisibility(CustomZoomButtonsController.Visibility.ALWAYS);
+        map.getZoomController().setVisibility(CustomZoomButtonsController.Visibility.ALWAYS)
 
         //to identify our app when downloading the map tiles (ie. pieces of the map)
         getInstance().setUserAgentValue(this.getPackageName())
