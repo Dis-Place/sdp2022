@@ -30,13 +30,13 @@ class AccountSettingsActivityLoggedInTest {
     @get:Rule
     val testRule = ActivityScenarioRule(AccountSettingsActivity::class.java)
 
-    @BeforeClass
+    @Before
     fun login() {
         onView(withId(R.id.mockSignInButton)).perform(click())
         Thread.sleep(2000)
     }
 
-    @AfterClass
+    @After
     fun logout() {
         onView(withId(R.id.mockSignOutButton)).perform(click())
     }
