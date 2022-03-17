@@ -20,7 +20,6 @@ import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 class GameVersusViewActivity : AppCompatActivity() {
 
     var goal = Point(3.0,4.0)
-    var tri = "neutral"
     val game = GameVersusViewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,7 +36,7 @@ class GameVersusViewActivity : AppCompatActivity() {
         game.handleEvent(GameEvent.OnStart(goal, listOf(3.0),3)) //add a pop up with goal and photo info
 
         val tryTextView =  findViewById<TextView>(R.id.TryText).apply { text =
-            "$tri"
+            "neutral"
         }
     }
 
@@ -53,12 +52,14 @@ class GameVersusViewActivity : AppCompatActivity() {
     fun triButtonFail(view: View) {
         val res = game.handleEvent(GameEvent.OnPointSelected(3,Point(13.0,14.0)))
         if(res == 1){
-            tri = "fail" //check if that change or not the message
+            val tryTextView =  findViewById<TextView>(R.id.TryText).apply { text =
+                "fail"
+            }
         }else{
             if(res == 2){
-                tri = "end of game" //check if that change or not the message
-                val intent = Intent(this, GameListActivity::class.java)
-                startActivity(intent)
+                val tryTextView =  findViewById<TextView>(R.id.TryText).apply { text =
+                    "end of game"
+                }
             }
         }
     }
@@ -67,9 +68,9 @@ class GameVersusViewActivity : AppCompatActivity() {
     fun triButtonWin(view: View) {
         val res = game.handleEvent(GameEvent.OnPointSelected(3,Point(3.0,5.0)))
         if(res == 0){
-            tri = "win" //check if that change or not the message
-            val intent = Intent(this, GameListActivity::class.java)
-            startActivity(intent)
+            val tryTextView =  findViewById<TextView>(R.id.TryText).apply { text =
+                "win"
+            }
         }
     }
 
