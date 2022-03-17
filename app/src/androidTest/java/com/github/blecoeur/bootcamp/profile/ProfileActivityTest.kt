@@ -98,7 +98,7 @@ class ProfileActivityTest {
 
         scenario.use { scenario ->
             Espresso.onView(ViewMatchers.withId(R.id.profileSettingsButton)).perform(click())
-            Espresso.onView(ViewMatchers.withId(R.id.textView3)).check(ViewAssertions.matches(isDisplayed()))
+            Espresso.onView(ViewMatchers.withId(R.id.editProfile)).check(ViewAssertions.matches(isDisplayed()))
         }
     }
 
