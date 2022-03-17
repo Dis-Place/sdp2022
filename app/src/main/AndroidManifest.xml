@@ -23,9 +23,6 @@
             android:name=".UploadImageActivity"
             android:exported="false" />
         <activity
-            android:name=".AccountSettingsActivity"
-            android:exported="false"/>
-        <activity
             android:name=".profile.friends.FriendProfile"
             android:exported="false" />
         <activity
@@ -40,10 +37,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
-
-        <activity
-            android:name=".profile.settings.AccountSettingsActivity"
-            android:exported="false" />
         <activity
             android:name=".profile.ProfileActivity"
             android:exported="false" />
