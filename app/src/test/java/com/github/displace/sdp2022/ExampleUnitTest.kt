@@ -1,13 +1,9 @@
 package com.github.displace.sdp2022
 
-<<<<<<< HEAD
 import gameComponents.GameEvent
 import gameComponents.Player
 import gameComponents.Point
 import gameVersus.GameVersusViewModel
-=======
-import GameComponents.Player
->>>>>>> main
 import org.junit.Test
 
 import org.junit.Assert.*
@@ -19,12 +15,6 @@ import java.lang.Error
  * See [testing documentation](http://d.android.com/tools/testing).
  */
 class ExampleUnitTest {
-    @Test
-<<<<<<< HEAD
-    fun addition_isCorrect() {
-        assertEquals(4, 2 + 2)
-    }
-
     val mod = GameVersusViewModel()
 
     @Test
