@@ -29,36 +29,36 @@ class GameMenuTest {
 
     @Test
     fun testPlayButton(){
-        onView(withId(R.id.playVersusButton)).perform(click())
-        onView(withId(R.id.TryText)).check(matches(withText("neutral")))
+        Espresso.onView(withId(R.id.playVersusButton)).perform(click())
+        Espresso.onView(withId(R.id.TryText)).check(matches(withText("neutral")))
     }
     @Test
     fun testWinButton(){
-        onView(withId(R.id.playVersusButton)).perform(click())
-        onView(withId(R.id.triButtonWin)).perform(click())
-        onView(withId(R.id.TryText)).check(matches(withText("win")))
+        Espresso.onView(withId(R.id.playVersusButton)).perform(click())
+        Espresso.onView(withId(R.id.triButtonWin)).perform(click())
+        Espresso.onView(withId(R.id.TryText)).check(matches(withText("win")))
     }
     @Test
     fun testFailButton(){
-        onView(withId(R.id.playVersusButton)).perform(click())
-        onView(withId(R.id.triButtonFail)).perform(click())
-        onView(withId(R.id.TryText)).check(matches(withText("fail")))
+        Espresso.onView(withId(R.id.playVersusButton)).perform(click())
+        Espresso.onView(withId(R.id.triButtonFail)).perform(click())
+        Espresso.onView(withId(R.id.TryText)).check(matches(withText("fail")))
     }
     @Test
     fun testEndButton(){
-        onView(withId(R.id.playVersusButton)).perform(click())
-        onView(withId(R.id.triButtonFail)).perform(click())
-        onView(withId(R.id.triButtonFail)).perform(click())
-        onView(withId(R.id.triButtonFail)).perform(click())
-        onView(withId(R.id.triButtonFail)).perform(click())
-        onView(withId(R.id.TryText)).check(matches(withText("end of game")))
+        Espresso.onView(withId(R.id.playVersusButton)).perform(click())
+        Espresso.onView(withId(R.id.triButtonFail)).perform(click())
+        Espresso.onView(withId(R.id.triButtonFail)).perform(click())
+        Espresso.onView(withId(R.id.triButtonFail)).perform(click())
+        Espresso.onView(withId(R.id.triButtonFail)).perform(click())
+        Espresso.onView(withId(R.id.TryText)).check(matches(withText("end of game")))
     }
 
     @Test
     fun testQuitButton(){
-        onView(withId(R.id.playVersusButton)).perform(click())
-        onView(withId(R.id.closeButton)).perform(click())
-        onView(withId(R.id.playVersusButton)).perform(click())
-        onView(withId(R.id.TryText)).check(matches(withText("neutral")))
+        Espresso.onView(withId(R.id.playVersusButton)).perform(click())
+        Espresso.onView(withId(R.id.closeButton)).perform(click())
+        Espresso.onView(withId(R.id.playVersusButton)).perform(click())
+        Espresso.onView(withId(R.id.TryText)).check(matches(withText("neutral")))
     }
 }
