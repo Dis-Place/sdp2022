@@ -30,7 +30,7 @@ class DemoMapActivityTest {
     @get:Rule
     val testRule = ActivityScenarioRule(DemoMapActivity::class.java)
 
-    
+
     /***
      * checks if the mapview is displayed
      */
