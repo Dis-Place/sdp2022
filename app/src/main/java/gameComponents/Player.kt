@@ -1,7 +1,5 @@
 package gameComponents
-
-package gameComponents;
-
+import android.util.Pair
 //model of a player
 
 class Player(val x:Double, val y:Double, val id:Int ) : Coordinate{
