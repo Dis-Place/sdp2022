@@ -32,7 +32,7 @@ class ProfileActivityTest {
     val testRule = ActivityScenarioRule(MainActivity::class.java)
 
     @Test
-    fun startToProfileTest(){
+    fun startToProfileTest() {
         Espresso.onView(ViewMatchers.withId(R.id.mainGoButton)).perform(click())
         Espresso.onView(ViewMatchers.withId(R.id.profileButton)).perform(click())
         Espresso.onView(ViewMatchers.withId(R.id.profileUsername)).check(
@@ -43,76 +43,88 @@ class ProfileActivityTest {
     }
 
     @Test
-    fun testInboxButton(){
-        val app = ApplicationProvider.getApplicationContext()  as MyApplication
-        app.setDb( MockDB() )
-        app.setActiveUser(Friend("Baptou","0"))
+    fun testInboxButton() {
+        val app = ApplicationProvider.getApplicationContext() as MyApplication
+        app.setDb(MockDB())
+        app.setActiveUser(Friend("Baptou", "0"))
 
-        val intent = Intent(ApplicationProvider.getApplicationContext(), ProfileActivity::class.java)
+        val intent =
+            Intent(ApplicationProvider.getApplicationContext(), ProfileActivity::class.java)
         val scenario = ActivityScenario.launch<ProfileActivity>(intent)
 
         scenario.use { scenario ->
             Espresso.onView(ViewMatchers.withId(R.id.inboxButton)).perform(click())
-            Espresso.onView(ViewMatchers.withId(R.id.InboxScroll)).check(ViewAssertions.matches(isDisplayed()))
+            Espresso.onView(ViewMatchers.withId(R.id.InboxScroll))
+                .check(ViewAssertions.matches(isDisplayed()))
         }
     }
 
     @Test
-    fun testProfileButton(){
-        val app = ApplicationProvider.getApplicationContext()  as MyApplication
-        app.setDb( MockDB() )
-        app.setActiveUser(Friend("Baptou","0"))
+    fun testProfileButton() {
+        val app = ApplicationProvider.getApplicationContext() as MyApplication
+        app.setDb(MockDB())
+        app.setActiveUser(Friend("Baptou", "0"))
 
-        val intent = Intent(ApplicationProvider.getApplicationContext(), ProfileActivity::class.java)
+        val intent =
+            Intent(ApplicationProvider.getApplicationContext(), ProfileActivity::class.java)
         val scenario = ActivityScenario.launch<ProfileActivity>(intent)
 
         scenario.use { scenario ->
             Espresso.onView(ViewMatchers.withId(R.id.innerProfileButton)).perform(click())
-            Espresso.onView(ViewMatchers.withId(R.id.ProfileScroll)).check(ViewAssertions.matches(isDisplayed()))
+            Espresso.onView(ViewMatchers.withId(R.id.ProfileScroll))
+                .check(ViewAssertions.matches(isDisplayed()))
         }
     }
 
     @Test
-    fun testFriendsButton(){
-        val app = ApplicationProvider.getApplicationContext()  as MyApplication
-        app.setDb( MockDB() )
-        app.setActiveUser(Friend("Baptou","0"))
+    fun testFriendsButton() {
+        val app = ApplicationProvider.getApplicationContext() as MyApplication
+        app.setDb(MockDB())
+        app.setActiveUser(Friend("Baptou", "0"))
 
-        val intent = Intent(ApplicationProvider.getApplicationContext(), ProfileActivity::class.java)
+        val intent =
+            Intent(ApplicationProvider.getApplicationContext(), ProfileActivity::class.java)
         val scenario = ActivityScenario.launch<ProfileActivity>(intent)
 
         scenario.use { scenario ->
             Espresso.onView(ViewMatchers.withId(R.id.friendsButton)).perform(click())
-            Espresso.onView(ViewMatchers.withId(R.id.FriendsScroll)).check(ViewAssertions.matches(isDisplayed()))
+            Espresso.onView(ViewMatchers.withId(R.id.FriendsScroll))
+                .check(ViewAssertions.matches(isDisplayed()))
         }
     }
 
+//    @Test
+//    fun testSettingsButton(){
+//        val app = ApplicationProvider.getApplicationContext()  as MyApplication
+//        app.setDb( MockDB() )
+//        app.setActiveUser(Friend("Baptou","0"))
+//
+//        val intent = Intent(ApplicationProvider.getApplicationContext(), ProfileActivity::class.java)
+//        val scenario = ActivityScenario.launch<ProfileActivity>(intent)
+//
+//        scenario.use { scenario ->
+//            Espresso.onView(ViewMatchers.withId(R.id.profileSettingsButton)).perform(click())
+//            Espresso.onView(ViewMatchers.withId(R.id.editProfile)).check(ViewAssertions.matches(isDisplayed()))
+//        }
+//    }
+
     @Test
-    fun testSettingsButton(){
-        val app = ApplicationProvider.getApplicationContext()  as MyApplication
-        app.setDb( MockDB() )
-        app.setActiveUser(Friend("Baptou","0"))
+    fun testMessageInInboxButton() {
+        val app = ApplicationProvider.getApplicationContext() as MyApplication
+        app.setDb(MockDB())
+        app.setActiveUser(Friend("Baptou", "0"))
 
-        val intent = Intent(ApplicationProvider.getApplicationContext(), ProfileActivity::class.java)
-        val scenario = ActivityScenario.launch<ProfileActivity>(intent)
-
-        scenario.use { scenario ->
-            Espresso.onView(ViewMatchers.withId(R.id.profileSettingsButton)).perform(click())
-            Espresso.onView(ViewMatchers.withId(R.id.editProfile)).check(ViewAssertions.matches(isDisplayed()))
-        }
-    }
-
-    @Test
-    fun testMessageInInboxButton(){
-        val app = ApplicationProvider.getApplicationContext()  as MyApplication
-        app.setDb( MockDB() )
-        app.setActiveUser(Friend("Baptou","0"))
-
-        val intent = Intent(ApplicationProvider.getApplicationContext(), ProfileActivity::class.java)
+        val intent =
+            Intent(ApplicationProvider.getApplicationContext(), ProfileActivity::class.java)
         val scenario = ActivityScenario.launch<ProfileActivity>(intent)
         scenario.use { _ ->
             Espresso.onView(ViewMatchers.withId(R.id.inboxButton)).perform(click())
-            Espresso.onView(ViewMatchers.withId(R.id.recyclerMsg)).perform(RecyclerViewActions.actionOnItemAtPosition<MsgViewHolder>(0, clickInInnerObject(R.id.replyButton) ))
+            Espresso.onView(ViewMatchers.withId(R.id.recyclerMsg)).perform(
+                RecyclerViewActions.actionOnItemAtPosition<MsgViewHolder>(
+                    0,
+                    clickInInnerObject(R.id.replyButton)
+                )
+            )
             Espresso.onView(ViewMatchers.withId(R.id.sendButton)).perform(click())
             Espresso.onView(ViewMatchers.withId(R.id.profileUsername)).check(
                 ViewAssertions.matches(
@@ -123,16 +135,22 @@ class ProfileActivityTest {
     }
 
     @Test
-    fun testMessageInFriendsButton(){
-        val app = ApplicationProvider.getApplicationContext()  as MyApplication
-        app.setDb( MockDB() )
-        app.setActiveUser(Friend("Baptou","0"))
+    fun testMessageInFriendsButton() {
+        val app = ApplicationProvider.getApplicationContext() as MyApplication
+        app.setDb(MockDB())
+        app.setActiveUser(Friend("Baptou", "0"))
 
-        val intent = Intent(ApplicationProvider.getApplicationContext(), ProfileActivity::class.java)
+        val intent =
+            Intent(ApplicationProvider.getApplicationContext(), ProfileActivity::class.java)
         val scenario = ActivityScenario.launch<ProfileActivity>(intent)
         scenario.use { scenario ->
             Espresso.onView(ViewMatchers.withId(R.id.friendsButton)).perform(click())
-            Espresso.onView(ViewMatchers.withId(R.id.recyclerFriend)).perform(RecyclerViewActions.actionOnItemAtPosition<MsgViewHolder>(0, clickInInnerObject(R.id.messageButton) ))
+            Espresso.onView(ViewMatchers.withId(R.id.recyclerFriend)).perform(
+                RecyclerViewActions.actionOnItemAtPosition<MsgViewHolder>(
+                    0,
+                    clickInInnerObject(R.id.messageButton)
+                )
+            )
             Espresso.onView(ViewMatchers.withId(R.id.sendButton)).perform(click())
             Espresso.onView(ViewMatchers.withId(R.id.profileUsername)).check(
                 ViewAssertions.matches(
@@ -143,18 +161,21 @@ class ProfileActivityTest {
     }
 
     @Test
-    fun testFriendProfile(){
-        val app = ApplicationProvider.getApplicationContext()  as MyApplication
-        app.setDb( MockDB() )
-        app.setActiveUser(Friend("Baptou","0"))
+    fun testFriendProfile() {
+        val app = ApplicationProvider.getApplicationContext() as MyApplication
+        app.setDb(MockDB())
+        app.setActiveUser(Friend("Baptou", "0"))
 
-        val intent = Intent(ApplicationProvider.getApplicationContext(), ProfileActivity::class.java)
+        val intent =
+            Intent(ApplicationProvider.getApplicationContext(), ProfileActivity::class.java)
         val scenario = ActivityScenario.launch<ProfileActivity>(intent)
 
         scenario.use { scenario ->
             Espresso.onView(ViewMatchers.withId(R.id.friendsButton)).perform(click())
-            Espresso.onView(ViewMatchers.withId(R.id.recyclerFriend)).perform(RecyclerViewActions.actionOnItemAtPosition<FriendViewHolder>(0,click()))
-            Espresso.onView(ViewMatchers.withId(R.id.friendUsername)).check(ViewAssertions.matches(isDisplayed()))
+            Espresso.onView(ViewMatchers.withId(R.id.recyclerFriend))
+                .perform(RecyclerViewActions.actionOnItemAtPosition<FriendViewHolder>(0, click()))
+            Espresso.onView(ViewMatchers.withId(R.id.friendUsername))
+                .check(ViewAssertions.matches(isDisplayed()))
         }
     }
 
