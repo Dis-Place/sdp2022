@@ -31,7 +31,7 @@ class UploadImageTest {
         Intents.init()
 
         Espresso.onView(withId(R.id.uploadButton)).perform(click())
-        intended(IntentMatchers.anyIntent())
+        intended(IntentMatchers.hasComponent(MainMenuActivity::class.java.name))
 
         Intents.release()
     }

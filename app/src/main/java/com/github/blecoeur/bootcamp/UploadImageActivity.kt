@@ -1,11 +1,15 @@
 package com.github.blecoeur.bootcamp
 
+import android.app.AlertDialog
 import android.content.Intent
+import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
+import java.io.IOError
+import java.io.IOException
 
 class UploadImageActivity : AppCompatActivity() {
     private lateinit var db: ImageDatabase
@@ -18,7 +22,20 @@ class UploadImageActivity : AppCompatActivity() {
 
     fun imageUpload(view: View) {
         val imageView = findViewById<ImageView>(R.id.imageUpload)
-        db.insert(String(), imageView.drawable.toString(), imageView)
+        try {
+            val bitmap = (imageView.drawable as BitmapDrawable).bitmap
+            db.insert(String(), imageView.drawable.toString(), bitmap)
+        }catch (e: IOException){
+            val alertDialogBuilder: AlertDialog.Builder = AlertDialog.Builder(imageView.context)
+            with(alertDialogBuilder) {
+                setTitle("Error uploading the image")
+                setNeutralButton("Ok") { dialog, _ ->
+                    dialog.cancel()
+                }
+            }
+            val alertDialog = alertDialogBuilder.create()
+            alertDialog.show()
+        }
         val intent = Intent(this, MainMenuActivity::class.java)
         startActivity(intent)
     }
@@ -28,6 +45,6 @@ class UploadImageActivity : AppCompatActivity() {
         Log.i("debug", "trying to open the gallery")
         val intent = Intent(Intent.ACTION_PICK)
         intent.type = "image/*"
-        startActivityForResult(intent, 1)
+        startActivity(intent)
     }
 }

@@ -36,8 +36,7 @@ class RealTimeDatabase : Database {
     }
 
     override fun insert(reference: String, key: String, obj: Any): Any {
-        firebaseSetValue(reference, key, obj)
-        return obj
+        return update(reference, key, obj)
     }
 
     override fun delete(reference: String, key: String) {

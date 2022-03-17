@@ -1,18 +1,15 @@
 package com.github.blecoeur.bootcamp
 
-import android.app.AlertDialog
 import android.graphics.Bitmap
-import android.graphics.drawable.BitmapDrawable
-import android.util.Log
-import android.widget.ImageView
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.ktx.storage
 import java.io.ByteArrayOutputStream
 import java.io.File
+import java.io.IOException
 
-class ImageDatabase: Database {
+class ImageDatabase : Database {
     private lateinit var storage: FirebaseStorage
     private lateinit var imageRef: StorageReference
 
@@ -31,23 +28,13 @@ class ImageDatabase: Database {
     }
 
     override fun insert(reference: String, key: String, obj: Any): Any {
-        val imageView: ImageView = obj as ImageView
-
-        val bitmap = (imageView.drawable as BitmapDrawable).bitmap
+        val bitmap = obj as Bitmap
         val baos = ByteArrayOutputStream()
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100,baos)
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
         val data = baos.toByteArray()
 
         val uploadTask = getChild(key).putBytes(data).addOnFailureListener {
-            val alertDialogBuilder: AlertDialog.Builder = AlertDialog.Builder(imageView.context)
-            with(alertDialogBuilder) {
-                setTitle("Error uploading the image")
-                setNeutralButton("Ok") { dialog, _ ->
-                    dialog.cancel()
-                }
-            }
-            val alertDialog = alertDialogBuilder.create()
-            alertDialog.show()
+            throw IOException()
         }
         return uploadTask
     }
