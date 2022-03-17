@@ -1,10 +1,8 @@
 package com.github.displace.sdp2022
 
 import GameComponents.Player
+import org.junit.Assert.assertEquals
 import org.junit.Test
-
-import org.junit.Assert.*
-import java.lang.Error
 
 /**
  * Example local unit test, which will execute on the development machine (host).
