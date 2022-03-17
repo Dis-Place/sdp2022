@@ -10,12 +10,21 @@
         <entry key="..\:/EPFL/B3 S2/SDP/sdp2022/app/src/main/res/layout/activity_play.xml" value="0.358695652173913" />
         <entry key="..\:/EPFL/B3 S2/SDP/sdp2022/app/src/main/res/layout/activity_profile.xml" value="0.358695652173913" />
         <entry key="..\:/EPFL/B3 S2/SDP/sdp2022/app/src/main/res/layout/activity_settings.xml" value="0.358695652173913" />
+        <entry key="..\:/Users/Franck/Desktop/EPFL/BA6/SDP/Displace_hopeful/sdp2022/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.271" />
+        <entry key="..\:/Users/Franck/Desktop/EPFL/BA6/SDP/Displace_hopeful/sdp2022/app/src/main/res/drawable/ic_launcher_background.xml" value="0.163" />
+        <entry key="..\:/Users/Franck/Desktop/EPFL/BA6/SDP/Displace_hopeful/sdp2022/app/src/main/res/layout/activity_account_settings.xml" value="0.3374094202898551" />
+        <entry key="..\:/Users/Franck/Desktop/EPFL/BA6/SDP/Displace_hopeful/sdp2022/app/src/main/res/layout/activity_profile.xml" value="0.3374094202898551" />
+        <entry key="..\:/Users/Franck/Desktop/EPFL/BA6/SDP/Displace_hopeful/sdp2022/app/src/main/res/layout/password_update_dialog.xml" value="0.3374094202898551" />
         <entry key="..\:/Users/bapti/AndroidStudioProjects/Bootcamp/app/src/main/res/layout/activity_greeting.xml" value="0.29030797101449274" />
         <entry key="..\:/Users/bapti/AndroidStudioProjects/Bootcamp/app/src/main/res/layout/activity_main.xml" value="0.24094202898550723" />
+        <entry key="..\:/Users/bapti/BA6/SDP/sdp2022/app/src/main/res/layout/activity_main_menu.xml" value="0.1859375" />
+        <entry key="..\:/Users/bapti/BA6/SDP/sdp2022/app/src/main/res/layout/activity_search_dummy_user.xml" value="0.153125" />
+        <entry key="..\:/Users/bapti/BA6/SDP/sdp2022/app/src/main/res/layout/activity_settings.xml" value="0.153125" />
+        <entry key="..\:/Users/bapti/BA6/SDP/sdp2022/app/src/main/res/layout/activity_upload_image.xml" value="0.25" />
       </map>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">
