@@ -10,11 +10,11 @@ import java.lang.IllegalArgumentException
  * util object for conversion between coordinates system (game model abstraction 'Coordinates',
  */
 object CoordinatesConversionUtil {
-    fun ofLocation(location : Location): GeoPoint {
+    fun geoPoint(location : Location): GeoPoint {
         return GeoPoint(location.latitude,location.longitude)
     }
 
-    fun ofCoordinates(coordinates: Coordinates): GeoPoint {
+    fun geoPoint(coordinates: Coordinates): GeoPoint {
         if(!isValid(coordinates)) throw IllegalArgumentException("invalid geographic coordinates")
         return GeoPoint(coordinates.pos.first,coordinates.pos.second)
     }
@@ -24,7 +24,7 @@ object CoordinatesConversionUtil {
                 && coordinates.pos.second in Constants.MIN_LONGITUDE..Constants.MAX_LONGITUDE
     }
 
-    fun ofGeoPoint(geoPoint: GeoPoint): Coordinates {
+    fun coordinates(geoPoint: GeoPoint): Coordinates {
         return object : Coordinates {
             override val pos: Pair<Double,Double> = Pair(geoPoint.latitude,geoPoint.longitude)
         }

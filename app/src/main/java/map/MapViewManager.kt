@@ -4,6 +4,7 @@ import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.CustomZoomButtonsController
 import org.osmdroid.views.MapView
+import util.gps.GPSPositionManager
 
 /**
  * interface that handles mapViews and provides a lightened API for Activities

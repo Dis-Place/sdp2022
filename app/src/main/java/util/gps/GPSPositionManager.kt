@@ -17,7 +17,7 @@ class GPSPositionManager(activity: Activity) {
     }
 
     fun getPosition() : GeoPoint? {
-        if(this::lastLocation.isInitialized) return CoordinatesConversionUtil.ofLocation(lastLocation)
+        if(this::lastLocation.isInitialized) return CoordinatesConversionUtil.geoPoint(lastLocation)
         return null
     }
 
