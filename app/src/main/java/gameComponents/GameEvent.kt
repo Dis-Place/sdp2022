@@ -1,4 +1,4 @@
-package GameComponents
+package gameComponents
 
 //definition of the possible event during a gameversus
 

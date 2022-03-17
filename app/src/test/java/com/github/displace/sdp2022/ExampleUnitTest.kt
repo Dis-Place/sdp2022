@@ -1,9 +1,9 @@
 package com.github.displace.sdp2022
 
-import GameComponents.GameEvent
-import GameComponents.Player
-import GameComponents.Point
-import GameVersus.GameVersusViewModel
+import gameComponents.GameEvent
+import gameComponents.Player
+import gameComponents.Point
+import gameVersus.GameVersusViewModel
 import org.junit.Test
 
 import org.junit.Assert.*
@@ -59,13 +59,20 @@ class ExampleUnitTest {
     }
 
     @Test
-    fun PlayerTest(){
+    fun PlayerTestPos(){
         val play = Player(3.0,2.0)
         assertEquals(3.0,play.pos[0],0.0)
         assertEquals(2.0,play.pos[1],0.0)
         play.pos = listOf(4.0,5.0)
         assertEquals(4.0,play.pos[0],0.0)
         assertEquals(5.0,play.pos[1],0.0)
+    }
+
+    @Test
+    fun PlayerTestId(){
+        val play = Player(3.0,2.0)
+        play.SetId(3)
+        assertEquals(3,play.GetId())
     }
 
     @Test

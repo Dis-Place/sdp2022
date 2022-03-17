@@ -13,6 +13,17 @@
         <entry key="..\:/Users/bapti/AndroidStudioProjects/Bootcamp/app/src/main/res/layout/activity_greeting.xml" value="0.29030797101449274" />
         <entry key="..\:/Users/bapti/AndroidStudioProjects/Bootcamp/app/src/main/res/layout/activity_main.xml" value="0.24094202898550723" />
         <entry key="..\:/Users/bapti/BA6/SDP/sdp2022/app/src/main/res/layout/activity_main_menu.xml" value="0.1859375" />
+        <entry key="app/src/main/res/layout/activity_demo_map.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/activity_game_list.xml" value="0.12715298885511653" />
+        <entry key="app/src/main/res/layout/activity_game_versus.xml" value="0.12715298885511653" />
+        <entry key="app/src/main/res/layout/activity_main.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/activity_main_menu.xml" value="0.12291666666666666" />
+        <entry key="app/src/main/res/layout/activity_news.xml" value="0.12291666666666666" />
+        <entry key="app/src/main/res/layout/activity_play.xml" value="0.12291666666666666" />
+        <entry key="app/src/main/res/layout/activity_profile.xml" value="0.12291666666666666" />
+        <entry key="app/src/main/res/layout/activity_search_dummy_user.xml" value="0.12291666666666666" />
+        <entry key="app/src/main/res/layout/activity_settings.xml" value="0.12291666666666666" />
+        <entry key="app/src/main/res/layout/game_list.xml" value="0.12715298885511653" />
       </map>
     </option>
   </component>

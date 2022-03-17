@@ -19,7 +19,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class MainMenuActivityTest {
+class GameMenu {
     @get:Rule
     val testRule = ActivityScenarioRule(MainActivity::class.java)
 
@@ -37,41 +37,61 @@ class MainMenuActivityTest {
         val sharedpreferences = context.getSharedPreferences(myPreferences, Context.MODE_PRIVATE)
 
         val editor = sharedpreferences.edit()
-        editor.putString("userNameKey","Baptou")
+        editor.putString("userNameKey","Antoine")
         editor.commit()
 
         val scenario = ActivityScenario.launch<MainMenuActivity>(intent)
 
         try {
             Espresso.onView(withId(R.id.WelcomeText))
-                .check(ViewAssertions.matches(ViewMatchers.withText("Welcome Baptou!")))
+                .check(ViewAssertions.matches(ViewMatchers.withText("Welcome Antoine!")))
         }finally {
             scenario.close()
         }
     }
-    
+
     @Test
-    fun testProfileButton(){
+    fun testPlayButton(){
         Espresso.onView(withId(R.id.mainGoButton)).perform(click())
-        Espresso.onView(withId(R.id.profileButton)).perform(click())
-        Espresso.onView(withId(R.id.textView3)).check(matches(withText("PROFILE")))
+        Espresso.onView(withId(R.id.playButton)).perform(click())
+        Espresso.onView(withId(R.id.playVersusButton)).perform(click())
+        Espresso.onView(withId(R.id.TryText)).check(matches(withText("neutral")))
     }
     @Test
-    fun testSettingsButton(){
+    fun testWinButton(){
         Espresso.onView(withId(R.id.mainGoButton)).perform(click())
-        Espresso.onView(withId(R.id.settingsButton)).perform(click())
-        Espresso.onView(withId(R.id.textView4)).check(matches(withText("SETTINGS")))
+        Espresso.onView(withId(R.id.playButton)).perform(click())
+        Espresso.onView(withId(R.id.playVersusButton)).perform(click())
+        Espresso.onView(withId(R.id.triButtonWin)).perform(click())
+        Espresso.onView(withId(R.id.TryText)).check(matches(withText("win")))
     }
     @Test
-    fun testNewsButton(){
+    fun testFailButton(){
         Espresso.onView(withId(R.id.mainGoButton)).perform(click())
-        Espresso.onView(withId(R.id.newsButton)).perform(click())
-        Espresso.onView(withId(R.id.textView)).check(matches(withText("NEWS")))
+        Espresso.onView(withId(R.id.playButton)).perform(click())
+        Espresso.onView(withId(R.id.playVersusButton)).perform(click())
+        Espresso.onView(withId(R.id.triButtonFail)).perform(click())
+        Espresso.onView(withId(R.id.TryText)).check(matches(withText("fail")))
     }
     @Test
-    fun leaveAndComeBack(){ //how to test the upward navigation???
+    fun testEndButton(){
         Espresso.onView(withId(R.id.mainGoButton)).perform(click())
-        Espresso.onView(withId(R.id.newsButton)).perform(click())
-        Espresso.onView(withId(R.id.textView)).check(matches(withText("NEWS")))
+        Espresso.onView(withId(R.id.playButton)).perform(click())
+        Espresso.onView(withId(R.id.playVersusButton)).perform(click())
+        Espresso.onView(withId(R.id.triButtonFail)).perform(click())
+        Espresso.onView(withId(R.id.triButtonFail)).perform(click())
+        Espresso.onView(withId(R.id.triButtonFail)).perform(click())
+        Espresso.onView(withId(R.id.triButtonFail)).perform(click())
+        Espresso.onView(withId(R.id.TryText)).check(matches(withText("end of game")))
+    }
+
+    @Test
+    fun testQuitButton(){
+        Espresso.onView(withId(R.id.mainGoButton)).perform(click())
+        Espresso.onView(withId(R.id.playButton)).perform(click())
+        Espresso.onView(withId(R.id.playVersusButton)).perform(click())
+        Espresso.onView(withId(R.id.closeButton)).perform(click())
+        Espresso.onView(withId(R.id.playVersusButton)).perform(click())
+        Espresso.onView(withId(R.id.TryText)).check(matches(withText("neutral")))
     }
 }
