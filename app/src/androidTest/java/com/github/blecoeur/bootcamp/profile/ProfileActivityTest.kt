@@ -110,7 +110,7 @@ class ProfileActivityTest {
 
         val intent = Intent(ApplicationProvider.getApplicationContext(), ProfileActivity::class.java)
         val scenario = ActivityScenario.launch<ProfileActivity>(intent)
-        scenario.use { scenario ->
+        scenario.use { _ ->
             Espresso.onView(ViewMatchers.withId(R.id.inboxButton)).perform(click())
             Espresso.onView(ViewMatchers.withId(R.id.recyclerMsg)).perform(RecyclerViewActions.actionOnItemAtPosition<MsgViewHolder>(0, clickInInnerObject(R.id.replyButton) ))
             Espresso.onView(ViewMatchers.withId(R.id.sendButton)).perform(click())
