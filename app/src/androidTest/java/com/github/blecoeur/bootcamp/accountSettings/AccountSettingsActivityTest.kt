@@ -16,10 +16,14 @@ import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.Intents.*
 import androidx.test.espresso.intent.matcher.IntentMatchers.hasAction
 import androidx.test.espresso.matcher.ViewMatchers.*
+import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.GrantPermissionRule
 import com.github.blecoeur.bootcamp.AccountSettingsActivity
+import com.github.blecoeur.bootcamp.ProfileActivity
 import com.github.blecoeur.bootcamp.R
+import com.google.firebase.auth.FirebaseAuth
+import org.junit.BeforeClass
 import org.junit.Rule
 
 import org.junit.Test
@@ -27,6 +31,7 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class AccountSettingsActivityTest {
+
 
     @Test
     fun passwordIsUpdated() {

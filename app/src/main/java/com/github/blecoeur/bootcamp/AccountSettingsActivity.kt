@@ -15,9 +15,6 @@ import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import com.firebase.ui.auth.AuthUI
-import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
-import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
@@ -26,7 +23,6 @@ import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.google.firebase.database.*
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
-import org.w3c.dom.Text
 
 class AccountSettingsActivity : AppCompatActivity() {
 
@@ -62,10 +58,10 @@ class AccountSettingsActivity : AppCompatActivity() {
         this.onSignInResult(res)
     }*/
 
-    private var username: TextView? = null
-    private var profilePic: ImageView? = null
+    private lateinit var username: TextView
+    private lateinit var profilePic: ImageView
     private var imageUri: Uri? = null
-    private var actualPassword: TextView? = null
+    private lateinit var actualPassword: TextView
     private var processingAlert: AlertDialog? = null
     private var firebaseAuth: FirebaseAuth? = null
     private var firebaseUser: FirebaseUser? = null
@@ -75,6 +71,7 @@ class AccountSettingsActivity : AppCompatActivity() {
     private var databaseReference: DatabaseReference? = null
     private var storageReference: StorageReference? = null
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_account_settings)
@@ -82,25 +79,30 @@ class AccountSettingsActivity : AppCompatActivity() {
         val profilePicUpdate = findViewById<TextView>(R.id.profilePicUpdate)
         val usernameUpdate = findViewById<TextView>(R.id.usernameUpdate)
         val passwordUpdate = findViewById<TextView>(R.id.passwordUpdate)
+        val mockSignInButton = findViewById<Button>(R.id.mockSignInButton)
+        val mockSignOutButton = findViewById<Button>(R.id.mockSignOutButton)
+
         username = findViewById(R.id.username)
 
         profilePic = findViewById(R.id.profilePic)
 
         actualPassword = findViewById(R.id.actualPassword)
-        actualPassword?.text = "password"
+        actualPassword.text = "password"
+
+        firebaseAuth = FirebaseAuth.getInstance()
 
         if(firebaseAuth?.currentUser == null) {
+            showToastText("Not signed in")
             //mockSignIn()
             //user = firebaseUser?.let { User(it) }
 
             //showToastText("No User connected")
             //finish()
         } else {
-            firebaseAuth = FirebaseAuth.getInstance()
             firebaseUser = firebaseAuth?.currentUser
             firebaseUser?.let {
-                username?.text = firebaseUser?.displayName
-                profilePic?.setImageURI(firebaseUser?.photoUrl)
+                username.text = firebaseUser?.displayName
+                profilePic.setImageURI(firebaseUser?.photoUrl)
             }
         }
 
@@ -109,7 +111,6 @@ class AccountSettingsActivity : AppCompatActivity() {
 
         firebaseDatabase = FirebaseDatabase.getInstance()
         databaseReference = firebaseDatabase?.getReference("Users")
-
 
         val query: Query? = databaseReference?.orderByChild("email")?.equalTo(firebaseUser?.email)
 
@@ -136,26 +137,33 @@ class AccountSettingsActivity : AppCompatActivity() {
         usernameUpdate.setOnClickListener{
             changeUsername()
         }
+
+        mockSignInButton.setOnClickListener{
+            mockSignin()
+        }
+
+        mockSignOutButton.setOnClickListener{
+            if(firebaseAuth?.currentUser == null) {
+                showToastText("Not signed in")
+            } else {
+                FirebaseAuth.getInstance().signOut()
+                showToastText("Signed out")
+            }
+        }
+
     }
 
-    /*private fun mockSignIn() {
-
-        val providers = arrayListOf(
-            AuthUI.IdpConfig.EmailBuilder().build()
-        )
-
-        val signInIntent = AuthUI.getInstance()
-            .createSignInIntentBuilder()
-            .setAvailableProviders(providers)
-            .build()
-
-        mockSignInLauncher.launch(signInIntent)
-    }*/
-
-    private fun onSignInResult(result: FirebaseAuthUIAuthenticationResult) {
-        val response = result.idpResponse
-        if(result.resultCode == RESULT_OK) {
-            firebaseUser = FirebaseAuth.getInstance().currentUser
+    private fun mockSignin() {
+        firebaseAuth?.signInWithEmailAndPassword("franck.khayat@gmail.com", "password")?.addOnCompleteListener(this) {
+                task ->
+            if(task.isSuccessful) {
+                firebaseUser = firebaseAuth?.currentUser
+                username.text = firebaseUser?.displayName
+                profilePic.setImageURI(firebaseUser?.photoUrl)
+                showToastText("Signed in")
+            } else {
+                showToastText("Sign in failed")
+            }
         }
     }
 
@@ -223,10 +231,10 @@ class AccountSettingsActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if(resultCode == Activity.RESULT_OK) {
             if (requestCode == IMAGE_CAMERA_REQUEST) {
-                profilePic?.setImageURI(imageUri)
+                profilePic.setImageURI(imageUri)
             } else if(requestCode == IMAGE_GALLERY_REQUEST) {
                 imageUri = data?.data
-                profilePic?.setImageURI(data?.data)
+                profilePic.setImageURI(data?.data)
             }
             uploadProfilePhoto(imageUri)
         }
@@ -264,7 +272,7 @@ class AccountSettingsActivity : AppCompatActivity() {
                     }
                 }
             }
-            profilePic?.setImageURI(imageUri)
+            profilePic.setImageURI(imageUri)
         }
     }
 
@@ -305,11 +313,13 @@ class AccountSettingsActivity : AppCompatActivity() {
 
         if (authCredential != null) {
             firebaseUser?.reauthenticate(authCredential)?.addOnSuccessListener {
-                actualPassword?.text = newP
+                actualPassword.text = newP
                 if(firebaseUser != null) {
                     firebaseUser!!.updatePassword(newP).addOnCompleteListener{ task ->
                         if(task.isSuccessful) {
                             showToastText("Password changed")
+                        } else {
+                            showToastText("Password change failed")
                         }
                     }
                 }
@@ -317,10 +327,10 @@ class AccountSettingsActivity : AppCompatActivity() {
                 showToastText("Incorrect password")
             }
         } else {
-            if(oldP != actualPassword?.text) {
+            if(oldP != actualPassword.text) {
                 showToastText("Incorrect password")
             } else {
-                actualPassword?.text = newP
+                actualPassword.text = newP
             }
         }
 
@@ -377,7 +387,7 @@ class AccountSettingsActivity : AppCompatActivity() {
                     }
                 }
 
-                username?.text = name
+                username.text = name
             }
         }
     }
