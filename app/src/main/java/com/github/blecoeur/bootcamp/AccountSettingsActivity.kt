@@ -15,10 +15,7 @@ import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import com.google.firebase.auth.AuthCredential
-import com.google.firebase.auth.EmailAuthProvider
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.*
 import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.google.firebase.database.*
 import com.google.firebase.storage.FirebaseStorage
@@ -238,11 +235,8 @@ class AccountSettingsActivity : AppCompatActivity() {
                 photoUri = imageUri
             }
             if(firebaseUser != null) {
-                firebaseUser!!.updateProfile(profileUpdates).addOnCompleteListener{ task ->
-                    if(task.isSuccessful) {
-                        showToastText("Profile picture updated")
-                    }
-                }
+
+                updateUser(profileUpdates, "Profile picture updated")
 
                 val filepathname: String = "Users_Profile_Cover_image/image_" + firebaseUser!!.uid
                 val storageReference1 = storageReference!!.child(filepathname)
@@ -346,11 +340,7 @@ class AccountSettingsActivity : AppCompatActivity() {
                 }
 
                 if(firebaseUser != null) {
-                    firebaseUser!!.updateProfile(profileUpdates).addOnCompleteListener{task ->
-                        if(task.isSuccessful) {
-                            showToastText("Username updated")
-                        }
-                    }
+                    updateUser(profileUpdates, "Username updated")
 
                     val map: HashMap<String, String> = HashMap()
                     map["name"] = name
@@ -429,5 +419,13 @@ class AccountSettingsActivity : AppCompatActivity() {
 
     private fun showToastText(string: String) {
         Toast.makeText(this, string, Toast.LENGTH_LONG).show()
+    }
+
+    private fun updateUser(profileUpdates: UserProfileChangeRequest, msg: String) {
+        firebaseUser!!.updateProfile(profileUpdates).addOnCompleteListener{task ->
+            if(task.isSuccessful) {
+                showToastText(msg)
+            }
+        }
     }
 }
