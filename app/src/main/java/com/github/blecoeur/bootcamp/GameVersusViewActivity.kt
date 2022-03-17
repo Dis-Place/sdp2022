@@ -1,5 +1,6 @@
 package com.github.blecoeur.bootcamp
 
+import android.annotation.SuppressLint
 import gameComponents.GameEvent
 import gameComponents.Point
 import gameVersus.GameVersusViewModel
@@ -36,7 +37,7 @@ class GameVersusViewActivity : AppCompatActivity() {
         game.handleEvent(GameEvent.OnStart(goal, listOf(3.0),3)) //add a pop up with goal and photo info
 
         val tryTextView =  findViewById<TextView>(R.id.TryText).apply { text =
-            "tri : $tri"
+            "$tri"
         }
     }
 
