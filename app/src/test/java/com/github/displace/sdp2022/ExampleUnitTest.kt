@@ -1,6 +1,5 @@
 package com.github.displace.sdp2022
 
-
 /**
  * Example local unit test, which will execute on the development machine (host).
  *
