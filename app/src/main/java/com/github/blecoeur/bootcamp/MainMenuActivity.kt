@@ -29,7 +29,7 @@ class MainMenuActivity : AppCompatActivity() {
 
     //send the user to the Play screen : start a match
     fun playButton(view: View) {
-        val intent = Intent(this, PlayActivity::class.java)
+        val intent = Intent(this, GameListActivity::class.java)
         startActivity(intent)
     }
 

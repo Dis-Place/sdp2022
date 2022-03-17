@@ -39,13 +39,7 @@ class MainMenuActivityTest {
                 .check(matches(withText("Welcome Baptou!")))
         }
     }
-
-    @Test
-    fun testPlayButton(){
-        Espresso.onView(withId(R.id.mainGoButton)).perform(click())
-        Espresso.onView(withId(R.id.playButton)).perform(click())
-        Espresso.onView(withId(R.id.textView2)).check(matches(withText("PLAY")))
-    }
+    
     @Test
     fun testProfileButton(){
         Espresso.onView(withId(R.id.mainGoButton)).perform(click())
