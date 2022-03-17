@@ -1,15 +1,16 @@
 package com.github.blecoeur.bootcamp
 
+import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
 import android.Manifest
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.ContentValues
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
-import android.os.Bundle
 import android.provider.MediaStore
 import android.text.TextUtils
 import android.view.*
@@ -18,6 +19,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 
 class AccountSettingsActivity : AppCompatActivity() {
+
     companion object {
         const val IMAGE_GALLERY_REQUEST = 300
         const val IMAGE_CAMERA_REQUEST = 400
@@ -27,11 +29,11 @@ class AccountSettingsActivity : AppCompatActivity() {
         if(accepted) {
             selectPicFromGallery()
         } else {
-            Toast.makeText(this, "Please enable Storage permissions", Toast.LENGTH_LONG).show()
+            showToastText("Please enable Storage permissions")
         }
     }
     private val cameraPermissionsLauncher = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
-        permissions ->
+            permissions ->
         var granted = true
         for((_,v) in permissions.entries) {
             granted = granted && v
@@ -39,18 +41,17 @@ class AccountSettingsActivity : AppCompatActivity() {
         if(granted) {
             selectPicFromCamera()
         } else {
-            Toast.makeText(this, "Please enable Camera & Storage permissions", Toast.LENGTH_LONG).show()
+            showToastText("Please enable Camera & Storage permissions")
         }
     }
     private var profilePic: ImageView? = null
     private var imageUri: Uri? = null
     private var actualPassword: TextView? = null
     private var processingAlert: AlertDialog? = null
-    
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_account_settings)
-
 
         val profilePicUpdate = findViewById<TextView>(R.id.profilePicUpdate)
         val usernameUpdate = findViewById<TextView>(R.id.usernameUpdate)
@@ -103,7 +104,7 @@ class AccountSettingsActivity : AppCompatActivity() {
                 == PackageManager.PERMISSION_GRANTED)
                 &&
                 (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                == PackageManager.PERMISSION_GRANTED)
+                        == PackageManager.PERMISSION_GRANTED)
     }
 
     private fun requestCameraPermissions() {
@@ -122,7 +123,7 @@ class AccountSettingsActivity : AppCompatActivity() {
 
     private fun storagePermissions(): Boolean {
         return (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-            == (PackageManager.PERMISSION_GRANTED))
+                == (PackageManager.PERMISSION_GRANTED))
     }
 
     private fun requestStoragePermissions() {
@@ -167,17 +168,25 @@ class AccountSettingsActivity : AppCompatActivity() {
 
             dialogPassword.dismiss()
             when {
-                TextUtils.isEmpty(oldP) -> {
-                    Toast.makeText(this, "Current Password can't be empty", Toast.LENGTH_LONG).show()
+                checkIfEmpty(oldP) -> {
+                    showToastText("Current Password can't be empty")
                 }
-                TextUtils.isEmpty(newP) -> {
-                    Toast.makeText(this, "New Password can't be empty", Toast.LENGTH_LONG).show()
+                checkIfEmpty(newP) -> {
+                    showToastText("New Password can't be empty")
                 }
                 else -> {
                     updatePassword(oldP, newP)
                 }
             }
         }
+    }
+
+    private fun checkIfEmpty(string: String): Boolean {
+        return TextUtils.isEmpty(string)
+    }
+
+    private fun showToastText(string: String) {
+        Toast.makeText(this, string, Toast.LENGTH_LONG).show()
     }
 
     private fun updatePassword(oldP: String, newP: String) {
@@ -193,7 +202,7 @@ class AccountSettingsActivity : AppCompatActivity() {
     }
 
     // Unused code for a progress dialog
-    fun setProgressDialog(progressMessage: String) {
+   /* fun setProgressDialog(progressMessage: String) {
         // Creating a Linear Layout
         val llPadding = 30
         val ll = LinearLayout(this)
@@ -248,6 +257,6 @@ class AccountSettingsActivity : AppCompatActivity() {
             // Disabling screen touch to avoid exiting the Dialog
             window.setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
         }
-    }
+    }*/
 
 }
