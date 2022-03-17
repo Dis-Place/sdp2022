@@ -16,10 +16,13 @@ import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.Intents.*
 import androidx.test.espresso.intent.matcher.IntentMatchers.hasAction
 import androidx.test.espresso.matcher.ViewMatchers.*
+import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.GrantPermissionRule
 import com.github.blecoeur.bootcamp.AccountSettingsActivity
 import com.github.blecoeur.bootcamp.R
+import com.google.firebase.auth.FirebaseAuth
+import org.junit.BeforeClass
 import org.junit.Rule
 
 import org.junit.Test
@@ -27,6 +30,7 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class AccountSettingsActivityTest {
+
 
     @Test
     fun passwordIsUpdated() {
@@ -145,12 +149,26 @@ class AccountSettingsActivityTest {
     }
 
     @Test
-    fun changeUsernameDoesNothing(){
+    fun usernameChangesCorrectly(){
         val intent = Intent(getApplicationContext(), AccountSettingsActivity::class.java)
         val scenario: ActivityScenario<AccountSettingsActivity> = ActivityScenario.launch(intent)
         scenario.use {
             onView(withId(R.id.usernameUpdate)).perform(click())
+            onView(withId(R.id.updateUsername)).perform(replaceText("newName"), closeSoftKeyboard())
+            onView(withId(R.id.updateUsernameButton)).perform(click())
+            onView(withId(R.id.username)).check(matches(withText("newName")))
         }
+    }
 
+    @Test
+    fun usernameNotUpdateIfEmpty() {
+        val intent = Intent(getApplicationContext(), AccountSettingsActivity::class.java)
+        val scenario: ActivityScenario<AccountSettingsActivity> = ActivityScenario.launch(intent)
+        scenario.use {
+            onView(withId(R.id.usernameUpdate)).perform(click())
+            onView(withId(R.id.updateUsername)).perform(replaceText(""), closeSoftKeyboard())
+            onView(withId(R.id.updateUsernameButton)).perform(click())
+            onView(withId(R.id.username)).check(matches(withText("Name")))
+        }
     }
 }

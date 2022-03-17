@@ -1,22 +1,25 @@
 package com.github.blecoeur.bootcamp
 
-import androidx.appcompat.app.AppCompatActivity
-import android.os.Bundle
 import android.Manifest
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.ContentValues
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.BitmapFactory
-import android.graphics.Color
 import android.net.Uri
+import android.os.Bundle
 import android.provider.MediaStore
 import android.text.TextUtils
 import android.view.*
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import com.google.firebase.auth.*
+import com.google.firebase.auth.ktx.userProfileChangeRequest
+import com.google.firebase.database.*
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 
 class AccountSettingsActivity : AppCompatActivity() {
 
@@ -44,10 +47,20 @@ class AccountSettingsActivity : AppCompatActivity() {
             showToastText("Please enable Camera & Storage permissions")
         }
     }
-    private var profilePic: ImageView? = null
+
+    private lateinit var username: TextView
+    private lateinit var profilePic: ImageView
     private var imageUri: Uri? = null
-    private var actualPassword: TextView? = null
+    private lateinit var actualPassword: TextView
     private var processingAlert: AlertDialog? = null
+    private var firebaseAuth: FirebaseAuth? = null
+    private var firebaseUser: FirebaseUser? = null
+    //private var user: User? = null
+
+    private var firebaseDatabase: FirebaseDatabase? = null
+    private var databaseReference: DatabaseReference? = null
+    private var storageReference: StorageReference? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,11 +69,47 @@ class AccountSettingsActivity : AppCompatActivity() {
         val profilePicUpdate = findViewById<TextView>(R.id.profilePicUpdate)
         val usernameUpdate = findViewById<TextView>(R.id.usernameUpdate)
         val passwordUpdate = findViewById<TextView>(R.id.passwordUpdate)
+        val mockSignInButton = findViewById<Button>(R.id.mockSignInButton)
+        val mockSignOutButton = findViewById<Button>(R.id.mockSignOutButton)
+
+        username = findViewById(R.id.username)
 
         profilePic = findViewById(R.id.profilePic)
 
         actualPassword = findViewById(R.id.actualPassword)
-        actualPassword?.text = "password"
+        actualPassword.text = "password"
+
+        firebaseAuth = FirebaseAuth.getInstance()
+
+        if(firebaseAuth?.currentUser == null) {
+            showToastText("Not signed in")
+        } else {
+            firebaseUser = firebaseAuth?.currentUser
+            firebaseUser?.let {
+                username.text = firebaseUser?.displayName
+                profilePic.setImageURI(firebaseUser?.photoUrl)
+            }
+        }
+
+
+        storageReference = FirebaseStorage.getInstance().reference
+
+        firebaseDatabase = FirebaseDatabase.getInstance()
+        databaseReference = firebaseDatabase?.getReference("Users")
+
+        val query: Query? = databaseReference?.orderByChild("email")?.equalTo(firebaseUser?.email)
+
+        query?.addValueEventListener(object :ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                for(snapshot1 in snapshot.children) {
+                    val image: String = "" + snapshot1.child("image").value
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {}
+
+        })
+
 
         profilePicUpdate.setOnClickListener {
             selectPic()
@@ -72,6 +121,34 @@ class AccountSettingsActivity : AppCompatActivity() {
 
         usernameUpdate.setOnClickListener{
             changeUsername()
+        }
+
+        mockSignInButton.setOnClickListener{
+            mockSignin()
+        }
+
+        mockSignOutButton.setOnClickListener{
+            if(firebaseAuth?.currentUser == null) {
+                showToastText("Not signed in")
+            } else {
+                FirebaseAuth.getInstance().signOut()
+                showToastText("Signed out")
+            }
+        }
+
+    }
+
+    private fun mockSignin() {
+        firebaseAuth?.signInWithEmailAndPassword("franck.khayat@gmail.com", "password")?.addOnCompleteListener(this) {
+                task ->
+            if(task.isSuccessful) {
+                firebaseUser = firebaseAuth?.currentUser
+                username.text = firebaseUser?.displayName
+                profilePic.setImageURI(firebaseUser?.photoUrl)
+                showToastText("Signed in")
+            } else {
+                showToastText("Sign in failed")
+            }
         }
     }
 
@@ -139,17 +216,47 @@ class AccountSettingsActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if(resultCode == Activity.RESULT_OK) {
             if (requestCode == IMAGE_CAMERA_REQUEST) {
-                profilePic?.setImageURI(imageUri)
+                profilePic.setImageURI(imageUri)
             } else if(requestCode == IMAGE_GALLERY_REQUEST) {
-                profilePic?.setImageURI(data?.data)
+                imageUri = data?.data
+                profilePic.setImageURI(data?.data)
             }
+            uploadProfilePhoto(imageUri)
         }
         super.onActivityResult(requestCode, resultCode, data)
     }
 
-    /*private fun uploadProfilePhoto(imageUri: Uri?) {
-        TODO("Not yet implemented")
-    }*/
+    private fun uploadProfilePhoto(imageUri: Uri?) {
+
+        if(imageUri == null) {
+            showToastText("Unable to upload profile photo")
+        } else {
+            val profileUpdates = userProfileChangeRequest {
+                photoUri = imageUri
+            }
+            if(firebaseUser != null) {
+
+                updateUser(profileUpdates, "Profile picture updated")
+
+                val filepathname: String = "Users_Profile_Cover_image/image_" + firebaseUser!!.uid
+                val storageReference1 = storageReference!!.child(filepathname)
+                storageReference1.putFile(imageUri).addOnSuccessListener { taskSnapshot ->
+                    val uriTask = taskSnapshot.storage.downloadUrl
+                    while(!uriTask.isSuccessful){}
+
+                    val downloadUri = uriTask.result
+                    if(uriTask.isSuccessful) {
+                        val map: HashMap<String, Any> = HashMap()
+                        map["image"] = downloadUri.toString()
+                        databaseReference?.child(firebaseUser!!.uid)?.updateChildren(map)?.addOnFailureListener{
+                            showToastText("Unable to update Profile Picture")
+                        }
+                    }
+                }
+            }
+            profilePic.setImageURI(imageUri)
+        }
+    }
 
     private fun showChangePasswordDialog() {
         val view = LayoutInflater.from(this).inflate(R.layout.password_update_dialog, null)
@@ -170,35 +277,82 @@ class AccountSettingsActivity : AppCompatActivity() {
             when {
                 checkIfEmpty(oldP) -> {
                     showToastText("Current Password can't be empty")
+                    return@setOnClickListener
                 }
                 checkIfEmpty(newP) -> {
                     showToastText("New Password can't be empty")
+                    return@setOnClickListener
                 }
-                else -> {
-                    updatePassword(oldP, newP)
+            }
+            dialogPassword.dismiss()
+            updatePassword(oldP, newP)
+        }
+    }
+
+    private fun updatePassword(oldP: String, newP: String) {
+        val authCredential: AuthCredential? =
+            firebaseUser?.email?.let { EmailAuthProvider.getCredential(it, oldP) }
+
+        if (authCredential != null) {
+            firebaseUser?.reauthenticate(authCredential)?.addOnSuccessListener {
+                actualPassword.text = newP
+                if(firebaseUser != null) {
+                    firebaseUser!!.updatePassword(newP).addOnCompleteListener{ task ->
+                        if(task.isSuccessful) {
+                            showToastText("Password changed")
+                        } else {
+                            showToastText("Password change failed")
+                        }
+                    }
                 }
+            }?.addOnFailureListener {
+                showToastText("Incorrect password")
+            }
+        } else {
+            if(oldP != actualPassword.text) {
+                showToastText("Incorrect password")
+            } else {
+                actualPassword.text = newP
             }
         }
     }
 
-    private fun checkIfEmpty(string: String): Boolean {
-        return TextUtils.isEmpty(string)
-    }
-
-    private fun showToastText(string: String) {
-        Toast.makeText(this, string, Toast.LENGTH_LONG).show()
-    }
-
-    private fun updatePassword(oldP: String, newP: String) {
-        if(oldP != actualPassword?.text) {
-            Toast.makeText(this, "Incorrect password", Toast.LENGTH_LONG).show()
-        } else {
-            actualPassword?.text = newP
-        }
-    }
-
     private fun changeUsername() {
-        // TODO Not yet implemented
+        val view = LayoutInflater.from(this).inflate(R.layout.username_update_dialog, null)
+        val newName = view.findViewById<EditText>(R.id.updateUsername)
+        val newNameButton = view.findViewById<Button>(R.id.updateUsernameButton)
+
+        val dialogBuilder = AlertDialog.Builder(this)
+        dialogBuilder.setView(view)
+        val dialogUsername = dialogBuilder.create()
+        dialogUsername.show()
+
+        newNameButton.setOnClickListener{
+            val name = newName.text.toString().trim()
+
+            dialogUsername.dismiss()
+
+            if(checkIfEmpty(name)) {
+                showToastText("New Username can't be empty")
+            } else {
+                val profileUpdates = userProfileChangeRequest {
+                    displayName = name
+                }
+
+                if(firebaseUser != null) {
+                    updateUser(profileUpdates, "Username updated")
+
+                    val map: HashMap<String, String> = HashMap()
+                    map["name"] = name
+
+                    databaseReference?.child(firebaseUser!!.uid)?.updateChildren(map as Map<String, Any>)?.addOnFailureListener{
+                        showToastText("Unable to update name")
+                    }
+                }
+
+                username.text = name
+            }
+        }
     }
 
     // Unused code for a progress dialog
@@ -259,4 +413,19 @@ class AccountSettingsActivity : AppCompatActivity() {
         }
     }*/
 
+    private fun checkIfEmpty(string: String): Boolean {
+        return TextUtils.isEmpty(string)
+    }
+
+    private fun showToastText(string: String) {
+        Toast.makeText(this, string, Toast.LENGTH_LONG).show()
+    }
+
+    private fun updateUser(profileUpdates: UserProfileChangeRequest, msg: String) {
+        firebaseUser!!.updateProfile(profileUpdates).addOnCompleteListener{task ->
+            if(task.isSuccessful) {
+                showToastText(msg)
+            }
+        }
+    }
 }
