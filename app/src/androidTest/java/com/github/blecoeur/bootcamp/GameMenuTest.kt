@@ -21,77 +21,44 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class GameMenuTest {
     @get:Rule
-    val testRule = ActivityScenarioRule(MainActivity::class.java)
+    val testRule = ActivityScenarioRule(GameListActivity::class.java)
 
     /*
      Test if the input of the main screen is correctly shown in the main menu
      */
-    @Test
-    fun testingInput() {
-        val myPreferences = "myPrefs"
-
-        val intent = Intent(ApplicationProvider.getApplicationContext(), MainMenuActivity::class.java)
-
-
-        val context = getInstrumentation().targetContext
-        val sharedpreferences = context.getSharedPreferences(myPreferences, Context.MODE_PRIVATE)
-
-        val editor = sharedpreferences.edit()
-        editor.putString("userNameKey","Antoine")
-        editor.commit()
-
-        val scenario = ActivityScenario.launch<MainMenuActivity>(intent)
-
-        try {
-            Espresso.onView(withId(R.id.WelcomeText))
-                .check(ViewAssertions.matches(ViewMatchers.withText("Welcome Antoine!")))
-        }finally {
-            scenario.close()
-        }
-    }
 
     @Test
     fun testPlayButton(){
-        Espresso.onView(withId(R.id.mainGoButton)).perform(click())
-        Espresso.onView(withId(R.id.playButton)).perform(click())
-        Espresso.onView(withId(R.id.playVersusButton)).perform(click())
-        Espresso.onView(withId(R.id.TryText)).check(matches(withText("neutral")))
+        onView(withId(R.id.playVersusButton)).perform(click())
+        onView(withId(R.id.TryText)).check(matches(withText("neutral")))
     }
     @Test
     fun testWinButton(){
-        Espresso.onView(withId(R.id.mainGoButton)).perform(click())
-        Espresso.onView(withId(R.id.playButton)).perform(click())
-        Espresso.onView(withId(R.id.playVersusButton)).perform(click())
-        Espresso.onView(withId(R.id.triButtonWin)).perform(click())
-        Espresso.onView(withId(R.id.TryText)).check(matches(withText("win")))
+        onView(withId(R.id.playVersusButton)).perform(click())
+        onView(withId(R.id.triButtonWin)).perform(click())
+        onView(withId(R.id.TryText)).check(matches(withText("win")))
     }
     @Test
     fun testFailButton(){
-        Espresso.onView(withId(R.id.mainGoButton)).perform(click())
-        Espresso.onView(withId(R.id.playButton)).perform(click())
-        Espresso.onView(withId(R.id.playVersusButton)).perform(click())
-        Espresso.onView(withId(R.id.triButtonFail)).perform(click())
-        Espresso.onView(withId(R.id.TryText)).check(matches(withText("fail")))
+        onView(withId(R.id.playVersusButton)).perform(click())
+        onView(withId(R.id.triButtonFail)).perform(click())
+        onView(withId(R.id.TryText)).check(matches(withText("fail")))
     }
     @Test
     fun testEndButton(){
-        Espresso.onView(withId(R.id.mainGoButton)).perform(click())
-        Espresso.onView(withId(R.id.playButton)).perform(click())
-        Espresso.onView(withId(R.id.playVersusButton)).perform(click())
-        Espresso.onView(withId(R.id.triButtonFail)).perform(click())
-        Espresso.onView(withId(R.id.triButtonFail)).perform(click())
-        Espresso.onView(withId(R.id.triButtonFail)).perform(click())
-        Espresso.onView(withId(R.id.triButtonFail)).perform(click())
-        Espresso.onView(withId(R.id.TryText)).check(matches(withText("end of game")))
+        onView(withId(R.id.playVersusButton)).perform(click())
+        onView(withId(R.id.triButtonFail)).perform(click())
+        onView(withId(R.id.triButtonFail)).perform(click())
+        onView(withId(R.id.triButtonFail)).perform(click())
+        onView(withId(R.id.triButtonFail)).perform(click())
+        onView(withId(R.id.TryText)).check(matches(withText("end of game")))
     }
 
     @Test
     fun testQuitButton(){
-        Espresso.onView(withId(R.id.mainGoButton)).perform(click())
-        Espresso.onView(withId(R.id.playButton)).perform(click())
-        Espresso.onView(withId(R.id.playVersusButton)).perform(click())
-        Espresso.onView(withId(R.id.closeButton)).perform(click())
-        Espresso.onView(withId(R.id.playVersusButton)).perform(click())
-        Espresso.onView(withId(R.id.TryText)).check(matches(withText("neutral")))
+        onView(withId(R.id.playVersusButton)).perform(click())
+        onView(withId(R.id.closeButton)).perform(click())
+        onView(withId(R.id.playVersusButton)).perform(click())
+        onView(withId(R.id.TryText)).check(matches(withText("neutral")))
     }
 }
