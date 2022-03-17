@@ -11,7 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 
 class MainActivity : AppCompatActivity() {
 
-    //preferences setup : using a dummy name
+    //preferences setup : using a dummy name 
     val myPreferences = "myPrefs"
     lateinit var sharedpreferences: SharedPreferences
 
