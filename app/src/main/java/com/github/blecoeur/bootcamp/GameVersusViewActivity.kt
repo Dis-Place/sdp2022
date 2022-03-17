@@ -15,12 +15,15 @@ import android.content.res.Configuration
 import androidx.preference.PreferenceManager
 import org.osmdroid.config.Configuration.*
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
+import org.osmdroid.util.GeoPoint
 
 
 class GameVersusViewActivity : AppCompatActivity() {
 
     var goal = Point(3.0,4.0)
     val game = GameVersusViewModel()
+    private val ZOOM = 16.0
+    private val EPFL_POS = GeoPoint(46.52048,6.56782)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,6 +35,13 @@ class GameVersusViewActivity : AppCompatActivity() {
 
         //to identify our app when downloading the map tiles (ie. pieces of the map)
         getInstance().setUserAgentValue(this.getPackageName())
+
+        map.controller.setCenter(EPFL_POS)
+        map.setTileSource(TileSourceFactory.DEFAULT_TILE_SOURCE)
+        map.setTilesScaledToDpi(true) //scaling tiles in order to see them well at any zoom scale
+
+        //setting zoom
+        map.getController().setZoom(ZOOM)
 
         game.handleEvent(GameEvent.OnStart(goal, listOf(3.0),3)) //add a pop up with goal and photo info
 
