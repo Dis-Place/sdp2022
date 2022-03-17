@@ -65,34 +65,14 @@ class ExampleUnitTest {
 
     @Test
     fun PlayerTestPos(){
-=======
-    fun PlayerTest(){
->>>>>>> main
         val play = Player(3.0,2.0)
-        assertEquals(3.0,play.pos[0],0.0)
-        assertEquals(2.0,play.pos[1],0.0)
-        play.pos = listOf(4.0,5.0)
-        assertEquals(4.0,play.pos[0],0.0)
-        assertEquals(5.0,play.pos[1],0.0)
-<<<<<<< HEAD
+        assertEquals(3.0,play.pos.first,0.0)
+        assertEquals(2.0,play.pos.second,0.0)
     }
 
     @Test
     fun PlayerTestId(){
-        val play = Player(3.0,2.0)
-        play.SetId(3)
-        assertEquals(3,play.GetId())
-    }
-
-    @Test
-    fun PointTest(){
-        val play = Point(3.0,2.0)
-        assertEquals(3.0,play.pos[0],0.0)
-        assertEquals(2.0,play.pos[1],0.0)
-        play.pos = listOf(4.0,5.0)
-        assertEquals(4.0,play.pos[0],0.0)
-        assertEquals(5.0,play.pos[1],0.0)
-=======
->>>>>>> main
+        val play = Player(3.0,2.0,3)
+        assertEquals(3,play.uid)
     }
 }
