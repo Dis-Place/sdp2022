@@ -79,6 +79,26 @@
                 android:value=".MainActivity" />
         </activity>
         <activity
+            android:name=".GameListActivity"
+            android:exported="false"
+            android:parentActivityName=".MainMenuActivity">
+
+            <!-- The meta-data tag is required if you support API level 15 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainMenuActivity" />
+        </activity>
+        <activity
+            android:name=".GameVersusViewActivity"
+            android:exported="false"
+            android:parentActivityName=".GameListActivity">
+
+            <!-- The meta-data tag is required if you support API level 15 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".GameListActivity" />
+        </activity>
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
