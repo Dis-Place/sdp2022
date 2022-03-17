@@ -44,14 +44,6 @@ interface MapViewManager {
         mapView().controller.setZoom(DEFAULT_ZOOM)
     }
 
-    /**
-     * sets center on GPS location
-     * @param zoom new zooming factor
-     */
-    fun centerOnGPSPosition() {
-        TODO()
-    }
-
     companion object {
         const val DEFAULT_ZOOM = 16.0
         val DEFAULT_CENTER =  GeoPoint(46.52048,6.56782)

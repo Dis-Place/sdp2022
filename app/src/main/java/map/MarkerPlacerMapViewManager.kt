@@ -11,7 +11,7 @@ import org.osmdroid.views.overlay.MapEventsOverlay
  * and remove a Marker bw clicking on it
  */
 class MarkerPlacerMapViewManager(private val mapView: MapView) : MapViewManager {
-    private val markerManager = MarkerManager(mapView)
+    val markerManager = MarkerManager(mapView)
 
     override fun mapView(): MapView {
         return mapView
