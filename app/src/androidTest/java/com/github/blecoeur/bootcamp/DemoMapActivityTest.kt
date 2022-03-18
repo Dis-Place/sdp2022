@@ -48,12 +48,4 @@ class DemoMapActivityTest {
         onView(withId(R.id.map)).perform(click())
     }
 
-    @Test
-    fun centerButtonDoesNotCrashApp()
-    {
-        onView(withId(R.id.map)).check(matches(isDisplayed()))
-        onView(withId(R.id.centerGPS)).perform(click())
-
-    }
-
 }
