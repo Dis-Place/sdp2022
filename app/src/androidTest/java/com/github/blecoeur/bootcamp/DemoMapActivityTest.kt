@@ -29,6 +29,8 @@ class DemoMapActivityTest {
 
     @get:Rule
     val testRule = ActivityScenarioRule(DemoMapActivity::class.java)
+    @get:Rule
+    val permissionRule = GrantPermissionRule.grant(android.Manifest.permission.ACCESS_COARSE_LOCATION, android.Manifest.permission.ACCESS_FINE_LOCATION)
 
 
     /***
