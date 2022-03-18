@@ -37,15 +37,27 @@ class DemoMapActivityTest {
     @Test
     fun mapIsDisplayedProperly()
     {
-        onView(withId(R.id.map)).check(matches(isDisplayed()))
+        testRule.scenario.use {
+            onView(withId(R.id.map)).check(matches(isDisplayed()))
+        }
     }
 
     @Test
     fun longClickClickDoesNotCauseException()
     {
-        onView(withId(R.id.map)).check(matches(isDisplayed()))
-        onView(withId(R.id.map)).perform(longClick())
-        onView(withId(R.id.map)).perform(click())
+        testRule.scenario.use {
+            onView(withId(R.id.map)).perform(longClick()).perform(longClick())
+            onView(withId(R.id.map)).perform(longClick()).perform(click())
+        }
+    }
+
+    @Test
+    fun centerButtonDoesNotCrashApp()
+    {
+        testRule.scenario.use {
+            onView(withId(R.id.centerGPS)).perform(click())
+        }
+
     }
 
 }
