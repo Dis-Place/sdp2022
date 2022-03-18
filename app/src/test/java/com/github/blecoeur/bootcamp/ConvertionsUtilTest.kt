@@ -1,11 +1,9 @@
 package com.github.blecoeur.bootcamp
 
-import GameComponents.Coordinates
-import androidx.test.ext.junit.runners.AndroidJUnit4
+import gameComponents.Coordinates
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertThrows
 import org.junit.Test
-import org.junit.runner.RunWith
 import org.osmdroid.util.GeoPoint
 import util.gps.CoordinatesConversionUtil
 import util.math.Constants

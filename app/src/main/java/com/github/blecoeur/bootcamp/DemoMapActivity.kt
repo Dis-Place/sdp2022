@@ -3,14 +3,11 @@ package com.github.blecoeur.bootcamp
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import map.MapViewManager
 import map.MarkerPlacerMapViewManager
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
-import org.osmdroid.views.overlay.Marker
 import util.PreferencesUtil
-import util.gps.CoordinatesConversionUtil
 import util.gps.GPSPositionManager
 
 

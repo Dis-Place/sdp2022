@@ -1,6 +1,6 @@
 package util.gps
 
-import GameComponents.Coordinates
+import gameComponents.Coordinates
 import android.location.Location
 import org.osmdroid.util.GeoPoint
 import util.math.Constants

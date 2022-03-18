@@ -1,4 +1,4 @@
-package GameComponents
+package gameComponents
 
 // modelisation of a coordinates
 
