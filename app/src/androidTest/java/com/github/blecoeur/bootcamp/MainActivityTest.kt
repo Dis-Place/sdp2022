@@ -47,11 +47,8 @@ class MainActivityTest {
 
     @Test
     fun mapButtonGoesToDemoMapActivity() {
-        val intent = Intent(ApplicationProvider.getApplicationContext(), MainActivity::class.java)
-        val scenario = ActivityScenario.launch<MainActivity>(intent)
         onView(ViewMatchers.withId(R.id.mapButton)).perform(click())
         onView(ViewMatchers.withId(R.id.map)).check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
-        scenario.close()
     }
 
 }

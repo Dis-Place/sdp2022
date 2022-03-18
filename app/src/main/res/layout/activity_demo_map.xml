@@ -3,7 +3,16 @@
         android:orientation="vertical" 
         android:layout_width="fill_parent"
         android:layout_height="fill_parent">
-        <org.osmdroid.views.MapView android:id="@+id/map"
-                android:layout_width="fill_parent" 
-                android:layout_height="fill_parent" />
+
+        <Button
+            android:id="@+id/centerGPS"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="centerGPS"
+            android:text="center" />
+
+        <org.osmdroid.views.MapView
+            android:id="@+id/map"
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent" />
 </LinearLayout>
