@@ -28,6 +28,7 @@ import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.GrantPermissionRule
+import com.github.blecoeur.bootcamp.profile.settings.AccountSettingsActivity
 import com.google.android.material.internal.ContextUtils.getActivity
 import org.hamcrest.Matchers.not
 import org.hamcrest.Description

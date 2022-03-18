@@ -30,7 +30,7 @@
             android:exported="false"
             android:parentActivityName=".profile.ProfileActivity"/>
         <activity
-            android:name=".AccountSettingsActivity"
+            android:name=".profile.settings.AccountSettingsActivity"
             android:exported="false" >
             <!-- The meta-data tag is required if you support API level 15 and lower -->
             <meta-data
