@@ -26,7 +26,7 @@ class MarkerPlacerMapViewManager(private val mapView: MapView) : MapViewManager 
             }
 
             override fun longPressHelper(p: GeoPoint?): Boolean {
-                if(p!=null) {
+                if (p != null) {
                     markerManager.putMarker(p)
                     mapView.invalidate()
                 }

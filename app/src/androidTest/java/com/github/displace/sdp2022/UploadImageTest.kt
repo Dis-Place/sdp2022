@@ -8,9 +8,7 @@ import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.github.blecoeur.bootcamp.MainMenuActivity
-import com.github.blecoeur.bootcamp.R
-import com.github.blecoeur.bootcamp.UploadImageActivity
+import displace.sdp2022.R
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith

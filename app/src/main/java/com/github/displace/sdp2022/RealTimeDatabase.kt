@@ -15,7 +15,7 @@ class RealTimeDatabase : com.github.displace.sdp2022.Database {
         return getRefAndChild(reference, key).setValue(obj)
     }
 
-    private fun getRefAndChild(reference: String, key: String): DatabaseReference{
+    private fun getRefAndChild(reference: String, key: String): DatabaseReference {
         return db.getReference(reference).child(key)
     }
 

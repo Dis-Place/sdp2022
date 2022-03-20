@@ -4,13 +4,14 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import displace.sdp2022.R
 
 
 class GameListActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(com.github.blecoeur.bootcamp.R.layout.activity_game_list)
+        setContentView(R.layout.activity_game_list)
     }
 
 

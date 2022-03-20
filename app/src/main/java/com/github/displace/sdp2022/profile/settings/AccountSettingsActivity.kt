@@ -10,18 +10,17 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.text.TextUtils
-import android.view.*
+import android.view.LayoutInflater
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import com.github.blecoeur.bootcamp.R
 import com.google.firebase.auth.*
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.google.firebase.database.*
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
+import displace.sdp2022.R
 
 class AccountSettingsActivity : AppCompatActivity() {
 
@@ -29,26 +28,27 @@ class AccountSettingsActivity : AppCompatActivity() {
         const val IMAGE_GALLERY_REQUEST = 300
         const val IMAGE_CAMERA_REQUEST = 400
     }
-    private val storagePermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) {
-            accepted: Boolean ->
-        if(accepted) {
-            selectPicFromGallery()
-        } else {
-            showToastText("Please enable Storage permissions")
+
+    private val storagePermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { accepted: Boolean ->
+            if (accepted) {
+                selectPicFromGallery()
+            } else {
+                showToastText("Please enable Storage permissions")
+            }
         }
-    }
-    private val cameraPermissionsLauncher = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
-            permissions ->
-        var granted = true
-        for((_,v) in permissions.entries) {
-            granted = granted && v
+    private val cameraPermissionsLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
+            var granted = true
+            for ((_, v) in permissions.entries) {
+                granted = granted && v
+            }
+            if (granted) {
+                selectPicFromCamera()
+            } else {
+                showToastText("Please enable Camera & Storage permissions")
+            }
         }
-        if(granted) {
-            selectPicFromCamera()
-        } else {
-            showToastText("Please enable Camera & Storage permissions")
-        }
-    }
 
     private lateinit var username: TextView
     private lateinit var profilePic: ImageView
@@ -83,7 +83,7 @@ class AccountSettingsActivity : AppCompatActivity() {
 
         firebaseAuth = FirebaseAuth.getInstance()
 
-        if(firebaseAuth?.currentUser == null) {
+        if (firebaseAuth?.currentUser == null) {
             showToastText("Not signed in")
         } else {
             firebaseUser = firebaseAuth?.currentUser
@@ -101,9 +101,9 @@ class AccountSettingsActivity : AppCompatActivity() {
 
         val query: Query? = databaseReference?.orderByChild("email")?.equalTo(firebaseUser?.email)
 
-        query?.addValueEventListener(object :ValueEventListener {
+        query?.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                for(snapshot1 in snapshot.children) {
+                for (snapshot1 in snapshot.children) {
                     val image: String = "" + snapshot1.child("image").value
                 }
             }
@@ -121,16 +121,16 @@ class AccountSettingsActivity : AppCompatActivity() {
             showChangePasswordDialog()
         }
 
-        usernameUpdate.setOnClickListener{
+        usernameUpdate.setOnClickListener {
             changeUsername()
         }
 
-        mockSignInButton.setOnClickListener{
+        mockSignInButton.setOnClickListener {
             mockSignin()
         }
 
-        mockSignOutButton.setOnClickListener{
-            if(firebaseAuth?.currentUser == null) {
+        mockSignOutButton.setOnClickListener {
+            if (firebaseAuth?.currentUser == null) {
                 showToastText("Not signed in")
             } else {
                 FirebaseAuth.getInstance().signOut()
@@ -141,17 +141,17 @@ class AccountSettingsActivity : AppCompatActivity() {
     }
 
     private fun mockSignin() {
-        firebaseAuth?.signInWithEmailAndPassword("franck.khayat@gmail.com", "password")?.addOnCompleteListener(this) {
-                task ->
-            if(task.isSuccessful) {
-                firebaseUser = firebaseAuth?.currentUser
-                username.text = firebaseUser?.displayName
-                profilePic.setImageURI(firebaseUser?.photoUrl)
-                showToastText("Signed in")
-            } else {
-                showToastText("Sign in failed")
+        firebaseAuth?.signInWithEmailAndPassword("franck.khayat@gmail.com", "password")
+            ?.addOnCompleteListener(this) { task ->
+                if (task.isSuccessful) {
+                    firebaseUser = firebaseAuth?.currentUser
+                    username.text = firebaseUser?.displayName
+                    profilePic.setImageURI(firebaseUser?.photoUrl)
+                    showToastText("Signed in")
+                } else {
+                    showToastText("Sign in failed")
+                }
             }
-        }
     }
 
     private fun selectPic() {
@@ -168,7 +168,7 @@ class AccountSettingsActivity : AppCompatActivity() {
                 }
 
             } else if (pos == 1) {
-                if(storagePermissions()) {
+                if (storagePermissions()) {
                     selectPicFromGallery()
                 } else {
                     requestStoragePermissions()
@@ -187,14 +187,20 @@ class AccountSettingsActivity : AppCompatActivity() {
     }
 
     private fun requestCameraPermissions() {
-        cameraPermissionsLauncher.launch(arrayOf(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE))
+        cameraPermissionsLauncher.launch(
+            arrayOf(
+                Manifest.permission.CAMERA,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            )
+        )
     }
 
     private fun selectPicFromCamera() {
         val contentValues = ContentValues()
         contentValues.put(MediaStore.Images.Media.TITLE, "Temp_pic")
         contentValues.put(MediaStore.Images.Media.DESCRIPTION, "Temp Description")
-        imageUri = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
+        imageUri =
+            contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
         val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
         startActivityForResult(cameraIntent, IMAGE_CAMERA_REQUEST)
@@ -216,10 +222,10 @@ class AccountSettingsActivity : AppCompatActivity() {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if(resultCode == Activity.RESULT_OK) {
+        if (resultCode == Activity.RESULT_OK) {
             if (requestCode == IMAGE_CAMERA_REQUEST) {
                 profilePic.setImageURI(imageUri)
-            } else if(requestCode == IMAGE_GALLERY_REQUEST) {
+            } else if (requestCode == IMAGE_GALLERY_REQUEST) {
                 imageUri = data?.data
                 profilePic.setImageURI(data?.data)
             }
@@ -230,13 +236,13 @@ class AccountSettingsActivity : AppCompatActivity() {
 
     private fun uploadProfilePhoto(imageUri: Uri?) {
 
-        if(imageUri == null) {
+        if (imageUri == null) {
             showToastText("Unable to upload profile photo")
         } else {
             val profileUpdates = userProfileChangeRequest {
                 photoUri = imageUri
             }
-            if(firebaseUser != null) {
+            if (firebaseUser != null) {
 
                 updateUser(profileUpdates, "Profile picture updated")
 
@@ -244,15 +250,17 @@ class AccountSettingsActivity : AppCompatActivity() {
                 val storageReference1 = storageReference!!.child(filepathname)
                 storageReference1.putFile(imageUri).addOnSuccessListener { taskSnapshot ->
                     val uriTask = taskSnapshot.storage.downloadUrl
-                    while(!uriTask.isSuccessful){}
+                    while (!uriTask.isSuccessful) {
+                    }
 
                     val downloadUri = uriTask.result
-                    if(uriTask.isSuccessful) {
+                    if (uriTask.isSuccessful) {
                         val map: HashMap<String, Any> = HashMap()
                         map["image"] = downloadUri.toString()
-                        databaseReference?.child(firebaseUser!!.uid)?.updateChildren(map)?.addOnFailureListener{
-                            showToastText("Unable to update Profile Picture")
-                        }
+                        databaseReference?.child(firebaseUser!!.uid)?.updateChildren(map)
+                            ?.addOnFailureListener {
+                                showToastText("Unable to update Profile Picture")
+                            }
                     }
                 }
             }
@@ -298,9 +306,9 @@ class AccountSettingsActivity : AppCompatActivity() {
         if (authCredential != null) {
             firebaseUser?.reauthenticate(authCredential)?.addOnSuccessListener {
                 actualPassword.text = newP
-                if(firebaseUser != null) {
-                    firebaseUser!!.updatePassword(newP).addOnCompleteListener{ task ->
-                        if(task.isSuccessful) {
+                if (firebaseUser != null) {
+                    firebaseUser!!.updatePassword(newP).addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
                             showToastText("Password changed")
                         } else {
                             showToastText("Password change failed")
@@ -311,7 +319,7 @@ class AccountSettingsActivity : AppCompatActivity() {
                 showToastText("Incorrect password")
             }
         } else {
-            if(oldP != actualPassword.text) {
+            if (oldP != actualPassword.text) {
                 showToastText("Incorrect password")
             } else {
                 actualPassword.text = newP
@@ -329,25 +337,26 @@ class AccountSettingsActivity : AppCompatActivity() {
         val dialogUsername = dialogBuilder.create()
         dialogUsername.show()
 
-        newNameButton.setOnClickListener{
+        newNameButton.setOnClickListener {
             val name = newName.text.toString().trim()
 
             dialogUsername.dismiss()
 
-            if(checkIfEmpty(name)) {
+            if (checkIfEmpty(name)) {
                 showToastText("New Username can't be empty")
             } else {
                 val profileUpdates = userProfileChangeRequest {
                     displayName = name
                 }
 
-                if(firebaseUser != null) {
+                if (firebaseUser != null) {
                     updateUser(profileUpdates, "Username updated")
 
                     val map: HashMap<String, String> = HashMap()
                     map["name"] = name
 
-                    databaseReference?.child(firebaseUser!!.uid)?.updateChildren(map as Map<String, Any>)?.addOnFailureListener{
+                    databaseReference?.child(firebaseUser!!.uid)
+                        ?.updateChildren(map as Map<String, Any>)?.addOnFailureListener {
                         showToastText("Unable to update name")
                     }
                 }
@@ -424,8 +433,8 @@ class AccountSettingsActivity : AppCompatActivity() {
     }
 
     private fun updateUser(profileUpdates: UserProfileChangeRequest, msg: String) {
-        firebaseUser!!.updateProfile(profileUpdates).addOnCompleteListener{task ->
-            if(task.isSuccessful) {
+        firebaseUser!!.updateProfile(profileUpdates).addOnCompleteListener { task ->
+            if (task.isSuccessful) {
                 showToastText(msg)
             }
         }

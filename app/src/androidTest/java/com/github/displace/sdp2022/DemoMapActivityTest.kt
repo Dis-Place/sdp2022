@@ -9,35 +9,37 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.GrantPermissionRule
-import com.github.blecoeur.bootcamp.R
+import displace.sdp2022.R
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class DemoMapActivityTest {
-    
+
 
     @get:Rule
     val testRule = ActivityScenarioRule(com.github.displace.sdp2022.DemoMapActivity::class.java)
+
     @get:Rule
-    val permissionRule = GrantPermissionRule.grant(android.Manifest.permission.ACCESS_COARSE_LOCATION, android.Manifest.permission.ACCESS_FINE_LOCATION)
+    val permissionRule = GrantPermissionRule.grant(
+        android.Manifest.permission.ACCESS_COARSE_LOCATION,
+        android.Manifest.permission.ACCESS_FINE_LOCATION
+    )
 
 
     /***
      * checks if the mapview is displayed
      */
     @Test
-    fun mapIsDisplayedProperly()
-    {
+    fun mapIsDisplayedProperly() {
         testRule.scenario.use {
             onView(withId(R.id.map)).check(matches(isDisplayed()))
         }
     }
 
     @Test
-    fun longClickClickDoesNotCauseException()
-    {
+    fun longClickClickDoesNotCauseException() {
         testRule.scenario.use {
             onView(withId(R.id.map)).perform(longClick()).perform(longClick())
             onView(withId(R.id.map)).perform(longClick()).perform(click())
@@ -45,8 +47,7 @@ class DemoMapActivityTest {
     }
 
     @Test
-    fun centerButtonDoesNotCrashApp()
-    {
+    fun centerButtonDoesNotCrashApp() {
         testRule.scenario.use {
             onView(withId(R.id.centerGPS)).perform(click())
         }

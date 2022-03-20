@@ -6,8 +6,9 @@ import android.os.Bundle
 import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import com.github.blecoeur.bootcamp.news.NewsActivity
-import com.github.blecoeur.bootcamp.profile.ProfileActivity
+import com.github.displace.sdp2022.news.NewsActivity
+import com.github.displace.sdp2022.profile.ProfileActivity
+import displace.sdp2022.R
 
 
 class MainMenuActivity : AppCompatActivity() {
@@ -20,8 +21,9 @@ class MainMenuActivity : AppCompatActivity() {
         //load the username from the application
         val app = applicationContext as MyApplication
         val message = app.getActiveUser().name
-        val welcomeTextView =  findViewById<TextView>(R.id.WelcomeText).apply { text =
-            "Welcome $message!"
+        val welcomeTextView = findViewById<TextView>(R.id.WelcomeText).apply {
+            text =
+                "Welcome $message!"
         }
 
     }
@@ -34,25 +36,25 @@ class MainMenuActivity : AppCompatActivity() {
     }
 
     //send the user to the Profile screen : view stats + edit profile
-    fun profileButton(view: View){
+    fun profileButton(view: View) {
         val intent = Intent(this, ProfileActivity::class.java)
         startActivity(intent)
     }
 
     //send the user to the Settings screen : change the apps settings
-    fun settingsButton(view: View){
+    fun settingsButton(view: View) {
         val intent = Intent(this, SettingsActivity::class.java)
         startActivity(intent)
     }
 
     //send the user to the News screen : view news and updates
-    fun newsButton(view: View){
+    fun newsButton(view: View) {
         val intent = Intent(this, NewsActivity::class.java)
         startActivity(intent)
     }
 
     //send the user to the database demonstration
-    fun databaseDemoButton(view: View){
+    fun databaseDemoButton(view: View) {
         val intent = Intent(this, UploadImageActivity::class.java)
         startActivity(intent)
     }

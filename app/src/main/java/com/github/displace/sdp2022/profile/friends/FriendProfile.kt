@@ -1,20 +1,20 @@
 package com.github.displace.sdp2022.profile.friends
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.github.blecoeur.bootcamp.MyApplication
-import com.github.blecoeur.bootcamp.R
-import com.github.blecoeur.bootcamp.profile.ProfileDbConnection
-import com.github.blecoeur.bootcamp.profile.achievements.AchViewAdapter
-import com.github.blecoeur.bootcamp.profile.history.HistoryViewAdapter
-import com.github.blecoeur.bootcamp.profile.statistics.StatViewAdapter
+import com.github.displace.sdp2022.MyApplication
+import com.github.displace.sdp2022.profile.ProfileDbConnection
+import com.github.displace.sdp2022.profile.achievements.AchViewAdapter
+import com.github.displace.sdp2022.profile.history.HistoryViewAdapter
+import com.github.displace.sdp2022.profile.statistics.StatViewAdapter
+import displace.sdp2022.R
 
 class FriendProfile : AppCompatActivity() {
 
-    private lateinit var dbAccess : ProfileDbConnection
+    private lateinit var dbAccess: ProfileDbConnection
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,19 +30,20 @@ class FriendProfile : AppCompatActivity() {
 
         /* Achievements */
         val achRecyclerView = findViewById<RecyclerView>(R.id.friendRecyclerAch)
-        val achAdapter = AchViewAdapter( applicationContext , dbAccess.getAchList(3,friendId))
+        val achAdapter = AchViewAdapter(applicationContext, dbAccess.getAchList(3, friendId))
         achRecyclerView.adapter = achAdapter
         achRecyclerView.layoutManager = LinearLayoutManager(applicationContext)
 
         /* Statistics */
         val statRecyclerView = findViewById<RecyclerView>(R.id.friendRecyclerStats)
-        val statAdapter = StatViewAdapter( applicationContext , dbAccess.getStatsList(3, friendId))
+        val statAdapter = StatViewAdapter(applicationContext, dbAccess.getStatsList(3, friendId))
         statRecyclerView.adapter = statAdapter
         statRecyclerView.layoutManager = LinearLayoutManager(applicationContext)
 
         /* Games History */
         val historyRecyclerView = findViewById<RecyclerView>(R.id.friendRecyclerHist)
-        val historyAdapter = HistoryViewAdapter( applicationContext , dbAccess.getHistList(3,  friendId) )
+        val historyAdapter =
+            HistoryViewAdapter(applicationContext, dbAccess.getHistList(3, friendId))
         historyRecyclerView.adapter = historyAdapter
         historyRecyclerView.layoutManager = LinearLayoutManager(applicationContext)
 

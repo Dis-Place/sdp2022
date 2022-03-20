@@ -1,27 +1,27 @@
 package com.github.displace.sdp2022.profile
 
-import com.github.blecoeur.bootcamp.profile.achievements.Achievement
-import com.github.blecoeur.bootcamp.profile.friends.Friend
-import com.github.blecoeur.bootcamp.profile.history.History
-import com.github.blecoeur.bootcamp.profile.messages.Message
-import com.github.blecoeur.bootcamp.profile.statistics.Statistic
+import com.github.displace.sdp2022.profile.achievements.Achievement
+import com.github.displace.sdp2022.profile.friends.Friend
+import com.github.displace.sdp2022.profile.history.History
+import com.github.displace.sdp2022.profile.messages.Message
+import com.github.displace.sdp2022.profile.statistics.Statistic
 
 interface ProfileDbConnection {
 
-    fun getAchList(size : Int, id : String) : List<Achievement>
+    fun getAchList(size: Int, id: String): List<Achievement>
 
-    fun getHistList(size : Int, id : String) : List<History>
+    fun getHistList(size: Int, id: String): List<History>
 
-    fun getStatsList(size : Int, id : String) : List<Statistic>
+    fun getStatsList(size: Int, id: String): List<Statistic>
 
-    fun getMsgList(size : Int, id : String) : List<Message>
+    fun getMsgList(size: Int, id: String): List<Message>
 
-    fun getFriendsList(size : Int, id : String) : List<Friend>
-    fun sendInvite(f : Friend)
-    fun sendMessage(msg : String ,id : String)
+    fun getFriendsList(size: Int, id: String): List<Friend>
+    fun sendInvite(f: Friend)
+    fun sendMessage(msg: String, id: String)
 
-    fun getProfileInfo( id : String) : Friend
+    fun getProfileInfo(id: String): Friend
 
-    fun getActiveUser() : Friend
+    fun getActiveUser(): Friend
 
 }

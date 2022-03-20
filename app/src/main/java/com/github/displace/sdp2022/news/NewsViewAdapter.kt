@@ -5,9 +5,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.github.blecoeur.bootcamp.R
+import displace.sdp2022.R
 
-class NewsViewAdapter (val context : Context, private val data : List<News> ) : RecyclerView.Adapter<NewsViewHolder>() {
+class NewsViewAdapter(val context: Context, private val data: List<News>) :
+    RecyclerView.Adapter<NewsViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NewsViewHolder {
         //  TODO("Not yet implemented")

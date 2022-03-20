@@ -5,9 +5,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.github.blecoeur.bootcamp.R
+import displace.sdp2022.R
 
-class StatViewAdapter(val context : Context, private val data : List<Statistic> ) : RecyclerView.Adapter<StatViewHolder>() {
+class StatViewAdapter(val context: Context, private val data: List<Statistic>) :
+    RecyclerView.Adapter<StatViewHolder>() {
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StatViewHolder {

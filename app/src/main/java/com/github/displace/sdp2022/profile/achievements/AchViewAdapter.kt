@@ -5,10 +5,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.github.blecoeur.bootcamp.R
+import displace.sdp2022.R
 
 
-class AchViewAdapter(val context : Context, private val data : List<Achievement> ) : RecyclerView.Adapter<AchViewHolder>() {
+class AchViewAdapter(val context: Context, private val data: List<Achievement>) :
+    RecyclerView.Adapter<AchViewHolder>() {
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AchViewHolder {
@@ -21,14 +22,14 @@ class AchViewAdapter(val context : Context, private val data : List<Achievement>
     }
 
     override fun onBindViewHolder(holder: AchViewHolder, position: Int) {
-    //    TODO("Not yet implemented")
+        //    TODO("Not yet implemented")
         val index = holder.adapterPosition
         holder.name.text = data[index].name
         holder.date.text = data[index].date
     }
 
     override fun getItemCount(): Int {
-     //   TODO("Not yet implemented")
+        //   TODO("Not yet implemented")
         return data.size
     }
 }

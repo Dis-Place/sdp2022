@@ -13,7 +13,7 @@ interface MapViewManager {
     /**
      * @return MapView managed by the MapViewManager
      */
-    fun mapView() : MapView
+    fun mapView(): MapView
 
     /**
      * initializes the mapView (sets initial center & zoom)
@@ -45,6 +45,6 @@ interface MapViewManager {
 
     companion object {
         const val DEFAULT_ZOOM = 16.0
-        val DEFAULT_CENTER =  GeoPoint(46.52048,6.56782)
+        val DEFAULT_CENTER = GeoPoint(46.52048, 6.56782)
     }
 }

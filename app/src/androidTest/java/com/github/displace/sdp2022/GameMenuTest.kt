@@ -7,7 +7,7 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.github.blecoeur.bootcamp.R
+import displace.sdp2022.R
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -22,24 +22,27 @@ class GameMenuTest {
      */
 
     @Test
-    fun testPlayButton(){
+    fun testPlayButton() {
         Espresso.onView(withId(R.id.playVersusButton)).perform(click())
         Espresso.onView(withId(R.id.TryText)).check(matches(withText("neutral")))
     }
+
     @Test
-    fun testWinButton(){
+    fun testWinButton() {
         Espresso.onView(withId(R.id.playVersusButton)).perform(click())
         Espresso.onView(withId(R.id.triButtonWin)).perform(click())
         Espresso.onView(withId(R.id.TryText)).check(matches(withText("win")))
     }
+
     @Test
-    fun testFailButton(){
+    fun testFailButton() {
         Espresso.onView(withId(R.id.playVersusButton)).perform(click())
         Espresso.onView(withId(R.id.triButtonFail)).perform(click())
         Espresso.onView(withId(R.id.TryText)).check(matches(withText("fail")))
     }
+
     @Test
-    fun testEndButton(){
+    fun testEndButton() {
         Espresso.onView(withId(R.id.playVersusButton)).perform(click())
         Espresso.onView(withId(R.id.triButtonFail)).perform(click())
         Espresso.onView(withId(R.id.triButtonFail)).perform(click())
@@ -49,7 +52,7 @@ class GameMenuTest {
     }
 
     @Test
-    fun testQuitButton(){
+    fun testQuitButton() {
         Espresso.onView(withId(R.id.playVersusButton)).perform(click())
         Espresso.onView(withId(R.id.closeButton)).perform(click())
         Espresso.onView(withId(R.id.playVersusButton)).perform(click())

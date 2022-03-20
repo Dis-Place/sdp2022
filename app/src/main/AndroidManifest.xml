@@ -1,100 +1,100 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.github.blecoeur.bootcamp">
+    package="displace.sdp2022">
 
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
-        android:name=".MyApplication"
+        android:name="com.github.displace.sdp2022.MyApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Bootcamp">
+        android:theme="@style/Theme.Displace">
         <activity
-            android:name=".UploadImageActivity"
+            android:name="com.github.displace.sdp2022.UploadImageActivity"
             android:exported="false" />
         <activity
-            android:name=".profile.friends.FriendProfile"
+            android:name="com.github.displace.sdp2022.profile.friends.FriendProfile"
             android:exported="false" />
         <activity
-            android:name=".profile.messages.SendMessageActivity"
+            android:name="com.github.displace.sdp2022.profile.messages.SendMessageActivity"
             android:exported="false"
-            android:parentActivityName=".profile.ProfileActivity"/>
+            android:parentActivityName="com.github.displace.sdp2022.profile.ProfileActivity" />
         <activity
-            android:name=".profile.settings.AccountSettingsActivity"
-            android:exported="false" >
+            android:name="com.github.displace.sdp2022.profile.settings.AccountSettingsActivity"
+            android:exported="false">
             <!-- The meta-data tag is required if you support API level 15 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
+                android:value="com.github.displace.sdp2022.MainActivity" />
         </activity>
         <activity
-            android:name=".profile.ProfileActivity"
+            android:name="com.github.displace.sdp2022.profile.ProfileActivity"
             android:exported="false" />
         <activity
             android:name="com.github.displace.sdp2022.DemoMapActivity"
             android:exported="false" />
         <activity
-            android:name=".news.NewsActivity"
+            android:name="com.github.displace.sdp2022.news.NewsActivity"
             android:exported="false"
-            android:parentActivityName=".MainMenuActivity">
+            android:parentActivityName="com.github.displace.sdp2022.MainMenuActivity">
 
             <!-- The meta-data tag is required if you support API level 15 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
+                android:value="com.github.displace.sdp2022.MainActivity" />
         </activity>
         <activity
-            android:name=".SettingsActivity"
+            android:name="com.github.displace.sdp2022.SettingsActivity"
             android:exported="false"
-            android:parentActivityName=".MainMenuActivity">
+            android:parentActivityName="com.github.displace.sdp2022.MainMenuActivity">
 
             <!-- The meta-data tag is required if you support API level 15 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
+                android:value="com.github.displace.sdp2022.MainActivity" />
         </activity>
         <activity
-            android:name=".PlayActivity"
+            android:name="com.github.displace.sdp2022.PlayActivity"
             android:exported="false"
-            android:parentActivityName=".MainMenuActivity">
+            android:parentActivityName="com.github.displace.sdp2022.MainMenuActivity">
 
             <!-- The meta-data tag is required if you support API level 15 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
+                android:value="com.github.displace.sdp2022.MainActivity" />
         </activity>
         <activity
-            android:name=".MainMenuActivity"
+            android:name="com.github.displace.sdp2022.MainMenuActivity"
             android:exported="false"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName="com.github.displace.sdp2022.MainActivity">
 
             <!-- The meta-data tag is required if you support API level 15 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
+                android:value="com.github.displace.sdp2022.MainActivity" />
         </activity>
         <activity
             android:name="com.github.displace.sdp2022.GameListActivity"
             android:exported="false"
-            android:parentActivityName=".MainMenuActivity">
+            android:parentActivityName="com.github.displace.sdp2022.MainMenuActivity">
 
             <!-- The meta-data tag is required if you support API level 15 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainMenuActivity" />
+                android:value="com.github.displace.sdp2022.MainMenuActivity" />
         </activity>
         <activity
-            android:name=".GameVersusViewActivity"
+            android:name="com.github.displace.sdp2022.GameVersusViewActivity"
             android:exported="false"
             android:parentActivityName="com.github.displace.sdp2022.GameListActivity">
 
@@ -104,7 +104,7 @@
                 android:value="com.github.displace.sdp2022.GameListActivity" />
         </activity>
         <activity
-            android:name=".MainActivity"
+            android:name="com.github.displace.sdp2022.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -6,8 +6,8 @@ import androidx.test.espresso.assertion.ViewAssertions
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.github.blecoeur.bootcamp.MainActivity
-import com.github.blecoeur.bootcamp.R
+import com.github.displace.sdp2022.MainActivity
+import displace.sdp2022.R
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -19,7 +19,7 @@ class NewsActivityTest {
     val testRule = ActivityScenarioRule(MainActivity::class.java)
 
     @Test
-    fun startToNewsTest(){
+    fun startToNewsTest() {
         Espresso.onView(ViewMatchers.withId(R.id.mainGoButton)).perform(ViewActions.click())
         Espresso.onView(ViewMatchers.withId(R.id.newsButton)).perform(ViewActions.click())
         Espresso.onView(ViewMatchers.withId(R.id.textView)).check(

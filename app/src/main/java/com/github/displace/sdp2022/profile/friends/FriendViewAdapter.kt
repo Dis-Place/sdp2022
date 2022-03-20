@@ -5,10 +5,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.github.blecoeur.bootcamp.R
-import com.github.blecoeur.bootcamp.profile.ProfileDbConnection
+import com.github.displace.sdp2022.profile.ProfileDbConnection
+import displace.sdp2022.R
 
-class FriendViewAdapter(val context : Context, private val data : List<Friend>, private val dbAdapter : ProfileDbConnection): RecyclerView.Adapter<FriendViewHolder>() {
+class FriendViewAdapter(
+    val context: Context,
+    private val data: List<Friend>,
+    private val dbAdapter: ProfileDbConnection
+) : RecyclerView.Adapter<FriendViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FriendViewHolder {
         val parentContext = parent.context

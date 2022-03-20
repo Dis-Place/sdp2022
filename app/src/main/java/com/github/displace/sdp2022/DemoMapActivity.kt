@@ -9,6 +9,7 @@ import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
 import com.github.displace.sdp2022.util.PreferencesUtil
 import com.github.displace.sdp2022.util.gps.GPSPositionManager
+import displace.sdp2022.R
 
 
 class DemoMapActivity : AppCompatActivity() {
@@ -27,8 +28,8 @@ class DemoMapActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         PreferencesUtil.initOsmdroidPref(this)
 
-        setContentView(com.github.blecoeur.bootcamp.R.layout.activity_demo_map)
-        mapView = findViewById<MapView>(com.github.blecoeur.bootcamp.R.id.map)
+        setContentView(R.layout.activity_demo_map)
+        mapView = findViewById<MapView>(R.id.map)
         mapViewManager = MarkerPlacerMapViewManager(mapView)
         mapViewManager.initMapView()
         gpsPositionManager = GPSPositionManager(this)

@@ -1,4 +1,4 @@
-package com.github.blecoeur.bootcamp.accountSettings
+package com.github.displace.sdp2022.accountSettings
 
 import android.app.Activity
 import android.app.Instrumentation
@@ -19,9 +19,12 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.GrantPermissionRule
-import com.github.blecoeur.bootcamp.R
-import com.github.blecoeur.bootcamp.profile.settings.AccountSettingsActivity
-import org.junit.*
+import com.github.displace.sdp2022.profile.settings.AccountSettingsActivity
+import displace.sdp2022.R
+import org.junit.After
+import org.junit.Before
+import org.junit.Rule
+import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
@@ -117,7 +120,12 @@ class AccountSettingsActivityLoggedInTest {
         // needs a Toast.maketext check
     }
 
-    @get:Rule val permissionRule = GrantPermissionRule.grant(android.Manifest.permission.CAMERA, android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+    @get:Rule
+    val permissionRule = GrantPermissionRule.grant(
+        android.Manifest.permission.CAMERA,
+        android.Manifest.permission.WRITE_EXTERNAL_STORAGE
+    )
+
     @Test
     fun pictureUpdatesCorrectlyFromGallery() {
         val resultData = Intent()

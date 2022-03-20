@@ -7,8 +7,9 @@ import android.os.Bundle
 import android.view.View
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
-import com.github.blecoeur.bootcamp.profile.MockDB
-import com.github.blecoeur.bootcamp.profile.friends.Friend
+import com.github.displace.sdp2022.profile.MockDB
+import com.github.displace.sdp2022.profile.friends.Friend
+import displace.sdp2022.R
 
 
 class MainActivity : AppCompatActivity() {

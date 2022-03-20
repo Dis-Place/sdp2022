@@ -7,8 +7,7 @@ import androidx.test.espresso.assertion.ViewAssertions
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.github.blecoeur.bootcamp.MainActivity
-import com.github.blecoeur.bootcamp.R
+import displace.sdp2022.R
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -26,7 +25,7 @@ class MainActivityTest {
     //the communication between the activities is done through the preferences, Intents are no longer used
     @Test
     fun testingInput() {
-    //    Intents.init()
+        //    Intents.init()
         onView(ViewMatchers.withId(R.id.mainName))
             .perform(ViewActions.replaceText("baptou gaming")).perform(
                 ViewActions.closeSoftKeyboard()
@@ -39,9 +38,9 @@ class MainActivityTest {
             )
         )
 
-    //    intended(IntentMatchers.hasExtra(EXTRA_MESSAGE, "baptou gaming"))
+        //    intended(IntentMatchers.hasExtra(EXTRA_MESSAGE, "baptou gaming"))
 
-    //    Intents.release()
+        //    Intents.release()
     }
 
     @Test

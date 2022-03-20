@@ -2,19 +2,19 @@ package com.github.displace.sdp2022.profile.messages
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.EditText
 import android.widget.TextView
-import com.github.blecoeur.bootcamp.MyApplication
-import com.github.blecoeur.bootcamp.R
-import com.github.blecoeur.bootcamp.profile.ProfileActivity
+import androidx.appcompat.app.AppCompatActivity
+import com.github.displace.sdp2022.MyApplication
+import com.github.displace.sdp2022.profile.ProfileActivity
+import displace.sdp2022.R
 
 class SendMessageActivity : AppCompatActivity() {
 
-    private lateinit var receiverId : String
-    private lateinit var receiverName : String
+    private lateinit var receiverId: String
+    private lateinit var receiverName: String
 
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -27,15 +27,15 @@ class SendMessageActivity : AppCompatActivity() {
 
     }
 
-    fun sendMessage(view : View){
-        val message : String = findViewById<EditText>(R.id.messageToSend).text.toString()
+    fun sendMessage(view: View) {
+        val message: String = findViewById<EditText>(R.id.messageToSend).text.toString()
 
         val app = applicationContext as MyApplication
         val dbAccess = app.getProfileDb()
 
-        dbAccess.sendMessage(message,receiverId)
+        dbAccess.sendMessage(message, receiverId)
 
-        val intent = Intent(this,ProfileActivity::class.java)
+        val intent = Intent(this, ProfileActivity::class.java)
         startActivity(intent)
 
 

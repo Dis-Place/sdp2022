@@ -4,7 +4,7 @@ import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
 
-class MarkerManager(private val mapView : MapView){
+class MarkerManager(private val mapView: MapView) {
 
     fun putMarker(pos: GeoPoint) {
         val marker = Marker(mapView)

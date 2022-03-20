@@ -5,11 +5,11 @@ import android.view.View
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.github.blecoeur.bootcamp.R
-import com.github.blecoeur.bootcamp.profile.ProfileDbConnection
-import com.github.blecoeur.bootcamp.profile.messages.SendMessageActivity
+import com.github.displace.sdp2022.profile.ProfileDbConnection
+import com.github.displace.sdp2022.profile.messages.SendMessageActivity
+import displace.sdp2022.R
 
-class FriendViewHolder(itemview : View) : RecyclerView.ViewHolder(itemview) {
+class FriendViewHolder(itemview: View) : RecyclerView.ViewHolder(itemview) {
 
     val friendNameView: TextView = itemView.findViewById(R.id.friendName)
     private val messageButton: ImageButton = itemView.findViewById(R.id.messageButton)

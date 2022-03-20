@@ -5,9 +5,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.github.blecoeur.bootcamp.R
+import displace.sdp2022.R
 
-class HistoryViewAdapter(val context : Context, private val data : List<History>): RecyclerView.Adapter<HistoryViewHolder>() {
+class HistoryViewAdapter(val context: Context, private val data: List<History>) :
+    RecyclerView.Adapter<HistoryViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HistoryViewHolder {
         val parentContext = parent.context

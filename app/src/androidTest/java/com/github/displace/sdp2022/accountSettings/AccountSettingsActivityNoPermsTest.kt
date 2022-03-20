@@ -1,4 +1,4 @@
-package com.github.blecoeur.bootcamp.accountSettings
+package com.github.displace.sdp2022.accountSettings
 
 import android.content.Intent
 import androidx.test.core.app.ActivityScenario
@@ -7,8 +7,8 @@ import androidx.test.espresso.Espresso
 import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.github.blecoeur.bootcamp.R
-import com.github.blecoeur.bootcamp.profile.settings.AccountSettingsActivity
+import com.github.displace.sdp2022.profile.settings.AccountSettingsActivity
+import displace.sdp2022.R
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -17,7 +17,8 @@ class AccountSettingsActivityNoPermsTest {
 
     @Test
     fun pictureDoesntUpdateWithoutCameraPermissions() {
-        val intent = Intent(ApplicationProvider.getApplicationContext(), AccountSettingsActivity::class.java)
+        val intent =
+            Intent(ApplicationProvider.getApplicationContext(), AccountSettingsActivity::class.java)
         val scenario: ActivityScenario<AccountSettingsActivity> = ActivityScenario.launch(intent)
 
         scenario.use {
@@ -31,7 +32,8 @@ class AccountSettingsActivityNoPermsTest {
 
     @Test
     fun pictureDoesntUpdateWithoutStoragePermissions() {
-        val intent = Intent(ApplicationProvider.getApplicationContext(), AccountSettingsActivity::class.java)
+        val intent =
+            Intent(ApplicationProvider.getApplicationContext(), AccountSettingsActivity::class.java)
         val scenario: ActivityScenario<AccountSettingsActivity> = ActivityScenario.launch(intent)
 
         scenario.use {

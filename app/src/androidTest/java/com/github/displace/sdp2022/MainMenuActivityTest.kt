@@ -1,4 +1,4 @@
-package com.github.blecoeur.bootcamp
+package com.github.displace.sdp2022
 
 import android.content.Intent
 import androidx.test.core.app.ActivityScenario
@@ -10,8 +10,9 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.github.blecoeur.bootcamp.profile.MockDB
-import com.github.blecoeur.bootcamp.profile.friends.Friend
+import com.github.displace.sdp2022.profile.MockDB
+import com.github.displace.sdp2022.profile.friends.Friend
+import displace.sdp2022.R
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -27,33 +28,36 @@ class MainMenuActivityTest {
     @Test
     fun testingInput() {
 
-        val app = ApplicationProvider.getApplicationContext()  as MyApplication
-        app.setDb( MockDB() )
-        app.setActiveUser(Friend("Baptou","0"))
+        val app = ApplicationProvider.getApplicationContext() as MyApplication
+        app.setDb(MockDB())
+        app.setActiveUser(Friend("Baptou", "0"))
 
-        val intent = Intent(ApplicationProvider.getApplicationContext(), MainMenuActivity::class.java)
+        val intent =
+            Intent(ApplicationProvider.getApplicationContext(), MainMenuActivity::class.java)
         val scenario = ActivityScenario.launch<MainMenuActivity>(intent)
 
-        scenario.use { scenario ->
+        scenario.use { _ ->
             Espresso.onView(withId(R.id.WelcomeText))
                 .check(matches(withText("Welcome Baptou!")))
         }
     }
-    
+
     @Test
-    fun testProfileButton(){
+    fun testProfileButton() {
         Espresso.onView(withId(R.id.mainGoButton)).perform(click())
         Espresso.onView(withId(R.id.profileButton)).perform(click())
         Espresso.onView(withId(R.id.profileUsername)).check(matches(withText("Name")))
     }
+
     @Test
-    fun testSettingsButton(){
+    fun testSettingsButton() {
         Espresso.onView(withId(R.id.mainGoButton)).perform(click())
         Espresso.onView(withId(R.id.settingsButton)).perform(click())
         Espresso.onView(withId(R.id.textView4)).check(matches(withText("SETTINGS")))
     }
+
     @Test
-    fun testNewsButton(){
+    fun testNewsButton() {
         Espresso.onView(withId(R.id.mainGoButton)).perform(click())
         Espresso.onView(withId(R.id.newsButton)).perform(click())
         Espresso.onView(withId(R.id.textView)).check(matches(withText("NEWS")))
