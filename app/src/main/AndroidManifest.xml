@@ -41,7 +41,7 @@
             android:name=".profile.ProfileActivity"
             android:exported="false" />
         <activity
-            android:name=".DemoMapActivity"
+            android:name="com.github.displace.sdp2022.DemoMapActivity"
             android:exported="false" />
         <activity
             android:name=".news.NewsActivity"
@@ -84,7 +84,7 @@
                 android:value=".MainActivity" />
         </activity>
         <activity
-            android:name=".GameListActivity"
+            android:name="com.github.displace.sdp2022.GameListActivity"
             android:exported="false"
             android:parentActivityName=".MainMenuActivity">
 
@@ -96,12 +96,12 @@
         <activity
             android:name=".GameVersusViewActivity"
             android:exported="false"
-            android:parentActivityName=".GameListActivity">
+            android:parentActivityName="com.github.displace.sdp2022.GameListActivity">
 
             <!-- The meta-data tag is required if you support API level 15 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".GameListActivity" />
+                android:value="com.github.displace.sdp2022.GameListActivity" />
         </activity>
         <activity
             android:name=".MainActivity"
