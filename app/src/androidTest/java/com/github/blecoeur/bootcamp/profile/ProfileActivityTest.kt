@@ -93,20 +93,20 @@ class ProfileActivityTest {
         }
     }
 
-//    @Test
-//    fun testSettingsButton(){
-//        val app = ApplicationProvider.getApplicationContext()  as MyApplication
-//        app.setDb( MockDB() )
-//        app.setActiveUser(Friend("Baptou","0"))
-//
-//        val intent = Intent(ApplicationProvider.getApplicationContext(), ProfileActivity::class.java)
-//        val scenario = ActivityScenario.launch<ProfileActivity>(intent)
-//
-//        scenario.use { scenario ->
-//            Espresso.onView(ViewMatchers.withId(R.id.profileSettingsButton)).perform(click())
-//            Espresso.onView(ViewMatchers.withId(R.id.editProfile)).check(ViewAssertions.matches(isDisplayed()))
-//        }
-//    }
+    @Test
+    fun testSettingsButton(){
+        val app = ApplicationProvider.getApplicationContext()  as MyApplication
+        app.setDb( MockDB() )
+        app.setActiveUser(Friend("Baptou","0"))
+
+        val intent = Intent(ApplicationProvider.getApplicationContext(), ProfileActivity::class.java)
+        val scenario = ActivityScenario.launch<ProfileActivity>(intent)
+
+        scenario.use { scenario ->
+            Espresso.onView(ViewMatchers.withId(R.id.profileSettingsButton)).perform(click())
+            Espresso.onView(ViewMatchers.withId(R.id.editProfile)).check(ViewAssertions.matches(isDisplayed()))
+        }
+    }
 
     @Test
     fun testMessageInInboxButton() {
