@@ -8,7 +8,6 @@ import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
-import com.github.displace.sdp2022.R
 import java.io.IOException
 
 class UploadImageActivity : AppCompatActivity() {
@@ -20,12 +19,13 @@ class UploadImageActivity : AppCompatActivity() {
         db = ImageDatabase().instantiate("gs://displace-dd51e.appspot.com/") as ImageDatabase
     }
 
+    @Suppress("UNUSED_PARAMETER")
     fun imageUpload(view: View) {
         val imageView = findViewById<ImageView>(R.id.imageUpload)
         try {
             val bitmap = (imageView.drawable as BitmapDrawable).bitmap
             db.insert(String(), imageView.drawable.toString(), bitmap)
-        }catch (e: IOException){
+        } catch (e: IOException) {
             val alertDialogBuilder: AlertDialog.Builder = AlertDialog.Builder(imageView.context)
             with(alertDialogBuilder) {
                 setTitle("Error uploading the image")
@@ -41,6 +41,7 @@ class UploadImageActivity : AppCompatActivity() {
     }
 
 
+    @Suppress("UNUSED_PARAMETER")
     fun openGallery(view: View) {
         Log.i("debug", "trying to open the gallery")
         val intent = Intent(Intent.ACTION_PICK)

@@ -9,13 +9,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.github.displace.sdp2022.MyApplication
+import com.github.displace.sdp2022.R
 import com.github.displace.sdp2022.profile.achievements.AchViewAdapter
 import com.github.displace.sdp2022.profile.friends.FriendViewAdapter
 import com.github.displace.sdp2022.profile.history.HistoryViewAdapter
 import com.github.displace.sdp2022.profile.messages.MsgViewAdapter
 import com.github.displace.sdp2022.profile.settings.AccountSettingsActivity
 import com.github.displace.sdp2022.profile.statistics.StatViewAdapter
-import com.github.displace.sdp2022.R
 
 
 class ProfileActivity : AppCompatActivity() {
@@ -85,22 +85,26 @@ class ProfileActivity : AppCompatActivity() {
         findViewById<ScrollView>(R.id.FriendsScroll).visibility = View.GONE
     }
 
+    @Suppress("UNUSED_PARAMETER")
     fun profileButton(view: View) {
         activityStart()
     }
 
+    @Suppress("UNUSED_PARAMETER")
     fun inboxButton(view: View) {
         findViewById<ScrollView>(R.id.ProfileScroll).visibility = View.GONE
         findViewById<ScrollView>(R.id.InboxScroll).visibility = View.VISIBLE
         findViewById<ScrollView>(R.id.FriendsScroll).visibility = View.GONE
     }
 
+    @Suppress("UNUSED_PARAMETER")
     fun friendsButton(view: View) {
         findViewById<ScrollView>(R.id.ProfileScroll).visibility = View.GONE
         findViewById<ScrollView>(R.id.InboxScroll).visibility = View.GONE
         findViewById<ScrollView>(R.id.FriendsScroll).visibility = View.VISIBLE
     }
 
+    @Suppress("UNUSED_PARAMETER")
     fun settingsButton(view: View) {
         val intent = Intent(this, AccountSettingsActivity::class.java)
         startActivity(intent)

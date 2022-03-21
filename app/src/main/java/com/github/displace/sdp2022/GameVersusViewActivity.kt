@@ -9,7 +9,6 @@ import androidx.preference.PreferenceManager
 import com.github.displace.sdp2022.gameComponents.GameEvent
 import com.github.displace.sdp2022.gameComponents.Point
 import com.github.displace.sdp2022.gameVersus.GameVersusViewModel
-import com.github.displace.sdp2022.R
 import org.osmdroid.config.Configuration.getInstance
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
@@ -70,13 +69,13 @@ class GameVersusViewActivity : AppCompatActivity() {
     fun triButtonFail(view: View) {
         val res = game.handleEvent(GameEvent.OnPointSelected(3, Point(13.0, 14.0)))
         if (res == 1) {
-            val tryTextView = findViewById<TextView>(R.id.TryText).apply {
+            findViewById<TextView>(R.id.TryText).apply {
                 text =
                     "fail"
             }
         } else {
             if (res == 2) {
-                val tryTextView = findViewById<TextView>(R.id.TryText).apply {
+                findViewById<TextView>(R.id.TryText).apply {
                     text =
                         "end of game"
                 }
@@ -89,7 +88,7 @@ class GameVersusViewActivity : AppCompatActivity() {
     fun triButtonWin(view: View) {
         val res = game.handleEvent(GameEvent.OnPointSelected(3, Point(3.0, 5.0)))
         if (res == 0) {
-            val tryTextView = findViewById<TextView>(R.id.TryText).apply {
+            findViewById<TextView>(R.id.TryText).apply {
                 text =
                     "win"
             }

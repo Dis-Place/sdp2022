@@ -26,6 +26,7 @@ class GameVersusViewModel {
             println("vers server : " + server)
         }
 
+        @Suppress("UNUSED_PARAMETER")
         fun GetData(uid: Int): GameVersus {
             println("got the data")
             return GameVersus(goal, listOf(3.0, 2.0, 1.0), 0, 3, 0.1)

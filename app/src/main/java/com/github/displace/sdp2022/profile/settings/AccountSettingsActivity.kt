@@ -221,6 +221,7 @@ class AccountSettingsActivity : AppCompatActivity() {
         startActivityForResult(galleryIntent, IMAGE_GALLERY_REQUEST)
     }
 
+    @Suppress("DEPRECATION")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == IMAGE_CAMERA_REQUEST) {

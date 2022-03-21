@@ -5,9 +5,9 @@ import android.view.View
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.github.displace.sdp2022.R
 import com.github.displace.sdp2022.profile.ProfileDbConnection
 import com.github.displace.sdp2022.profile.messages.SendMessageActivity
-import com.github.displace.sdp2022.R
 
 class FriendViewHolder(itemview: View) : RecyclerView.ViewHolder(itemview) {
 
@@ -27,7 +27,7 @@ class FriendViewHolder(itemview: View) : RecyclerView.ViewHolder(itemview) {
             v.context.startActivity(intent)
         }
 
-        inviteButton.setOnClickListener { v -> dbAdapter.sendInvite(friend) }
+        inviteButton.setOnClickListener { dbAdapter.sendInvite(friend) }
 
         itemview.setOnClickListener { v ->
             val intent = Intent(v.context, FriendProfile::class.java).apply {
