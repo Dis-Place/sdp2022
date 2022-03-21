@@ -12,7 +12,7 @@ class AchViewHolder(itemview: View) : RecyclerView.ViewHolder(itemview) {
     val date: TextView = itemview.findViewById(R.id.achDate)
 
     init {
-        itemview.setOnClickListener { v ->
+        itemview.setOnClickListener {
             Log.d("test", "username is : pipo")
         }
         //is on the view : can be used for buttons in the view

@@ -20,7 +20,7 @@ class MainMenuActivity : AppCompatActivity() {
         //load the username from the application
         val app = applicationContext as MyApplication
         val message = app.getActiveUser().name
-        val welcomeTextView = findViewById<TextView>(R.id.WelcomeText).apply {
+        findViewById<TextView>(R.id.WelcomeText).apply {
             text =
                 "Welcome $message!"
         }

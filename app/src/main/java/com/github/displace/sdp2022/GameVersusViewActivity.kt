@@ -49,7 +49,7 @@ class GameVersusViewActivity : AppCompatActivity() {
             )
         ) //add a pop up with goal and photo info
 
-        val tryTextView = findViewById<TextView>(R.id.TryText).apply {
+        findViewById<TextView>(R.id.TryText).apply {
             text =
                 "neutral"
         }

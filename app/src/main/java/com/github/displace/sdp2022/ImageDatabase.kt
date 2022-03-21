@@ -49,6 +49,8 @@ class ImageDatabase : Database {
         return getOnLocalFile(reference, key)
     }
 
+
+    @Suppress("UNUSED_PARAMETER")
     fun getOnMemory(reference: String, key: String): Any {
         val uploadTask = getChild(reference).getBytes(TWENTY_MEGA_BYTE)
 

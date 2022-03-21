@@ -15,12 +15,12 @@ import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import com.github.displace.sdp2022.R
 import com.google.firebase.auth.*
 import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.google.firebase.database.*
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
-import com.github.displace.sdp2022.R
 
 class AccountSettingsActivity : AppCompatActivity() {
 
@@ -195,6 +195,7 @@ class AccountSettingsActivity : AppCompatActivity() {
         )
     }
 
+    @Suppress("DEPRECATION")
     private fun selectPicFromCamera() {
         val contentValues = ContentValues()
         contentValues.put(MediaStore.Images.Media.TITLE, "Temp_pic")
@@ -215,6 +216,7 @@ class AccountSettingsActivity : AppCompatActivity() {
         storagePermissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
     }
 
+    @Suppress("DEPRECATION")
     private fun selectPicFromGallery() {
         val galleryIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
         galleryIntent.type = "image/*"
