@@ -4,13 +4,13 @@ import android.app.Application
 import com.github.displace.sdp2022.news.NewsDbConnection
 import com.github.displace.sdp2022.profile.MockDB
 import com.github.displace.sdp2022.profile.ProfileDbConnection
-import com.github.displace.sdp2022.profile.friends.Friend as Friend1
+import com.github.displace.sdp2022.profile.friends.Friend
 
 class MyApplication : Application() {
 
     //the database
     private lateinit var db: MockDB
-    private lateinit var activeUser: Friend1
+    private lateinit var activeUser: Friend
 
     fun setDb(db: MockDB) {
         this.db = db
@@ -24,11 +24,11 @@ class MyApplication : Application() {
         return db
     }
 
-    fun setActiveUser(user: Friend1) {
+    fun setActiveUser(user: Friend) {
         activeUser = user
     }
 
-    fun getActiveUser(): Friend1 {
+    fun getActiveUser(): Friend {
         return activeUser
     }
 

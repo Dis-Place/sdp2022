@@ -6,7 +6,7 @@ dependencyResolutionManagement {
         jcenter() // Warning: this repository is going to shut down soon
     }
 }
-rootProject.name = "Displace"
+rootProject.name = "Bootcamp"
 include ':app'
 
 ext.isCiServer = System.getenv().containsKey("CIRRUS_CI")

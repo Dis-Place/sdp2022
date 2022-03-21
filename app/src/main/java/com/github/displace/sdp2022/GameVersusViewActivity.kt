@@ -6,10 +6,10 @@ import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.PreferenceManager
+import com.github.displace.sdp2022.gameComponents.GameEvent
+import com.github.displace.sdp2022.gameComponents.Point
 import com.github.displace.sdp2022.gameVersus.GameVersusViewModel
-import displace.sdp2022.R
-import gameComponents.GameEvent
-import gameComponents.Point
+import com.github.displace.sdp2022.R
 import org.osmdroid.config.Configuration.getInstance
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
@@ -58,6 +58,7 @@ class GameVersusViewActivity : AppCompatActivity() {
 
 
     //close the screen
+    @Suppress("UNUSED_PARAMETER")
     fun closeButton(view: View) {
         game.handleEvent(GameEvent.OnSurrend(3))
         val intent = Intent(this, com.github.displace.sdp2022.GameListActivity::class.java)
@@ -65,6 +66,7 @@ class GameVersusViewActivity : AppCompatActivity() {
     }
 
     //close the screen
+    @Suppress("UNUSED_PARAMETER")
     fun triButtonFail(view: View) {
         val res = game.handleEvent(GameEvent.OnPointSelected(3, Point(13.0, 14.0)))
         if (res == 1) {
@@ -83,6 +85,7 @@ class GameVersusViewActivity : AppCompatActivity() {
     }
 
     //close the screen
+    @Suppress("UNUSED_PARAMETER")
     fun triButtonWin(view: View) {
         val res = game.handleEvent(GameEvent.OnPointSelected(3, Point(3.0, 5.0)))
         if (res == 0) {

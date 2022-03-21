@@ -5,4 +5,6 @@ object Constants {
     const val MIN_LONGITUDE = -180.0
     const val MAX_LATITUDE = 90.0
     const val MIN_LATITUDE = -90.0
+    const val TWENTY_MEGA_BYTE: Long = 20 * 1024 * 1024
+
 }

@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.github.displace.sdp2022.profile.ProfileDbConnection
-import displace.sdp2022.R
+import com.github.displace.sdp2022.R
 
 class MsgViewAdapter(
     val context: Context,

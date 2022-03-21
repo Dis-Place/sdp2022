@@ -9,7 +9,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.profile.ProfileActivity
-import displace.sdp2022.R
+import com.github.displace.sdp2022.R
 
 class SendMessageActivity : AppCompatActivity() {
 
@@ -27,6 +27,8 @@ class SendMessageActivity : AppCompatActivity() {
 
     }
 
+
+    @Suppress("UNUSED_PARAMETER")
     fun sendMessage(view: View) {
         val message: String = findViewById<EditText>(R.id.messageToSend).text.toString()
 

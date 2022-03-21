@@ -10,7 +10,7 @@ import com.github.displace.sdp2022.profile.ProfileDbConnection
 import com.github.displace.sdp2022.profile.achievements.AchViewAdapter
 import com.github.displace.sdp2022.profile.history.HistoryViewAdapter
 import com.github.displace.sdp2022.profile.statistics.StatViewAdapter
-import displace.sdp2022.R
+import com.github.displace.sdp2022.R
 
 class FriendProfile : AppCompatActivity() {
 

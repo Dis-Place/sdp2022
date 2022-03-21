@@ -5,7 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.github.displace.sdp2022.MyApplication
-import displace.sdp2022.R
+import com.github.displace.sdp2022.R
 
 class NewsActivity : AppCompatActivity() {
 

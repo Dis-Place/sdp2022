@@ -1,6 +1,7 @@
 package com.github.displace.sdp2022
 
 import android.graphics.Bitmap
+import com.github.displace.sdp2022.util.math.Constants.TWENTY_MEGA_BYTE
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
@@ -9,7 +10,7 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException
 
-class ImageDatabase : com.github.displace.sdp2022.Database {
+class ImageDatabase : Database {
     private lateinit var storage: FirebaseStorage
     private lateinit var imageRef: StorageReference
 
@@ -49,7 +50,6 @@ class ImageDatabase : com.github.displace.sdp2022.Database {
     }
 
     fun getOnMemory(reference: String, key: String): Any {
-        val TWENTY_MEGA_BYTE: Long = 20 * 1024 * 1024
         val uploadTask = getChild(reference).getBytes(TWENTY_MEGA_BYTE)
 
         return uploadTask.result as Any

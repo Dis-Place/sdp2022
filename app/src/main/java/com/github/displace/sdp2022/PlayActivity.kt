@@ -2,7 +2,7 @@ package com.github.displace.sdp2022
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import displace.sdp2022.R
+import com.github.displace.sdp2022.R
 
 class PlayActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

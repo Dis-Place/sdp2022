@@ -20,7 +20,7 @@ import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.google.firebase.database.*
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
-import displace.sdp2022.R
+import com.github.displace.sdp2022.R
 
 class AccountSettingsActivity : AppCompatActivity() {
 
@@ -357,8 +357,8 @@ class AccountSettingsActivity : AppCompatActivity() {
 
                     databaseReference?.child(firebaseUser!!.uid)
                         ?.updateChildren(map as Map<String, Any>)?.addOnFailureListener {
-                        showToastText("Unable to update name")
-                    }
+                            showToastText("Unable to update name")
+                        }
                 }
 
                 username.text = name

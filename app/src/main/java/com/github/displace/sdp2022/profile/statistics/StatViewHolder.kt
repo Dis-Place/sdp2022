@@ -3,7 +3,7 @@ package com.github.displace.sdp2022.profile.statistics
 import android.view.View
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import displace.sdp2022.R
+import com.github.displace.sdp2022.R
 
 class StatViewHolder(itemview: View) : RecyclerView.ViewHolder(itemview) {
 

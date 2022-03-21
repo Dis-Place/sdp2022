@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import displace.sdp2022.R
+import com.github.displace.sdp2022.R
 
 class NewsViewAdapter(val context: Context, private val data: List<News>) :
     RecyclerView.Adapter<NewsViewHolder>() {

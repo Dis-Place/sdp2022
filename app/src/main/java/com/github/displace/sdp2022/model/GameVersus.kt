@@ -1,6 +1,6 @@
 package com.github.displace.sdp2022.model
 
-import gameComponents.Coordinate
+import com.github.displace.sdp2022.gameComponents.Coordinate
 
 //com.github.displace.sdp2022.model of a gameversus
 

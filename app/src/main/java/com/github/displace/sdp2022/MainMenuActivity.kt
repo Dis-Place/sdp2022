@@ -8,7 +8,6 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.github.displace.sdp2022.news.NewsActivity
 import com.github.displace.sdp2022.profile.ProfileActivity
-import displace.sdp2022.R
 
 
 class MainMenuActivity : AppCompatActivity() {
@@ -30,30 +29,35 @@ class MainMenuActivity : AppCompatActivity() {
 
 
     //send the user to the Play screen : start a match
+    @Suppress("UNUSED_PARAMETER")
     fun playButton(view: View) {
-        val intent = Intent(this, com.github.displace.sdp2022.GameListActivity::class.java)
+        val intent = Intent(this, GameListActivity::class.java)
         startActivity(intent)
     }
 
     //send the user to the Profile screen : view stats + edit profile
+    @Suppress("UNUSED_PARAMETER")
     fun profileButton(view: View) {
         val intent = Intent(this, ProfileActivity::class.java)
         startActivity(intent)
     }
 
     //send the user to the Settings screen : change the apps settings
+    @Suppress("UNUSED_PARAMETER")
     fun settingsButton(view: View) {
         val intent = Intent(this, SettingsActivity::class.java)
         startActivity(intent)
     }
 
     //send the user to the News screen : view news and updates
+    @Suppress("UNUSED_PARAMETER")
     fun newsButton(view: View) {
         val intent = Intent(this, NewsActivity::class.java)
         startActivity(intent)
     }
 
     //send the user to the database demonstration
+    @Suppress("UNUSED_PARAMETER")
     fun databaseDemoButton(view: View) {
         val intent = Intent(this, UploadImageActivity::class.java)
         startActivity(intent)

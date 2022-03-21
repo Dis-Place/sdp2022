@@ -9,7 +9,7 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.GrantPermissionRule
-import displace.sdp2022.R
+import com.github.displace.sdp2022.R
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -19,7 +19,7 @@ class DemoMapActivityTest {
 
 
     @get:Rule
-    val testRule = ActivityScenarioRule(com.github.displace.sdp2022.DemoMapActivity::class.java)
+    val testRule = ActivityScenarioRule(DemoMapActivity::class.java)
 
     @get:Rule
     val permissionRule = GrantPermissionRule.grant(

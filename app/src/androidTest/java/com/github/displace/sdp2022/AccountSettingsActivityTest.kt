@@ -1,4 +1,4 @@
-package com.github.displace.sdp2022
+package com.github.blecoeur.bootcamp
 
 import android.content.Intent
 import androidx.test.core.app.ActivityScenario
@@ -11,7 +11,7 @@ import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.GrantPermissionRule
 import com.github.displace.sdp2022.profile.settings.AccountSettingsActivity
-import displace.sdp2022.R
+import com.github.displace.sdp2022.R
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith

@@ -8,7 +8,7 @@ import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
-import displace.sdp2022.R
+import com.github.displace.sdp2022.R
 import java.io.IOException
 
 class UploadImageActivity : AppCompatActivity() {
@@ -17,7 +17,7 @@ class UploadImageActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_upload_image)
-        db = ImageDatabase().instantiate("gs://displac-dd51e.appspot.com/") as ImageDatabase
+        db = ImageDatabase().instantiate("gs://displace-dd51e.appspot.com/") as ImageDatabase
     }
 
     fun imageUpload(view: View) {
@@ -25,7 +25,7 @@ class UploadImageActivity : AppCompatActivity() {
         try {
             val bitmap = (imageView.drawable as BitmapDrawable).bitmap
             db.insert(String(), imageView.drawable.toString(), bitmap)
-        } catch (e: IOException) {
+        }catch (e: IOException){
             val alertDialogBuilder: AlertDialog.Builder = AlertDialog.Builder(imageView.context)
             with(alertDialogBuilder) {
                 setTitle("Error uploading the image")

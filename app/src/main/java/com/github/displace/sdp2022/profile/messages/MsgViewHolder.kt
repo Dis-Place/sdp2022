@@ -7,7 +7,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.github.displace.sdp2022.profile.ProfileDbConnection
 import com.github.displace.sdp2022.profile.friends.Friend
-import displace.sdp2022.R
+import com.github.displace.sdp2022.R
 
 class MsgViewHolder(itemview: View) : RecyclerView.ViewHolder(itemview) {
 

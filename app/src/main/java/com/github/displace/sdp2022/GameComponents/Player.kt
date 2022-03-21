@@ -1,4 +1,4 @@
-package gameComponents
+package com.github.displace.sdp2022.gameComponents
 
 import android.util.Pair
 

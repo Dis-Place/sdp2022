@@ -20,7 +20,7 @@ import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.GrantPermissionRule
 import com.github.displace.sdp2022.profile.settings.AccountSettingsActivity
-import displace.sdp2022.R
+import com.github.displace.sdp2022.R
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -121,7 +121,7 @@ class AccountSettingsActivityLoggedInTest {
     }
 
     @get:Rule
-    val permissionRule = GrantPermissionRule.grant(
+    val permissionRule: GrantPermissionRule = GrantPermissionRule.grant(
         android.Manifest.permission.CAMERA,
         android.Manifest.permission.WRITE_EXTERNAL_STORAGE
     )

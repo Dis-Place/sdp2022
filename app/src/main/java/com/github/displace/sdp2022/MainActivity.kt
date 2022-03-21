@@ -9,7 +9,7 @@ import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import com.github.displace.sdp2022.profile.MockDB
 import com.github.displace.sdp2022.profile.friends.Friend
-import displace.sdp2022.R
+import com.github.displace.sdp2022.R
 
 
 class MainActivity : AppCompatActivity() {
@@ -23,6 +23,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
     }
 
+    @Suppress("UNUSED_PARAMETER")
     fun startAppUse(view: View) {
 
         //set application data : start DB connection
@@ -40,9 +41,10 @@ class MainActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
+    @Suppress("UNUSED_PARAMETER")
     fun openMap(view: View) {
         val intent =
-            Intent(this, com.github.displace.sdp2022.DemoMapActivity::class.java).apply { }
+            Intent(this, DemoMapActivity::class.java).apply { }
         startActivity(intent)
     }
 
