@@ -20,6 +20,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Bootcamp">
         <activity
+            android:name=".GameSummaryActivity"
+            android:exported="false" />
+        <activity
             android:name=".UploadImageActivity"
             android:exported="false" />
         <activity
@@ -41,7 +44,7 @@
             android:name=".profile.ProfileActivity"
             android:exported="false" />
         <activity
-            android:name="com.github.displace.sdp2022.DemoMapActivity"
+            android:name=".DemoMapActivity"
             android:exported="false" />
         <activity
             android:name=".news.NewsActivity"
@@ -84,7 +87,7 @@
                 android:value=".MainActivity" />
         </activity>
         <activity
-            android:name="com.github.displace.sdp2022.GameListActivity"
+            android:name=".GameListActivity"
             android:exported="false"
             android:parentActivityName=".MainMenuActivity">
 
