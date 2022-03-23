@@ -1,4 +1,4 @@
-package com.github.blecoeur.bootcamp.accountSettings
+package com.github.displace.sdp2022.accountSettings
 
 import android.app.Activity
 import android.app.Instrumentation
@@ -20,8 +20,8 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.GrantPermissionRule
-import com.github.displace.sdp2022.profile.settings.AccountSettingsActivity
 import com.github.displace.sdp2022.R
+import com.github.displace.sdp2022.profile.settings.AccountSettingsActivity
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith

@@ -7,7 +7,7 @@ import com.google.firebase.database.FirebaseDatabase
 /**
  * Implementation of the database
  */
-class RealTimeDatabase : com.github.displace.sdp2022.Database {
+class RealTimeDatabase : Database {
 
     private lateinit var db: FirebaseDatabase
 
@@ -19,7 +19,7 @@ class RealTimeDatabase : com.github.displace.sdp2022.Database {
         return db.getReference(reference).child(key)
     }
 
-    override fun instantiate(url: String): com.github.displace.sdp2022.Database {
+    override fun instantiate(url: String): Database {
         //get the instance of the database
         db = FirebaseDatabase.getInstance(url)
 

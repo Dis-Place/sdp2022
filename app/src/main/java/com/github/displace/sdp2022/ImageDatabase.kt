@@ -18,7 +18,7 @@ class ImageDatabase : Database {
         return imageRef.child(key)
     }
 
-    override fun instantiate(url: String): com.github.displace.sdp2022.Database {
+    override fun instantiate(url: String): Database {
         storage = Firebase.storage(url)
         imageRef = storage.reference.child("images")
         return this
