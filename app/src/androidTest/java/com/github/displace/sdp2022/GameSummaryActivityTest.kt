@@ -106,6 +106,7 @@ class GameSummaryActivityTest {
             onView(withId(R.id.gameListButton)).perform(click())
             intended(IntentMatchers.hasComponent(GameListActivity::class.java.name))
         }
+
         Intents.release()
     }
 

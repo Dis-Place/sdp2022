@@ -10,7 +10,7 @@ import android.provider.MediaStore
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions
-import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers
@@ -47,12 +47,12 @@ class AccountSettingsActivityLoggedInTest {
     fun passwordIsUpdated() {
         onView(withId(R.id.passwordUpdate)).perform(click())
         onView(withId(R.id.oldPasswordLog)).perform(
-            ViewActions.replaceText("password"),
-            ViewActions.closeSoftKeyboard()
+            replaceText("password"),
+            closeSoftKeyboard()
         )
         onView(withId(R.id.newPasswordLog)).perform(
-            ViewActions.replaceText("wordpass"),
-            ViewActions.closeSoftKeyboard()
+            replaceText("wordpass"),
+            closeSoftKeyboard()
         )
         onView(withId(R.id.passwordUpdateButton)).perform(click())
         Thread.sleep(2000)
@@ -60,12 +60,12 @@ class AccountSettingsActivityLoggedInTest {
 
         onView(withId(R.id.passwordUpdate)).perform(click())
         onView(withId(R.id.oldPasswordLog)).perform(
-            ViewActions.replaceText("wordpass"),
-            ViewActions.closeSoftKeyboard()
+            replaceText("wordpass"),
+            closeSoftKeyboard()
         )
         onView(withId(R.id.newPasswordLog)).perform(
-            ViewActions.replaceText("password"),
-            ViewActions.closeSoftKeyboard()
+            replaceText("password"),
+            closeSoftKeyboard()
         )
         onView(withId(R.id.passwordUpdateButton)).perform(click())
     }
@@ -74,12 +74,12 @@ class AccountSettingsActivityLoggedInTest {
     fun passwordNotUpdatedIfOldPasswordIncorrect() {
         onView(withId(R.id.passwordUpdate)).perform(click())
         onView(withId(R.id.oldPasswordLog)).perform(
-            ViewActions.replaceText("pass"),
-            ViewActions.closeSoftKeyboard()
+            replaceText("pass"),
+            closeSoftKeyboard()
         )
         onView(withId(R.id.newPasswordLog)).perform(
-            ViewActions.replaceText("word"),
-            ViewActions.closeSoftKeyboard()
+            replaceText("word"),
+            closeSoftKeyboard()
         )
         onView(withId(R.id.passwordUpdateButton)).perform(click())
         onView(withId(R.id.actualPassword)).check(ViewAssertions.matches(ViewMatchers.withText("password")))
@@ -92,12 +92,12 @@ class AccountSettingsActivityLoggedInTest {
     fun passwordNotUpdateIfOldPasswordEmpty() {
         onView(withId(R.id.passwordUpdate)).perform(click())
         onView(withId(R.id.oldPasswordLog)).perform(
-            ViewActions.replaceText(""),
-            ViewActions.closeSoftKeyboard()
+            replaceText(""),
+            closeSoftKeyboard()
         )
         onView(withId(R.id.newPasswordLog)).perform(
-            ViewActions.replaceText("word"),
-            ViewActions.closeSoftKeyboard()
+            replaceText("word"),
+            closeSoftKeyboard()
         )
         onView(withId(R.id.passwordUpdateButton)).perform(click())
         onView(withId(R.id.actualPassword)).check(ViewAssertions.matches(ViewMatchers.withText("password")))
@@ -108,12 +108,12 @@ class AccountSettingsActivityLoggedInTest {
     fun passwordNotUpdateIfNewPasswordEmpty() {
         onView(withId(R.id.passwordUpdate)).perform(click())
         onView(withId(R.id.oldPasswordLog)).perform(
-            ViewActions.replaceText("password"),
-            ViewActions.closeSoftKeyboard()
+            replaceText("password"),
+            closeSoftKeyboard()
         )
         onView(withId(R.id.newPasswordLog)).perform(
-            ViewActions.replaceText(""),
-            ViewActions.closeSoftKeyboard()
+            replaceText(""),
+            closeSoftKeyboard()
         )
         onView(withId(R.id.passwordUpdateButton)).perform(click())
         onView(withId(R.id.actualPassword)).check(ViewAssertions.matches(ViewMatchers.withText("password")))
@@ -190,15 +190,15 @@ class AccountSettingsActivityLoggedInTest {
     fun usernameChangesCorrectly() {
         onView(withId(R.id.usernameUpdate)).perform(click())
         onView(withId(R.id.updateUsername)).perform(
-            ViewActions.replaceText("newName"),
-            ViewActions.closeSoftKeyboard()
+            replaceText("newName"),
+            closeSoftKeyboard()
         )
         onView(withId(R.id.updateUsernameButton)).perform(click())
         onView(withId(R.id.username)).check(ViewAssertions.matches(ViewMatchers.withText("newName")))
         onView(withId(R.id.usernameUpdate)).perform(click())
         onView(withId(R.id.updateUsername)).perform(
-            ViewActions.replaceText("UsernameTest"),
-            ViewActions.closeSoftKeyboard()
+            replaceText("UsernameTest"),
+            closeSoftKeyboard()
         )
         onView(withId(R.id.updateUsernameButton)).perform(click())
     }
@@ -207,8 +207,8 @@ class AccountSettingsActivityLoggedInTest {
     fun usernameNotUpdateIfEmpty() {
         onView(withId(R.id.usernameUpdate)).perform(click())
         onView(withId(R.id.updateUsername)).perform(
-            ViewActions.replaceText(""),
-            ViewActions.closeSoftKeyboard()
+            replaceText(""),
+            closeSoftKeyboard()
         )
         onView(withId(R.id.updateUsernameButton)).perform(click())
         onView(withId(R.id.username)).check(ViewAssertions.matches(ViewMatchers.withText("UsernameTest")))
