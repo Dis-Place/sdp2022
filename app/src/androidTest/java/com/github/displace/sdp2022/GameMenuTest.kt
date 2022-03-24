@@ -1,6 +1,7 @@
 package com.github.displace.sdp2022
 
 import androidx.test.espresso.Espresso
+import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.intent.Intents
@@ -29,6 +30,7 @@ class GameMenuTest {
         Espresso.onView(withId(R.id.TryText)).check(matches(withText("neutral")))
     }
 
+
     @Test
     fun testWinButton() {
         Intents.init()
@@ -38,10 +40,11 @@ class GameMenuTest {
         Intents.release()
     }
 
+
     @Test
     fun testFailButton() {
         Espresso.onView(withId(R.id.playVersusButton)).perform(click())
-        Espresso.onView(withId(R.id.triButtonFail)).perform(click())
+        Espresso.onView(withId(R.id.map)).perform(ViewActions.longClick())
         Espresso.onView(withId(R.id.TryText)).check(matches(withText("fail")))
     }
 
@@ -49,10 +52,10 @@ class GameMenuTest {
     fun testEndButton() {
         Intents.init()
         Espresso.onView(withId(R.id.playVersusButton)).perform(click())
-        Espresso.onView(withId(R.id.triButtonFail)).perform(click())
-        Espresso.onView(withId(R.id.triButtonFail)).perform(click())
-        Espresso.onView(withId(R.id.triButtonFail)).perform(click())
-        Espresso.onView(withId(R.id.triButtonFail)).perform(click())
+        Espresso.onView(withId(R.id.map)).perform(ViewActions.longClick())
+        Espresso.onView(withId(R.id.map)).perform(ViewActions.longClick())
+        Espresso.onView(withId(R.id.map)).perform(ViewActions.longClick())
+        Espresso.onView(withId(R.id.map)).perform(ViewActions.longClick())
         Intents.intended(IntentMatchers.hasComponent(GameSummaryActivity::class.java.name))
         Intents.release()
     }

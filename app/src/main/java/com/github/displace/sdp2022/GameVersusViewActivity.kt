@@ -106,6 +106,18 @@ class GameVersusViewActivity : AppCompatActivity() {
         }
     }
 
+    @Suppress("UNUSED_PARAMETER")
+    fun winButton(view: View) {
+        val res = game.handleEvent(GameEvent.OnPointSelected(Point(46.52048, 6.56782)))
+        if(res == 0) {
+            extras.putBoolean(EXTRA_RESULT, true)
+            extras.putInt(EXTRA_SCORE_P1, 1)
+            extras.putInt(EXTRA_SCORE_P2, 0)
+            statsList.add("18:43")      // Example Time
+            showGameSummaryActivity()
+        }
+    }
+
     fun showGameSummaryActivity() {
         val intent = Intent(this, GameSummaryActivity::class.java)
         extras.putStringArrayList(EXTRA_STATS, statsList)
