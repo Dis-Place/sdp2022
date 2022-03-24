@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import com.github.displace.sdp2022.matchMaking.MatchMakingActivity
 
 
 class GameListActivity : AppCompatActivity() {
@@ -17,7 +18,7 @@ class GameListActivity : AppCompatActivity() {
     //send the user to the Play screen : start a match
     @Suppress("UNUSED_PARAMETER")
     fun playButton(view: View) {
-        val intent = Intent(this, GameVersusViewActivity::class.java)
+        val intent = Intent(this, MatchMakingActivity::class.java)
         startActivity(intent)
     }
 }
