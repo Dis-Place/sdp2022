@@ -1,6 +1,7 @@
 package com.github.displace.sdp2022
 
 import com.google.android.gms.tasks.Task
+import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 
@@ -9,7 +10,8 @@ import com.google.firebase.database.FirebaseDatabase
  */
 class RealTimeDatabase : Database {
 
-    private lateinit var db: FirebaseDatabase
+     private lateinit var db: FirebaseDatabase
+
 
     private fun firebaseSetValue(reference: String, key: String, obj: Any): Task<Void> {
         return getRefAndChild(reference, key).setValue(obj)
@@ -44,6 +46,25 @@ class RealTimeDatabase : Database {
     override fun get(reference: String, key: String): Any? {
         return getRefAndChild(reference, key).get().result.getValue(Any::class.java)
     }
+
+    fun referenceGet(reference: String, key: String): Task<DataSnapshot> {
+        return getRefAndChild(reference, key).get()
+    }
+
+    fun noCacheInstantiate(url: String): Database {
+        //get the instance of the database
+        db = FirebaseDatabase.getInstance(url)
+        return this
+    }
+
+    fun getDbReference(path : String = "") : DatabaseReference  {
+        return if(path == ""){
+            db.reference
+        }else{
+            db.getReference(path)
+        }
+    }
+
 
 
 }
