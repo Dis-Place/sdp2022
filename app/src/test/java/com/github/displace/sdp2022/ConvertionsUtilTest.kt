@@ -12,11 +12,11 @@ import java.lang.IllegalArgumentException
 class ConvertionsUtilTest {
     private val DELTA = 1e-4
 
-    private class DummyCoordinates(override val pos: Pair<Double, Double>) : Coordinates
+    private class DummyCoordinates(override val pos: android.util.Pair<Double, Double>) : Coordinates
 
     @Test
     fun geoPointIsCorrectOnValidCoordinates(){
-        val coordinates = DummyCoordinates(Pair(1.8,3.0))
+        val coordinates = DummyCoordinates(android.util.Pair(1.8,3.0))
         val geoPoint = CoordinatesConversionUtil.geoPoint(coordinates)
         assertEquals(coordinates.pos.first,geoPoint.latitude,DELTA)
         assertEquals(coordinates.pos.second,geoPoint.longitude,DELTA)
@@ -24,11 +24,11 @@ class ConvertionsUtilTest {
 
     @Test
     fun geoPointThrowIllegalArgumentExceptionOnInvalidCoordinates(){
-        var coordinates = DummyCoordinates(Pair(Constants.MAX_LATITUDE + 1,3.0))
+        var coordinates = DummyCoordinates(android.util.Pair(Constants.MAX_LATITUDE + 1,3.0))
         assertThrows(IllegalArgumentException::class.java) {
             CoordinatesConversionUtil.geoPoint(coordinates)
         }
-        coordinates = DummyCoordinates(Pair(Constants.MAX_LATITUDE,Constants.MAX_LONGITUDE+1))
+        coordinates = DummyCoordinates(android.util.Pair(Constants.MAX_LATITUDE,Constants.MAX_LONGITUDE+1))
         assertThrows(IllegalArgumentException::class.java) {
             CoordinatesConversionUtil.geoPoint(coordinates)
         }
