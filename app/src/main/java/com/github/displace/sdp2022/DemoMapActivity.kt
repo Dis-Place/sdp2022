@@ -80,5 +80,9 @@ class DemoMapActivity : AppCompatActivity() {
         }
     }
 
+    fun mapViewListeners() : List<GeoPointListener>{
+        return mapViewManager.currentOnLongClickListeners()
+    }
+
 
 }
