@@ -6,6 +6,8 @@ import gameComponents.Coordinate
 import gameComponents.Point
 import model.GameVersus
 import com.github.blecoeur.bootcamp.RealTimeDatabase
+import com.google.firebase.database.*
+import java.util.*
 
 class ClientServerLink {
     private val server = RealTimeDatabase().newInstantiate("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/") as RealTimeDatabase
