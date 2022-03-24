@@ -4,15 +4,48 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent">
 
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/centerGPS"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:onClick="centerGPS"
+                    android:text="center" />
+
+                <ToggleButton
+                    android:id="@+id/markersToggleButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:onClick="toggleMarkers"
+                    android:text="ToggleButton"
+                    android:textOff="markers OFF"
+                    android:textOn="markers ON" />
+
+                <ToggleButton
+                    android:id="@+id/toastPosToggleButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:onClick="toggleToastPos"
+                    android:text="ToggleButton"
+                    android:textOff="Position msg OFF"
+                    android:textOn="Position msg ON" />
+
+        </LinearLayout>
+
         <Button
-            android:id="@+id/centerGPS"
+            android:id="@+id/disableAllButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="centerGPS"
-            android:text="center" />
+            android:onClick="disableAllListeners"
+            android:text="disable all" />
 
         <org.osmdroid.views.MapView
             android:id="@+id/map"
             android:layout_width="match_parent"
-            android:layout_height="fill_parent" />
+            android:layout_height="wrap_content" />
 </LinearLayout>

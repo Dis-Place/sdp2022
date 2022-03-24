@@ -25,37 +25,36 @@ class GameMenuTest {
 
     @Test
     fun testPlayButton() {
-      //  Espresso.onView(withId(R.id.playVersusButton)).perform(click())
         Espresso.onView(withId(R.id.TryText)).check(matches(withText("neutral")))
     }
 
     @Test
     fun testWinButton() {
-     //   Espresso.onView(withId(R.id.playVersusButton)).perform(click())
+        Intents.init()
         Espresso.onView(withId(R.id.triButtonWin)).perform(click())
-        Espresso.onView(withId(R.id.TryText)).check(matches(withText("win")))
+        Intents.intended(IntentMatchers.hasComponent(GameSummaryActivity::class.java.name))
+        Intents.release()
     }
 
     @Test
     fun testFailButton() {
-     //   Espresso.onView(withId(R.id.playVersusButton)).perform(click())
         Espresso.onView(withId(R.id.triButtonFail)).perform(click())
         Espresso.onView(withId(R.id.TryText)).check(matches(withText("fail")))
     }
 
     @Test
     fun testEndButton() {
-     //   Espresso.onView(withId(R.id.playVersusButton)).perform(click())
+        Intents.init()
         Espresso.onView(withId(R.id.triButtonFail)).perform(click())
         Espresso.onView(withId(R.id.triButtonFail)).perform(click())
         Espresso.onView(withId(R.id.triButtonFail)).perform(click())
         Espresso.onView(withId(R.id.triButtonFail)).perform(click())
-        Espresso.onView(withId(R.id.TryText)).check(matches(withText("end of game")))
+        Intents.intended(IntentMatchers.hasComponent(GameSummaryActivity::class.java.name))
+        Intents.release()
     }
 
     @Test
     fun testQuitButton() {
-     //   Espresso.onView(withId(R.id.playVersusButton)).perform(click())
         Intents.init()
         Espresso.onView(withId(R.id.closeButton)).perform(click())
         Intents.intended(IntentMatchers.hasComponent(GameListActivity::class.java.name))

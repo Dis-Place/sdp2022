@@ -21,6 +21,12 @@
         <activity
             android:name=".matchMaking.MatchMakingActivity"
             android:exported="false" />
+      <activity
+            android:name=".login.LoginMenuActivity"
+            android:exported="false" />
+        <activity
+            android:name=".GameSummaryActivity"
+            android:exported="false" />
         <activity
             android:name=".UploadImageActivity"
             android:exported="false" />
