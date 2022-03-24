@@ -1,19 +1,27 @@
 package com.github.displace.sdp2022
 
-import android.content.Intent
-import android.os.Bundle
-import android.view.View
-import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
 import com.github.displace.sdp2022.gameComponents.GameEvent
 import com.github.displace.sdp2022.gameComponents.Point
 import com.github.displace.sdp2022.gameVersus.GameVersusViewModel
+import android.content.Intent
+import android.os.Bundle
+import android.view.View
+import org.osmdroid.views.MapView
+import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import com.github.displace.sdp2022.map.MapViewManager
 import com.github.displace.sdp2022.util.PreferencesUtil
 import com.github.displace.sdp2022.util.gps.GPSPositionManager
 import com.github.displace.sdp2022.util.gps.GeoPointListener
 import org.osmdroid.views.MapView
+import org.osmdroid.config.Configuration.*
+import java.util.ArrayList
 
+const val EXTRA_STATS = "com.github.displace.sdp2022.GAMESTAT"
+const val EXTRA_RESULT = "com.github.displace.sdp2022.GAMERESULT"
+const val EXTRA_MODE = "com.github.displace.sdp2022.GAMEMODE"
+const val EXTRA_SCORE_P1 = "com.github.displace.sdp2022.SCOREP1"
+const val EXTRA_SCORE_P2 = "com.github.displace.sdp2022.SCOREP2"
 
 class GameVersusViewActivity : AppCompatActivity() {
 
@@ -24,6 +32,10 @@ class GameVersusViewActivity : AppCompatActivity() {
     private lateinit var gpsPositionManager: GPSPositionManager
     private lateinit var markerListener: GeoPointListener
     private lateinit var tryListener: GeoPointListener
+
+    val statsList: ArrayList<String> = arrayListOf()
+    val extras: Bundle = Bundle()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,6 +54,11 @@ class GameVersusViewActivity : AppCompatActivity() {
                     text =
                             "win"
                 }
+                extras.putBoolean(EXTRA_RESULT, true)
+                extras.putInt(EXTRA_SCORE_P1, 1)
+                extras.putInt(EXTRA_SCORE_P2, 0)
+                statsList.add("18:43")      // Example Time
+                showGameSummaryActivity()
             }else{
                 if(res == 1){ //failed
                     findViewById<TextView>(R.id.TryText).apply {
@@ -54,6 +71,11 @@ class GameVersusViewActivity : AppCompatActivity() {
                             text =
                                     "end of game"
                         }
+                        extras.putBoolean(EXTRA_RESULT, false)
+                        extras.putInt(EXTRA_SCORE_P1, 0)
+                        extras.putInt(EXTRA_SCORE_P2, 1)
+                        statsList.add("15:04")      // Example Time
+                        showGameSummaryActivity()
                     }
                 }
             }
@@ -80,6 +102,14 @@ class GameVersusViewActivity : AppCompatActivity() {
             val intent = Intent(this, GameListActivity::class.java)
             startActivity(intent)
         }
+    }
+
+    fun showGameSummaryActivity() {
+        val intent = Intent(this, GameSummaryActivity::class.java)
+        extras.putStringArrayList(EXTRA_STATS, statsList)
+        extras.putString(EXTRA_MODE, "Versus")
+        intent.putExtras(extras)
+        startActivity(intent)
     }
 
 }
