@@ -26,10 +26,10 @@ class ClientServerLink {
     fun GetData(uid : Int) {
         var x = 0.0
         var y = 0.0
-        server.get("GameInstance/GameFor" + uid + "/goal","x").addOnSuccessListener { ls ->
+        server.get("GameInstance/GameFor" + uid + "/goal","x").addOnSuccessListener { ls:Double ->
             x = ls
         }
-        server.get("GameInstance/GameFor" + uid + "/goal","y").addOnSuccessListener { ls ->
+        server.get("GameInstance/GameFor" + uid + "/goal","y").addOnSuccessListener { ls:Double ->
             y = ls
         }
 
