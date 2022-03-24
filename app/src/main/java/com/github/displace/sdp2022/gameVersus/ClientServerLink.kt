@@ -2,10 +2,10 @@ package com.github.displace.sdp2022.gameVersus
 
 import android.annotation.TargetApi
 import android.os.Build
-import gameComponents.Coordinate
-import gameComponents.Point
-import model.GameVersus
-import com.github.blecoeur.bootcamp.RealTimeDatabase
+import com.github.displace.sdp2022.RealTimeDatabase
+import com.github.displace.sdp2022.gameComponents.Coordinates
+import com.github.displace.sdp2022.gameComponents.Point
+import com.github.displace.sdp2022.model.GameVersus
 import com.google.firebase.database.*
 import java.util.*
 
@@ -14,7 +14,7 @@ class ClientServerLink {
     private var game = GameVersus(Point(0.0,0.0),3,0,3,0.1)
 
     @TargetApi(Build.VERSION_CODES.ECLAIR)
-    fun SendDataToOther(goal: Coordinate, photo: Int, uid: Int) {
+    fun SendDataToOther(goal: Coordinates, photo: Int, uid: Int) {
         server.newGet("GameInstance/GameFor" + uid,"other").addOnSuccessListener { ls:Int ->
             server.update("GameInstance/GameFor" + ls + "/goal","x",goal.pos.first)
             server.update("GameInstance/GameFor" + ls + "/goal","y",goal.pos.second)
@@ -25,17 +25,17 @@ class ClientServerLink {
     fun GetData(uid : Int) {
         var x = 0.0
         var y = 0.0
-        server.newGet("GameInstance/GameFor" + uid + "/goal","x").addOnSuccessListener { ls ->
+        server.newGet("GameInstance/GameFor" + uid + "/goal","x").addOnSuccessListener { ls: Double ->
             x = ls
         }
-        server.newGet("GameInstance/GameFor" + uid + "/goal","y").addOnSuccessListener { ls ->
+        server.newGet("GameInstance/GameFor" + uid + "/goal","y").addOnSuccessListener { ls: Double ->
             y = ls
         }
 
         game = GameVersus(Point(x,y),3,0,3,0.1)
     }
 
-    fun verify(test: Coordinate) : Int{
+    fun verify(test: Coordinates) : Int{
         if(game.verify(test)){
             return 0
         }
