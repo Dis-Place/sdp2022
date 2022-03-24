@@ -41,7 +41,7 @@ class GameVersusViewActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        game.SetGoal(Point(46.52048, 6.56782),3,0)
+        game.handleEvent(GameEvent.SetGoal(Point(46.52048, 6.56782),3,0))
 
         PreferencesUtil.initOsmdroidPref(this)
 
