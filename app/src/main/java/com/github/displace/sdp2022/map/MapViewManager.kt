@@ -1,6 +1,7 @@
 package com.github.displace.sdp2022.map
 
 import com.github.displace.sdp2022.util.gps.GeoPointListener
+import com.github.displace.sdp2022.util.gps.GeoPointListenersManager
 import org.osmdroid.events.MapEventsReceiver
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
@@ -14,13 +15,13 @@ import org.osmdroid.views.overlay.MapEventsOverlay
  * @author LeoLgdr
  */
 class MapViewManager(val mapView: MapView) {
-    private val listeners = mutableListOf<GeoPointListener>()
+    val listenersManager = GeoPointListenersManager()
 
     /**
      * @return current listeners called on long click
      */
     fun currentOnLongClickListeners() : List<GeoPointListener>{
-        return listeners.toList()
+        return listenersManager.current()
     }
 
     /**
@@ -28,7 +29,7 @@ class MapViewManager(val mapView: MapView) {
      * @param listeners added to the listeners
      */
     fun addCallOnLongClick(vararg listeners : GeoPointListener){
-        this.listeners.addAll(listeners)
+        listenersManager.addCall(*listeners)
     }
 
     /**
@@ -36,7 +37,7 @@ class MapViewManager(val mapView: MapView) {
      * @param listeners removed from listeners
      */
     fun removeCallOnLongClick(vararg listeners : GeoPointListener){
-        this.listeners.removeAll(listeners)
+        listenersManager.removeCall(*listeners)
     }
 
     /**
@@ -44,7 +45,7 @@ class MapViewManager(val mapView: MapView) {
      * @param listeners removed from listeners
      */
     fun clearOnLongClickCalls(){
-        listeners.clear()
+        listenersManager.clearAllCalls()
     }
 
     init {
@@ -62,13 +63,7 @@ class MapViewManager(val mapView: MapView) {
             }
 
             override fun longPressHelper(p: GeoPoint?): Boolean {
-                if (p != null) {
-                    for(l in listeners){
-                        //calling all the listeners on long click
-                        l.invoke(p)
-                    }
-                    mapView.invalidate()
-                }
+                listenersManager.invokeAll(p)
                 return false
             }
         }
@@ -88,7 +83,7 @@ class MapViewManager(val mapView: MapView) {
      * @param zoom new zooming factor
      */
     fun zoom(zoom: Double) {
-        mapView.controller.setZoom(DEFAULT_ZOOM)
+        mapView.controller.setZoom(zoom)
     }
 
     companion object {

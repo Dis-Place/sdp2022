@@ -8,15 +8,18 @@ import androidx.appcompat.app.AppCompatActivity
 import com.github.displace.sdp2022.map.MapViewManager
 import com.github.displace.sdp2022.util.PreferencesUtil
 import com.github.displace.sdp2022.util.gps.GPSPositionManager
+import com.github.displace.sdp2022.util.gps.GPSPositionUpdater
 import com.github.displace.sdp2022.util.gps.GeoPointListener
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
+import kotlin.concurrent.timer
 
 
 class DemoMapActivity : AppCompatActivity() {
 
     private lateinit var mapView: MapView
     private lateinit var mapViewManager: MapViewManager
+    private lateinit var gpsPositionUpdater: GPSPositionUpdater
     private lateinit var gpsPositionManager: GPSPositionManager
     private lateinit var markerListener: GeoPointListener
     private lateinit var posToastListener: GeoPointListener
@@ -35,6 +38,13 @@ class DemoMapActivity : AppCompatActivity() {
         markerListener = GeoPointListener.markerPlacer(mapView)
         posToastListener = GeoPointListener { geoPoint -> Toast.makeText(this,String.format("( %.4f ; %.4f )",geoPoint.latitude,geoPoint.longitude),Toast.LENGTH_SHORT).show() }
         gpsPositionManager = GPSPositionManager(this)
+        gpsPositionUpdater = GPSPositionUpdater(this,gpsPositionManager)
+        gpsPositionUpdater.listenersManager.addCall(markerListener)
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        gpsPositionUpdater.stopUpdates()
     }
 
 
