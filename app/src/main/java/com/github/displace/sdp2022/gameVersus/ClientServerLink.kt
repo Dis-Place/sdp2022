@@ -9,23 +9,6 @@ import com.github.displace.sdp2022.model.GameVersus
 import com.google.firebase.database.*
 import java.util.*
 
-import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
-import android.os.Bundle
-import android.util.Log
-import android.view.View
-import com.github.displace.sdp2022.GameListActivity
-import com.github.displace.sdp2022.MainMenuActivity
-import com.github.displace.sdp2022.R
-import com.github.displace.sdp2022.RealTimeDatabase
-import com.github.displace.sdp2022.news.NewsActivity
-import com.google.firebase.database.*
-import com.google.firebase.database.core.ServerValues
-import java.util.*
-import kotlin.collections.ArrayList
-import kotlin.concurrent.scheduleAtFixedRate
-import kotlin.concurrent.timerTask
-
 class ClientServerLink {
     private val server = RealTimeDatabase().newInstantiate("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/") as RealTimeDatabase
     private var game = GameVersus(Point(0.0,0.0),3,0,3,0.1)

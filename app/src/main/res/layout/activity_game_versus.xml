@@ -10,22 +10,6 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-                <Button
-                    android:id="@+id/triButtonFail"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:onClick="triButtonFail"
-                    android:text="Fail" />
-
-                <Button
-                    android:id="@+id/triButtonWin"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:onClick="triButtonWin"
-                    android:text="Win" />
-
                 <TextView
                     android:id="@+id/TryText"
                     android:layout_width="wrap_content"
