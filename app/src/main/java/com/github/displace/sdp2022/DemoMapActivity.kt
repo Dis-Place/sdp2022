@@ -15,8 +15,6 @@ import org.osmdroid.views.MapView
 
 class DemoMapActivity : AppCompatActivity() {
 
-    private val ZOOM = 16.0
-    private val EPFL_POS = GeoPoint(46.52048, 6.56782)
     private lateinit var mapView: MapView
     private lateinit var mapViewManager: MapViewManager
     private lateinit var gpsPositionManager: GPSPositionManager

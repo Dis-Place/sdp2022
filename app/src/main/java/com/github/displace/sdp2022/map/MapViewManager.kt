@@ -9,7 +9,7 @@ import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.MapEventsOverlay
 
 /**
- * class that handles mapViews and provides a lightened API for Activities
+ * class that handles a mapView and provides a lightened API for Activities
  * @param mapView
  * @author LeoLgdr
  */
