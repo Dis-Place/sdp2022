@@ -7,6 +7,15 @@ import com.github.displace.sdp2022.gameComponents.Coordinates
 import com.github.displace.sdp2022.gameComponents.Point
 import com.github.displace.sdp2022.model.GameVersus
 import com.google.firebase.database.*
+import android.content.Intent
+import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
+import android.util.Log
+import android.view.View
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.concurrent.scheduleAtFixedRate
+import kotlin.concurrent.timerTask
 
 
 
