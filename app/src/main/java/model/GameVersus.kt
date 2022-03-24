@@ -5,7 +5,7 @@ import gameComponents.Coordinate
 //model of a gameversus
 
 class GameVersus(val goal : Coordinate,
-                 val Photo : List<Double>,
+                 val Photo : Int,
                  val nbTry : Int,
                  val nbTryMax : Int,
                  val threshold : Double) : Game(goal) {

@@ -43,7 +43,7 @@ class GameVersusViewActivity : AppCompatActivity() {
         //setting zoom
         map.getController().setZoom(ZOOM)
 
-        game.handleEvent(GameEvent.OnStart(goal, listOf(3.0),3)) //add a pop up with goal and photo info
+        game.handleEvent(GameEvent.OnStart(goal, 3,3)) //add a pop up with goal and photo info
 
         val tryTextView =  findViewById<TextView>(R.id.TryText).apply { text =
             "neutral"
@@ -53,14 +53,16 @@ class GameVersusViewActivity : AppCompatActivity() {
 
     //close the screen
     fun closeButton(view: View) {
-        game.handleEvent(GameEvent.OnSurrend(3))
-        val intent = Intent(this, GameListActivity::class.java)
-        startActivity(intent)
+        val res = game.handleEvent(GameEvent.OnSurrend(3))
+        if(res == 3) {
+            val intent = Intent(this, GameListActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     //close the screen
     fun triButtonFail(view: View) {
-        val res = game.handleEvent(GameEvent.OnPointSelected(3,Point(13.0,14.0)))
+        val res = game.handleEvent(GameEvent.OnPointSelected(Point(13.0,14.0)))
         if(res == 1){
             val tryTextView =  findViewById<TextView>(R.id.TryText).apply { text =
                 "fail"
