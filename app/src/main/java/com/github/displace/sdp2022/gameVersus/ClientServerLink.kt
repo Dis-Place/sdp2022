@@ -15,7 +15,7 @@ class ClientServerLink {
 
     @TargetApi(Build.VERSION_CODES.ECLAIR)
     fun SendDataToOther(goal: Coordinates, photo: Int, uid: Int) {
-        val ls = server.get("GameInstance/GameFor" + uid,"other")
+        val ls = server.get("GameInstance/GameFor)","other")
         server.update("GameInstance/GameFor" + ls + "/goal","x",goal.pos.first)
         server.update("GameInstance/GameFor" + ls + "/goal","y",goal.pos.second)
         server.update("GameInstance/GameFor" + ls + "/photo","photo",photo)

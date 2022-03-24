@@ -41,6 +41,7 @@ class GameVersusViewActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        game.SetGoal(Point(46.52048, 6.56782),3,0)
 
         PreferencesUtil.initOsmdroidPref(this)
 
@@ -89,8 +90,6 @@ class GameVersusViewActivity : AppCompatActivity() {
         mapViewManager.addCallOnLongClick(markerListener)
         mapViewManager.addCallOnLongClick(tryListener)
 
-        game.SetGoal(Point(46.52048, 6.56782),3,0)
-
         val tryTextView =  findViewById<TextView>(R.id.TryText).apply { text =
             "neutral"
         }
@@ -99,7 +98,7 @@ class GameVersusViewActivity : AppCompatActivity() {
     //close the screen
     @Suppress("UNUSED_PARAMETER")
     fun closeButton(view: View) {
-        val res = game.handleEvent(GameEvent.OnSurrend(3))
+        val res = game.handleEvent(GameEvent.OnSurrend(0))
         if(res == 3) {
             val intent = Intent(this, GameListActivity::class.java)
             startActivity(intent)
