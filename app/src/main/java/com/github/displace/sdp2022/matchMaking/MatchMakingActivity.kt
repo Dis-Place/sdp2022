@@ -36,7 +36,8 @@ class MatchMakingActivity : AppCompatActivity() {
             val counter = snapshot.value as Long?
             if(counter != null && isLeader){
                 db.referenceGet("MM/$gamemode/$map/$currentLobbyNumber","max_p").addOnSuccessListener { m ->
-                    if(counter >= m.value as Long){
+                    val max = m.value as Long?
+                    if(max != null && counter >=max){
                         //copy lobby info to game instance - after that is finished : update launch
                         db.update("MM/$gamemode/$map/$currentLobbyNumber","launch",true) //set launch for everyone
 
