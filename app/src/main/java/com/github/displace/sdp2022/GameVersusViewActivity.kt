@@ -80,7 +80,7 @@ class GameVersusViewActivity : AppCompatActivity() {
     //close the screen
     @Suppress("UNUSED_PARAMETER")
     fun triButtonWin(view: View) {
-        val res = game.handleEvent(GameEvent.OnPointSelected(3, Point(3.0, 5.0)))
+        val res = game.handleEvent(GameEvent.OnPointSelected(Point(3.0, 5.0)))
         if (res == 0) {
             findViewById<TextView>(R.id.TryText).apply {
                 text =
