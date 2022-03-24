@@ -1,7 +1,7 @@
 package com.github.displace.sdp2022
 
 interface Database {
-    fun instantiate(url: String) : com.github.displace.sdp2022.Database
+    fun instantiate(url: String) : Database
 
     fun update(reference: String, key: String, obj: Any) : Any
 
