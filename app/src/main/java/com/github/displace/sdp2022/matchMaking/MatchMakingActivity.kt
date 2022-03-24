@@ -36,7 +36,7 @@ class MatchMakingActivity : AppCompatActivity() {
             val counter = snapshot.value as Long?
             if(counter != null && isLeader){
                 db.referenceGet("MM/$gamemode/$map/$currentLobbyNumber","max_p").addOnSuccessListener { m ->
-                    if(counter == m.value as Long){
+                    if(counter >= m.value as Long){
                         //copy lobby info to game instance - after that is finished : update launch
                         db.update("MM/$gamemode/$map/$currentLobbyNumber","launch",true) //set launch for everyone
 
@@ -132,7 +132,7 @@ class MatchMakingActivity : AppCompatActivity() {
                     val max = m.value
                     db.referenceGet("MM/$gamemode/$map/$lobby", "launch").addOnSuccessListener { l ->
                         val launch = l.value as Boolean?
-                        if ( launch == null || max == null || launch== true || count as Long == (max as Long)) { //this lobby is full or launching : continue searching
+                        if ( launch == null || max == null || launch== true || count as Long >= (max as Long)) { //this lobby is full or launching : continue searching
                             indexedSearch(idx + 1)    //no need for transaction for this kind of search
                         } else {
                             //use transaction to insert yourself : modify counter AND player list

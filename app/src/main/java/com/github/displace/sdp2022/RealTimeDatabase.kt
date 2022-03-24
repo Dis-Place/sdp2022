@@ -12,6 +12,7 @@ class RealTimeDatabase : Database {
 
      private lateinit var db: FirebaseDatabase
 
+
     private fun firebaseSetValue(reference: String, key: String, obj: Any): Task<Void> {
         return getRefAndChild(reference, key).setValue(obj)
     }
@@ -63,6 +64,7 @@ class RealTimeDatabase : Database {
             db.getReference(path)
         }
     }
+
 
 
 }
