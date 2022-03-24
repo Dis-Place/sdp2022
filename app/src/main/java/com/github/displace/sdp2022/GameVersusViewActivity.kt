@@ -13,9 +13,11 @@ import com.github.displace.sdp2022.map.MapViewManager
 import com.github.displace.sdp2022.util.PreferencesUtil
 import com.github.displace.sdp2022.util.gps.GPSPositionManager
 import com.github.displace.sdp2022.util.gps.GeoPointListener
-import org.osmdroid.views.MapView
 import org.osmdroid.config.Configuration.*
 import java.util.ArrayList
+import android.widget.Toast
+import android.widget.ToggleButton
+import org.osmdroid.util.GeoPoint
 
 const val EXTRA_STATS = "com.github.displace.sdp2022.GAMESTAT"
 const val EXTRA_RESULT = "com.github.displace.sdp2022.GAMERESULT"
