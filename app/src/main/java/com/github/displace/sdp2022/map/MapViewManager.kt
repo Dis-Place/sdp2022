@@ -83,7 +83,7 @@ class MapViewManager(val mapView: MapView) {
      * @param zoom new zooming factor
      */
     fun zoom(zoom: Double) {
-        mapView.controller.setZoom(DEFAULT_ZOOM)
+        mapView.controller.setZoom(zoom)
     }
 
     companion object {
