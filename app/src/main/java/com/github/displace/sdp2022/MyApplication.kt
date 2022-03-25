@@ -12,9 +12,25 @@ class MyApplication : Application() {
     private lateinit var db: MockDB
     private lateinit var activeUser: Friend
 
-    fun setDb(db: MockDB) {
-        this.db = db
+    private lateinit var rTdb : RealTimeDatabase
+    private lateinit var rTdbNoCache : RealTimeDatabase
+
+    fun setDb(db: RealTimeDatabase) {
+        this.rTdb = db
     }
+
+    fun setDbNonCache(db: RealTimeDatabase) {
+        this.rTdbNoCache = db
+    }
+
+    fun getDb() : RealTimeDatabase{
+        return rTdb
+    }
+
+    fun getDbNonCache() : RealTimeDatabase{
+        return rTdbNoCache
+    }
+
 
     fun getProfileDb(): ProfileDbConnection {
         return db
