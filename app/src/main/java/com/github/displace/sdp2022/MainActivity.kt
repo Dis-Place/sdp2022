@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.github.displace.sdp2022.profile.MockDB
 import com.github.displace.sdp2022.profile.friends.Friend
 import com.github.displace.sdp2022.R
+import com.github.displace.sdp2022.authentication.TempLoginActivity
 
 
 class MainActivity : AppCompatActivity() {
@@ -47,5 +48,12 @@ class MainActivity : AppCompatActivity() {
             Intent(this, DemoMapActivity::class.java).apply { }
         startActivity(intent)
     }
+
+    fun toLogin(view: View) {
+        val intent =
+            Intent(this, TempLoginActivity::class.java).apply { }
+        startActivity(intent)
+    }
+
 
 }
