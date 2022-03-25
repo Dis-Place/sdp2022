@@ -8,7 +8,6 @@ import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
-import com.github.blecoeur.bootcamp.R
 import java.io.IOException
 
 class UploadImageActivity : AppCompatActivity() {
