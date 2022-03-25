@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import com.github.blecoeur.bootcamp.R
 import com.github.displace.sdp2022.matchMaking.MatchMakingActivity
 
 

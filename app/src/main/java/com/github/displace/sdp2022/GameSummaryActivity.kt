@@ -9,6 +9,7 @@ import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.ScrollView
 import android.widget.TextView
+import com.github.blecoeur.bootcamp.R
 
 class GameSummaryActivity : AppCompatActivity() {
 
