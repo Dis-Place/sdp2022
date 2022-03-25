@@ -14,7 +14,7 @@ import com.google.firebase.database.*
 class MatchMakingActivity : AppCompatActivity() {
 
     //Database
-    private val db = RealTimeDatabase().noCacheInstantiate("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/") as RealTimeDatabase
+    private val db = RealTimeDatabase().noCacheInstantiate("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",false) as RealTimeDatabase
     private var currentLobbyNumber = "L_-1"
     private val gamemode = "Versus"
     private val map = "Map1"
@@ -189,12 +189,12 @@ class MatchMakingActivity : AppCompatActivity() {
                 if( idx > last as Long){
                     val updates: MutableMap<String, Any> = HashMap()
                     updates["MM/$gamemode/$map/last"] = ServerValue.increment(idx-last)
-                    db.getDbReference().updateChildren(updates)
+                    db.getDbReference("").updateChildren(updates)
                 }
             }else{
                 val updates: MutableMap<String, Any> = HashMap()
                 updates["MM/$gamemode/$map/last"] = ServerValue.increment(idx)
-                db.getDbReference().updateChildren(updates)
+                db.getDbReference("").updateChildren(updates)
             }
 
             db.referenceGet("MM/$gamemode/$map","first").addOnSuccessListener {    first ->
@@ -203,12 +203,12 @@ class MatchMakingActivity : AppCompatActivity() {
                     if( idx < f as Long){
                         val updates: MutableMap<String, Any> = HashMap()
                         updates["MM/$gamemode/$map/last"] = ServerValue.increment(idx-f)
-                        db.getDbReference().updateChildren(updates)
+                        db.getDbReference("").updateChildren(updates)
                     }
                 }else{
                     val updates: MutableMap<String, Any> = HashMap()
                     updates["MM/$gamemode/$map/first"] = ServerValue.increment(idx)
-                    db.getDbReference().updateChildren(updates)
+                    db.getDbReference("").updateChildren(updates)
                 }
             }
 

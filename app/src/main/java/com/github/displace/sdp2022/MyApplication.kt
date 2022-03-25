@@ -15,8 +15,12 @@ class MyApplication : Application() {
     private lateinit var rTdb : RealTimeDatabase
     private lateinit var rTdbNoCache : RealTimeDatabase
 
-    fun setDb(db: RealTimeDatabase) {
+    fun setDbRt(db: RealTimeDatabase) {
         this.rTdb = db
+    }
+
+    fun setDb(db: MockDB) {
+        this.db= db
     }
 
     fun setDbNonCache(db: RealTimeDatabase) {
