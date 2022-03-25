@@ -9,15 +9,16 @@
     <EditText
         android:id="@+id/mainName"
         android:layout_width="253dp"
-        android:layout_height="94dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="482dp"
         android:ems="10"
         android:inputType="textPersonName"
         android:text="Name"
-        app:layout_constraintBottom_toTopOf="@+id/mainGoButton"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.518"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/floatingActionButton"
         app:layout_constraintVertical_bias="0.319" />
 
     <Button
@@ -42,5 +43,19 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/mainName" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/floatingActionButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="63dp"
+        android:layout_marginBottom="36dp"
+        android:clickable="true"
+        android:onClick="toLogin"
+        app:layout_constraintBottom_toTopOf="@+id/mainName"
+        app:layout_constraintEnd_toEndOf="@+id/mainName"
+        app:layout_constraintStart_toEndOf="@+id/mainName"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/common_google_signin_btn_icon_dark_normal" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

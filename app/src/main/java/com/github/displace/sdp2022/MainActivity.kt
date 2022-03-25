@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
@@ -21,6 +22,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        Log.i("TAG","CREATING")
     }
 
     @Suppress("UNUSED_PARAMETER")
@@ -45,6 +47,13 @@ class MainActivity : AppCompatActivity() {
     fun openMap(view: View) {
         val intent =
             Intent(this, DemoMapActivity::class.java).apply { }
+        startActivity(intent)
+    }
+
+    fun toLogin(view: View) {
+
+        val intent =
+        Intent(this, TempLoginActivity::class.java).apply { }
         startActivity(intent)
     }
 
