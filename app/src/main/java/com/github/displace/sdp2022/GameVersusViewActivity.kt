@@ -13,7 +13,12 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import android.content.res.Configuration
 import android.os.Parcelable
+import android.widget.Toast
 import androidx.preference.PreferenceManager
+import com.github.displace.sdp2022.map.MapViewManager
+import com.github.displace.sdp2022.util.gps.GPSPositionManager
+import com.github.displace.sdp2022.util.gps.GPSPositionUpdater
+import com.github.displace.sdp2022.util.gps.GeoPointListener
 import org.osmdroid.config.Configuration.*
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
@@ -36,23 +41,25 @@ class GameVersusViewActivity : AppCompatActivity() {
     private val ZOOM = 16.0
     private val EPFL_POS = GeoPoint(46.52048,6.56782)
 
+    private lateinit var mapView: MapView
+    private lateinit var mapViewManager: MapViewManager
+    private lateinit var gpsPositionUpdater: GPSPositionUpdater
+    private lateinit var gpsPositionManager: GPSPositionManager
+    private lateinit var markerListener: GeoPointListener
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_game_versus)
-        getInstance().load(this, PreferenceManager.getDefaultSharedPreferences(this))
-        val map = findViewById<MapView>(R.id.map)
-        map.getZoomController().setVisibility(CustomZoomButtonsController.Visibility.ALWAYS)
 
-        //to identify our app when downloading the map tiles (ie. pieces of the map)
-        getInstance().setUserAgentValue(this.getPackageName())
+        mapView = findViewById<MapView>(R.id.map)
+        mapViewManager = MapViewManager(mapView)
+        markerListener = GeoPointListener.markerPlacer(mapView)
+        gpsPositionManager = GPSPositionManager(this)
+        gpsPositionUpdater = GPSPositionUpdater(this,gpsPositionManager)
+        gpsPositionUpdater.listenersManager.addCall(markerListener)
 
-        map.controller.setCenter(EPFL_POS)
-        map.setTileSource(TileSourceFactory.DEFAULT_TILE_SOURCE)
-        map.setTilesScaledToDpi(true) //scaling tiles in order to see them well at any zoom scale
-
-        //setting zoom
-        map.getController().setZoom(ZOOM)
+        mapViewManager.addCallOnLongClick(markerListener)
 
         game.handleEvent(GameEvent.OnStart(goal, listOf(3.0),3)) //add a pop up with goal and photo info
 
