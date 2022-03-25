@@ -17,22 +17,21 @@ class ClientServerLink {
 
     @TargetApi(Build.VERSION_CODES.ECLAIR)
     fun SendDataToOther(goal: Coordinates, photo: Int, uid: Int) {
-        server.get("GameInstance/GameFor" + uid,"other").addOnSuccessListener { ls:Any? ->
-            val uio = ls as Double
-            server.update("GameInstance/GameFor" + uio + "/goal","x",goal.pos.first)
-            server.update("GameInstance/GameFor" + uio + "/goal","y",goal.pos.second)
-            server.update("GameInstance/GameFor" + uio + "/photo","photo",photo)
+        server.referenceGet("GameInstance/GameFor" + uid,"other").addOnSuccessListener { ls:Int ->
+            server.update("GameInstance/GameFor" + ls + "/goal","x",goal.pos.first)
+            server.update("GameInstance/GameFor" + ls + "/goal","y",goal.pos.second)
+            server.update("GameInstance/GameFor" + ls + "/photo","photo",photo)
         }
     }
 
     fun GetData(uid : Int) {
         var x = 0.0
         var y = 0.0
-        server.get("GameInstance/GameFor" + uid + "/goal","x").addOnSuccessListener { ls:Any? ->
-            x = ls as Double
+        server.referenceGet("GameInstance/GameFor" + uid + "/goal","x").addOnSuccessListener { ls:Double ->
+            x = ls
         }
-        server.get("GameInstance/GameFor" + uid + "/goal","y").addOnSuccessListener { ls:Any? ->
-            y = ls as Double
+        server.referenceGet("GameInstance/GameFor" + uid + "/goal","y").addOnSuccessListener { ls:Double ->
+            y = ls
         }
 
         game = GameVersus(Point(x,y),3,0,3,0.1)
