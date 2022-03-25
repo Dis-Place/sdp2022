@@ -24,7 +24,7 @@
         <activity
             android:name=".matchMaking.MatchMakingActivity"
             android:exported="false" />
-      <activity
+        <activity
             android:name=".login.LoginMenuActivity"
             android:exported="false" />
         <activity
@@ -126,4 +126,5 @@
         </activity>
     </application>
 
+>>>>>>>  fixed manifest
 </manifest>
