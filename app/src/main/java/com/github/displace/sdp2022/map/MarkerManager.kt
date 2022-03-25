@@ -16,5 +16,6 @@ class MarkerManager(private val mapView: MapView) {
             mapV.invalidate()
             false
         }
+        mapView.invalidate()
     }
 }

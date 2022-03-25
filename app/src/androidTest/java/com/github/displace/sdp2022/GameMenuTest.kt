@@ -18,7 +18,7 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class GameMenuTest {
     @get:Rule
-    val testRule = ActivityScenarioRule(com.github.displace.sdp2022.GameListActivity::class.java)
+    val testRule = ActivityScenarioRule(com.github.displace.sdp2022.GameVersusViewActivity::class.java)
 
     /*
      Test if the input of the main screen is correctly shown in the main menu
@@ -26,7 +26,6 @@ class GameMenuTest {
 
     @Test
     fun testPlayButton() {
-        Espresso.onView(withId(R.id.playVersusButton)).perform(click())
         Espresso.onView(withId(R.id.TryText)).check(matches(withText("neutral")))
     }
 
@@ -34,7 +33,6 @@ class GameMenuTest {
     @Test
     fun testWinButton() {
         Intents.init()
-        Espresso.onView(withId(R.id.playVersusButton)).perform(click())
         Espresso.onView(withId(R.id.triButtonWin)).perform(click())
         Intents.intended(IntentMatchers.hasComponent(GameSummaryActivity::class.java.name))
         Intents.release()
@@ -62,9 +60,9 @@ class GameMenuTest {
 
     @Test
     fun testQuitButton() {
-        Espresso.onView(withId(R.id.playVersusButton)).perform(click())
+        Intents.init()
         Espresso.onView(withId(R.id.closeButton)).perform(click())
-        Espresso.onView(withId(R.id.playVersusButton)).perform(click())
-        Espresso.onView(withId(R.id.TryText)).check(matches(withText("neutral")))
+        Intents.intended(IntentMatchers.hasComponent(GameListActivity::class.java.name))
+        Intents.release()
     }
 }
