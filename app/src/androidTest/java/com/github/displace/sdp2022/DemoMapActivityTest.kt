@@ -48,84 +48,87 @@ class DemoMapActivityTest {
         }
     }
 
-    @Test
-    fun centerButtonDoesNotCrashApp() {
-        testRule.scenario.use {
-            onView(withId(R.id.centerGPS)).perform(click())
-        }
+/*
+@Test
+fun centerButtonDoesNotCrashApp() {
+    testRule.scenario.use {
+        onView(withId(R.id.centerGPS)).perform(click())
     }
+}
 
-    @Test
-    fun listenersIsEmptyOnStart() {
-        val scenario = testRule.scenario
-        scenario.onActivity { activity ->
-            assertEquals(activity.mapViewListeners().size,0)
-        }
-    }
+ */
 
-    @Test
-    fun markersToggleAddsListener() {
-        val scenario = testRule.scenario
-        onView(withId(R.id.markersToggleButton)).perform(click())
-        scenario.onActivity { activity ->
-            assertEquals(activity.mapViewListeners().size,1)
-        }
+@Test
+fun listenersIsEmptyOnStart() {
+    val scenario = testRule.scenario
+    scenario.onActivity { activity ->
+        assertEquals(activity.mapViewListeners().size,0)
     }
+}
 
-    @Test
-    fun toastPosToggleAddsListener() {
-        val scenario = testRule.scenario
-        onView(withId(R.id.toastPosToggleButton)).perform(click())
-        scenario.onActivity { activity ->
-            assertEquals(activity.mapViewListeners().size,1)
-        }
+@Test
+fun markersToggleAddsListener() {
+    val scenario = testRule.scenario
+    onView(withId(R.id.markersToggleButton)).perform(click())
+    scenario.onActivity { activity ->
+        assertEquals(activity.mapViewListeners().size,1)
     }
+}
 
-    @Test
-    fun markersToggleRemovesListener() {
-        val scenario = testRule.scenario
-        onView(withId(R.id.markersToggleButton))
-            .perform(click())
-            .perform(click())
-        scenario.onActivity { activity ->
-            assertEquals(activity.mapViewListeners().size,0)
-        }
+@Test
+fun toastPosToggleAddsListener() {
+    val scenario = testRule.scenario
+    onView(withId(R.id.toastPosToggleButton)).perform(click())
+    scenario.onActivity { activity ->
+        assertEquals(activity.mapViewListeners().size,1)
     }
+}
 
-    @Test
-    fun toastPosToggleRemovesListener() {
-        val scenario = testRule.scenario
-        onView(withId(R.id.toastPosToggleButton))
-            .perform(click())
-            .perform(click())
-        scenario.onActivity { activity ->
-            assertEquals(activity.mapViewListeners().size,0)
-        }
+@Test
+fun markersToggleRemovesListener() {
+    val scenario = testRule.scenario
+    onView(withId(R.id.markersToggleButton))
+        .perform(click())
+        .perform(click())
+    scenario.onActivity { activity ->
+        assertEquals(activity.mapViewListeners().size,0)
     }
+}
 
-    @Test
-    fun disableAllClearsListeners() {
-        val scenario = testRule.scenario
-        onView(withId(R.id.toastPosToggleButton))
-            .perform(click())
-        onView(withId(R.id.markersToggleButton))
-            .perform(click())
-        onView(withId(R.id.disableAllButton))
-            .perform(click())
-        scenario.onActivity { activity ->
-            assertEquals(0,activity.mapViewListeners().size)
-        }
+@Test
+fun toastPosToggleRemovesListener() {
+    val scenario = testRule.scenario
+    onView(withId(R.id.toastPosToggleButton))
+        .perform(click())
+        .perform(click())
+    scenario.onActivity { activity ->
+        assertEquals(activity.mapViewListeners().size,0)
     }
+}
 
-    @Test
-    fun longClickClickWithListenersDoesNotCauseCrash(){
-        testRule.scenario
-        onView(withId(R.id.toastPosToggleButton))
-            .perform(click())
-        onView(withId(R.id.markersToggleButton))
-            .perform(click())
-        onView(withId(R.id.map))
-            .perform(longClick())
-            .perform(click())
+@Test
+fun disableAllClearsListeners() {
+    val scenario = testRule.scenario
+    onView(withId(R.id.toastPosToggleButton))
+        .perform(click())
+    onView(withId(R.id.markersToggleButton))
+        .perform(click())
+    onView(withId(R.id.disableAllButton))
+        .perform(click())
+    scenario.onActivity { activity ->
+        assertEquals(0,activity.mapViewListeners().size)
     }
+}
+
+@Test
+fun longClickClickWithListenersDoesNotCauseCrash(){
+    testRule.scenario
+    onView(withId(R.id.toastPosToggleButton))
+        .perform(click())
+    onView(withId(R.id.markersToggleButton))
+        .perform(click())
+    onView(withId(R.id.map))
+        .perform(longClick())
+        .perform(click())
+}
 }
