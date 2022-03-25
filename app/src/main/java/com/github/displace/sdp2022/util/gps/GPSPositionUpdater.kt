@@ -25,7 +25,6 @@ class GPSPositionUpdater(private val activity: Activity, private val gpsPosition
 
     private fun initTimer() {
         timer = Timer()
-        val timerTask =
         timer.schedule(timerTask, SCHEDULE_DELAY_MILLIS, UPDATE_PERIOD_MILLIS)
     }
 
