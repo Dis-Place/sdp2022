@@ -19,6 +19,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Bootcamp">
         <activity
+            android:name=".TempLoginActivity"
+            android:exported="false" />
+        <activity
             android:name=".matchMaking.MatchMakingActivity"
             android:exported="false" />
       <activity

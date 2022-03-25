@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">Bootcamp</string>
     <string name="button">button</string>
+<!--    <string name="webclient_id">234574558506–16nsvhuf2lv5tjb18fktu65uh9c5nio6.apps.googleusercontent.com</string>-->
+    <string name="webclient_id">234574558506-suoe41h1bshkkc9ir6u167hbnp77jnl3.apps.googleusercontent.com</string>
+    <string name="logout_while_not_logged_in">Cannot log out you\'re not logged in</string>
+
 </resources>
