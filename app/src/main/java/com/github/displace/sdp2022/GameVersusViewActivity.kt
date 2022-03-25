@@ -17,6 +17,7 @@ import org.osmdroid.config.Configuration.*
 import java.util.ArrayList
 import android.widget.Toast
 import android.widget.ToggleButton
+import com.github.blecoeur.bootcamp.R
 import org.osmdroid.util.GeoPoint
 
 const val EXTRA_STATS = "com.github.displace.sdp2022.GAMESTAT"
@@ -90,7 +91,7 @@ class GameVersusViewActivity : AppCompatActivity() {
         mapViewManager.addCallOnLongClick(markerListener)
         mapViewManager.addCallOnLongClick(tryListener)
 
-        val tryTextView =  findViewById<TextView>(R.id.TryText).apply { text =
+        findViewById<TextView>(R.id.TryText).apply { text =
             "neutral"
         }
     }
