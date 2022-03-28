@@ -59,12 +59,14 @@ class TempLoginActivity : AppCompatActivity() {
         }
     }
 
-    private fun googleAuthForFirebase(account : GoogleSignInAccount) {
+        private fun googleAuthForFirebase(account : GoogleSignInAccount) {
         val credentials = GoogleAuthProvider.getCredential(account.idToken, null)
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 auth.signInWithCredential(credentials).await()
                 withContext(Dispatchers.Main){
+                    val current = auth.currentUser
+
                     Toast.makeText(this@TempLoginActivity, "Successfully logged in", Toast.LENGTH_LONG).show()
                     isLoggedIn = true
                 }
