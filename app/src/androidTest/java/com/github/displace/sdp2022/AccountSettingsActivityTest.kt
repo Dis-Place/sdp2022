@@ -18,21 +18,21 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class AccountSettingsActivityTest {
 
-    @Test
-    fun passwordIsUpdated() {
-        val intent = Intent(getApplicationContext(), AccountSettingsActivity::class.java)
-        val scenario: ActivityScenario<AccountSettingsActivity> = ActivityScenario.launch(intent)
-        scenario.use {
-            onView(withId(R.id.passwordUpdate)).perform(click())
-            onView(withId(R.id.oldPasswordLog)).perform(
-                replaceText("password"),
-                closeSoftKeyboard()
-            )
-            onView(withId(R.id.newPasswordLog)).perform(replaceText("pwd"), closeSoftKeyboard())
-            onView(withId(R.id.passwordUpdateButton)).perform(click())
-            onView(withId(R.id.actualPassword)).check(matches(withText("pwd")))
-        }
-    }
+//    @Test
+//    fun passwordIsUpdated() {
+//        val intent = Intent(getApplicationContext(), AccountSettingsActivity::class.java)
+//        val scenario: ActivityScenario<AccountSettingsActivity> = ActivityScenario.launch(intent)
+//        scenario.use {
+//            onView(withId(R.id.passwordUpdate)).perform(click())
+//            onView(withId(R.id.oldPasswordLog)).perform(
+//                replaceText("password"),
+//                closeSoftKeyboard()
+//            )
+//            onView(withId(R.id.newPasswordLog)).perform(replaceText("pwd"), closeSoftKeyboard())
+//            onView(withId(R.id.passwordUpdateButton)).perform(click())
+//            onView(withId(R.id.actualPassword)).check(matches(withText("pwd")))
+//        }
+//    }
 
     @Test
     fun passwordNotUpdatedIfOldPasswordIncorrect() {
