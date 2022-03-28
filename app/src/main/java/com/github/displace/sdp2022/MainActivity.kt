@@ -29,8 +29,6 @@ class MainActivity : AppCompatActivity() {
         //set application data : start DB connection
         val app = applicationContext as MyApplication
         app.setDb(MockDB())
-        app.setDbRt(RealTimeDatabase())
-        app.setDbNonCache(RealTimeDatabase())
 
         val nameText = findViewById<EditText>(R.id.mainName)
         val name = nameText.text.toString()
@@ -38,8 +36,6 @@ class MainActivity : AppCompatActivity() {
         sharedpreferences = getSharedPreferences(myPreferences, Context.MODE_PRIVATE)
 
         app.setActiveUser(Friend(name, "0"))
-        app.getDb().instantiate("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",false)
-        app.getDbNonCache().instantiate("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",false)
 
         val intent = Intent(this, MainMenuActivity::class.java)
         startActivity(intent)

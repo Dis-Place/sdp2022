@@ -58,7 +58,7 @@ class ProfileActivity : AppCompatActivity() {
         val friendAdapter = FriendViewAdapter(
             applicationContext,
             dbAccess.getFriendsList(3, app.getActiveUser().ID),
-            dbAccess
+            dbAccess, false
         )
         friendRecyclerView.adapter = friendAdapter
         friendRecyclerView.layoutManager = LinearLayoutManager(applicationContext)

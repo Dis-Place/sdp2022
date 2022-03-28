@@ -10,9 +10,13 @@ import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.displace.sdp2022.MainActivity
+import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.R
 import com.github.displace.sdp2022.matchMaking.MatchMakingActivity
+import com.github.displace.sdp2022.profile.MockDB
 import com.github.displace.sdp2022.profile.ProfileActivity
+import com.github.displace.sdp2022.profile.friends.Friend
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -21,43 +25,51 @@ import org.junit.runner.RunWith
 class MatchMakingTest {
 
     @get:Rule
-    val testRule = ActivityScenarioRule(MatchMakingActivity::class.java)
+    val testRule = ActivityScenarioRule(MainActivity::class.java)
+/*
+    @Before
+    fun before(){
+        val app = ApplicationProvider.getApplicationContext() as MyApplication
+        app.setDb(MockDB())
+        app.setActiveUser(Friend("Baptou", "0"))
+
+    }*/
 
 
     @Test
-    fun testLobbyCreation(){
-  /*      val intent =
+    fun testPublicLobbyCreation(){
+        val intent =
             Intent(ApplicationProvider.getApplicationContext(), MatchMakingActivity::class.java)
         val scenario = ActivityScenario.launch<MatchMakingActivity>(intent)
 
-        scenario.use {  }*/
+        scenario.use {  }
     }
 
     @Test
-    fun testLobbySearch(){
-     /*   val intent =
+    fun testPublicLobbySearch(){
+        val intent =
             Intent(ApplicationProvider.getApplicationContext(), MatchMakingActivity::class.java)
         val scenario = ActivityScenario.launch<MatchMakingActivity>(intent)
 
-        scenario.use {  }*/
+        scenario.use {  }
     }
 
     @Test
-    fun testSecondLobbyCreation(){
-     /*   val intent =
+    fun testPrivateLobbyCreation(){
+        val intent =
             Intent(ApplicationProvider.getApplicationContext(), MatchMakingActivity::class.java)
         val scenario = ActivityScenario.launch<MatchMakingActivity>(intent)
 
-        scenario.use {  }*/
+        scenario.use {  }
     }
 
     @Test
-    fun testSecondLobbySearch(){
-        /*   val intent =
+    fun testPrivateLobbySearch(){
+           val intent =
                Intent(ApplicationProvider.getApplicationContext(), MatchMakingActivity::class.java)
            val scenario = ActivityScenario.launch<MatchMakingActivity>(intent)
 
-           scenario.use {  }*/
+           scenario.use {  }
     }
 
 }

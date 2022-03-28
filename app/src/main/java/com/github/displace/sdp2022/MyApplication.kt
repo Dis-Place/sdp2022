@@ -12,29 +12,29 @@ class MyApplication : Application() {
     private lateinit var db: MockDB
     private lateinit var activeUser: Friend
 
-    private lateinit var rTdb : RealTimeDatabase
-    private lateinit var rTdbNoCache : RealTimeDatabase
+  //  private lateinit var rTdb : RealTimeDatabase
+   // private lateinit var rTdbNoCache : RealTimeDatabase
 
-    fun setDbRt(db: RealTimeDatabase) {
+  /*  fun setDbRt(db: RealTimeDatabase) {
         this.rTdb = db
-    }
+    }*/
 
     fun setDb(db: MockDB) {
         this.db= db
     }
-
+/*
     fun setDbNonCache(db: RealTimeDatabase) {
         this.rTdbNoCache = db
-    }
+    }*/
 
-    fun getDb() : RealTimeDatabase{
+  /*  fun getDb() : RealTimeDatabase{
         return rTdb
     }
-
-    fun getDbNonCache() : RealTimeDatabase{
+*/
+  /*  fun getDbNonCache() : RealTimeDatabase{
         return rTdbNoCache
     }
-
+*/
 
     fun getProfileDb(): ProfileDbConnection {
         return db

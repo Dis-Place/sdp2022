@@ -11,7 +11,8 @@ import com.github.displace.sdp2022.R
 class FriendViewAdapter(
     val context: Context,
     private val data: List<Friend>,
-    private val dbAdapter: ProfileDbConnection
+    private val dbAdapter: ProfileDbConnection,
+    private val MM : Boolean
 ) : RecyclerView.Adapter<FriendViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FriendViewHolder {
@@ -27,6 +28,11 @@ class FriendViewAdapter(
         holder.friendNameView.text = data[index].name
         holder.friend = data[index]
         holder.dbAdapter = dbAdapter
+        if(MM){
+            holder.messageButton.visibility = View.INVISIBLE
+        }else{
+            holder.inviteButton.visibility = View.INVISIBLE
+        }
     }
 
     override fun getItemCount(): Int {
