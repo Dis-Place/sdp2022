@@ -194,35 +194,39 @@ class MatchMakingActivity : AppCompatActivity() {
     private fun createPublicLobby(id : Long ){
         isLeader = true
         myId = 0
-        val ls : List<Long> = listOf(myId)
         val lobby = "L_$id"
 
 
         db.referenceGet("MM/$gamemode/$map/$lobbyType","last").addOnSuccessListener { lastLobby ->
             val last = lastLobby.value
             val updates: MutableMap<String, Any> = HashMap()
+            var inc : Long = 0
             if(last != null){
                 if( id > last as Long){
-                    updates["MM/$gamemode/$map/$lobbyType/last"] = ServerValue.increment(id-last)
+                    inc = id-last
                 }
             }else{
-                updates["MM/$gamemode/$map/$lobbyType/last"] = ServerValue.increment(id)
+                inc = id
             }
-            db.getDbReference("").updateChildren(updates)
+            updates["MM/$gamemode/$map/$lobbyType/last"] = ServerValue.increment(inc)
+//            db.getDbReference("").updateChildren(updates)
 
             db.referenceGet("MM/$gamemode/$map*$lobbyType","first").addOnSuccessListener {    first ->
                 val f = first.value
                 if(f != null){
                     if( id < f as Long){
-                        val updates: MutableMap<String, Any> = HashMap()
+        //                val updates: MutableMap<String, Any> = HashMap()
                         updates["MM/$gamemode/$map/$lobbyType/last"] = ServerValue.increment(id-f)
-                        db.getDbReference("").updateChildren(updates)
+   //                     db.getDbReference("").updateChildren(updates)
                     }
                 }else{
-                    val updates: MutableMap<String, Any> = HashMap()
+          //          val updates: MutableMap<String, Any> = HashMap()
                     updates["MM/$gamemode/$map/$lobbyType/first"] = ServerValue.increment(id)
-                    db.getDbReference("").updateChildren(updates)
+//                    db.getDbReference("").updateChildren(updates)
                 }
+
+                db.getDbReference("").updateChildren(updates)
+
             }
 
 
