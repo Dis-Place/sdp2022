@@ -225,12 +225,19 @@ class MatchMakingActivity : AppCompatActivity() {
                 }
             }
 
+
+
+            currentLobbyNumber = lobby
+            setupLobby()
+            /*
             db.insert("MM/$gamemode/$map/$lobbyType/$lobby", "p_count", 1)
             db.insert("MM/$gamemode/$map/$lobbyType/$lobby", "max_p", 2)
             db.insert("MM/$gamemode/$map/$lobbyType/$lobby", "p_list", ls)
             db.insert("MM/$gamemode/$map/$lobbyType/$lobby", "launch", false)
             db.insert("MM/$gamemode/$map/$lobbyType/$lobby", "leader", myId)
-            currentLobbyNumber = lobby
+            */
+            //currentLobbyNumber = lobby
+
 
         //    db.getDbReference("MM/$gamemode/$map/$lobbyType/$currentLobbyNumber/p_count").addValueEventListener(counterListener)
         //    db.getDbReference("MM/$gamemode/$map/$lobbyType/$currentLobbyNumber/launch").addValueEventListener(launchListener)
@@ -422,15 +429,18 @@ class MatchMakingActivity : AppCompatActivity() {
                 myId = 0
                 isLeader = true
 
-                val ls : List<Long> = listOf(myId)
+                //val ls : List<Long> = listOf(myId)
 
+                currentLobbyNumber = lobby
+                setupLobby()
+/*
                 db.insert("MM/$gamemode/$map/$lobbyType/$lobby", "p_count", 1)
                 db.insert("MM/$gamemode/$map/$lobbyType/$lobby", "max_p", 2)
                 db.insert("MM/$gamemode/$map/$lobbyType/$lobby", "p_list", ls)
                 db.insert("MM/$gamemode/$map/$lobbyType/$lobby", "launch", false)
                 db.insert("MM/$gamemode/$map/$lobbyType/$lobby", "leader", myId)
-
-                currentLobbyNumber = lobby
+*/
+                //currentLobbyNumber = lobby
 
 //                db.getDbReference("MM/$gamemode/$map/$lobbyType/$currentLobbyNumber/p_count").addValueEventListener(counterListener)
   //              db.getDbReference("MM/$gamemode/$map/$lobbyType/$currentLobbyNumber/launch").addValueEventListener(launchListener)
@@ -477,6 +487,13 @@ class MatchMakingActivity : AppCompatActivity() {
 
     }
 
-
+    private fun setupLobby(){
+        val ls : List<Long> = listOf(myId)
+        db.insert("MM/$gamemode/$map/$lobbyType/$currentLobbyNumber", "p_count", 1)
+        db.insert("MM/$gamemode/$map/$lobbyType/$currentLobbyNumber", "max_p", 2)
+        db.insert("MM/$gamemode/$map/$lobbyType/$currentLobbyNumber", "p_list", ls)
+        db.insert("MM/$gamemode/$map/$lobbyType/$currentLobbyNumber", "launch", false)
+        db.insert("MM/$gamemode/$map/$lobbyType/$currentLobbyNumber", "leader", myId)
+    }
 
 }
