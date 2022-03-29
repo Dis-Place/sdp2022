@@ -149,12 +149,12 @@ class MatchMakingTest {
         scenario.use {
 
             Espresso.onView(ViewMatchers.withId(R.id.lobbyIdInsert))
-                .perform(ViewActions.replaceText("baptouGaming1")).perform(
+                .perform(ViewActions.replaceText("baptouGaming3")).perform(
                     ViewActions.closeSoftKeyboard()
                 )
             Espresso.onView(ViewMatchers.withId(R.id.privateLobbyCreate)).perform(ViewActions.click())
             Thread.sleep(1000)
-            db.delete("MM/Versus/Map1/public","L_baptouGaming1")
+            db.delete("MM/Versus/Map1/public","L_baptouGaming3")
             Espresso.onView(ViewMatchers.withId(R.id.textView14)).check(ViewAssertions.matches(
                 ViewMatchers.isDisplayed()
             ))
