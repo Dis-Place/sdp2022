@@ -30,15 +30,15 @@ class MatchMakingActivity : AppCompatActivity() {
     private val gamemode = "Versus"
     private val map = "Map1"
     private var isLeader = false
-    private var pList : ArrayList<Int> = ArrayList()
-    private var myId : Long = -1
+    private var pList : ArrayList<Int> = ArrayList()    //PARTIAL USER : should be a list of partial users
+    private var myId : Long = -1 //PARTIAL USER : just use the current user Partial User, not the ID
     private var lobbyType : String = "private"
 
 
     private val counterListener = object : ValueEventListener {
         override fun onDataChange(snapshot: DataSnapshot) {
             db.referenceGet("MM/$gamemode/$map/$lobbyType/$currentLobbyNumber","p_list").addOnSuccessListener { ls ->
-                val temp = ls.value as ArrayList<Int>?
+                val temp = ls.value as ArrayList<Int>?  //PARTIAL USER : should be a list of partial users , change the cast
                 if(temp != null) {
                     pList = temp
                     updateUI()
@@ -82,7 +82,7 @@ class MatchMakingActivity : AppCompatActivity() {
 
             db.referenceGet("MM/$gamemode/$map/$lobbyType/$currentLobbyNumber","launch").addOnSuccessListener { l ->
                 val leader = snapshot.value as Long?
-                if(leader != null && leader == myId){
+                if(leader != null && leader == myId){   //PARTIAL USER : use the id of the active partial user
                     isLeader = true
                 }
 
@@ -110,7 +110,7 @@ class MatchMakingActivity : AppCompatActivity() {
         val app = applicationContext as MyApplication
         val dbAccess = app.getProfileDb()
 
-        /* Friends in private lobby */
+        /* Friends in private lobby */  //PARTIAL USER : should be the friends list of the active user
         val friendRecyclerView = findViewById<RecyclerView>(R.id.friendsMMRecycler)
         val friendAdapter = FriendViewAdapter(
             applicationContext,
@@ -155,8 +155,8 @@ class MatchMakingActivity : AppCompatActivity() {
                                             val p = currentData.value as MutableMap<String, Any>?
                                                     ?: return Transaction.success(currentData)
                                             p["p_count"] = p["p_count"] as Long + 1
-                                            val ls = (p["p_list"] as ArrayList<Long>?) ?: return Transaction.success(currentData)
-                                            ls.add(1)
+                                            val ls = (p["p_list"] as ArrayList<Long>?) ?: return Transaction.success(currentData) //PARTIAL USER : should be a list of partial users
+                                            ls.add(1) //PARTIAL USER : should insert the partial user
                                             p["p_list"] = ls
                                             currentData.value = p
                                             return Transaction.success(currentData)
@@ -170,7 +170,7 @@ class MatchMakingActivity : AppCompatActivity() {
 
                                             currentLobbyNumber = lobby
                                             isLeader = false
-                                            myId = 1
+                                            myId = 1    //PARTIAL USER : the id should not change
                                             setupListeners()
                                             uiToSearch()
                                         }
@@ -187,7 +187,7 @@ class MatchMakingActivity : AppCompatActivity() {
 
     private fun createPublicLobby(id : Long ){
         isLeader = true
-        myId = 0
+        myId = 0 //PARTIAL USER : should be the partial user itself
         val lobby = "L_$id"
 
 
@@ -236,7 +236,7 @@ class MatchMakingActivity : AppCompatActivity() {
     private fun updateUI(){
 
         //REPLACE WITH PARTIAL USERS ONCE IT IS IMPLEMENTED
-
+        //PARTIAL USER : should replace getFriendsList with the list of partials users (the players)
         val app = applicationContext as MyApplication
         val dbAccess = app.getProfileDb()
         val friendRecyclerView = findViewById<RecyclerView>(R.id.playersRecycler)
@@ -264,7 +264,7 @@ class MatchMakingActivity : AppCompatActivity() {
                         val currLobby = p[currentLobbyNumber] as MutableMap<String,Any>? ?: return Transaction.success(currentData)
 
                         if(!isLeader){
-                            val ls = currLobby["p_list"] as ArrayList<Long>? ?: return Transaction.success(currentData)
+                            val ls = currLobby["p_list"] as ArrayList<Long>? ?: return Transaction.success(currentData) //PARTIAL USER : should be a list of partial users
                             ls.remove(myId)
                             val count = currLobby["p_count"] as Long? ?: return Transaction.success(currentData)
                             currLobby["p_count"] = count-1
@@ -288,7 +288,7 @@ class MatchMakingActivity : AppCompatActivity() {
                                 p.remove(currentLobbyNumber)
                                 //delete the lobby here
                             }else{
-                                val ls = currLobby["p_list"] as ArrayList<Long>? ?: return Transaction.success(currentData)
+                                val ls = currLobby["p_list"] as ArrayList<Long>? ?: return Transaction.success(currentData) //PARTIAL USER : should be a list of partial users
                                 ls.remove(myId)
                                 currLobby["p_list"] = ls
                                 //assign a new leader
@@ -357,8 +357,8 @@ class MatchMakingActivity : AppCompatActivity() {
 
                             val p = currentData.value as MutableMap<String, Any>? ?: return Transaction.success(currentData)
                             p["p_count"] = p["p_count"] as Long + 1
-                            val ls = (p["p_list"] as ArrayList<Long>?) ?: return Transaction.success(currentData)
-                            ls.add(1)
+                            val ls = (p["p_list"] as ArrayList<Long>?) ?: return Transaction.success(currentData) //PARTIAL USER : should be a list of partial users
+                            ls.add(1)   //PARTIAL USER : should add the Partial User
                             p["p_list"] = ls
                             currentData.value = p
                             return Transaction.success(currentData)
@@ -374,7 +374,7 @@ class MatchMakingActivity : AppCompatActivity() {
                             uiToSearch()
                             currentLobbyNumber = lobby
                             isLeader = false
-                            myId = 1
+                            myId = 1 //PARTIAL USER : myId should not change
 
                             setupListeners()
                         }
@@ -389,11 +389,13 @@ class MatchMakingActivity : AppCompatActivity() {
 
     }
 
+    /*
+    Creation of a private lobby
+     */
     fun onPrivateLobbyCreateButton(v : View){
         lobbyType = "private"
-        //create private lobby
 
-
+        //The ID of the private lobby cannot be empty
         val id = findViewById<EditText>(R.id.lobbyIdInsert).text
         if(id.isEmpty()){
             findViewById<TextView>(R.id.errorIdNonEmpty).visibility = View.VISIBLE
@@ -401,10 +403,11 @@ class MatchMakingActivity : AppCompatActivity() {
         }
         val lobby = "L_$id"
 
+
         db.referenceGet("MM/$gamemode/$map/$lobbyType", lobby).addOnSuccessListener { i ->
             val lobbyId = i.value as HashMap<String,Any>?
             if(lobbyId == null){
-                myId = 0
+                myId = 0    //PARTIAL USER : myId should not change
                 isLeader = true
 
                 currentLobbyNumber = lobby
@@ -420,6 +423,9 @@ class MatchMakingActivity : AppCompatActivity() {
 
     }
 
+    /*
+    Transition to the setup section of the activity
+     */
     private fun uiToSetup(){
         findViewById<Group>(R.id.setupGroup).visibility = View.VISIBLE
         findViewById<Group>(R.id.waitGroup).visibility = View.INVISIBLE
@@ -429,6 +435,9 @@ class MatchMakingActivity : AppCompatActivity() {
         findViewById<Group>(R.id.errorGroup).visibility = View.INVISIBLE
     }
 
+    /*
+    Transition to the search section of the activity
+    */
     private fun uiToSearch(){
         findViewById<Group>(R.id.setupGroup).visibility = View.INVISIBLE
         findViewById<Group>(R.id.waitGroup).visibility = View.VISIBLE
@@ -441,6 +450,9 @@ class MatchMakingActivity : AppCompatActivity() {
         findViewById<Group>(R.id.errorGroup).visibility = View.INVISIBLE
     }
 
+    /*
+    Setup the listener for the necessary changes
+     */
     private fun setupListeners(){
         db.getDbReference("MM/$gamemode/$map/$lobbyType/$currentLobbyNumber/p_count").addValueEventListener(counterListener)
         db.getDbReference("MM/$gamemode/$map/$lobbyType/$currentLobbyNumber/launch").addValueEventListener(launchListener)
@@ -448,13 +460,16 @@ class MatchMakingActivity : AppCompatActivity() {
 
     }
 
+    /*
+    Create the necessary information for a lobby inside the Database
+     */
     private fun setupLobby(){
-        val ls : List<Long> = listOf(myId)
+        val ls : List<Long> = listOf(myId) //PARTIAL USER : this list should be of Partial users NOT long
         db.insert("MM/$gamemode/$map/$lobbyType/$currentLobbyNumber", "p_count", 1)
         db.insert("MM/$gamemode/$map/$lobbyType/$currentLobbyNumber", "max_p", 2)
         db.insert("MM/$gamemode/$map/$lobbyType/$currentLobbyNumber", "p_list", ls)
         db.insert("MM/$gamemode/$map/$lobbyType/$currentLobbyNumber", "launch", false)
-        db.insert("MM/$gamemode/$map/$lobbyType/$currentLobbyNumber", "leader", myId)
+        db.insert("MM/$gamemode/$map/$lobbyType/$currentLobbyNumber", "leader", myId)   //Partial User : use the Id of the Partial User for the leader, not the user itself
     }
 
 }
