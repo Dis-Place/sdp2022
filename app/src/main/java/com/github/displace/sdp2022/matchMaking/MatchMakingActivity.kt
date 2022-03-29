@@ -112,12 +112,12 @@ class MatchMakingActivity : AppCompatActivity() {
         val app = applicationContext as MyApplication
         val dbAccess = app.getProfileDb()
 
-        /* Friends */
+        /* Friends in private lobby */
         val friendRecyclerView = findViewById<RecyclerView>(R.id.friendsMMRecycler)
         val friendAdapter = FriendViewAdapter(
             applicationContext,
             dbAccess.getFriendsList(3, app.getActiveUser().ID),
-            dbAccess, true
+            dbAccess, 1
         )
         friendRecyclerView.adapter = friendAdapter
         friendRecyclerView.layoutManager = LinearLayoutManager(applicationContext)
@@ -248,7 +248,19 @@ class MatchMakingActivity : AppCompatActivity() {
     }
 
     private fun updateUI(){
-        //not for now
+
+        //REPLACE WITH PARTIAL USERS ONCE IT IS IMPLEMENTED
+
+        val app = applicationContext as MyApplication
+        val dbAccess = app.getProfileDb()
+        val friendRecyclerView = findViewById<RecyclerView>(R.id.playersRecycler)
+        val friendAdapter = FriendViewAdapter(
+            applicationContext,
+            dbAccess.getFriendsList(pList.size, app.getActiveUser().ID),
+            dbAccess, 2
+        )
+        friendRecyclerView.adapter = friendAdapter
+        friendRecyclerView.layoutManager = LinearLayoutManager(applicationContext)
     }
 
     private fun gameScreenTransition(){

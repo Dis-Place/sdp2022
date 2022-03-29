@@ -30,7 +30,7 @@ import org.junit.runner.RunWith
 class ProfileActivityTest {
 
  //   @get:Rule
- //   val testRule = ActivityScenarioRule(ProfileActivity::class.java)
+  //  val testRule = ActivityScenarioRule(ProfileActivity::class.java)
 
     @Before
     fun before(){
