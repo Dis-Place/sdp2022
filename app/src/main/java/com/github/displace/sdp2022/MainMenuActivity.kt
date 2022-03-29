@@ -45,8 +45,8 @@ class MainMenuActivity : AppCompatActivity() {
     //send the user to the Settings screen : change the apps settings
     @Suppress("UNUSED_PARAMETER")
     fun settingsButton(view: View) {
-        val intent = Intent(this, SettingsActivity::class.java)
-        startActivity(intent)
+        //val intent = Intent(this, SettingsActivity::class.java)
+        //startActivity(intent)
     }
 
     //send the user to the News screen : view news and updates
