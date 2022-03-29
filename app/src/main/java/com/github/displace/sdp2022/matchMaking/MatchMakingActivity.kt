@@ -172,12 +172,6 @@ class MatchMakingActivity : AppCompatActivity() {
                                             isLeader = false
                                             myId = 1
                                             setupListeners()
-                  //                          db.getDbReference("MM/$gamemode/$map/$lobbyType/$currentLobbyNumber/p_count")
-                    //                                .addValueEventListener(counterListener)
-                      //                      db.getDbReference("MM/$gamemode/$map/$lobbyType/$currentLobbyNumber/launch")
-                        //                            .addValueEventListener(launchListener)
-                          //                  db.getDbReference("MM/$gamemode/$map/$lobbyType/$currentLobbyNumber/leader")
-                            //                        .addValueEventListener(leaderListener)
                                             uiToSearch()
                                         }
                                     })
@@ -233,19 +227,6 @@ class MatchMakingActivity : AppCompatActivity() {
 
             currentLobbyNumber = lobby
             setupLobby()
-            /*
-            db.insert("MM/$gamemode/$map/$lobbyType/$lobby", "p_count", 1)
-            db.insert("MM/$gamemode/$map/$lobbyType/$lobby", "max_p", 2)
-            db.insert("MM/$gamemode/$map/$lobbyType/$lobby", "p_list", ls)
-            db.insert("MM/$gamemode/$map/$lobbyType/$lobby", "launch", false)
-            db.insert("MM/$gamemode/$map/$lobbyType/$lobby", "leader", myId)
-            */
-            //currentLobbyNumber = lobby
-
-
-        //    db.getDbReference("MM/$gamemode/$map/$lobbyType/$currentLobbyNumber/p_count").addValueEventListener(counterListener)
-        //    db.getDbReference("MM/$gamemode/$map/$lobbyType/$currentLobbyNumber/launch").addValueEventListener(launchListener)
-        //    db.getDbReference("MM/$gamemode/$map/$lobbyType/$currentLobbyNumber/leader").addValueEventListener(leaderListener)
             setupListeners()
             uiToSearch()
         }
@@ -312,7 +293,6 @@ class MatchMakingActivity : AppCompatActivity() {
                                 currLobby["p_list"] = ls
                                 //assign a new leader
                                 currLobby["leader"] = ls[0]
-                            //    val count = currLobby["p_count"] as Long? ?: return Transaction.success(currentData)
                                 currLobby["p_count"] = count-1
 
                                 p[currentLobbyNumber] = currLobby
@@ -397,20 +377,13 @@ class MatchMakingActivity : AppCompatActivity() {
                             myId = 1
 
                             setupListeners()
-      //                      db.getDbReference("MM/$gamemode/$map/$lobbyType/$currentLobbyNumber/p_count")
-        //                        .addValueEventListener(counterListener)
-          //                  db.getDbReference("MM/$gamemode/$map/$lobbyType/$currentLobbyNumber/launch")
-            //                    .addValueEventListener(launchListener)
-              //              db.getDbReference("MM/$gamemode/$map/$lobbyType/$currentLobbyNumber/leader")
-                //                .addValueEventListener(leaderListener)
-
                         }
 
                     })
 
             }else{
                 //LOBBY NOT FOUND
-                showToastText("Lobby not found")
+                findViewById<TextView>(R.id.errorIdNotFound).visibility = View.VISIBLE
             }
         }
 
@@ -423,7 +396,8 @@ class MatchMakingActivity : AppCompatActivity() {
 
         val id = findViewById<EditText>(R.id.lobbyIdInsert).text
         if(id.isEmpty()){
-            showToastText("Lobby ID can not be empty")
+            findViewById<TextView>(R.id.errorIdNonEmpty).visibility = View.VISIBLE
+            return
         }
         val lobby = "L_$id"
 
@@ -433,28 +407,13 @@ class MatchMakingActivity : AppCompatActivity() {
                 myId = 0
                 isLeader = true
 
-                //val ls : List<Long> = listOf(myId)
-
                 currentLobbyNumber = lobby
                 setupLobby()
-/*
-                db.insert("MM/$gamemode/$map/$lobbyType/$lobby", "p_count", 1)
-                db.insert("MM/$gamemode/$map/$lobbyType/$lobby", "max_p", 2)
-                db.insert("MM/$gamemode/$map/$lobbyType/$lobby", "p_list", ls)
-                db.insert("MM/$gamemode/$map/$lobbyType/$lobby", "launch", false)
-                db.insert("MM/$gamemode/$map/$lobbyType/$lobby", "leader", myId)
-*/
-                //currentLobbyNumber = lobby
-
-//                db.getDbReference("MM/$gamemode/$map/$lobbyType/$currentLobbyNumber/p_count").addValueEventListener(counterListener)
-  //              db.getDbReference("MM/$gamemode/$map/$lobbyType/$currentLobbyNumber/launch").addValueEventListener(launchListener)
-    //            db.getDbReference("MM/$gamemode/$map/$lobbyType/$currentLobbyNumber/leader").addValueEventListener(leaderListener)
                 setupListeners()
                 uiToSearch()
 
             }else{
-                //LOBBY ALREADY EXISTS : toast message later
-                showToastText("Lobby ID already exists")
+                findViewById<TextView>(R.id.errorIdExists).visibility = View.VISIBLE
             }
 
         }
@@ -467,6 +426,7 @@ class MatchMakingActivity : AppCompatActivity() {
         if(lobbyType == "private" ){
             findViewById<Group>(R.id.privateGroup).visibility = View.INVISIBLE
         }
+        findViewById<Group>(R.id.errorGroup).visibility = View.INVISIBLE
     }
 
     private fun uiToSearch(){
@@ -478,10 +438,7 @@ class MatchMakingActivity : AppCompatActivity() {
                 IntRange(2,currentLobbyNumber.length-1)
             )
         }
-    }
-
-    private fun showToastText(string: String) {
-        Toast.makeText(this, string, Toast.LENGTH_LONG).show()
+        findViewById<Group>(R.id.errorGroup).visibility = View.INVISIBLE
     }
 
     private fun setupListeners(){
