@@ -48,10 +48,8 @@ class MatchMakingActivity : AppCompatActivity() {
             if(counter != null && isLeader){
                 db.referenceGet("MM/$gamemode/$map/$lobbyType/$currentLobbyNumber","max_p").addOnSuccessListener { m ->
                     val max = m.value as Long?
-                    if(max != null && counter >=max){
-                        //copy lobby info to game instance - after that is finished : update launch
+                    if(max != null && counter >= max){
                         db.update("MM/$gamemode/$map/$lobbyType/$currentLobbyNumber","launch",true) //set launch for everyone
-
                     }
                 }
             }
@@ -121,8 +119,6 @@ class MatchMakingActivity : AppCompatActivity() {
         )
         friendRecyclerView.adapter = friendAdapter
         friendRecyclerView.layoutManager = LinearLayoutManager(applicationContext)
-
-
     }
 
 
@@ -175,13 +171,13 @@ class MatchMakingActivity : AppCompatActivity() {
                                             currentLobbyNumber = lobby
                                             isLeader = false
                                             myId = 1
-
-                                            db.getDbReference("MM/$gamemode/$map/$lobbyType/$currentLobbyNumber/p_count")
-                                                    .addValueEventListener(counterListener)
-                                            db.getDbReference("MM/$gamemode/$map/$lobbyType/$currentLobbyNumber/launch")
-                                                    .addValueEventListener(launchListener)
-                                            db.getDbReference("MM/$gamemode/$map/$lobbyType/$currentLobbyNumber/leader")
-                                                    .addValueEventListener(leaderListener)
+                                            setupListeners()
+                  //                          db.getDbReference("MM/$gamemode/$map/$lobbyType/$currentLobbyNumber/p_count")
+                    //                                .addValueEventListener(counterListener)
+                      //                      db.getDbReference("MM/$gamemode/$map/$lobbyType/$currentLobbyNumber/launch")
+                        //                            .addValueEventListener(launchListener)
+                          //                  db.getDbReference("MM/$gamemode/$map/$lobbyType/$currentLobbyNumber/leader")
+                            //                        .addValueEventListener(leaderListener)
                                             uiToSearch()
                                         }
                                     })
@@ -204,17 +200,15 @@ class MatchMakingActivity : AppCompatActivity() {
 
         db.referenceGet("MM/$gamemode/$map/$lobbyType","last").addOnSuccessListener { lastLobby ->
             val last = lastLobby.value
+            val updates: MutableMap<String, Any> = HashMap()
             if(last != null){
                 if( id > last as Long){
-                    val updates: MutableMap<String, Any> = HashMap()
                     updates["MM/$gamemode/$map/$lobbyType/last"] = ServerValue.increment(id-last)
-                    db.getDbReference("").updateChildren(updates)
                 }
             }else{
-                val updates: MutableMap<String, Any> = HashMap()
                 updates["MM/$gamemode/$map/$lobbyType/last"] = ServerValue.increment(id)
-                db.getDbReference("").updateChildren(updates)
             }
+            db.getDbReference("").updateChildren(updates)
 
             db.referenceGet("MM/$gamemode/$map*$lobbyType","first").addOnSuccessListener {    first ->
                 val f = first.value
@@ -238,10 +232,10 @@ class MatchMakingActivity : AppCompatActivity() {
             db.insert("MM/$gamemode/$map/$lobbyType/$lobby", "leader", myId)
             currentLobbyNumber = lobby
 
-            db.getDbReference("MM/$gamemode/$map/$lobbyType/$currentLobbyNumber/p_count").addValueEventListener(counterListener)
-            db.getDbReference("MM/$gamemode/$map/$lobbyType/$currentLobbyNumber/launch").addValueEventListener(launchListener)
-            db.getDbReference("MM/$gamemode/$map/$lobbyType/$currentLobbyNumber/leader").addValueEventListener(leaderListener)
-
+        //    db.getDbReference("MM/$gamemode/$map/$lobbyType/$currentLobbyNumber/p_count").addValueEventListener(counterListener)
+        //    db.getDbReference("MM/$gamemode/$map/$lobbyType/$currentLobbyNumber/launch").addValueEventListener(launchListener)
+        //    db.getDbReference("MM/$gamemode/$map/$lobbyType/$currentLobbyNumber/leader").addValueEventListener(leaderListener)
+            setupListeners()
             uiToSearch()
         }
 
@@ -264,18 +258,6 @@ class MatchMakingActivity : AppCompatActivity() {
     }
 
     private fun gameScreenTransition(){
-        //this is called when a launch occurs
-        //add yourself to game instance list (TRANSACTION)
-
-        //if you are the leader
-        //if you are alone in the lobby : delete it
-        //if its the first lobby : first = first + 1
-        //if its the last lobby : last = last - 1
-        //if not alone
-        //set next player in the list as the new leader
-        //delete yourself from players list (TRANSACTION) : currentLobby = "-1"
-        //if you are not the leader
-        //delete yourself from players list (TRANSACTION) : currentLobby = "-1"
         val intent = Intent(this, GameVersusViewActivity::class.java)
         startActivity(intent)
     }
@@ -403,12 +385,13 @@ class MatchMakingActivity : AppCompatActivity() {
                             isLeader = false
                             myId = 1
 
-                            db.getDbReference("MM/$gamemode/$map/$lobbyType/$currentLobbyNumber/p_count")
-                                .addValueEventListener(counterListener)
-                            db.getDbReference("MM/$gamemode/$map/$lobbyType/$currentLobbyNumber/launch")
-                                .addValueEventListener(launchListener)
-                            db.getDbReference("MM/$gamemode/$map/$lobbyType/$currentLobbyNumber/leader")
-                                .addValueEventListener(leaderListener)
+                            setupListeners()
+      //                      db.getDbReference("MM/$gamemode/$map/$lobbyType/$currentLobbyNumber/p_count")
+        //                        .addValueEventListener(counterListener)
+          //                  db.getDbReference("MM/$gamemode/$map/$lobbyType/$currentLobbyNumber/launch")
+            //                    .addValueEventListener(launchListener)
+              //              db.getDbReference("MM/$gamemode/$map/$lobbyType/$currentLobbyNumber/leader")
+                //                .addValueEventListener(leaderListener)
 
                         }
 
@@ -449,10 +432,10 @@ class MatchMakingActivity : AppCompatActivity() {
 
                 currentLobbyNumber = lobby
 
-                db.getDbReference("MM/$gamemode/$map/$lobbyType/$currentLobbyNumber/p_count").addValueEventListener(counterListener)
-                db.getDbReference("MM/$gamemode/$map/$lobbyType/$currentLobbyNumber/launch").addValueEventListener(launchListener)
-                db.getDbReference("MM/$gamemode/$map/$lobbyType/$currentLobbyNumber/leader").addValueEventListener(leaderListener)
-
+//                db.getDbReference("MM/$gamemode/$map/$lobbyType/$currentLobbyNumber/p_count").addValueEventListener(counterListener)
+  //              db.getDbReference("MM/$gamemode/$map/$lobbyType/$currentLobbyNumber/launch").addValueEventListener(launchListener)
+    //            db.getDbReference("MM/$gamemode/$map/$lobbyType/$currentLobbyNumber/leader").addValueEventListener(leaderListener)
+                setupListeners()
                 uiToSearch()
 
             }else{
@@ -487,7 +470,12 @@ class MatchMakingActivity : AppCompatActivity() {
         Toast.makeText(this, string, Toast.LENGTH_LONG).show()
     }
 
+    private fun setupListeners(){
+        db.getDbReference("MM/$gamemode/$map/$lobbyType/$currentLobbyNumber/p_count").addValueEventListener(counterListener)
+        db.getDbReference("MM/$gamemode/$map/$lobbyType/$currentLobbyNumber/launch").addValueEventListener(launchListener)
+        db.getDbReference("MM/$gamemode/$map/$lobbyType/$currentLobbyNumber/leader").addValueEventListener(leaderListener)
 
+    }
 
 
 
