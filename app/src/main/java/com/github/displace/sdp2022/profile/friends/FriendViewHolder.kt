@@ -12,8 +12,8 @@ import com.github.displace.sdp2022.profile.messages.SendMessageActivity
 class FriendViewHolder(itemview: View) : RecyclerView.ViewHolder(itemview) {
 
     val friendNameView: TextView = itemView.findViewById(R.id.friendName)
-    private val messageButton: ImageButton = itemView.findViewById(R.id.messageButton)
-    private val inviteButton: ImageButton = itemView.findViewById(R.id.inviteButton)
+    val messageButton: ImageButton = itemView.findViewById(R.id.messageButton)
+    val inviteButton: ImageButton = itemView.findViewById(R.id.inviteButton)
 
     lateinit var dbAdapter: ProfileDbConnection
     lateinit var friend: Friend

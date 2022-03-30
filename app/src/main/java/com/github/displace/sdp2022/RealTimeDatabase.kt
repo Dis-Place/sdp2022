@@ -11,7 +11,7 @@ import com.google.firebase.database.FirebaseDatabase
 class RealTimeDatabase : Database {
 
      private lateinit var db: FirebaseDatabase
-
+     private var debug : String = ""
 
     private fun firebaseSetValue(reference: String, key: String, obj: Any): Task<Void> {
         return getRefAndChild(reference, key).setValue(obj)
@@ -21,8 +21,11 @@ class RealTimeDatabase : Database {
         return db.getReference(reference).child(key)
     }
 
-    override fun instantiate(url: String): Database {
+    override fun instantiate(url: String, debug : Boolean): Database {
         //get the instance of the database
+        if(debug){
+            this.debug = "debug/"
+        }
         db = FirebaseDatabase.getInstance(url)
 
         //Will cache offline data and update the database when online
@@ -31,37 +34,40 @@ class RealTimeDatabase : Database {
     }
 
     override fun update(reference: String, key: String, obj: Any): Any {
-        firebaseSetValue(reference, key, obj)
+        firebaseSetValue(debug+reference, key, obj)
         return obj
     }
 
     override fun insert(reference: String, key: String, obj: Any): Any {
-        return update(reference, key, obj)
+        return update(debug+reference, key, obj)
     }
 
     override fun delete(reference: String, key: String) {
-        getRefAndChild(reference, key).removeValue()
+        getRefAndChild(debug+reference, key).removeValue()
     }
 
     override fun get(reference: String, key: String): Any? {
-        return getRefAndChild(reference, key).get().result.getValue(Any::class.java)
+        return getRefAndChild(debug+reference, key).get().result.getValue(Any::class.java)
     }
 
-    fun referenceGet(reference: String, key: String): Task<DataSnapshot> {
-        return getRefAndChild(reference, key).get()
+    override fun referenceGet(reference: String, key: String): Task<DataSnapshot> {
+        return getRefAndChild(debug+reference, key).get()
     }
 
-    fun noCacheInstantiate(url: String): Database {
+    override fun noCacheInstantiate(url: String, debug : Boolean): Database {
         //get the instance of the database
+        if(debug){
+            this.debug = "debug/"
+        }
         db = FirebaseDatabase.getInstance(url)
         return this
     }
 
-    fun getDbReference(path : String = "") : DatabaseReference  {
+    override fun getDbReference(path : String) : DatabaseReference  {
         return if(path == ""){
             db.reference
         }else{
-            db.getReference(path)
+            db.getReference(debug+path)
         }
     }
 
