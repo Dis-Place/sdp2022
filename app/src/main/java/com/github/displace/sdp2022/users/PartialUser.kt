@@ -8,6 +8,6 @@ class PartialUser(val username: String, val uid: String) { // profile picture la
     }
 
     override fun hashCode(): Int {
-        return super.hashCode()
+        return uid.hashCode()
     }
 }

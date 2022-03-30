@@ -170,6 +170,9 @@ class AccountSettingsActivityTest {
             onView(withId(R.id.updateUsername)).perform(replaceText("newName"), closeSoftKeyboard())
             onView(withId(R.id.updateUsernameButton)).perform(click())
             onView(withId(R.id.username)).check(matches(withText("newName")))
+            onView(withId(R.id.usernameUpdate)).perform(click())
+            onView(withId(R.id.updateUsername)).perform(replaceText("Name"), closeSoftKeyboard())
+            onView(withId(R.id.updateUsernameButton)).perform(click())
         }
     }
 

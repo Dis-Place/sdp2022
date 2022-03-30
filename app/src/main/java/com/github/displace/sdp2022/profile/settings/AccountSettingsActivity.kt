@@ -137,7 +137,6 @@ class AccountSettingsActivity : AppCompatActivity() {
                 showToastText("Signed out")
             }
         }
-
     }
 
     private fun mockSignin() {
