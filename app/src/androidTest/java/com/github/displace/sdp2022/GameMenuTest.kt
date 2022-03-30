@@ -33,7 +33,10 @@ class GameMenuTest {
 
     @Test
     fun testPlayButton() {
-        Espresso.onView(withId(R.id.TryText)).check(matches(withText("status : neutral, nombre d'essais restant : 4")))
+        testRule.scenario.use {
+            Espresso.onView(withId(R.id.TryText))
+                .check(matches(withText("status : neutral, nombre d'essais restant : 4")))
+        }
     }
 
     @Test
@@ -48,32 +51,35 @@ class GameMenuTest {
         testRule.scenario.use {
             Espresso.onView(withId(R.id.map)).perform(ViewActions.longClick())
             Intents.intended(IntentMatchers.hasComponent(GameSummaryActivity::class.java.name))
-            Intents.release()
         }
     }
 
     @Test
     fun testFailButton() {
-        Espresso.onView(withId(R.id.map)).perform(ViewActions.longClick())
-        Espresso.onView(withId(R.id.TryText)).check(matches(withText("status : fail, nombre d'essais restant : 3")))
+        testRule.scenario.use {
+            Espresso.onView(withId(R.id.map)).perform(ViewActions.longClick())
+            Espresso.onView(withId(R.id.TryText))
+                .check(matches(withText("status : fail, nombre d'essais restant : 3")))
+        }
     }
 
     @Test
     fun testEndButton() {
-        Intents.init()
-        Espresso.onView(withId(R.id.map)).perform(ViewActions.longClick())
-        Espresso.onView(withId(R.id.map)).perform(ViewActions.longClick())
-        Espresso.onView(withId(R.id.map)).perform(ViewActions.longClick())
-        Espresso.onView(withId(R.id.map)).perform(ViewActions.longClick())
-        Intents.intended(IntentMatchers.hasComponent(GameSummaryActivity::class.java.name))
-        Intents.release()
+        testRule.scenario.use {
+            Espresso.onView(withId(R.id.map)).perform(ViewActions.longClick())
+            Espresso.onView(withId(R.id.map)).perform(ViewActions.longClick())
+            Espresso.onView(withId(R.id.map)).perform(ViewActions.longClick())
+            Espresso.onView(withId(R.id.map)).perform(ViewActions.longClick())
+            Intents.intended(IntentMatchers.hasComponent(GameSummaryActivity::class.java.name))
+        }
     }
 
     @Test
     fun testQuitButton() {
-        Intents.init()
-        Espresso.onView(withId(R.id.closeButton)).perform(click())
-        Intents.intended(IntentMatchers.hasComponent(GameListActivity::class.java.name))
-        Intents.release()
+        testRule.scenario.use {
+            Espresso.onView(withId(R.id.closeButton)).perform(click())
+            Intents.intended(IntentMatchers.hasComponent(GameListActivity::class.java.name))
+            Intents.release()
+        }
     }
 }
