@@ -6,6 +6,7 @@ import android.util.Log
 import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.firebase.ui.auth.AuthUI
 import com.github.displace.sdp2022.MainActivity
 import com.github.displace.sdp2022.R
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -14,6 +15,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -26,13 +29,12 @@ class TempLoginActivity : AppCompatActivity() {
 
     private lateinit var auth : FirebaseAuth
     private lateinit var signInClient :GoogleSignInClient
-    private var isLoggedIn = false
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_temp_login)
-        auth = FirebaseAuth.getInstance()
+        auth = Firebase.auth
 
         val signInButton = findViewById<Button>(R.id.btnGoogleSignIn)
         signInButton.setOnClickListener {
@@ -45,13 +47,9 @@ class TempLoginActivity : AppCompatActivity() {
         }
         val logout = findViewById<Button>(R.id.btnGoogleSignOut)
         logout.setOnClickListener {
-            if(isLoggedIn){
-                signInClient.signOut().addOnCompleteListener {
-                    isLoggedIn = false
-                    val intent= Intent(this, MainActivity::class.java)
+            if(Firebase.auth.currentUser != null){
+                AuthUI.getInstance().signOut(this).addOnCompleteListener {
                     Toast.makeText(this,"Logging Out",Toast.LENGTH_SHORT).show()
-                    startActivity(intent)
-                    finish()
                 }
             }
             else{
@@ -67,9 +65,13 @@ class TempLoginActivity : AppCompatActivity() {
                 auth.signInWithCredential(credentials).await()
                 withContext(Dispatchers.Main){
                     val current = auth.currentUser
-
-                    Toast.makeText(this@TempLoginActivity, "Successfully logged in", Toast.LENGTH_LONG).show()
-                    isLoggedIn = true
+                    val name : String? = current?.displayName
+                    if( name.isNullOrEmpty()){
+                        Toast.makeText(this@TempLoginActivity, "Successfully logged in ", Toast.LENGTH_LONG).show()
+                    }
+                    else{
+                        Toast.makeText(this@TempLoginActivity, "Successfully logged in $name ", Toast.LENGTH_LONG).show()
+                    }
                 }
 
 
