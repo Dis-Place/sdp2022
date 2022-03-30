@@ -6,11 +6,16 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.intent.Intents
+import androidx.test.espresso.intent.Intents.intended
+import androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.github.displace.sdp2022.news.NewsActivity
 import com.github.displace.sdp2022.profile.MockDB
+import com.github.displace.sdp2022.profile.ProfileActivity
 import com.github.displace.sdp2022.profile.friends.Friend
 import org.junit.Rule
 import org.junit.Test
@@ -43,23 +48,34 @@ class MainMenuActivityTest {
 
     @Test
     fun testProfileButton() {
+        Intents.init()
+
         Espresso.onView(withId(R.id.mainGoButton)).perform(click())
         Espresso.onView(withId(R.id.profileButton)).perform(click())
-        Espresso.onView(withId(R.id.profileUsername)).check(matches(withText("Name")))
+
+        intended(hasComponent(ProfileActivity::class.java.name))
+        Intents.release()
     }
 
     @Test
     fun testSettingsButton() {
+        Intents.init()
+
         Espresso.onView(withId(R.id.mainGoButton)).perform(click())
         Espresso.onView(withId(R.id.settingsButton)).perform(click())
-        Espresso.onView(withId(R.id.textView4)).check(matches(withText("SETTINGS")))
+
+        intended(hasComponent(SettingsActivity::class.java.name))
+        Intents.release()
     }
 
     @Test
     fun testNewsButton() {
+        Intents.init()
         Espresso.onView(withId(R.id.mainGoButton)).perform(click())
         Espresso.onView(withId(R.id.newsButton)).perform(click())
-        Espresso.onView(withId(R.id.textView)).check(matches(withText("NEWS")))
+
+        intended(hasComponent(NewsActivity::class.java.name))
+        Intents.release()
     }
 
 }
