@@ -35,7 +35,7 @@ class GameVersusViewActivity : AppCompatActivity() {
 
     val statsList: ArrayList<String> = arrayListOf()
 
-    var goal = Point(3.0,4.0)
+    var goal = Point(46.52048,6.56782)
     val game = GameVersusViewModel()
     val extras: Bundle = Bundle()
     private val ZOOM = 16.0
@@ -52,6 +52,9 @@ class GameVersusViewActivity : AppCompatActivity() {
 
         setContentView(R.layout.activity_game_versus)
 
+        game.handleEvent(GameEvent.OnStart(goal,0))
+
+
         mapView = findViewById<MapView>(R.id.map)
         mapViewManager = MapViewManager(mapView)
         markerListener = GeoPointListener.markerPlacer(mapView)
@@ -61,9 +64,35 @@ class GameVersusViewActivity : AppCompatActivity() {
 
         mapViewManager.addCallOnLongClick(markerListener)
 
-        game.handleEvent(GameEvent.OnStart(goal, listOf(3.0),3)) //add a pop up with goal and photo info
+        mapViewManager.addCallOnLongClick(GeoPointListener { geoPoint -> run {
+                val res = game.handleEvent(
+                    GameEvent.OnPointSelected(
+                        0,
+                        Point(0.0, 0.0)
+                    )
+                )//geoPoint.latitude as Long,geoPoint.longitude as Long)))
+                print("ok")
+                if (res == 1) {
+                    val tryTextView = findViewById<TextView>(R.id.TryText).apply {
+                        text =
+                            "fail"
+                    }
+                } else {
+                    if (res == 2) {
+                        val tryTextView = findViewById<TextView>(R.id.TryText).apply {
+                            text =
+                                "end of game"
+                        }
+                        extras.putBoolean(EXTRA_RESULT, false)
+                        extras.putInt(EXTRA_SCORE_P1, 0)
+                        extras.putInt(EXTRA_SCORE_P2, 1)
+                        statsList.add("15:04")      // Example Time
+                        showGameSummaryActivity()
+                    }
+                }
+            }})
 
-        val tryTextView =  findViewById<TextView>(R.id.TryText).apply { text =
+        findViewById<TextView>(R.id.TryText).apply { text =
             "neutral"
         }
     }
@@ -71,14 +100,14 @@ class GameVersusViewActivity : AppCompatActivity() {
 
     //close the screen
     fun closeButton(view: View) {
-        game.handleEvent(GameEvent.OnSurrend(3))
+        game.handleEvent(GameEvent.OnSurrend(0))
         val intent = Intent(this, GameListActivity::class.java)
         startActivity(intent)
     }
 
     //close the screen
     fun triButtonFail(view: View) {
-        val res = game.handleEvent(GameEvent.OnPointSelected(3,Point(13.0,14.0)))
+        val res = game.handleEvent(GameEvent.OnPointSelected(0,Point(13.0,14.0)))
         if(res == 1){
             val tryTextView =  findViewById<TextView>(R.id.TryText).apply { text =
                 "fail"
@@ -95,12 +124,11 @@ class GameVersusViewActivity : AppCompatActivity() {
                 showGameSummaryActivity()
             }
         }
-
     }
 
     //close the screen
     fun triButtonWin(view: View) {
-        val res = game.handleEvent(GameEvent.OnPointSelected(3,Point(3.0,5.0)))
+        val res = game.handleEvent(GameEvent.OnPointSelected(0,goal))
         if(res == 0){
             val tryTextView =  findViewById<TextView>(R.id.TryText).apply { text =
                 "win"
