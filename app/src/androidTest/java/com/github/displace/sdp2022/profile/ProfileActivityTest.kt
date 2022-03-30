@@ -21,6 +21,7 @@ import com.github.displace.sdp2022.profile.friends.Friend
 import com.github.displace.sdp2022.profile.friends.FriendViewHolder
 import com.github.displace.sdp2022.profile.messages.MsgViewHolder
 import org.hamcrest.Matcher
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -28,25 +29,20 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class ProfileActivityTest {
 
-    @get:Rule
-    val testRule = ActivityScenarioRule(MainActivity::class.java)
+ //   @get:Rule
+  //  val testRule = ActivityScenarioRule(ProfileActivity::class.java)
 
-    @Test
-    fun startToProfileTest() {
-        Espresso.onView(ViewMatchers.withId(R.id.mainGoButton)).perform(click())
-        Espresso.onView(ViewMatchers.withId(R.id.profileButton)).perform(click())
-        Espresso.onView(ViewMatchers.withId(R.id.profileUsername)).check(
-            ViewAssertions.matches(
-                ViewMatchers.withText("Name")
-            )
-        )
-    }
-
-    @Test
-    fun testInboxButton() {
+    @Before
+    fun before(){
         val app = ApplicationProvider.getApplicationContext() as MyApplication
         app.setDb(MockDB())
         app.setActiveUser(Friend("Baptou", "0"))
+
+    }
+
+
+    @Test
+    fun testInboxButton() {
 
         val intent =
             Intent(ApplicationProvider.getApplicationContext(), ProfileActivity::class.java)
@@ -56,6 +52,32 @@ class ProfileActivityTest {
             Espresso.onView(ViewMatchers.withId(R.id.inboxButton)).perform(click())
             Espresso.onView(ViewMatchers.withId(R.id.InboxScroll))
                 .check(ViewAssertions.matches(isDisplayed()))
+        }
+    }
+
+    @Test
+    fun testMessageInInboxButton() {
+        val app = ApplicationProvider.getApplicationContext() as MyApplication
+        app.setDb(MockDB())
+        app.setActiveUser(Friend("Baptou", "0"))
+
+        val intent =
+            Intent(ApplicationProvider.getApplicationContext(), ProfileActivity::class.java)
+        val scenario = ActivityScenario.launch<ProfileActivity>(intent)
+        scenario.use { _ ->
+            Espresso.onView(ViewMatchers.withId(R.id.inboxButton)).perform(click())
+            Espresso.onView(ViewMatchers.withId(R.id.recyclerMsg)).perform(
+                RecyclerViewActions.actionOnItemAtPosition<MsgViewHolder>(
+                    0,
+                    clickInInnerObject(R.id.replyButton)
+                )
+            )
+            Espresso.onView(ViewMatchers.withId(R.id.sendButton)).perform(click())
+            Espresso.onView(ViewMatchers.withId(R.id.profileUsername)).check(
+                ViewAssertions.matches(
+                    ViewMatchers.withText("Baptou")
+                )
+            )
         }
     }
 
@@ -107,32 +129,6 @@ class ProfileActivityTest {
             Espresso.onView(ViewMatchers.withId(R.id.profileSettingsButton)).perform(click())
             Espresso.onView(ViewMatchers.withId(R.id.editProfile))
                 .check(ViewAssertions.matches(isDisplayed()))
-        }
-    }
-
-    @Test
-    fun testMessageInInboxButton() {
-        val app = ApplicationProvider.getApplicationContext() as MyApplication
-        app.setDb(MockDB())
-        app.setActiveUser(Friend("Baptou", "0"))
-
-        val intent =
-            Intent(ApplicationProvider.getApplicationContext(), ProfileActivity::class.java)
-        val scenario = ActivityScenario.launch<ProfileActivity>(intent)
-        scenario.use { _ ->
-            Espresso.onView(ViewMatchers.withId(R.id.inboxButton)).perform(click())
-            Espresso.onView(ViewMatchers.withId(R.id.recyclerMsg)).perform(
-                RecyclerViewActions.actionOnItemAtPosition<MsgViewHolder>(
-                    0,
-                    clickInInnerObject(R.id.replyButton)
-                )
-            )
-            Espresso.onView(ViewMatchers.withId(R.id.sendButton)).perform(click())
-            Espresso.onView(ViewMatchers.withId(R.id.profileUsername)).check(
-                ViewAssertions.matches(
-                    ViewMatchers.withText("Baptou")
-                )
-            )
         }
     }
 
