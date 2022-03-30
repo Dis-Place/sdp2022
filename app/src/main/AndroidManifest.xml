@@ -20,7 +20,8 @@
         android:theme="@style/Theme.Bootcamp">
         <activity
             android:name=".authentication.TempLoginActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:parentActivityName=".MainActivity"/>
         <activity
             android:name=".matchMaking.MatchMakingActivity"
             android:exported="false" />
