@@ -16,7 +16,7 @@ class UploadImageActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_upload_image)
-        db = ImageDatabase().instantiate("gs://displace-dd51e.appspot.com/") as ImageDatabase
+        db = ImageDatabase().instantiate("gs://displace-dd51e.appspot.com/",false) as ImageDatabase
     }
 
     @Suppress("UNUSED_PARAMETER")

@@ -2,6 +2,9 @@ package com.github.displace.sdp2022
 
 import android.graphics.Bitmap
 import com.github.displace.sdp2022.util.math.Constants.TWENTY_MEGA_BYTE
+import com.google.android.gms.tasks.Task
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseReference
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
@@ -18,7 +21,7 @@ class ImageDatabase : Database {
         return imageRef.child(key)
     }
 
-    override fun instantiate(url: String): Database {
+    override fun instantiate(url: String, debug : Boolean): Database {
         storage = Firebase.storage(url)
         imageRef = storage.reference.child("images")
         return this
@@ -47,6 +50,18 @@ class ImageDatabase : Database {
     @Deprecated("Not enough specific", ReplaceWith("getOnLocalFile or getOnMemory"))
     override fun get(reference: String, key: String): Any {
         return getOnLocalFile(reference, key)
+    }
+
+    override fun referenceGet(reference: String, key: String): Task<DataSnapshot> {
+        TODO("Not yet implemented")
+    }
+
+    override fun noCacheInstantiate(url: String, debug: Boolean): Database {
+        TODO("Not yet implemented")
+    }
+
+    override fun getDbReference(path: String): DatabaseReference {
+        TODO("Not yet implemented")
     }
 
 

@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "234574558506",
+    "firebase_url": "https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app",
     "project_id": "displace-dd51e",
     "storage_bucket": "displace-dd51e.appspot.com"
   },
@@ -13,6 +14,14 @@
         }
       },
       "oauth_client": [
+        {
+          "client_id": "234574558506-16nsvhuf2lv5tjb18fktu65uh9c5nio6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.github.displace.sdp2022",
+            "certificate_hash": "04dd08d4e742f94bdd0a3f99ed0c4141c024e9ca"
+          }
+        },
         {
           "client_id": "234574558506-suoe41h1bshkkc9ir6u167hbnp77jnl3.apps.googleusercontent.com",
           "client_type": 3

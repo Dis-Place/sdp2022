@@ -25,7 +25,6 @@ class SettingsActivityTest {
     @get:Rule
     val testRule = ActivityScenarioRule(SettingsActivity::class.java)
 
-
     @Before
     fun setUp() {
         val intent =
@@ -77,6 +76,3 @@ class SettingsActivityTest {
         } else {
             assert(true)
         }
-    }
-}
-
