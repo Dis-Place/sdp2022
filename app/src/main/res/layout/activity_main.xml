@@ -43,4 +43,19 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/mainName" />
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/floatingActionButtonToAuthenticate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="63dp"
+        android:layout_marginBottom="36dp"
+        android:clickable="true"
+        android:onClick="toLogin"
+        app:layout_constraintBottom_toTopOf="@+id/mainName"
+        app:layout_constraintEnd_toEndOf="@+id/mainName"
+        app:layout_constraintStart_toEndOf="@+id/mainName"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/common_google_signin_btn_icon_dark_normal" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>
