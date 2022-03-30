@@ -49,4 +49,10 @@ class MainActivityTest {
         onView(ViewMatchers.withId(R.id.map)).check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
     }
 
+    @Test
+    fun loginButtonGoesToTempLoginActivity(){
+        onView(ViewMatchers.withId(R.id.floatingActionButtonToAuthenticate)).perform(click())
+        onView(ViewMatchers.withId(R.id.btnGoogleSignIn)).check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
+    }
+
 }
