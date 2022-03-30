@@ -1,6 +1,7 @@
 package com.github.displace.sdp2022
 
 import android.app.Application
+import android.content.SharedPreferences
 import com.github.displace.sdp2022.news.NewsDbConnection
 import com.github.displace.sdp2022.profile.MockDB
 import com.github.displace.sdp2022.profile.ProfileDbConnection
