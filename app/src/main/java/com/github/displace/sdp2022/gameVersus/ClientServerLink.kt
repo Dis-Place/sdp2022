@@ -8,7 +8,7 @@ import com.github.displace.sdp2022.model.GameVersus
 class ClientServerLink {
     private val db = RealTimeDatabase().noCacheInstantiate("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/") as RealTimeDatabase
     private val goal = Point(3.0, 5.0)
-    private var game = GameVersus(goal,0,3,0.1)
+    var game = GameVersus(goal,0,3,0.0001)
 
     fun SendDataToOther(goal: Coordinates, playerId: Int) {
         db.update("GameInstance/GameTest/id:" + playerId,"x",goal.pos.first)

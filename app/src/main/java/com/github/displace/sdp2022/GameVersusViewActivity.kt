@@ -16,6 +16,7 @@ import android.os.Parcelable
 import android.widget.Toast
 import androidx.preference.PreferenceManager
 import com.github.displace.sdp2022.map.MapViewManager
+import com.github.displace.sdp2022.util.PreferencesUtil
 import com.github.displace.sdp2022.util.gps.GPSPositionManager
 import com.github.displace.sdp2022.util.gps.GPSPositionUpdater
 import com.github.displace.sdp2022.util.gps.GeoPointListener
@@ -49,7 +50,7 @@ class GameVersusViewActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        PreferencesUtil.initOsmdroidPref(this)
         setContentView(R.layout.activity_game_versus)
 
         game.handleEvent(GameEvent.OnStart(goal,0))
@@ -68,33 +69,44 @@ class GameVersusViewActivity : AppCompatActivity() {
                 val res = game.handleEvent(
                     GameEvent.OnPointSelected(
                         0,
-                        Point(0.0, 0.0)
+                        Point(geoPoint.latitude ,geoPoint.longitude )
                     )
-                )//geoPoint.latitude as Long,geoPoint.longitude as Long)))
-                print("ok")
-                if (res == 1) {
-                    val tryTextView = findViewById<TextView>(R.id.TryText).apply {
-                        text =
-                            "fail"
-                    }
-                } else {
-                    if (res == 2) {
-                        val tryTextView = findViewById<TextView>(R.id.TryText).apply {
+                )
+                if(res == 0){
+                    findViewById<TextView>(R.id.TryText).apply { text = "win" }
+                    extras.putBoolean(EXTRA_RESULT, true)
+                    extras.putInt(EXTRA_SCORE_P1, 1)
+                    extras.putInt(EXTRA_SCORE_P2, 0)
+                    statsList.add("18:43")      // Example Time
+                    showGameSummaryActivity()
+                }else {
+                    if (res == 1) {
+                        findViewById<TextView>(R.id.TryText).apply {
                             text =
-                                "end of game"
+                                "status : fail, nombre d'essais restant : " + (4 - game.getNbEssai())
                         }
-                        extras.putBoolean(EXTRA_RESULT, false)
-                        extras.putInt(EXTRA_SCORE_P1, 0)
-                        extras.putInt(EXTRA_SCORE_P2, 1)
-                        statsList.add("15:04")      // Example Time
-                        showGameSummaryActivity()
+                    } else {
+                        if (res == 2) {
+                            findViewById<TextView>(R.id.TryText).apply {
+                                text =
+                                    "status : end of game"
+                            }
+                            extras.putBoolean(EXTRA_RESULT, false)
+                            extras.putInt(EXTRA_SCORE_P1, 0)
+                            extras.putInt(EXTRA_SCORE_P2, 1)
+                            statsList.add("15:04")      // Example Time
+                            showGameSummaryActivity()
+                        }
                     }
-                }
-            }})
+                }}})
 
         findViewById<TextView>(R.id.TryText).apply { text =
-            "neutral"
+            "status : neutral, nombre d'essais restant : " + (4 - game.getNbEssai())
         }
+
+        val gpsPos = gpsPositionManager.getPosition()
+        if (gpsPos != null)
+            mapViewManager.center(gpsPos)
     }
 
 
@@ -105,40 +117,10 @@ class GameVersusViewActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    //close the screen
-    fun triButtonFail(view: View) {
-        val res = game.handleEvent(GameEvent.OnPointSelected(0,Point(13.0,14.0)))
-        if(res == 1){
-            val tryTextView =  findViewById<TextView>(R.id.TryText).apply { text =
-                "fail"
-            }
-        }else{
-            if(res == 2){
-                val tryTextView =  findViewById<TextView>(R.id.TryText).apply { text =
-                    "end of game"
-                }
-                extras.putBoolean(EXTRA_RESULT, false)
-                extras.putInt(EXTRA_SCORE_P1, 0)
-                extras.putInt(EXTRA_SCORE_P2, 1)
-                statsList.add("15:04")      // Example Time
-                showGameSummaryActivity()
-            }
-        }
-    }
-
-    //close the screen
-    fun triButtonWin(view: View) {
-        val res = game.handleEvent(GameEvent.OnPointSelected(0,goal))
-        if(res == 0){
-            val tryTextView =  findViewById<TextView>(R.id.TryText).apply { text =
-                "win"
-            }
-            extras.putBoolean(EXTRA_RESULT, true)
-            extras.putInt(EXTRA_SCORE_P1, 1)
-            extras.putInt(EXTRA_SCORE_P2, 0)
-            statsList.add("18:43")      // Example Time
-            showGameSummaryActivity()
-        }
+    fun centerButton(view: View) {
+        val gpsPos = gpsPositionManager.getPosition()
+        if (gpsPos != null)
+            mapViewManager.center(gpsPos)
     }
 
     fun showGameSummaryActivity() {

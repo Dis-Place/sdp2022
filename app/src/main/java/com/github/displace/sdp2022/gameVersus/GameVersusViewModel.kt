@@ -21,8 +21,8 @@ class GameVersusViewModel {
 
     //Set the goal at the start of the game (each player set the goal of the other)
     fun SetGoal(goal: Coordinates, playerId: Int): Int {
-        reseau.SendDataToOther(goal, playerId)
         reseau.GetData(playerId)
+        reseau.SendDataToOther(goal, playerId)
         return 0
     }
 
@@ -37,6 +37,14 @@ class GameVersusViewModel {
         println("fin du match")
 
         return 0
+    }
+
+    fun getGoal(): Coordinates {
+        return reseau.game.goal
+    }
+
+    fun getNbEssai() : Int {
+        return reseau.game.nbTry
     }
 
 }
