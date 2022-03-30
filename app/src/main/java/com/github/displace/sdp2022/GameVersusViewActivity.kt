@@ -39,8 +39,6 @@ class GameVersusViewActivity : AppCompatActivity() {
     var goal = Point(46.52048,6.56782)
     val game = GameVersusViewModel()
     val extras: Bundle = Bundle()
-    private val ZOOM = 16.0
-    private val EPFL_POS = GeoPoint(46.52048,6.56782)
 
     private lateinit var mapView: MapView
     private lateinit var mapViewManager: MapViewManager
@@ -103,10 +101,6 @@ class GameVersusViewActivity : AppCompatActivity() {
         findViewById<TextView>(R.id.TryText).apply { text =
             "status : neutral, nombre d'essais restant : " + (4 - game.getNbEssai())
         }
-
-        val gpsPos = gpsPositionManager.getPosition()
-        if (gpsPos != null)
-            mapViewManager.center(gpsPos)
     }
 
 
