@@ -2,6 +2,7 @@ package com.github.displace.sdp2022.authentication
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -38,9 +39,9 @@ class TempLoginActivity : AppCompatActivity() {
             val options  = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken( getString(R.string.webclient_id)).requestEmail().build()
             signInClient = GoogleSignIn.getClient(this, options)
-            signInClient.signInIntent.also {
-                startActivityForResult(it, REQUEST_CODE_SIGN_IN)
-            }
+
+            startActivityForResult(signInClient.signInIntent, REQUEST_CODE_SIGN_IN)
+
         }
         val logout = findViewById<Button>(R.id.btnGoogleSignOut)
         logout.setOnClickListener {
@@ -84,9 +85,14 @@ class TempLoginActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if( requestCode == REQUEST_CODE_SIGN_IN) {
-            val account = GoogleSignIn.getSignedInAccountFromIntent(data).result
-            account?.let {
-                googleAuthForFirebase(it)
+            try {
+                val account = GoogleSignIn.getSignedInAccountFromIntent(data).result
+
+                account?.let {
+                    googleAuthForFirebase(it)
+                }
+            } catch(e: Exception) {
+                Log.e("test", e.message!!)
             }
         }
     }

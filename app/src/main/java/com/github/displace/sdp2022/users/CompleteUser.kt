@@ -6,18 +6,19 @@ import com.github.displace.sdp2022.profile.achievements.Achievement
 import com.github.displace.sdp2022.profile.friends.Friend
 import com.github.displace.sdp2022.profile.history.History
 import com.github.displace.sdp2022.profile.statistics.Statistic
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 
-class CompleteUser(private val firebaseUser: FirebaseUser?) {
+class CompleteUser(private val googleAccount: GoogleSignInAccount?) {
 
     private val db: RealTimeDatabase = RealTimeDatabase().instantiate("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/") as RealTimeDatabase
 
-    private val partialUser: PartialUser = if(firebaseUser != null) {
-        if(firebaseUser.displayName == null) {        // maybe add the profile picture later
-            PartialUser("defaultName", firebaseUser.uid)
+    private val partialUser: PartialUser = if(googleAccount != null) {
+        if(googleAccount.displayName == null) {        // maybe add the profile picture later
+            PartialUser("defaultName", googleAccount.id!!)
         } else {
-            PartialUser(firebaseUser.displayName!!, firebaseUser.uid)
+            PartialUser(googleAccount.displayName!!, googleAccount.id!!)
         }
     } else {
         PartialUser("defaultName", "errorUid")
@@ -30,15 +31,15 @@ class CompleteUser(private val firebaseUser: FirebaseUser?) {
 
     private var gameHistory: MutableList<History> = mutableListOf()
 
-    private val dbReference: String = "CompleteUsers/${firebaseUser?.uid}"
+    private val dbReference: String = "CompleteUsers/${googleAccount?.id}"
 
     init {
         addUserToDatabase()
     }
 
-    fun addUserToDatabase() {
-        if(firebaseUser != null) {
-            db.insert(dbReference, firebaseUser.uid, this)
+    private fun addUserToDatabase() {
+        if(googleAccount != null) {
+            db.insert(dbReference, googleAccount.id!!, this)
             /*db.insert(dbReference, "achievements", achievements)
             db.insert(dbReference, "statistics", stats)
             db.insert(dbReference, "friends", friendsList)
