@@ -29,7 +29,7 @@ class RealTimeDatabase : Database {
         db = FirebaseDatabase.getInstance(url)
 
         //Will cache offline data and update the database when online
-        db.setPersistenceEnabled(true)
+//        db.setPersistenceEnabled(true)
         return this
     }
 
@@ -44,10 +44,6 @@ class RealTimeDatabase : Database {
 
     override fun delete(reference: String, key: String) {
         getRefAndChild(debug+reference, key).removeValue()
-    }
-
-    override fun get(reference: String, key: String): Any? {
-        return getRefAndChild(debug+reference, key).get().result.getValue(Any::class.java)
     }
 
     override fun referenceGet(reference: String, key: String): Task<DataSnapshot> {

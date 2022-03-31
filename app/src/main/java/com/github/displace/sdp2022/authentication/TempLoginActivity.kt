@@ -7,8 +7,9 @@ import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.firebase.ui.auth.AuthUI
-import com.github.displace.sdp2022.MainActivity
+import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.R
+import com.github.displace.sdp2022.users.CompleteUser
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -64,6 +65,8 @@ class TempLoginActivity : AppCompatActivity() {
             try {
                 auth.signInWithCredential(credentials).await()
                 withContext(Dispatchers.Main){
+
+                    val app = applicationContext as MyApplication
                     val current = auth.currentUser
                     val name : String? = current?.displayName
                     if( name.isNullOrEmpty()){
@@ -71,6 +74,7 @@ class TempLoginActivity : AppCompatActivity() {
                     }
                     else{
                         Toast.makeText(this@TempLoginActivity, "Successfully logged in $name ", Toast.LENGTH_LONG).show()
+                        app.setActiveUser(CompleteUser(current))
                     }
                 }
 

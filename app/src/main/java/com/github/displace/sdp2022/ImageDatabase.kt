@@ -47,10 +47,10 @@ class ImageDatabase : Database {
         getChild(reference).child(key).delete()
     }
 
-    @Deprecated("Not enough specific", ReplaceWith("getOnLocalFile or getOnMemory"))
+    /*@Deprecated("Not enough specific", ReplaceWith("getOnLocalFile or getOnMemory"))
     override fun get(reference: String, key: String): Any {
         return getOnLocalFile(reference, key)
-    }
+    }*/
 
     override fun referenceGet(reference: String, key: String): Task<DataSnapshot> {
         TODO("Not yet implemented")

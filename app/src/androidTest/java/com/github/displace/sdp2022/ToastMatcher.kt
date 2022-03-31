@@ -12,6 +12,7 @@ class ToastMatcher : TypeSafeMatcher<Root>() {
         description?.appendText("is toast")
     }
 
+    @Suppress("DEPRECATION")
     override fun matchesSafely(item: Root?): Boolean {
         val type: Int? = item?.windowLayoutParams?.get()?.type
         if ((type == WindowManager.LayoutParams.TYPE_TOAST)) {

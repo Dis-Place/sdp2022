@@ -24,7 +24,7 @@ class MsgViewAdapter(
     override fun onBindViewHolder(holder: MsgViewHolder, position: Int) {
         val index = holder.adapterPosition
         holder.content.text = data[index].message
-        holder.sender.text = data[index].sender.name
+        holder.sender.text = data[index].sender.username
         holder.date.text = data[index].date
         holder.dbAdapter = dbAdapter
         holder.friend = data[index].sender

@@ -13,9 +13,11 @@ import com.github.displace.sdp2022.R
 import com.github.displace.sdp2022.profile.achievements.AchViewAdapter
 import com.github.displace.sdp2022.profile.friends.FriendViewAdapter
 import com.github.displace.sdp2022.profile.history.HistoryViewAdapter
+import com.github.displace.sdp2022.profile.messages.Message
 import com.github.displace.sdp2022.profile.messages.MsgViewAdapter
 import com.github.displace.sdp2022.profile.settings.AccountSettingsActivity
 import com.github.displace.sdp2022.profile.statistics.StatViewAdapter
+import com.github.displace.sdp2022.users.PartialUser
 
 
 class ProfileActivity : AppCompatActivity() {
@@ -30,26 +32,26 @@ class ProfileActivity : AppCompatActivity() {
         /* Active user Information */
         val app = applicationContext as MyApplication
         dbAccess = app.getProfileDb()
-        findViewById<TextView>(R.id.profileUsername).text = app.getActiveUser().name
+        findViewById<TextView>(R.id.profileUsername).text = app.getActiveUser().getPartialUser().username
 
         /* Achievements */
         val achRecyclerView = findViewById<RecyclerView>(R.id.recyclerAch)
         val achAdapter =
-            AchViewAdapter(applicationContext, dbAccess.getAchList(3, app.getActiveUser().ID))
+            AchViewAdapter(applicationContext, app.getActiveUser().getAchievements())
         achRecyclerView.adapter = achAdapter
         achRecyclerView.layoutManager = LinearLayoutManager(applicationContext)
 
         /* Statistics */
         val statRecyclerView = findViewById<RecyclerView>(R.id.recyclerStats)
         val statAdapter =
-            StatViewAdapter(applicationContext, dbAccess.getStatsList(3, app.getActiveUser().ID))
+            StatViewAdapter(applicationContext, app.getActiveUser().getStats())
         statRecyclerView.adapter = statAdapter
         statRecyclerView.layoutManager = LinearLayoutManager(applicationContext)
 
         /* Games History */
         val historyRecyclerView = findViewById<RecyclerView>(R.id.recyclerHist)
         val historyAdapter =
-            HistoryViewAdapter(applicationContext, dbAccess.getHistList(3, app.getActiveUser().ID))
+            HistoryViewAdapter(applicationContext, app.getActiveUser().getGameHistory())
         historyRecyclerView.adapter = historyAdapter
         historyRecyclerView.layoutManager = LinearLayoutManager(applicationContext)
 
@@ -57,7 +59,7 @@ class ProfileActivity : AppCompatActivity() {
         val friendRecyclerView = findViewById<RecyclerView>(R.id.recyclerFriend)
         val friendAdapter = FriendViewAdapter(
             applicationContext,
-            dbAccess.getFriendsList(3, app.getActiveUser().ID),
+            app.getActiveUser().getFriendsList(),
             dbAccess, 0
         )
         friendRecyclerView.adapter = friendAdapter
@@ -67,7 +69,13 @@ class ProfileActivity : AppCompatActivity() {
         val messageRecyclerView = findViewById<RecyclerView>(R.id.recyclerMsg)
         val messageAdapter = MsgViewAdapter(
             applicationContext,
-            dbAccess.getMsgList(3, app.getActiveUser().ID),
+            listOf(
+                Message(
+                    "MESSAGE 1 IT IS A VERY LONG MESSAGEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE",
+                    "1",
+                    PartialUser("dummy_username", "dummy_friend_id")
+                )
+            ),//dbAccess.getMsgList(3, app.getActiveUser().ID),       //TODO: CompleteUsers/id/MessageHistory in database to implement
             dbAccess
         )
         messageRecyclerView.adapter = messageAdapter

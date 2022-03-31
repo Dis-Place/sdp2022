@@ -7,6 +7,7 @@ import com.github.displace.sdp2022.profile.friends.Friend
 import com.github.displace.sdp2022.profile.history.History
 import com.github.displace.sdp2022.profile.messages.Message
 import com.github.displace.sdp2022.profile.statistics.Statistic
+import com.github.displace.sdp2022.users.PartialUser
 
 class MockDB : ProfileDbConnection, NewsDbConnection {
 
@@ -30,10 +31,10 @@ class MockDB : ProfileDbConnection, NewsDbConnection {
         Achievement("ach1", "today")
     )
 
-    private var dummyFriendList: List<Friend> = listOf(
-        Friend("friend1", "1"),
-        Friend("friend2", "2"),
-        Friend("friend2", "3")
+    private var dummyFriendList: List<PartialUser> = listOf(
+        PartialUser("dummy_friend1", "1"),
+        PartialUser("dummy_friend2", "2"),
+        PartialUser("dummy_friend3", "3")
     )
 
     private var dummyMessageList: List<Message> = listOf(
@@ -68,12 +69,11 @@ class MockDB : ProfileDbConnection, NewsDbConnection {
         return dummyMessageList.take(size)
     }
 
-    override fun getFriendsList(size: Int, id: String): List<Friend> {
+    override fun getFriendsList(size: Int, id: String): List<PartialUser> {
         return dummyFriendList.take(size)
     }
 
-    override fun sendInvite(f: Friend) {
-    }
+    override fun sendInvite(f: PartialUser) {}
 
     override fun sendMessage(msg: String, id: String) {
         dummyMessageList = listOf(Message(msg, "3", dummyFriendList[2]))
