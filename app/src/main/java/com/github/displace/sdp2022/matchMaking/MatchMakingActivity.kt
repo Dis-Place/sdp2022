@@ -114,7 +114,7 @@ class MatchMakingActivity : AppCompatActivity() {
         val friendRecyclerView = findViewById<RecyclerView>(R.id.friendsMMRecycler)
         val friendAdapter = FriendViewAdapter(
             applicationContext,
-            dbAccess.getFriendsList(3, app.getActiveUser().ID),
+            app.getActiveUser().getFriendsList(),
             dbAccess, 1
         )
         friendRecyclerView.adapter = friendAdapter
@@ -242,7 +242,7 @@ class MatchMakingActivity : AppCompatActivity() {
         val friendRecyclerView = findViewById<RecyclerView>(R.id.playersRecycler)
         val friendAdapter = FriendViewAdapter(
             applicationContext,
-            dbAccess.getFriendsList(pList.size, app.getActiveUser().ID),
+            app.getActiveUser().getFriendsList(),
             dbAccess, 2
         )
         friendRecyclerView.adapter = friendAdapter

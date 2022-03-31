@@ -17,6 +17,7 @@ import com.github.displace.sdp2022.matchMaking.MatchMakingActivity
 import com.github.displace.sdp2022.profile.MockDB
 import com.github.displace.sdp2022.profile.ProfileActivity
 import com.github.displace.sdp2022.profile.friends.Friend
+import com.github.displace.sdp2022.users.CompleteUser
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -30,7 +31,7 @@ class MatchMakingTest {
     fun before(){
         val app = ApplicationProvider.getApplicationContext() as MyApplication
         app.setDb(MockDB())
-        app.setActiveUser(Friend("Baptou", "0"))
+        app.setActiveUser(CompleteUser(null))
 
     }
 

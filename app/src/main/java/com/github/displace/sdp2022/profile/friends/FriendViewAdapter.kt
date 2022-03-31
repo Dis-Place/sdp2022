@@ -7,10 +7,11 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.github.displace.sdp2022.profile.ProfileDbConnection
 import com.github.displace.sdp2022.R
+import com.github.displace.sdp2022.users.PartialUser
 
 class FriendViewAdapter(
     val context: Context,
-    private val data: List<Friend>,
+    private val data: List<PartialUser>,
     private val dbAdapter: ProfileDbConnection,
     private val MM : Int
 ) : RecyclerView.Adapter<FriendViewHolder>() {
@@ -25,7 +26,7 @@ class FriendViewAdapter(
 
     override fun onBindViewHolder(holder: FriendViewHolder, position: Int) {
         val index = holder.adapterPosition
-        holder.friendNameView.text = data[index].name
+        holder.friendNameView.text = data[index].username
         holder.friend = data[index]
         holder.dbAdapter = dbAdapter
         when (MM) {

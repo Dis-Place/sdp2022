@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.github.displace.sdp2022.profile.ProfileDbConnection
 import com.github.displace.sdp2022.profile.friends.Friend
 import com.github.displace.sdp2022.R
+import com.github.displace.sdp2022.users.PartialUser
 
 class MsgViewHolder(itemview: View) : RecyclerView.ViewHolder(itemview) {
 
@@ -19,13 +20,13 @@ class MsgViewHolder(itemview: View) : RecyclerView.ViewHolder(itemview) {
 
 
     lateinit var dbAdapter: ProfileDbConnection
-    lateinit var friend: Friend
+    lateinit var friend: PartialUser
 
     init {
         replyButton.setOnClickListener { v ->
             val intent = Intent(v.context, SendMessageActivity::class.java).apply {
-                putExtra("MessageReceiverID", friend.ID)
-                putExtra("MessageReceiverName", friend.name)
+                putExtra("MessageReceiverID", friend.uid)
+                putExtra("MessageReceiverName", friend.username)
             }
             v.context.startActivity(intent)
         }

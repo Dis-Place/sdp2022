@@ -2,12 +2,14 @@ package com.github.displace.sdp2022.authentication
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.firebase.ui.auth.AuthUI
-import com.github.displace.sdp2022.MainActivity
+import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.R
+import com.github.displace.sdp2022.users.CompleteUser
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -40,9 +42,9 @@ class TempLoginActivity : AppCompatActivity() {
             val options  = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken( getString(R.string.webclient_id)).requestEmail().build()
             signInClient = GoogleSignIn.getClient(this, options)
-            signInClient.signInIntent.also {
-                startActivityForResult(it, REQUEST_CODE_SIGN_IN)
-            }
+
+            startActivityForResult(signInClient.signInIntent, REQUEST_CODE_SIGN_IN)
+
         }
         val logout = findViewById<Button>(R.id.btnGoogleSignOut)
         logout.setOnClickListener {
@@ -63,6 +65,8 @@ class TempLoginActivity : AppCompatActivity() {
             try {
                 auth.signInWithCredential(credentials).await()
                 withContext(Dispatchers.Main){
+
+                    val app = applicationContext as MyApplication
                     val current = auth.currentUser
                     val name : String? = current?.displayName
                     if( name.isNullOrEmpty()){
@@ -70,6 +74,7 @@ class TempLoginActivity : AppCompatActivity() {
                     }
                     else{
                         Toast.makeText(this@TempLoginActivity, "Successfully logged in $name ", Toast.LENGTH_LONG).show()
+                        app.setActiveUser(CompleteUser(current))
                     }
                 }
 
@@ -86,9 +91,14 @@ class TempLoginActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if( requestCode == REQUEST_CODE_SIGN_IN) {
-            val account = GoogleSignIn.getSignedInAccountFromIntent(data).result
-            account?.let {
-                googleAuthForFirebase(it)
+            try {
+                val account = GoogleSignIn.getSignedInAccountFromIntent(data).result
+
+                account?.let {
+                    googleAuthForFirebase(it)
+                }
+            } catch(e: Exception) {
+                Log.e("test", e.message!!)
             }
         }
     }

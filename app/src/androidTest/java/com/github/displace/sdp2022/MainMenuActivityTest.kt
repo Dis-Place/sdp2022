@@ -16,7 +16,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.displace.sdp2022.news.NewsActivity
 import com.github.displace.sdp2022.profile.MockDB
 import com.github.displace.sdp2022.profile.ProfileActivity
-import com.github.displace.sdp2022.profile.friends.Friend
+import com.github.displace.sdp2022.users.CompleteUser
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -34,7 +34,7 @@ class MainMenuActivityTest {
 
         val app = ApplicationProvider.getApplicationContext() as MyApplication
         app.setDb(MockDB())
-        app.setActiveUser(Friend("Baptou", "0"))
+        app.setActiveUser(CompleteUser(null))
 
         val intent =
             Intent(ApplicationProvider.getApplicationContext(), MainMenuActivity::class.java)
@@ -42,7 +42,7 @@ class MainMenuActivityTest {
 
         scenario.use {
             Espresso.onView(withId(R.id.WelcomeText))
-                .check(matches(withText("Welcome Baptou!")))
+                .check(matches(withText("Welcome defaultName!")))
         }
     }
 
@@ -75,6 +75,27 @@ class MainMenuActivityTest {
         Espresso.onView(withId(R.id.newsButton)).perform(click())
 
         intended(hasComponent(NewsActivity::class.java.name))
+        Intents.release()
+
+    }
+
+    @Test
+    fun testPlayButton() {
+        Intents.init()
+        Espresso.onView(withId(R.id.mainGoButton)).perform(click())
+        Espresso.onView(withId(R.id.playButton)).perform(click())
+
+        intended(hasComponent(GameListActivity::class.java.name))
+        Intents.release()
+    }
+
+    @Test
+    fun testDemoButton() {
+        Intents.init()
+        Espresso.onView(withId(R.id.mainGoButton)).perform(click())
+        Espresso.onView(withId(R.id.dataBaseDemoButton)).perform(click())
+
+        intended(hasComponent(UploadImageActivity::class.java.name))
         Intents.release()
     }
 

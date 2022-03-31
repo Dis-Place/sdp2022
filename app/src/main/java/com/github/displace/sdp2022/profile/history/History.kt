@@ -1,3 +1,3 @@
 package com.github.displace.sdp2022.profile.history
 
-class History(val map: String, val date: String, val result: String)
+class History(val map: String, val date: String, val result: String)        // add score and player list

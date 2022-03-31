@@ -13,7 +13,6 @@ interface Database {
 
     fun delete(reference: String, key: String)
 
-    fun get(reference: String, key: String): Any?
     fun referenceGet(reference: String, key: String): Task<DataSnapshot>
     fun noCacheInstantiate(url: String, debug: Boolean): Database
     fun getDbReference(path: String) : DatabaseReference
