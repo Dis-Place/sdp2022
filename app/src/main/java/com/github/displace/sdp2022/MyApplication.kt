@@ -13,7 +13,7 @@ class MyApplication : Application() {
     //the database
     private lateinit var db: MockDB
 
-    private lateinit var completeUser: CompleteUser
+    private var completeUser: CompleteUser? = null
 
   //  private lateinit var rTdb : RealTimeDatabase
    // private lateinit var rTdbNoCache : RealTimeDatabase
@@ -51,7 +51,7 @@ class MyApplication : Application() {
         completeUser = user
     }
 
-    fun getActiveUser(): CompleteUser {
+    fun getActiveUser(): CompleteUser? {
         return completeUser
     }
 

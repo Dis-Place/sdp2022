@@ -109,12 +109,19 @@ class MatchMakingActivity : AppCompatActivity() {
 
         val app = applicationContext as MyApplication
         val dbAccess = app.getProfileDb()
+        val activeUser = app.getActiveUser()
 
         /* Friends in private lobby */  //PARTIAL USER : should be the friends list of the active user
         val friendRecyclerView = findViewById<RecyclerView>(R.id.friendsMMRecycler)
+        val friends = if(activeUser != null) {
+            activeUser.getFriendsList()
+        }else {
+            mutableListOf()
+        }
+
         val friendAdapter = FriendViewAdapter(
             applicationContext,
-            app.getActiveUser().getFriendsList(),
+            friends,
             dbAccess, 1
         )
         friendRecyclerView.adapter = friendAdapter
@@ -242,7 +249,7 @@ class MatchMakingActivity : AppCompatActivity() {
         val friendRecyclerView = findViewById<RecyclerView>(R.id.playersRecycler)
         val friendAdapter = FriendViewAdapter(
             applicationContext,
-            app.getActiveUser().getFriendsList(),
+            app.getActiveUser()!!.getFriendsList(),     // TO REPLACE WITH LIST OF PLAYERS
             dbAccess, 2
         )
         friendRecyclerView.adapter = friendAdapter

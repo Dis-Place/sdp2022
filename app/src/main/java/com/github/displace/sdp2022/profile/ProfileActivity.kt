@@ -32,34 +32,65 @@ class ProfileActivity : AppCompatActivity() {
         /* Active user Information */
         val app = applicationContext as MyApplication
         dbAccess = app.getProfileDb()
-        findViewById<TextView>(R.id.profileUsername).text = app.getActiveUser().getPartialUser().username
+        val activeUser = app.getActiveUser()
+        findViewById<TextView>(R.id.profileUsername).text = if(activeUser != null) {
+            activeUser.getPartialUser().username
+        } else {
+            "defaultNotLoggedIn"
+        }
 
         /* Achievements */
         val achRecyclerView = findViewById<RecyclerView>(R.id.recyclerAch)
+        val achs = if(activeUser != null) {
+            activeUser.getAchievements()
+        } else {
+            mutableListOf()
+        }
+
         val achAdapter =
-            AchViewAdapter(applicationContext, app.getActiveUser().getAchievements())
+            AchViewAdapter(applicationContext, achs)
         achRecyclerView.adapter = achAdapter
         achRecyclerView.layoutManager = LinearLayoutManager(applicationContext)
 
         /* Statistics */
         val statRecyclerView = findViewById<RecyclerView>(R.id.recyclerStats)
+
+        val stats = if(activeUser != null) {
+            activeUser.getStats()
+        } else {
+            mutableListOf()
+        }
+
         val statAdapter =
-            StatViewAdapter(applicationContext, app.getActiveUser().getStats())
+            StatViewAdapter(applicationContext, stats)
         statRecyclerView.adapter = statAdapter
         statRecyclerView.layoutManager = LinearLayoutManager(applicationContext)
 
         /* Games History */
         val historyRecyclerView = findViewById<RecyclerView>(R.id.recyclerHist)
+
+        val hist = if(activeUser != null) {
+            activeUser.getGameHistory()
+        } else {
+            mutableListOf()
+        }
+
         val historyAdapter =
-            HistoryViewAdapter(applicationContext, app.getActiveUser().getGameHistory())
+            HistoryViewAdapter(applicationContext, hist)
         historyRecyclerView.adapter = historyAdapter
         historyRecyclerView.layoutManager = LinearLayoutManager(applicationContext)
 
         /* Friends */
         val friendRecyclerView = findViewById<RecyclerView>(R.id.recyclerFriend)
+
+        val friends = if(activeUser != null) {
+            activeUser.getFriendsList()
+        } else {
+            mutableListOf()
+        }
         val friendAdapter = FriendViewAdapter(
             applicationContext,
-            app.getActiveUser().getFriendsList(),
+            friends,
             dbAccess, 0
         )
         friendRecyclerView.adapter = friendAdapter
