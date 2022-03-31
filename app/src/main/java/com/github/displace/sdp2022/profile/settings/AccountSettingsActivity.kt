@@ -383,7 +383,6 @@ class AccountSettingsActivity : AppCompatActivity() {
          )
          llParam.gravity = Gravity.CENTER
          ll.layoutParams = llParam
-
          // Creating a ProgressBar inside the layout
          val progressBar = ProgressBar(this)
          progressBar.isIndeterminate = true
@@ -394,7 +393,6 @@ class AccountSettingsActivity : AppCompatActivity() {
              ViewGroup.LayoutParams.WRAP_CONTENT
          )
          llParam.gravity = Gravity.CENTER
-
          // Creating a TextView inside the layout
          val tvText = TextView(this)
          tvText.text = progressMessage
@@ -403,17 +401,14 @@ class AccountSettingsActivity : AppCompatActivity() {
          tvText.layoutParams = llParam
          ll.addView(progressBar)
          ll.addView(tvText)
-
          // Setting the AlertDialog Builder view
          // as the Linear layout created above
          val builder: AlertDialog.Builder = AlertDialog.Builder(this)
          builder.setCancelable(true)
          builder.setView(ll)
-
          // Displaying the dialog
          processingAlert = builder.create()
          processingAlert?.show()
-
          val window: Window? = processingAlert?.window
          if (window != null) {
              val layoutParams = WindowManager.LayoutParams()
@@ -421,7 +416,6 @@ class AccountSettingsActivity : AppCompatActivity() {
              layoutParams.width = LinearLayout.LayoutParams.WRAP_CONTENT
              layoutParams.height = LinearLayout.LayoutParams.WRAP_CONTENT
              processingAlert?.window?.attributes = layoutParams
-
              // Disabling screen touch to avoid exiting the Dialog
              window.setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
          }

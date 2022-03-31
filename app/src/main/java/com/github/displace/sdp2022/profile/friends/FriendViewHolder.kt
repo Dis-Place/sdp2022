@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.github.displace.sdp2022.R
 import com.github.displace.sdp2022.profile.ProfileDbConnection
 import com.github.displace.sdp2022.profile.messages.SendMessageActivity
+import com.github.displace.sdp2022.users.PartialUser
 
 class FriendViewHolder(itemview: View) : RecyclerView.ViewHolder(itemview) {
 
@@ -16,13 +17,13 @@ class FriendViewHolder(itemview: View) : RecyclerView.ViewHolder(itemview) {
     val inviteButton: ImageButton = itemView.findViewById(R.id.inviteButton)
 
     lateinit var dbAdapter: ProfileDbConnection
-    lateinit var friend: Friend
+    lateinit var friend: PartialUser
 
     init {
         messageButton.setOnClickListener { v ->
             val intent = Intent(v.context, SendMessageActivity::class.java).apply {
-                putExtra("MessageReceiverID", friend.ID)
-                putExtra("MessageReceiverName", friend.name)
+                putExtra("MessageReceiverID", friend.uid)
+                putExtra("MessageReceiverName", friend.username)
             }
             v.context.startActivity(intent)
         }
@@ -31,8 +32,8 @@ class FriendViewHolder(itemview: View) : RecyclerView.ViewHolder(itemview) {
 
         itemview.setOnClickListener { v ->
             val intent = Intent(v.context, FriendProfile::class.java).apply {
-                putExtra("FriendId", friend.ID)
-                putExtra("FriendUsername", friend.name)
+                putExtra("FriendId", friend.uid)
+                putExtra("FriendUsername", friend.username)
             }
             v.context.startActivity(intent)
         }

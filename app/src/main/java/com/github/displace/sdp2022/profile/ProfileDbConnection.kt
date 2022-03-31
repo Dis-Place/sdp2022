@@ -5,6 +5,7 @@ import com.github.displace.sdp2022.profile.friends.Friend
 import com.github.displace.sdp2022.profile.history.History
 import com.github.displace.sdp2022.profile.messages.Message
 import com.github.displace.sdp2022.profile.statistics.Statistic
+import com.github.displace.sdp2022.users.PartialUser
 
 interface ProfileDbConnection {
 
@@ -16,8 +17,8 @@ interface ProfileDbConnection {
 
     fun getMsgList(size: Int, id: String): List<Message>
 
-    fun getFriendsList(size: Int, id: String): List<Friend>
-    fun sendInvite(f: Friend)
+    fun getFriendsList(size: Int, id: String): List<PartialUser>
+    fun sendInvite(f: PartialUser)
     fun sendMessage(msg: String, id: String)
 
     fun getProfileInfo(id: String): Friend

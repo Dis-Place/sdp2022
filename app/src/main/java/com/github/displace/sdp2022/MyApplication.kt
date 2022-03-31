@@ -1,16 +1,19 @@
 package com.github.displace.sdp2022
 
 import android.app.Application
+import android.content.SharedPreferences
 import com.github.displace.sdp2022.news.NewsDbConnection
 import com.github.displace.sdp2022.profile.MockDB
 import com.github.displace.sdp2022.profile.ProfileDbConnection
 import com.github.displace.sdp2022.profile.friends.Friend
+import com.github.displace.sdp2022.users.CompleteUser
 
 class MyApplication : Application() {
 
     //the database
     private lateinit var db: MockDB
-    private lateinit var activeUser: Friend
+
+    private lateinit var completeUser: CompleteUser
 
   //  private lateinit var rTdb : RealTimeDatabase
    // private lateinit var rTdbNoCache : RealTimeDatabase
@@ -44,12 +47,12 @@ class MyApplication : Application() {
         return db
     }
 
-    fun setActiveUser(user: Friend) {
-        activeUser = user
+    fun setActiveUser(user: CompleteUser) {
+        completeUser = user
     }
 
-    fun getActiveUser(): Friend {
-        return activeUser
+    fun getActiveUser(): CompleteUser {
+        return completeUser
     }
 
 }

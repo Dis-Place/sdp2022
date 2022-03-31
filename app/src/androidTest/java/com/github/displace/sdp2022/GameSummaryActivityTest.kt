@@ -1,8 +1,6 @@
 package com.github.displace.sdp2022
 
-import android.content.ContextWrapper
 import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
@@ -13,11 +11,9 @@ import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.Intents.intended
 import androidx.test.espresso.intent.matcher.IntentMatchers
-import androidx.test.espresso.matcher.BoundedMatcher
 import androidx.test.espresso.matcher.ViewMatchers.*
-import androidx.test.ext.junit.rules.activityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.github.displace.sdp2022.profile.friends.Friend
+import com.github.displace.sdp2022.users.CompleteUser
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -33,7 +29,7 @@ class GameSummaryActivityTest {
     @Before
     fun createIntentAndBundle() {
         bundle = Bundle()
-        intent = Intent(ApplicationProvider.getApplicationContext(),GameSummaryActivity::class.java)
+        intent = Intent(getApplicationContext(),GameSummaryActivity::class.java)
     }
 
     @Test
@@ -117,7 +113,7 @@ class GameSummaryActivityTest {
 
         val app = getApplicationContext() as MyApplication
 
-        app.setActiveUser(Friend("Name", "0"))
+        app.setActiveUser(CompleteUser(null))
 
         ActivityScenario.launch<GameSummaryActivity>(intent).use {
             onView(withId(R.id.mainMenuButton)).perform(click())

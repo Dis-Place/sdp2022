@@ -34,7 +34,7 @@ class MainActivityTest {
 
         onView(ViewMatchers.withId(R.id.WelcomeText)).check(
             ViewAssertions.matches(
-                ViewMatchers.withText("Welcome baptou gaming!")
+                ViewMatchers.withText("Welcome defaultName!")
             )
         )
 
