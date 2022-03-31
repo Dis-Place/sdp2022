@@ -1,29 +1,19 @@
 package com.github.displace.sdp2022
 
-import android.annotation.SuppressLint
-import com.github.displace.sdp2022.gameComponents.GameEvent
-import com.github.displace.sdp2022.gameComponents.Point
-import com.github.displace.sdp2022.gameVersus.GameVersusViewModel
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import org.osmdroid.views.CustomZoomButtonsController
-import org.osmdroid.views.MapView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import android.content.res.Configuration
-import android.os.Parcelable
-import android.widget.Toast
-import androidx.preference.PreferenceManager
+import com.github.displace.sdp2022.gameComponents.GameEvent
+import com.github.displace.sdp2022.gameComponents.Point
+import com.github.displace.sdp2022.gameVersus.GameVersusViewModel
 import com.github.displace.sdp2022.map.MapViewManager
 import com.github.displace.sdp2022.util.PreferencesUtil
 import com.github.displace.sdp2022.util.gps.GPSPositionManager
 import com.github.displace.sdp2022.util.gps.GPSPositionUpdater
 import com.github.displace.sdp2022.util.gps.GeoPointListener
-import org.osmdroid.config.Configuration.*
-import org.osmdroid.tileprovider.tilesource.TileSourceFactory
-import org.osmdroid.util.GeoPoint
-import java.util.ArrayList
+import org.osmdroid.views.MapView
 
 
 const val EXTRA_STATS = "com.github.displace.sdp2022.GAMESTAT"
@@ -38,7 +28,7 @@ class GameVersusViewActivity : AppCompatActivity() {
 
     var goal = Point(46.52048,6.56782)
     val game = GameVersusViewModel()
-    val extras: Bundle = Bundle()
+    private val extras: Bundle = Bundle()
 
     private lateinit var mapView: MapView
     private lateinit var mapViewManager: MapViewManager
@@ -117,7 +107,7 @@ class GameVersusViewActivity : AppCompatActivity() {
             mapViewManager.center(gpsPos)
     }
 
-    fun showGameSummaryActivity() {
+    private fun showGameSummaryActivity() {
         val intent = Intent(this, GameSummaryActivity::class.java)
         extras.putStringArrayList(EXTRA_STATS, statsList)
         extras.putString(EXTRA_MODE, "Versus")

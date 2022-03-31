@@ -1,7 +1,8 @@
 package com.github.displace.sdp2022
 
-import androidx.test.espresso.Espresso
-import androidx.test.espresso.action.ViewActions
+import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.ViewAction
+import androidx.test.espresso.action.*
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.intent.Intents
@@ -11,46 +12,40 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.test.rule.GrantPermissionRule
-import com.github.displace.sdp2022.R
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+
 
 @RunWith(AndroidJUnit4::class)
 class GameMenuTest {
 
     @get:Rule
     val testRule = ActivityScenarioRule(GameVersusViewActivity::class.java)
-    @get:Rule
-    val permissionRule = GrantPermissionRule.grant(
-        android.Manifest.permission.ACCESS_COARSE_LOCATION,
-        android.Manifest.permission.ACCESS_FINE_LOCATION
-    )
-
-    /*
-     Test if the input of the main screen is correctly shown in the main menu
-     */
 
     @Test
     fun testPlayButton() {
-        Intents.init()
-        Espresso.onView(withId(R.id.TryText))
-            .check(matches(withText("status : neutral, nombre d'essais restant : 4")))
-        Intents.release()
+            onView(withId(R.id.TryText))
+                .check(matches(withText("status : neutral, nombre d'essais restant : 4")))
     }
 
     @Test
     fun testMap() {
-        Intents.init()
-        Espresso.onView(withId(R.id.map)).check(matches(ViewMatchers.isDisplayed()))
-        Intents.release()
+            onView(withId(R.id.map)).check(matches(ViewMatchers.isDisplayed()))
+
     }
 
     @Test
-    fun testWinButton() {
+    fun testEndButton() {
         Intents.init()
-        Espresso.onView(withId(R.id.map)).perform(ViewActions.longClick())
+        onView(withId(R.id.map)).perform(swipeUp())
+        onView(withId(R.id.map)).perform(ViewActions.longClick())
+        onView(withId(R.id.map)).perform(swipeUp())
+        onView(withId(R.id.map)).perform(ViewActions.longClick())
+        onView(withId(R.id.map)).perform(swipeUp())
+        onView(withId(R.id.map)).perform(ViewActions.longClick())
+        onView(withId(R.id.map)).perform(swipeUp())
+        onView(withId(R.id.map)).perform(ViewActions.longClick())
         Intents.intended(IntentMatchers.hasComponent(GameSummaryActivity::class.java.name))
         Intents.release()
     }
@@ -58,19 +53,18 @@ class GameMenuTest {
     @Test
     fun testFailButton() {
         Intents.init()
-        Espresso.onView(withId(R.id.map)).perform(ViewActions.longClick())
-        Espresso.onView(withId(R.id.TryText))
+        onView(withId(R.id.map)).perform(swipeUp())
+        onView(withId(R.id.map)).perform(ViewActions.longClick())
+        onView(withId(R.id.TryText))
             .check(matches(withText("status : fail, nombre d'essais restant : 3")))
         Intents.release()
+
     }
 
     @Test
-    fun testEndButton() {
+    fun testWinButton() {
         Intents.init()
-        Espresso.onView(withId(R.id.map)).perform(ViewActions.longClick())
-        Espresso.onView(withId(R.id.map)).perform(ViewActions.longClick())
-        Espresso.onView(withId(R.id.map)).perform(ViewActions.longClick())
-        Espresso.onView(withId(R.id.map)).perform(ViewActions.longClick())
+        onView(withId(R.id.map)).perform(ViewActions.longClick())
         Intents.intended(IntentMatchers.hasComponent(GameSummaryActivity::class.java.name))
         Intents.release()
     }
@@ -78,9 +72,16 @@ class GameMenuTest {
     @Test
     fun testQuitButton() {
         Intents.init()
-        Espresso.onView(withId(R.id.closeButton)).perform(click())
+        onView(withId(R.id.closeButton)).perform(click())
         Intents.intended(IntentMatchers.hasComponent(GameListActivity::class.java.name))
         Intents.release()
+    }
+
+    private fun swipeUp(): ViewAction? {
+        return GeneralSwipeAction(
+            Swipe.FAST, GeneralLocation.BOTTOM_CENTER,
+            GeneralLocation.TOP_CENTER, Press.FINGER
+        )
     }
 
 }
