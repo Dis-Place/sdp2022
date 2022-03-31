@@ -76,3 +76,5 @@ class SettingsActivityTest {
         } else {
             assert(true)
         }
+    }
+}
