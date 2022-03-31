@@ -60,6 +60,7 @@ class MainMenuActivityTest {
     @Test
     fun testSettingsButton() {
         Intents.init()
+
         Espresso.onView(withId(R.id.mainGoButton)).perform(click())
         Espresso.onView(withId(R.id.settingsButton)).perform(click())
 
@@ -75,6 +76,7 @@ class MainMenuActivityTest {
 
         intended(hasComponent(NewsActivity::class.java.name))
         Intents.release()
+
     }
 
     @Test

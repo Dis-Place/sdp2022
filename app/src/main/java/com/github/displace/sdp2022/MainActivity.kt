@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
+import androidx.preference.PreferenceManager
 import com.github.displace.sdp2022.profile.MockDB
 import com.github.displace.sdp2022.profile.friends.Friend
 import com.github.displace.sdp2022.R
@@ -36,6 +37,9 @@ class MainActivity : AppCompatActivity() {
         val name = nameText.text.toString()
         //load the username in the preferences for later use
         sharedpreferences = getSharedPreferences(myPreferences, Context.MODE_PRIVATE)
+
+        //Load the default settings values
+        PreferenceManager.setDefaultValues(this, R.xml.preferences, false)
 
         val intent = Intent(this, MainMenuActivity::class.java)
         startActivity(intent)
