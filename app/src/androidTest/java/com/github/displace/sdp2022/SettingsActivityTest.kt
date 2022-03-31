@@ -1,80 +1,80 @@
 package com.github.displace.sdp2022
 
 import android.content.Intent
+import androidx.lifecycle.Lifecycle
+import androidx.recyclerview.widget.RecyclerView
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
-import androidx.test.espresso.Espresso
-import androidx.test.espresso.action.ViewActions
-import androidx.test.espresso.assertion.ViewAssertions
-import androidx.test.espresso.matcher.ViewMatchers
+import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.contrib.RecyclerViewActions.actionOnItem
+import androidx.test.espresso.matcher.RootMatchers.withDecorView
+import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.github.displace.sdp2022.R
+import org.hamcrest.Matchers.*
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
+
 @RunWith(AndroidJUnit4::class)
 class SettingsActivityTest {
-
     @get:Rule
     val testRule = ActivityScenarioRule(SettingsActivity::class.java)
 
-    @Test
-    fun darkModeSwitchIsDisplayedTest() {
-
-        Espresso.onView(ViewMatchers.withId(R.id.darkModeSwitch))
-            .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
-
+    @Before
+    fun setUp() {
+        val intent =
+            Intent(ApplicationProvider.getApplicationContext(), SettingsActivity::class.java)
+        ActivityScenario.launch<SettingsActivity>(intent)
     }
 
     @Test
-    fun darkModeSwitchIsDisplayedAfterClickTest() {
-
-        Espresso.onView(ViewMatchers.withId(R.id.darkModeSwitch)).perform(ViewActions.click())
-        Espresso.onView(ViewMatchers.withId(R.id.darkModeSwitch))
-            .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
-
+    fun pressingDarkModeButtonDisplayToastMessage() {
+        genericSettingsCheck("Dark Mode", "dark mode")
     }
 
     @Test
-    fun offlineModeSwitchIsDisplayedTest() {
-        Espresso.onView(ViewMatchers.withId(R.id.offlineModeSwitch))
-            .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
+    fun pressingSfxButtonDisplayToastMessage() {
+        genericSettingsCheck("SFX", "Sound effects")
     }
 
     @Test
-    fun offlineModeSwitchIsDisplayedAfterClickTest() {
-        Espresso.onView(ViewMatchers.withId(R.id.offlineModeSwitch)).perform(ViewActions.click())
-        Espresso.onView(ViewMatchers.withId(R.id.offlineModeSwitch))
-            .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
+    fun pressingMusicButtonDisplayToastMessage() {
+        genericSettingsCheck("Music", "Music")
     }
 
-    @Test
-    fun musicSwitchIsDisplayedTest() {
-        Espresso.onView(ViewMatchers.withId(R.id.musicSwitch))
-            .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
+    fun genericSettingsCheck(fullName: String, name: String) {
+        //Select the dark mode switch and then press it
+        onView(withId(androidx.preference.R.id.recycler_view))
+            .perform(
+                actionOnItem<RecyclerView.ViewHolder>(
+                    hasDescendant(withText("Enable $fullName")), click()
+                )
+            )
+
+        //Verify that it was pressed
+        if (testRule.scenario.state != Lifecycle.State.DESTROYED) {
+            testRule.scenario.onActivity { activity ->
+                onView(anyOf(withText("$name enabled"), withText("$name disabled"))).inRoot(
+                    withDecorView(
+                        not(
+                            `is`(
+                                activity.window.decorView
+                            )
+                        )
+                    )
+                ).check(
+                    matches(
+                        isDisplayed()
+                    )
+                )
+            }
+        } else {
+            assert(true)
         }
-
-    @Test
-    fun musicSwitchIsDisplayedAfterClickTest() {
-        Espresso.onView(ViewMatchers.withId(R.id.musicSwitch)).perform(ViewActions.click())
-        Espresso.onView(ViewMatchers.withId(R.id.musicSwitch))
-            .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
-
-    }
-
-    @Test
-    fun sFXSwitchIsDisplayedTest() {
-        Espresso.onView(ViewMatchers.withId(R.id.sFXSwitch))
-            .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
-
-    }
-
-    @Test
-    fun sFXSwitchIsDisplayedAfterClickTest() {
-        Espresso.onView(ViewMatchers.withId(R.id.sFXSwitch)).perform(ViewActions.click())
-        Espresso.onView(ViewMatchers.withId(R.id.sFXSwitch))
-            .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
     }
 }

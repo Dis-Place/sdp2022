@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <SwitchPreference
+        android:contentDescription="dark mode button"
+        android:defaultValue="false"
+
+        android:key="darkMode"
+        android:summary="[May come later] You will soon be able to use the app with a dark mode"
+        android:title="Enable Dark Mode" />
+    <SwitchPreference
+        android:contentDescription="sfx button"
+        android:defaultValue="true"
+        android:key="sfxKey"
+        android:summary="[May come later] You will soon be able to enable/disable sound effect "
+        android:title="Enable SFX" />
+    <SwitchPreference
+        android:contentDescription="music button"
+        android:defaultValue="true"
+        android:key="musicKey"
+        android:summary="[May come later] You will soon be able to enable/disable music "
+        android:title="Enable Music" />
+</PreferenceScreen>
