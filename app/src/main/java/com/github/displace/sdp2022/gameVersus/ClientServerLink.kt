@@ -6,7 +6,7 @@ import com.github.displace.sdp2022.gameComponents.Point
 import com.github.displace.sdp2022.model.GameVersus
 
 class ClientServerLink {
-    private val db = RealTimeDatabase().noCacheInstantiate("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/") as RealTimeDatabase
+    private val db = RealTimeDatabase().noCacheInstantiate("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",false) as RealTimeDatabase
     private val goal = Point(3.0, 5.0)
     var game = GameVersus(goal,0,3,0.0001)
 

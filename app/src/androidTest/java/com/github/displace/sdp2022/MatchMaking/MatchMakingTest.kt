@@ -127,10 +127,6 @@ class MatchMakingTest {
 
             db.delete("MM/Versus/Map1/public","L_$last")
 
-            Espresso.onView(ViewMatchers.withId(R.id.triButtonFail)).check(ViewAssertions.matches(
-                ViewMatchers.isDisplayed()
-            ))
-
             Thread.sleep(1000)
 
         }
