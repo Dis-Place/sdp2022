@@ -31,7 +31,7 @@ class CompleteUser(private val firebaseUser: FirebaseUser?) {
 
     init {
         initializeUser()
-        Thread.sleep(1000)
+        Thread.sleep(3000)
     }
 
     private fun addUserToDatabase() {
