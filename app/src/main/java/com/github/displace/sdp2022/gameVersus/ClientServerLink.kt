@@ -8,12 +8,12 @@ import com.github.displace.sdp2022.model.GameVersus
 class ClientServerLink {
     private val db = RealTimeDatabase().noCacheInstantiate("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",false) as RealTimeDatabase
     private val goal = Point(3.0, 5.0)
-    var game = GameVersus(goal,0,3,0.0001)
+    var game = GameVersus(goal,0,3,0.0001,2)
 
     fun SendDataToOther(goal: Coordinates, playerId: Int) {
         db.update("GameInstance/GameTest/id:" + playerId,"x",goal.pos.first)
         db.update("GameInstance/GameTest/id:" + playerId,"y",goal.pos.second)
-        game = GameVersus(goal, game.nbTry, game.nbTryMax, game.threshold)
+        game = GameVersus(goal, game.nbTry, game.nbTryMax, game.threshold,game.nbPlayer)
     }
 
     @Suppress("UNUSED_PARAMETER")
@@ -26,7 +26,7 @@ class ClientServerLink {
         db.referenceGet("GameInstance/GameTest/id:" + oid,"y").addOnSuccessListener { ls ->
             y = ls.value as Double
         }
-        game =  GameVersus(Point(x,y), game.nbTry, game.nbTryMax, game.threshold)
+        game =  GameVersus(Point(x,y), game.nbTry, game.nbTryMax, game.threshold, game.nbPlayer)
     }
 
     fun verify(test: Coordinates): Int {
@@ -36,7 +36,7 @@ class ClientServerLink {
             if (game.nbTry >= game.nbTryMax) {
                 return 2
             }else{
-                game = GameVersus(game.goal, game.nbTry + 1, game.nbTryMax, game.threshold)
+                game = GameVersus(game.goal, game.nbTry + 1, game.nbTryMax, game.threshold, game.nbPlayer)
                 return 1
             }
         }

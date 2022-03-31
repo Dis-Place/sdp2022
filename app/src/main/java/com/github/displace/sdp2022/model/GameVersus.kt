@@ -8,8 +8,9 @@ class GameVersus(
     val goal: Coordinates,
     val nbTry: Int,
     val nbTryMax: Int,
-    val threshold: Double
-) : Game(goal) {
+    val threshold: Double,
+    val nbPlayer : Int
+) : Game(goal,nbPlayer,threshold) {
 
     override fun verify(test: Coordinates): Boolean {
         return goal.pos.first + threshold > test.pos.first &&
