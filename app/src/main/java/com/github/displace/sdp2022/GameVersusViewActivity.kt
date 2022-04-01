@@ -1,28 +1,19 @@
 package com.github.displace.sdp2022
 
-import android.annotation.SuppressLint
-import com.github.displace.sdp2022.gameComponents.GameEvent
-import com.github.displace.sdp2022.gameComponents.Point
-import com.github.displace.sdp2022.gameVersus.GameVersusViewModel
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import org.osmdroid.views.CustomZoomButtonsController
-import org.osmdroid.views.MapView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import android.content.res.Configuration
-import android.os.Parcelable
-import android.widget.Toast
-import androidx.preference.PreferenceManager
+import com.github.displace.sdp2022.gameComponents.GameEvent
+import com.github.displace.sdp2022.gameComponents.Point
+import com.github.displace.sdp2022.gameVersus.GameVersusViewModel
 import com.github.displace.sdp2022.map.MapViewManager
+import com.github.displace.sdp2022.util.PreferencesUtil
 import com.github.displace.sdp2022.util.gps.GPSPositionManager
 import com.github.displace.sdp2022.util.gps.GPSPositionUpdater
 import com.github.displace.sdp2022.util.gps.GeoPointListener
-import org.osmdroid.config.Configuration.*
-import org.osmdroid.tileprovider.tilesource.TileSourceFactory
-import org.osmdroid.util.GeoPoint
-import java.util.ArrayList
+import org.osmdroid.views.MapView
 
 
 const val EXTRA_STATS = "com.github.displace.sdp2022.GAMESTAT"
@@ -35,11 +26,9 @@ class GameVersusViewActivity : AppCompatActivity() {
 
     val statsList: ArrayList<String> = arrayListOf()
 
-    var goal = Point(3.0,4.0)
+    var goal = Point(46.52048,6.56782)
     val game = GameVersusViewModel()
-    val extras: Bundle = Bundle()
-    private val ZOOM = 16.0
-    private val EPFL_POS = GeoPoint(46.52048,6.56782)
+    private val extras: Bundle = Bundle()
 
     private lateinit var mapView: MapView
     private lateinit var mapViewManager: MapViewManager
@@ -49,8 +38,11 @@ class GameVersusViewActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        PreferencesUtil.initOsmdroidPref(this)
         setContentView(R.layout.activity_game_versus)
+
+        game.handleEvent(GameEvent.OnStart(goal,0))
+
 
         mapView = findViewById<MapView>(R.id.map)
         mapViewManager = MapViewManager(mapView)
@@ -61,59 +53,61 @@ class GameVersusViewActivity : AppCompatActivity() {
 
         mapViewManager.addCallOnLongClick(markerListener)
 
-        game.handleEvent(GameEvent.OnStart(goal, listOf(3.0),3)) //add a pop up with goal and photo info
+        mapViewManager.addCallOnLongClick(GeoPointListener { geoPoint -> run {
+                val res = game.handleEvent(
+                    GameEvent.OnPointSelected(
+                        0,
+                        Point(geoPoint.latitude ,geoPoint.longitude )
+                    )
+                )
+                if(res == 0){
+                    findViewById<TextView>(R.id.TryText).apply { text = "win" }
+                    extras.putBoolean(EXTRA_RESULT, true)
+                    extras.putInt(EXTRA_SCORE_P1, 1)
+                    extras.putInt(EXTRA_SCORE_P2, 0)
+                    statsList.add("18:43")      // Example Time
+                    showGameSummaryActivity()
+                }else {
+                    if (res == 1) {
+                        findViewById<TextView>(R.id.TryText).apply {
+                            text =
+                                "status : fail, nombre d'essais restant : " + (4 - game.getNbEssai())
+                        }
+                    } else {
+                        if (res == 2) {
+                            findViewById<TextView>(R.id.TryText).apply {
+                                text =
+                                    "status : end of game"
+                            }
+                            extras.putBoolean(EXTRA_RESULT, false)
+                            extras.putInt(EXTRA_SCORE_P1, 0)
+                            extras.putInt(EXTRA_SCORE_P2, 1)
+                            statsList.add("15:04")      // Example Time
+                            showGameSummaryActivity()
+                        }
+                    }
+                }}})
 
-        val tryTextView =  findViewById<TextView>(R.id.TryText).apply { text =
-            "neutral"
+        findViewById<TextView>(R.id.TryText).apply { text =
+            "status : neutral, nombre d'essais restant : " + (4 - game.getNbEssai())
         }
     }
 
 
     //close the screen
     fun closeButton(view: View) {
-        game.handleEvent(GameEvent.OnSurrend(3))
+        game.handleEvent(GameEvent.OnSurrend(0))
         val intent = Intent(this, GameListActivity::class.java)
         startActivity(intent)
     }
 
-    //close the screen
-    fun triButtonFail(view: View) {
-        val res = game.handleEvent(GameEvent.OnPointSelected(3,Point(13.0,14.0)))
-        if(res == 1){
-            val tryTextView =  findViewById<TextView>(R.id.TryText).apply { text =
-                "fail"
-            }
-        }else{
-            if(res == 2){
-                val tryTextView =  findViewById<TextView>(R.id.TryText).apply { text =
-                    "end of game"
-                }
-                extras.putBoolean(EXTRA_RESULT, false)
-                extras.putInt(EXTRA_SCORE_P1, 0)
-                extras.putInt(EXTRA_SCORE_P2, 1)
-                statsList.add("15:04")      // Example Time
-                showGameSummaryActivity()
-            }
-        }
-
+    fun centerButton(view: View) {
+        val gpsPos = gpsPositionManager.getPosition()
+        if (gpsPos != null)
+            mapViewManager.center(gpsPos)
     }
 
-    //close the screen
-    fun triButtonWin(view: View) {
-        val res = game.handleEvent(GameEvent.OnPointSelected(3,Point(3.0,5.0)))
-        if(res == 0){
-            val tryTextView =  findViewById<TextView>(R.id.TryText).apply { text =
-                "win"
-            }
-            extras.putBoolean(EXTRA_RESULT, true)
-            extras.putInt(EXTRA_SCORE_P1, 1)
-            extras.putInt(EXTRA_SCORE_P2, 0)
-            statsList.add("18:43")      // Example Time
-            showGameSummaryActivity()
-        }
-    }
-
-    fun showGameSummaryActivity() {
+    private fun showGameSummaryActivity() {
         val intent = Intent(this, GameSummaryActivity::class.java)
         extras.putStringArrayList(EXTRA_STATS, statsList)
         extras.putString(EXTRA_MODE, "Versus")
