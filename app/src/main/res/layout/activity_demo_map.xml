@@ -44,6 +44,15 @@
             android:onClick="disableAllListeners"
             android:text="disable all" />
 
+        <ToggleButton
+            android:id="@+id/toggleMockMarkersButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="toggleMockMarkers"
+            android:text="mock markers"
+            android:textOff="mock markers"
+            android:textOn="mock markers" />
+
         <org.osmdroid.views.MapView
             android:id="@+id/map"
             android:layout_width="match_parent"

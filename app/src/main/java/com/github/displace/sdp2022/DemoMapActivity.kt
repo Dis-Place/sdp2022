@@ -6,13 +6,14 @@ import android.widget.Toast
 import android.widget.ToggleButton
 import androidx.appcompat.app.AppCompatActivity
 import com.github.displace.sdp2022.map.MapViewManager
+import com.github.displace.sdp2022.map.MapViewManager.Companion.DEFAULT_CENTER
+import com.github.displace.sdp2022.map.MarkerManager
 import com.github.displace.sdp2022.util.PreferencesUtil
 import com.github.displace.sdp2022.util.gps.GPSPositionManager
 import com.github.displace.sdp2022.util.gps.GPSPositionUpdater
 import com.github.displace.sdp2022.util.gps.GeoPointListener
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
-import kotlin.concurrent.timer
 
 
 class DemoMapActivity : AppCompatActivity() {
@@ -23,6 +24,8 @@ class DemoMapActivity : AppCompatActivity() {
     private lateinit var gpsPositionManager: GPSPositionManager
     private lateinit var markerListener: GeoPointListener
     private lateinit var posToastListener: GeoPointListener
+    private lateinit var markerManager: MarkerManager
+    lateinit var mockPinpointsRef: MarkerManager.PinpointsRef
 
     /**
      * @param savedInstanceState
@@ -35,11 +38,14 @@ class DemoMapActivity : AppCompatActivity() {
         setContentView(R.layout.activity_demo_map)
         mapView = findViewById<MapView>(R.id.map)
         mapViewManager = MapViewManager(mapView)
-        markerListener = GeoPointListener.markerPlacer(mapView)
+        markerManager = MarkerManager(mapView)
+        markerListener = GeoPointListener {p -> markerManager.putMarker(p)}
         posToastListener = GeoPointListener { geoPoint -> Toast.makeText(this,String.format("( %.4f ; %.4f )",geoPoint.latitude,geoPoint.longitude),Toast.LENGTH_SHORT).show() }
         gpsPositionManager = GPSPositionManager(this)
         gpsPositionUpdater = GPSPositionUpdater(this,gpsPositionManager)
         gpsPositionUpdater.listenersManager.addCall(markerListener)
+
+        mockPinpointsRef = markerManager.PinpointsRef()
     }
 
     override fun onBackPressed() {
@@ -92,6 +98,31 @@ class DemoMapActivity : AppCompatActivity() {
 
     fun mapViewListeners() : List<GeoPointListener>{
         return mapViewManager.currentOnLongClickListeners()
+    }
+
+    fun markerManager(): MarkerManager{
+        return markerManager
+    }
+
+    private fun displayMockMarkers(){
+        mockPinpointsRef.set(MOCK_MARKERS_POSITIONS)
+    }
+
+    private fun removeMockMarkers(){
+        mockPinpointsRef.clear()
+    }
+
+    fun toggleMockMarkers(view : View){
+        val toggleButton = view as ToggleButton
+        if(toggleButton.isChecked){
+            displayMockMarkers()
+        } else {
+            removeMockMarkers()
+        }
+    }
+
+    companion object {
+        val MOCK_MARKERS_POSITIONS = listOf(DEFAULT_CENTER, GeoPoint(6.5,-4.0), GeoPoint(6.7,47.0))
     }
 
 
