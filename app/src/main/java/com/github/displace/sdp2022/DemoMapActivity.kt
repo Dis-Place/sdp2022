@@ -5,9 +5,11 @@ import android.view.View
 import android.widget.Toast
 import android.widget.ToggleButton
 import androidx.appcompat.app.AppCompatActivity
+import com.github.displace.sdp2022.gameComponents.Player
 import com.github.displace.sdp2022.map.MapViewManager
 import com.github.displace.sdp2022.map.MapViewManager.Companion.DEFAULT_CENTER
 import com.github.displace.sdp2022.map.MarkerManager
+import com.github.displace.sdp2022.map.PinpointsDBCommunicationHandler
 import com.github.displace.sdp2022.util.PreferencesUtil
 import com.github.displace.sdp2022.util.gps.GPSPositionManager
 import com.github.displace.sdp2022.util.gps.GPSPositionUpdater
@@ -26,6 +28,9 @@ class DemoMapActivity : AppCompatActivity() {
     private lateinit var posToastListener: GeoPointListener
     private lateinit var markerManager: MarkerManager
     lateinit var mockPinpointsRef: MarkerManager.PinpointsRef
+    lateinit var remoteMockPinpointsRef: MarkerManager.PinpointsRef
+    private lateinit var dbHandler: PinpointsDBCommunicationHandler
+    private var useDB = false
 
     /**
      * @param savedInstanceState
@@ -46,6 +51,9 @@ class DemoMapActivity : AppCompatActivity() {
         gpsPositionUpdater.listenersManager.addCall(markerListener)
 
         mockPinpointsRef = markerManager.PinpointsRef()
+        remoteMockPinpointsRef = markerManager.PinpointsRef()
+        val db = RealTimeDatabase().noCacheInstantiate("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",false)
+        dbHandler = PinpointsDBCommunicationHandler(db,MOCK_GAME_INSTANCE_NAME)
     }
 
     override fun onBackPressed() {
@@ -119,10 +127,27 @@ class DemoMapActivity : AppCompatActivity() {
         } else {
             removeMockMarkers()
         }
+        if(useDB){
+            dbHandler.updateDBPinpoints(MOCK_PLAYER,mockPinpointsRef)
+        }
+    }
+
+    @Suppress("UNUSED_PARAMETER")
+    fun updateRemoteMockPinPoints(view: View){
+        if(useDB){
+            dbHandler.updateLocalPinpoints(MOCK_PLAYER,remoteMockPinpointsRef)
+        }
+    }
+
+    fun toggleDB(view : View){
+        val toggleButton = view as ToggleButton
+        useDB = toggleButton.isChecked
     }
 
     companion object {
         val MOCK_MARKERS_POSITIONS = listOf(DEFAULT_CENTER, GeoPoint(6.5,-4.0), GeoPoint(6.7,47.0))
+        const val MOCK_GAME_INSTANCE_NAME = "demoMapMock"
+        val MOCK_PLAYER = Player(0.0,0.0,0)
     }
 
 

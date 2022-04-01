@@ -4,6 +4,7 @@ import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.ext.junit.rules.ActivityScenarioRule
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.GrantPermissionRule
 import com.github.displace.sdp2022.DemoMapActivity
 import com.github.displace.sdp2022.DemoMapActivity.Companion.MOCK_MARKERS_POSITIONS
@@ -11,7 +12,10 @@ import com.github.displace.sdp2022.R
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.osmdroid.util.GeoPoint
 
+@RunWith(AndroidJUnit4::class)
 class MarkerManagerTest {
     @get:Rule
     val testRule = ActivityScenarioRule(DemoMapActivity::class.java)
@@ -62,12 +66,7 @@ class MarkerManagerTest {
         onView(ViewMatchers.withId(R.id.toggleMockMarkersButton))
             .perform(click())
         scenario.onActivity { a ->
-            val positions = a.mockPinpointsRef.get()
-            assertEquals(MOCK_MARKERS_POSITIONS.size,positions.size)
-            for(i in MOCK_MARKERS_POSITIONS.indices){
-                assertEquals(MOCK_MARKERS_POSITIONS[i].latitude,positions[i].latitude,EPSILON)
-                assertEquals(MOCK_MARKERS_POSITIONS[i].longitude,positions[i].longitude,EPSILON)
-            }
+            assertCorrectPositions(MOCK_MARKERS_POSITIONS,a.mockPinpointsRef.get())
         }
 
     }
@@ -75,6 +74,14 @@ class MarkerManagerTest {
     companion object{
         val MARKER_DESTROY_DELAY = 50.toLong()
         val EPSILON = 1e-4
+
+        fun assertCorrectPositions(expected: List<GeoPoint>,actual: List<GeoPoint>){
+            assertEquals(expected.size,actual.size)
+            for(i in expected.indices){
+                assertEquals(expected[i].latitude,actual[i].latitude,EPSILON)
+                assertEquals(expected[i].longitude,actual[i].longitude,EPSILON)
+            }
+        }
     }
 
 }
