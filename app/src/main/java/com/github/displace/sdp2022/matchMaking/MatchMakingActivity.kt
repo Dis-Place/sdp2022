@@ -288,7 +288,7 @@ class MatchMakingActivity : AppCompatActivity() {
         lobbyType = "private"
         val id = findViewById<EditText>(R.id.lobbyIdInsert).text
         if(id.isEmpty()){   //the ID can not be empty
-            changeTextVisible(R.id.errorIdNonEmpty,View.VISIBLE)
+            changeVisibility<TextView>(R.id.errorIdNonEmpty,View.VISIBLE)
             return
         }
 
@@ -296,7 +296,7 @@ class MatchMakingActivity : AppCompatActivity() {
         db.referenceGet("MM/$gamemode/$map/$lobbyType","freeList").addOnSuccessListener { free ->
             val ls = free.value as MutableList<String>
             if(ls.contains(id.toString())){
-                changeTextVisible(R.id.errorIdExists,View.VISIBLE)
+                changeVisibility<TextView>(R.id.errorIdExists,View.VISIBLE)
             }else{
                 currentLobbyId = id.toString()
                 app.setLobbyID(currentLobbyId)
@@ -317,7 +317,7 @@ class MatchMakingActivity : AppCompatActivity() {
         lobbyType = "private"
         val id = findViewById<EditText>(R.id.lobbyIdInsert).text
         if(id.isEmpty()){
-            changeTextVisible(R.id.errorIdNonEmpty,View.VISIBLE)
+            changeVisibility<TextView>(R.id.errorIdNonEmpty,View.VISIBLE)
             return
         }
         db.referenceGet("MM/$gamemode/$map/$lobbyType","freeList").addOnSuccessListener { free ->
@@ -326,7 +326,7 @@ class MatchMakingActivity : AppCompatActivity() {
                 checkOutLobby(id.toString())
                 app.setLobbyID(id.toString())
             }else{
-                changeTextVisible(R.id.errorIdNotFound,View.VISIBLE)
+                changeVisibility<TextView>(R.id.errorIdNotFound,View.VISIBLE)
             }
         }
     }
@@ -434,13 +434,10 @@ class MatchMakingActivity : AppCompatActivity() {
         return findViewById<Group>(id).visibility == View.VISIBLE
     }
 
-    private fun changeGroupVisibility(id : Int, visibility : Int ) {
-        findViewById<Group>(id).visibility = visibility
+    private fun <T : View> changeVisibility(id : Int, visibility : Int ) {
+        findViewById<T>(id).visibility = visibility
     }
 
-    private fun changeTextVisible(id : Int, visibility : Int ) {
-        findViewById<TextView>(id).visibility = visibility
-    }
 
     override fun onDestroy() {
         leaveMM(false)
@@ -468,22 +465,22 @@ class MatchMakingActivity : AppCompatActivity() {
      * UI transition between multiple groups of UI elements : done to keep the same activity
      */
     private fun uiToSetup(){
-        changeGroupVisibility(R.id.setupGroup,View.VISIBLE)
-        changeGroupVisibility(R.id.waitGroup,View.INVISIBLE)
+        changeVisibility<Group>(R.id.setupGroup,View.VISIBLE)
+        changeVisibility<Group>(R.id.waitGroup,View.INVISIBLE)
         if(lobbyType == "private" ){
-            changeGroupVisibility(R.id.privateGroup,View.INVISIBLE)
+            changeVisibility<Group>(R.id.privateGroup,View.INVISIBLE)
         }
-        changeGroupVisibility(R.id.errorGroup,View.INVISIBLE)
+        changeVisibility<Group>(R.id.errorGroup,View.INVISIBLE)
     }
 
     private fun uiToSearch(){
-        changeGroupVisibility(R.id.setupGroup,View.INVISIBLE)
-        changeGroupVisibility(R.id.waitGroup,View.VISIBLE)
+        changeVisibility<Group>(R.id.setupGroup,View.INVISIBLE)
+        changeVisibility<Group>(R.id.waitGroup,View.VISIBLE)
         if(lobbyType == "private" ){
-            changeGroupVisibility(R.id.privateGroup,View.VISIBLE)
+            changeVisibility<Group>(R.id.privateGroup,View.VISIBLE)
             findViewById<TextView>(R.id.lobbyIdWaitShowing).text = currentLobbyId
         }
-        changeGroupVisibility(R.id.errorGroup,View.INVISIBLE)
+        changeVisibility<Group>(R.id.errorGroup,View.INVISIBLE)
     }
 
     /**

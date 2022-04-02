@@ -11,6 +11,7 @@ import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.profile.ProfileActivity
 import com.github.displace.sdp2022.R
 import com.github.displace.sdp2022.RealTimeDatabase
+import com.github.displace.sdp2022.profile.MessageUpdater
 import com.github.displace.sdp2022.users.PartialUser
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -43,6 +44,7 @@ class SendMessageActivity : AppCompatActivity() {
     fun sendMessage(view: View) {
         val message: String = findViewById<EditText>(R.id.messageToSend).text.toString()
         val app = applicationContext as MyApplication
+
         val db : RealTimeDatabase = RealTimeDatabase().noCacheInstantiate("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",false) as RealTimeDatabase
         val activeUser = app.getActiveUser()
         var activePartialUser = PartialUser("defaultName","dummy_id")
@@ -50,37 +52,9 @@ class SendMessageActivity : AppCompatActivity() {
             activePartialUser = activeUser.getPartialUser()
         }
 
-        db.getDbReference("CompleteUsers/$receiverId/MessageHistory").runTransaction( object : Transaction.Handler{
-            override fun doTransaction(currentData: MutableData): Transaction.Result {
-                val ls = currentData.value as ArrayList<MutableMap<String,Any>>?
-                val msg = Message(message,app.getCurrentDate(), activePartialUser)
-                if(ls == null){
-                    return Transaction.success(currentData)
-                }else{
-                    val msgMap = HashMap<String,Any>()
-                    msgMap["message"] = msg.message
-                    msgMap["date"] = app.getCurrentDate()
-                    msgMap["sender"] = msg.sender
-                    ls.add(0,msgMap)
-                }
-                currentData.value = ls
-                return Transaction.success(currentData)
-            }
-
-            override fun onComplete(
-                error: DatabaseError?,
-                committed: Boolean,
-                currentData: DataSnapshot?
-            ) {
-                if(committed){
-                    val intent = Intent(applicationContext, ProfileActivity::class.java)
-                    startActivity(intent)
-                }else{
-             //       TODO("ERROR MESSAGE : COULD NOT BE SENT")
-                }
-            }
-
-        })
+        db.getDbReference("CompleteUsers/$receiverId/MessageHistory").runTransaction(
+            MessageUpdater(true, applicationContext,message,activePartialUser)
+        )
 
     }
 
