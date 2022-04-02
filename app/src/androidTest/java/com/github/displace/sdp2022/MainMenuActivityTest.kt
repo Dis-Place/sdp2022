@@ -36,6 +36,7 @@ class MainMenuActivityTest {
         app.setDb(MockDB())
         app.setActiveUser(CompleteUser(null))
 
+
         val intent =
             Intent(ApplicationProvider.getApplicationContext(), MainMenuActivity::class.java)
         val scenario = ActivityScenario.launch<MainMenuActivity>(intent)

@@ -6,19 +6,20 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.util.Range
 import android.view.View
 import android.widget.EditText
 import android.widget.TextView
-import android.widget.Toast
 import androidx.constraintlayout.widget.Group
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.github.displace.sdp2022.GameVersusViewActivity
-import com.github.displace.sdp2022.MyApplication
+import com.github.displace.sdp2022.*
 import com.github.displace.sdp2022.R
-import com.github.displace.sdp2022.RealTimeDatabase
 import com.github.displace.sdp2022.profile.friends.FriendViewAdapter
+import com.github.displace.sdp2022.users.PartialUser
 import com.google.firebase.database.*
+import kotlin.random.Random
+import kotlin.random.nextUInt
 
 
 @Suppress("UNUSED_PARAMETER")
@@ -27,46 +28,52 @@ class MatchMakingActivity : AppCompatActivity() {
     //Database
     private var db : RealTimeDatabase = RealTimeDatabase().noCacheInstantiate("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",false) as RealTimeDatabase
     private var currentLobbyNumber = "L_-1"
+    private var currentLobbyId = ""
     private val gamemode = "Versus"
-    private val map = "Map1"
+    private val map = "Map2"
     private var isLeader = false
-    private var pList : ArrayList<Int> = ArrayList()    //PARTIAL USER : should be a list of partial users
-    private var myId : Long = -1 //PARTIAL USER : just use the current user Partial User, not the ID
+    private var myId : Long = Random.nextLong() //PARTIAL USER : just use the current user Partial User, not the ID
+    private val activeUser = PartialUser("active",myId.toString())
     private var lobbyType : String = "private"
 
+    private var lobbyMap : MutableMap<String,Any> = HashMap<String,Any>()
 
-    private val counterListener = object : ValueEventListener {
+
+    private val lobbyListener = object : ValueEventListener {
         override fun onDataChange(snapshot: DataSnapshot) {
-            db.referenceGet("MM/$gamemode/$map/$lobbyType/$currentLobbyNumber","p_list").addOnSuccessListener { ls ->
-                val temp = ls.value as ArrayList<Int>?  //PARTIAL USER : should be a list of partial users , change the cast
-                if(temp != null) {
-                    pList = temp
-                    updateUI()
-                }
-            }
-            val counter = snapshot.value as Long?
-            if(counter != null && isLeader){
-                db.referenceGet("MM/$gamemode/$map/$lobbyType/$currentLobbyNumber","max_p").addOnSuccessListener { m ->
-                    val max = m.value as Long?
-                    if(max != null && counter >= max){
-                        db.update("MM/$gamemode/$map/$lobbyType/$currentLobbyNumber","launch",true) //set launch for everyone
+            val lobby = snapshot.value as MutableMap<String,Any>? ?: return
+            lobbyMap = lobby
+            updateUI()
+            if(lobbyMap["lobbyCount"] as Long == lobbyMap["lobbyMax"] as Long  ){
+                lobbyMap["lobbyLaunch"] = true
+                setupLaunchListener()
+                if(lobbyMap["lobbyLeader"] as String == activeUser.uid){
+                    db.referenceGet("MM/$gamemode/$map/$lobbyType","freeList").addOnSuccessListener { free ->
+                        val ls = free.value as ArrayList<String>?
+                        if(ls != null){
+                            ls.remove(currentLobbyId)
+                            db.update("MM/$gamemode/$map/$lobbyType","freeList",ls)
+                        }
+                        db.delete("MM/$gamemode/$map/$lobbyType/freeLobbies",currentLobbyId)
+                        db.update("MM/$gamemode/$map/$lobbyType/launchLobbies",currentLobbyId, lobbyMap)
                     }
                 }
             }
         }
 
-        override fun onCancelled(error: DatabaseError) {
-            Log.d("tag","loadCounter Failed" )
-        }
 
+        override fun onCancelled(error: DatabaseError) {
+        }
     }
 
-    private val launchListener = object : ValueEventListener {
+
+
+
+    private val launchLobbyListener = object : ValueEventListener {
         override fun onDataChange(snapshot: DataSnapshot) {
-            //current leader transitions to game screen : signals the start of the launch
-            val launch = snapshot.value as Boolean?
-            if(launch != null && launch == true && isLeader){
-                //transition to game screen : fetch correct game Instance
+            val lobby = snapshot.value as MutableMap<String,Any>? ?: return
+            lobbyMap = lobby
+            if(lobbyMap["lobbyLeader"] as String == activeUser.uid ){
                 gameScreenTransition()
             }
         }
@@ -77,34 +84,13 @@ class MatchMakingActivity : AppCompatActivity() {
 
     }
 
-    private val leaderListener = object : ValueEventListener {
-        override fun onDataChange(snapshot: DataSnapshot) {
-
-            db.referenceGet("MM/$gamemode/$map/$lobbyType/$currentLobbyNumber","launch").addOnSuccessListener { l ->
-                val leader = snapshot.value as Long?
-                if(leader != null && leader == myId){   //PARTIAL USER : use the id of the active partial user
-                    isLeader = true
-                }
-
-                val launch = l.value as Boolean?
-                if(launch != null && launch == true && isLeader){
-                    //transition to game screen : fetch the correct gameInstance
-                    gameScreenTransition()
-                }
-            }
-
-        }
-
-        override fun onCancelled(error: DatabaseError) {
-            Log.d("tag","loadLeader Failed" )
-        }
-
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_match_making)
 
+   //     db.insert("MM/$gamemode/$map/private","freeList", listOf("head"))
+  //      db.insert("MM/$gamemode/$map/private/freeLobbies","freeHead", Lobby("freeHead",0,PartialUser("FREE","FREE")))
+  //      db.insert("MM/$gamemode/$map/private/launchLobbies","launchHead", Lobby("launchHead",0,PartialUser("FREE","FREE")))
         uiToSetup()
 
         val app = applicationContext as MyApplication
@@ -128,116 +114,131 @@ class MatchMakingActivity : AppCompatActivity() {
         friendRecyclerView.layoutManager = LinearLayoutManager(applicationContext)
     }
 
-
-    private fun indexedSearch(idx : Long){
-
-        val lobby = "L_$idx"
-        db.referenceGet("MM/$gamemode/$map/$lobbyType/$lobby","p_count").addOnSuccessListener { c ->
-            val count = c.value
-            if(count == null){
-                db.referenceGet("MM/$gamemode/$lobbyType/$map","last").addOnSuccessListener { last ->
-                    val p = last.value as Long?
-                    if(p != null){
-                        if(idx > p){
-                            createPublicLobby(idx)
-                        }else{
-                            indexedSearch(idx+1)
-                        }
-                    }else{
-                        createPublicLobby(idx)
-                    }
+    private fun publicSearch(){
+        var toCreateId = ""
+        var toSearchId = ""
+        db.getDbReference("MM/$gamemode/$map/$lobbyType/freeList").runTransaction( object : Transaction.Handler{
+            override fun doTransaction(currentData: MutableData): Transaction.Result {
+                toCreateId = ""
+                toSearchId = ""
+                val ls = currentData.value as ArrayList<String>? ?: return Transaction.abort()
+                if(ls.size == 1){
+                    //only the head exists : add a new ID to the list and create a new lobby with that ID
+                    val nextId = Random.nextLong().toString()
+                    ls.add(nextId)
+                    toCreateId = nextId
+                    currentData.value = ls
+                }else{
+                    //more than only the head exists : check the first one out
+                    toSearchId = ls[1]
                 }
-            }else{
-                db.referenceGet("MM/$gamemode/$map/$lobbyType/$lobby","max_p").addOnSuccessListener { m ->
-                    val max = m.value
-                    db.referenceGet("MM/$gamemode/$map/$lobbyType/$lobby", "launch").addOnSuccessListener { l ->
-                        val launch = l.value as Boolean?
-                        if ( launch == null || max == null || launch== true || count as Long >= (max as Long)) { //this lobby is full or launching : continue searching
-                            indexedSearch(idx + 1)    //no need for transaction for this kind of search
-                        } else {
-                            //use transaction to insert yourself : modify counter AND player list
-                            db.getDbReference("MM/$gamemode/$map/$lobbyType/$lobby")
-                                    .runTransaction(object : Transaction.Handler {
-                                        override fun doTransaction(currentData: MutableData): Transaction.Result {
-                                            val p = currentData.value as MutableMap<String, Any>?
-                                                    ?: return Transaction.success(currentData)
-                                            p["p_count"] = p["p_count"] as Long + 1
-                                            val ls = (p["p_list"] as ArrayList<Long>?) ?: return Transaction.success(currentData) //PARTIAL USER : should be a list of partial users
-                                            ls.add(1) //PARTIAL USER : should insert the partial user
-                                            p["p_list"] = ls
-                                            currentData.value = p
-                                            return Transaction.success(currentData)
-                                        }
+                return Transaction.success(currentData)
+            }
 
-                                        override fun onComplete(
-                                                error: DatabaseError?,
-                                                committed: Boolean,
-                                                currentData: DataSnapshot?
-                                        ) {
-
-                                            currentLobbyNumber = lobby
-                                            isLeader = false
-                                            myId = 1    //PARTIAL USER : the id should not change
-                                            setupListeners()
-                                            uiToSearch()
-                                        }
-                                    })
-
-                        }
+            override fun onComplete(
+                error: DatabaseError?,
+                committed: Boolean,
+                currentData: DataSnapshot?
+            ) {
+                if(committed){
+                    if(toCreateId != ""){   //we need to create a lobby
+                        createPublicLobby(toCreateId)
+                    }else{  //we need to check out a lobby
+                        checkOutLobby(toSearchId)
                     }
+                }else{
+                    publicSearch()
                 }
             }
-        }
+
+        })
+
 
     }
 
-
-    private fun createPublicLobby(id : Long ){
-        isLeader = true
-        myId = 0 //PARTIAL USER : should be the partial user itself
-        val lobby = "L_$id"
-
-
-        db.referenceGet("MM/$gamemode/$map/$lobbyType","last").addOnSuccessListener { lastLobby ->
-            val last = lastLobby.value
-            val updates: MutableMap<String, Any> = HashMap()
-            var inc : Long = 0
-            if(last != null){
-                if( id > last as Long){
-                    inc = id-last
+    private fun checkOutLobby(toSearchId: String) {
+        db.getDbReference("MM/$gamemode/$map/$lobbyType/freeLobbies/$toSearchId").runTransaction( object : Transaction.Handler{
+            override fun doTransaction(currentData: MutableData): Transaction.Result {
+                val lobby = currentData.value as MutableMap<String,Any>? ?: return Transaction.abort()
+                if(lobby["lobbyCount"] as Long == lobby["lobbyMax"] as Long || lobby["lobbyLaunch"] as Boolean ){
+                    return Transaction.abort()
                 }
-            }else{
-                inc = id
+                lobby["lobbyCount"] = lobby["lobbyCount"] as Long + 1
+                val ls = lobby["lobbyPlayers"] as ArrayList<MutableMap<String,Any>>
+                val userMap = HashMap<String,Any>()
+                userMap["username"] = activeUser.username
+                userMap["uid"] = activeUser.uid
+                ls.add(userMap)
+                lobby["lobbyPlayers"] = ls
+                currentData.value = lobby
+                return Transaction.success(currentData)
             }
-            updates["MM/$gamemode/$map/$lobbyType/last"] = ServerValue.increment(inc)
-//            db.getDbReference("").updateChildren(updates)
 
-            db.referenceGet("MM/$gamemode/$map*$lobbyType","first").addOnSuccessListener {    first ->
-                val f = first.value
-                if(f != null){
-                    if( id < f as Long){
-        //                val updates: MutableMap<String, Any> = HashMap()
-                        updates["MM/$gamemode/$map/$lobbyType/last"] = ServerValue.increment(id-f)
-   //                     db.getDbReference("").updateChildren(updates)
-                    }
+            override fun onComplete(
+                error: DatabaseError?,
+                committed: Boolean,
+                currentData: DataSnapshot?
+            ) {
+                if(committed){
+                    currentLobbyId = toSearchId
+                    setupLobbyListener()
+                    uiToSearch()
                 }else{
-          //          val updates: MutableMap<String, Any> = HashMap()
-                    updates["MM/$gamemode/$map/$lobbyType/first"] = ServerValue.increment(id)
-//                    db.getDbReference("").updateChildren(updates)
+                    publicSearch()
                 }
-
-                db.getDbReference("").updateChildren(updates)
-
             }
 
+        })
+    }
 
+    private fun createPublicLobby(id : String){
+        val lobby = Lobby(id,2,activeUser)
+        currentLobbyId = id
+        db.update("MM/$gamemode/$map/$lobbyType/freeLobbies", id,lobby)
+        setupLobbyListener()
+        uiToSearch()
+    }
 
-            currentLobbyNumber = lobby
-            setupLobby()
-            setupListeners()
-            uiToSearch()
+    fun createPrivateLobby(view : View){
+        lobbyType = "private"
+        val id = findViewById<EditText>(R.id.lobbyIdInsert).text
+        if(id.isEmpty()){
+            findViewById<TextView>(R.id.errorIdNonEmpty).visibility = View.VISIBLE
+            return
         }
 
+
+        val lobby = Lobby(currentLobbyId,2, activeUser)
+        db.referenceGet("MM/$gamemode/$map/$lobbyType","freeList").addOnSuccessListener { free ->
+            val ls = free.value as MutableList<String>
+            if(ls.contains(id.toString())){
+                findViewById<TextView>(R.id.errorIdExists).visibility = View.VISIBLE
+            }else{
+                currentLobbyId = id.toString()
+                ls.add(currentLobbyId)
+                db.update("MM/$gamemode/$map/$lobbyType", "freeList", ls)
+                db.update("MM/$gamemode/$map/$lobbyType/freeLobbies", currentLobbyId, lobby)
+                setupLobbyListener()
+                uiToSearch()
+            }
+        }
+    }
+
+    fun joinPrivateLobby(view : View){
+        lobbyType = "private"
+        val id = findViewById<EditText>(R.id.lobbyIdInsert).text
+        if(id.isEmpty()){
+            findViewById<TextView>(R.id.errorIdNotFound).visibility = View.VISIBLE
+            return
+        }
+        db.referenceGet("MM/$gamemode/$map/$lobbyType","freeList").addOnSuccessListener { free ->
+            val ls = free.value as MutableList<String>
+            if(ls.contains(id.toString())){
+                checkOutLobby(id.toString())
+            }else{
+                findViewById<TextView>(R.id.errorIdNotFound).visibility = View.VISIBLE
+            }
+        }
     }
 
     private fun updateUI(){
@@ -249,7 +250,9 @@ class MatchMakingActivity : AppCompatActivity() {
         val friendRecyclerView = findViewById<RecyclerView>(R.id.playersRecycler)
         val friendAdapter = FriendViewAdapter(
             applicationContext,
-            app.getActiveUser()!!.getFriendsList(),     // TO REPLACE WITH LIST OF PLAYERS
+            (lobbyMap["lobbyPlayers"] as ArrayList<MutableMap<String,Any>>).map{    p ->
+                 PartialUser(p["username"] as String , p["uid"] as String)
+            },
             dbAccess, 2
         )
         friendRecyclerView.adapter = friendAdapter
@@ -257,177 +260,88 @@ class MatchMakingActivity : AppCompatActivity() {
     }
 
     private fun gameScreenTransition(){
-        val intent = Intent(this, GameVersusViewActivity::class.java)
-        startActivity(intent)
+        leaveMM(true)
     }
 
     //when leaving the MM screen
-    private fun leaveMM(){
+    private fun leaveMM(toGame : Boolean){
 
-        db.getDbReference("MM/$gamemode/$map/$lobbyType")
-                .runTransaction(object : Transaction.Handler {
-                    override fun doTransaction(currentData: MutableData): Transaction.Result {
-                        val p = currentData.value as MutableMap<String, Any>? ?: return Transaction.success(currentData)
-                        val currLobby = p[currentLobbyNumber] as MutableMap<String,Any>? ?: return Transaction.success(currentData)
+        db.getDbReference("MM/$gamemode/$map/$lobbyType").runTransaction( object : Transaction.Handler{
+            override fun doTransaction(currentData: MutableData): Transaction.Result {
+                val lobbyTypeLevel = currentData.value as MutableMap<String,Any>? ?: return Transaction.success(currentData)
+                val path = if(toGame){
+                    "launchLobbies"
+                }else{
+                    "freeLobbies"
+                }
 
-                        if(!isLeader){
-                            val ls = currLobby["p_list"] as ArrayList<Long>? ?: return Transaction.success(currentData) //PARTIAL USER : should be a list of partial users
-                            ls.remove(myId)
-                            val count = currLobby["p_count"] as Long? ?: return Transaction.success(currentData)
-                            currLobby["p_count"] = count-1
-
-                            p[currentLobbyNumber] = currLobby
-
-                        }else{
-                            val count = currLobby["p_count"] as Long? ?: return Transaction.success(currentData)
-                            if(count == 1L){
-                                if(lobbyType == "public") {
-                                    val first = p["first"] as Long
-                                    val last = p["last"] as Long
-                                    if (first != last) {
-                                        if ("L_$first" == currentLobbyNumber) {
-                                            p["first"] = first + 1L
-                                        } else if ("L_$last" == currentLobbyNumber) {
-                                            p["last"] = last - 1L
-                                        }
-                                    }
-                                }
-                                p.remove(currentLobbyNumber)
-                                //delete the lobby here
-                            }else{
-                                val ls = currLobby["p_list"] as ArrayList<Long>? ?: return Transaction.success(currentData) //PARTIAL USER : should be a list of partial users
-                                ls.remove(myId)
-                                currLobby["p_list"] = ls
-                                //assign a new leader
-                                currLobby["leader"] = ls[0]
-                                currLobby["p_count"] = count-1
-
-                                p[currentLobbyNumber] = currLobby
-                            }
-                        }
-                        currentData.value = p
-                        return Transaction.success(currentData)
+                val lobbyState = lobbyTypeLevel[path] as MutableMap<String,Any>? ?: return Transaction.success(currentData)
+                val lobby = lobbyState[currentLobbyId] as MutableMap<String,Any>? ?: return Transaction.success(currentData)
+                if(!toGame && lobby["lobbyLeader"] as String == activeUser.uid){
+                    val ls = lobbyTypeLevel["freeList"] as ArrayList<String>? ?: return Transaction.success(currentData)
+                    ls.remove(currentLobbyId)
+                    lobbyTypeLevel["freeList"] = ls
+                }
+                if(lobby["lobbyLeader"] as String == activeUser.uid){
+                    if(lobby["lobbyCount"] as Long == 1L){
+                        lobbyState.remove(currentLobbyId)
+                    }else{
+                        lobby["lobbyCount"] = lobby["lobbyCount"] as Long -1
+                        val userMap = HashMap<String,Any>()
+                        userMap["username"] = activeUser.username
+                        userMap["uid"] = activeUser.uid
+                        (lobby["lobbyPlayers"] as ArrayList<MutableMap<String,Any>>).remove(userMap)
+                        lobby["lobbyLeader"] = (lobby["lobbyPlayers"] as ArrayList<MutableMap<String,Any>>)[0]["uid"] as String //PARTIAL USER : should be a list of partial users
+                        lobbyState[currentLobbyId] = lobby
                     }
+                }else{
+                    lobby["lobbyCount"] = lobby["lobbyCount"] as Long -1
+                    val userMap = HashMap<String,Any>()
+                    userMap["username"] = activeUser.username
+                    userMap["uid"] = activeUser.uid
+                    (lobby["lobbyPlayers"] as ArrayList<String>).remove(activeUser.uid) //PARTIAL USER : should be a list of partial users
+                    lobbyState[currentLobbyId] = lobby
+                }
+                lobbyTypeLevel[path] = lobbyState
+                currentData.value = lobbyTypeLevel
+                return Transaction.success(currentData)
+            }
 
-                    override fun onComplete(
-                            error: DatabaseError?,
-                            committed: Boolean,
-                            currentData: DataSnapshot?
-                    ) {
+            override fun onComplete(
+                error: DatabaseError?,
+                committed: Boolean,
+                currentData: DataSnapshot?
+            ) {
+               if(toGame){
+                   val intent = Intent(applicationContext, GameVersusViewActivity::class.java)
+                   startActivity(intent)
+               }
+            }
 
-                    }
-                })
+        })
+
     }
 
     override fun onDestroy() {
-        leaveMM()
+        leaveMM(false)
         super.onDestroy()
     }
 
     override fun onPause() {
-        leaveMM()
+        leaveMM(false)
+        uiToSetup()
         super.onPause()
     }
 
 
     fun onCancelButton(v : View){
-        leaveMM()
+        leaveMM(false)
         uiToSetup()
     }
 
     fun onPublicLobbySearchButton(v : View){
         lobbyType = "public"
-        db.referenceGet("MM/$gamemode/$map/$lobbyType","first").addOnSuccessListener { f ->
-            val first = f.value
-            if(first != null) {
-                indexedSearch(first as Long)
-            }else{
-                indexedSearch(0)
-            }
-        }
-    }
-
-
-    fun onPrivateLobbyJoinButton(v : View){
-        lobbyType = "private"
-        //join private lobby
-
-        val id = findViewById<EditText>(R.id.lobbyIdInsert).text
-        val lobby = "L_$id"
-        db.referenceGet("MM/$gamemode/$map/$lobbyType", lobby).addOnSuccessListener { i ->
-            val lobbyId = i.value as HashMap<String,Any>?
-            if(lobbyId != null) {
-
-                db.getDbReference("MM/$gamemode/$map/$lobbyType/$lobby")
-                    .runTransaction(object : Transaction.Handler {
-                        override fun doTransaction(currentData: MutableData): Transaction.Result {
-
-                            val p = currentData.value as MutableMap<String, Any>? ?: return Transaction.success(currentData)
-                            p["p_count"] = p["p_count"] as Long + 1
-                            val ls = (p["p_list"] as ArrayList<Long>?) ?: return Transaction.success(currentData) //PARTIAL USER : should be a list of partial users
-                            ls.add(1)   //PARTIAL USER : should add the Partial User
-                            p["p_list"] = ls
-                            currentData.value = p
-                            return Transaction.success(currentData)
-
-                        }
-
-                        override fun onComplete(
-                            error: DatabaseError?,
-                            committed: Boolean,
-                            currentData: DataSnapshot?
-                        ) {
-
-                            uiToSearch()
-                            currentLobbyNumber = lobby
-                            isLeader = false
-                            myId = 1 //PARTIAL USER : myId should not change
-
-                            setupListeners()
-                        }
-
-                    })
-
-            }else{
-                //LOBBY NOT FOUND
-                findViewById<TextView>(R.id.errorIdNotFound).visibility = View.VISIBLE
-            }
-        }
-
-    }
-
-    /*
-    Creation of a private lobby
-     */
-    fun onPrivateLobbyCreateButton(v : View){
-        lobbyType = "private"
-
-        //The ID of the private lobby cannot be empty
-        val id = findViewById<EditText>(R.id.lobbyIdInsert).text
-        if(id.isEmpty()){
-            findViewById<TextView>(R.id.errorIdNonEmpty).visibility = View.VISIBLE
-            return
-        }
-        val lobby = "L_$id"
-
-
-        db.referenceGet("MM/$gamemode/$map/$lobbyType", lobby).addOnSuccessListener { i ->
-            val lobbyId = i.value as HashMap<String,Any>?
-            if(lobbyId == null){
-                myId = 0    //PARTIAL USER : myId should not change
-                isLeader = true
-
-                currentLobbyNumber = lobby
-                setupLobby()
-                setupListeners()
-                uiToSearch()
-
-            }else{
-                findViewById<TextView>(R.id.errorIdExists).visibility = View.VISIBLE
-            }
-
-        }
-
+        publicSearch()
     }
 
     /*
@@ -450,9 +364,7 @@ class MatchMakingActivity : AppCompatActivity() {
         findViewById<Group>(R.id.waitGroup).visibility = View.VISIBLE
         if(lobbyType == "private" ){
             findViewById<Group>(R.id.privateGroup).visibility = View.VISIBLE
-            findViewById<TextView>(R.id.lobbyIdWaitShowing).text = currentLobbyNumber.subSequence(
-                IntRange(2,currentLobbyNumber.length-1)
-            )
+            findViewById<TextView>(R.id.lobbyIdWaitShowing).text = currentLobbyId
         }
         findViewById<Group>(R.id.errorGroup).visibility = View.INVISIBLE
     }
@@ -460,23 +372,23 @@ class MatchMakingActivity : AppCompatActivity() {
     /*
     Setup the listener for the necessary changes
      */
-    private fun setupListeners(){
-        db.getDbReference("MM/$gamemode/$map/$lobbyType/$currentLobbyNumber/p_count").addValueEventListener(counterListener)
-        db.getDbReference("MM/$gamemode/$map/$lobbyType/$currentLobbyNumber/launch").addValueEventListener(launchListener)
-        db.getDbReference("MM/$gamemode/$map/$lobbyType/$currentLobbyNumber/leader").addValueEventListener(leaderListener)
-
+    private fun setupLobbyListener(){
+        db.getDbReference("MM/$gamemode/$map/$lobbyType/freeLobbies/$currentLobbyId").addValueEventListener(lobbyListener)
     }
 
-    /*
-    Create the necessary information for a lobby inside the Database
-     */
-    private fun setupLobby(){
-        val ls : List<Long> = listOf(myId) //PARTIAL USER : this list should be of Partial users NOT long
-        db.insert("MM/$gamemode/$map/$lobbyType/$currentLobbyNumber", "p_count", 1)
-        db.insert("MM/$gamemode/$map/$lobbyType/$currentLobbyNumber", "max_p", 2)
-        db.insert("MM/$gamemode/$map/$lobbyType/$currentLobbyNumber", "p_list", ls)
-        db.insert("MM/$gamemode/$map/$lobbyType/$currentLobbyNumber", "launch", false)
-        db.insert("MM/$gamemode/$map/$lobbyType/$currentLobbyNumber", "leader", myId)   //Partial User : use the Id of the Partial User for the leader, not the user itself
+    private fun setupLaunchListener(){
+        db.getDbReference("MM/$gamemode/$map/$lobbyType/freeLobbies/$currentLobbyId").removeEventListener(lobbyListener)
+        db.getDbReference("MM/$gamemode/$map/$lobbyType/launchLobbies/$currentLobbyId").addValueEventListener(launchLobbyListener)
     }
 
+}
+
+
+class Lobby(id : String, max_p : Long, leader : PartialUser){
+    val lobbyId = id
+    val lobbyMax = max_p
+    var lobbyCount = 1
+    var lobbyLaunch = false
+    var lobbyLeader = leader.uid
+    var lobbyPlayers = mutableListOf<PartialUser>(leader)    //PARTIAL USER : should be a list of partial users
 }
