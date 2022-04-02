@@ -65,7 +65,7 @@ class MatchMakingActivity : AppCompatActivity() {
      */
     private val lobbyListener = object : ValueEventListener {
         override fun onDataChange(snapshot: DataSnapshot) {
-            if(findViewById<Group>(R.id.setupGroup).visibility == View.VISIBLE){    //nothing should be done if the player is not in a lobby
+            if(isVisible(R.id.setupGroup)){    //nothing should be done if the player is not in a lobby
                 return
             }
             val lobby = snapshot.value as MutableMap<String,Any>? ?: return
@@ -365,7 +365,7 @@ class MatchMakingActivity : AppCompatActivity() {
      * - the player is alone in the lobby , meaning the lobby has to be deleted
      */
     private fun leaveMM(toGame : Boolean){
-        if(findViewById<Group>(R.id.setupGroup).visibility == View.VISIBLE){    //nothing should be done if the player is not in a lobby
+        if(isVisible(R.id.setupGroup)){    //nothing should be done if the player is not in a lobby
             return
         }
         db.getDbReference("MM/$gamemode/$map/$lobbyType").runTransaction( object : Transaction.Handler{
@@ -379,7 +379,7 @@ class MatchMakingActivity : AppCompatActivity() {
                 }
 
                 val lobbyState = lobbyTypeLevel[path] as MutableMap<String,Any>? ?: return Transaction.success(currentData)
-                val lobby = lobbyState[currentLobbyId] as MutableMap<String,Any>? ?: return Transaction.success(currentData)
+                var lobby = lobbyState[currentLobbyId] as MutableMap<String,Any>? ?: return Transaction.success(currentData)
 
                 if(lobby["lobbyLeader"] as String == activeUser.uid){
                     if(lobby["lobbyCount"] as Long == 1L){
@@ -390,20 +390,12 @@ class MatchMakingActivity : AppCompatActivity() {
                         }
                         lobbyState.remove(currentLobbyId)
                     }else{
-                        lobby["lobbyCount"] = lobby["lobbyCount"] as Long -1
-                        val userMap = HashMap<String,Any>()
-                        userMap["username"] = activeUser.username
-                        userMap["uid"] = activeUser.uid
-                        (lobby["lobbyPlayers"] as ArrayList<MutableMap<String,Any>>).remove(userMap)
+                        lobby = removePlayerFromList(lobby)
                         lobby["lobbyLeader"] = (lobby["lobbyPlayers"] as ArrayList<MutableMap<String,Any>>)[0]["uid"] as String //use the next player as the new leader
                         lobbyState[currentLobbyId] = lobby
                     }
                 }else{
-                    lobby["lobbyCount"] = lobby["lobbyCount"] as Long -1
-                    val userMap = HashMap<String,Any>()
-                    userMap["username"] = activeUser.username
-                    userMap["uid"] = activeUser.uid
-                    (lobby["lobbyPlayers"] as ArrayList<MutableMap<String,Any>>).remove(userMap)
+                    lobby = removePlayerFromList(lobby)
                     lobbyState[currentLobbyId] = lobby
                 }
                 lobbyTypeLevel[path] = lobbyState
@@ -424,6 +416,25 @@ class MatchMakingActivity : AppCompatActivity() {
 
         })
 
+    }
+
+    private fun removePlayerFromList(lobby : MutableMap<String,Any>): MutableMap<String, Any> {
+
+        lobby["lobbyCount"] = lobby["lobbyCount"] as Long -1
+        val userMap = HashMap<String,Any>()
+        userMap["username"] = activeUser.username
+        userMap["uid"] = activeUser.uid
+        (lobby["lobbyPlayers"] as ArrayList<MutableMap<String,Any>>).remove(userMap)
+        return lobby
+
+    }
+
+    private fun isVisible(id : Int) : Boolean{
+        return findViewById<Group>(id).visibility == View.VISIBLE
+    }
+
+    private fun changeVisibility(id : Int, visibility : Int ) {
+        findViewById<Group>(id).visibility = visibility
     }
 
     override fun onDestroy() {
@@ -452,22 +463,22 @@ class MatchMakingActivity : AppCompatActivity() {
      * UI transition between multiple groups of UI elements : done to keep the same activity
      */
     private fun uiToSetup(){
-        findViewById<Group>(R.id.setupGroup).visibility = View.VISIBLE
-        findViewById<Group>(R.id.waitGroup).visibility = View.INVISIBLE
+        changeVisibility(R.id.setupGroup,View.VISIBLE)
+        changeVisibility(R.id.waitGroup,View.INVISIBLE)
         if(lobbyType == "private" ){
-            findViewById<Group>(R.id.privateGroup).visibility = View.INVISIBLE
+            changeVisibility(R.id.privateGroup,View.INVISIBLE)
         }
-        findViewById<Group>(R.id.errorGroup).visibility = View.INVISIBLE
+        changeVisibility(R.id.errorGroup,View.INVISIBLE)
     }
 
     private fun uiToSearch(){
-        findViewById<Group>(R.id.setupGroup).visibility = View.INVISIBLE
-        findViewById<Group>(R.id.waitGroup).visibility = View.VISIBLE
+        changeVisibility(R.id.setupGroup,View.INVISIBLE)
+        changeVisibility(R.id.waitGroup,View.VISIBLE)
         if(lobbyType == "private" ){
-            findViewById<Group>(R.id.privateGroup).visibility = View.VISIBLE
+            changeVisibility(R.id.privateGroup,View.VISIBLE)
             findViewById<TextView>(R.id.lobbyIdWaitShowing).text = currentLobbyId
         }
-        findViewById<Group>(R.id.errorGroup).visibility = View.INVISIBLE
+        changeVisibility(R.id.errorGroup,View.INVISIBLE)
     }
 
     /**

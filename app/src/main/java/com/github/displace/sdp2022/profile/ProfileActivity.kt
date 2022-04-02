@@ -87,21 +87,7 @@ class ProfileActivity : AppCompatActivity() {
         }
         db.referenceGet( "CompleteUsers/" + activePartialUser.uid, "MessageHistory" ).addOnSuccessListener { msg ->
             val ls = msg.value as ArrayList<HashMap<String,Any>>?
-            val messageRecyclerView = findViewById<RecyclerView>(R.id.recyclerMsg)
-            val list = mutableListOf<Message>()
-            if(ls != null){
-                for( map in ls ){
-                    val sender = map["sender"] as HashMap<String,Any>
-                    val m = Message(map["message"] as String,map["date"] as String, PartialUser(sender["username"] as String,sender["uid"] as String) )
-                    list.add(m)
-                }
-            }
-            val messageAdapter = MsgViewAdapter(
-                applicationContext,
-                list
-            )
-            messageRecyclerView.adapter = messageAdapter
-            messageRecyclerView.layoutManager = LinearLayoutManager(applicationContext)
+            messageList(ls)
         }
 
         db.getDbReference("CompleteUsers/" + activePartialUser.uid + "/MessageHistory").addValueEventListener(messageListener())
@@ -115,21 +101,7 @@ class ProfileActivity : AppCompatActivity() {
     private fun messageListener() = object : ValueEventListener {
         override fun onDataChange(snapshot: DataSnapshot) {
             val ls = snapshot.value as ArrayList<HashMap<String,Any>>?
-            val messageRecyclerView = findViewById<RecyclerView>(R.id.recyclerMsg)
-            val list = mutableListOf<Message>()
-            if(ls != null){
-                for( map in ls ){
-                    val sender = map["sender"] as HashMap<String,Any>
-                    val m = Message(map["message"] as String,map["date"] as String, PartialUser(sender["username"] as String,sender["uid"] as String) )
-                    list.add(m)
-                }
-            }
-            val messageAdapter = MsgViewAdapter(
-                applicationContext,
-                list
-            )
-            messageRecyclerView.adapter = messageAdapter
-            messageRecyclerView.layoutManager = LinearLayoutManager(applicationContext)
+            messageList(ls)
         }
 
         override fun onCancelled(error: DatabaseError) {
@@ -166,6 +138,24 @@ class ProfileActivity : AppCompatActivity() {
     fun settingsButton(view: View) {
         val intent = Intent(this, AccountSettingsActivity::class.java)
         startActivity(intent)
+    }
+
+    private fun messageList(ls : ArrayList<HashMap<String,Any>>?){
+        val messageRecyclerView = findViewById<RecyclerView>(R.id.recyclerMsg)
+        val list = mutableListOf<Message>()
+        if(ls != null){
+            for( map in ls ){
+                val sender = map["sender"] as HashMap<String,Any>
+                val m = Message(map["message"] as String,map["date"] as String, PartialUser(sender["username"] as String,sender["uid"] as String) )
+                list.add(m)
+            }
+        }
+        val messageAdapter = MsgViewAdapter(
+            applicationContext,
+            list
+        )
+        messageRecyclerView.adapter = messageAdapter
+        messageRecyclerView.layoutManager = LinearLayoutManager(applicationContext)
     }
 
 }
