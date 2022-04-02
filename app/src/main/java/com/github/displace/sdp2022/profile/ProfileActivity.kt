@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.R
+import com.github.displace.sdp2022.RealTimeDatabase
 import com.github.displace.sdp2022.profile.achievements.AchViewAdapter
 import com.github.displace.sdp2022.profile.friends.FriendViewAdapter
 import com.github.displace.sdp2022.profile.history.HistoryViewAdapter
@@ -18,11 +19,14 @@ import com.github.displace.sdp2022.profile.messages.MsgViewAdapter
 import com.github.displace.sdp2022.profile.settings.AccountSettingsActivity
 import com.github.displace.sdp2022.profile.statistics.StatViewAdapter
 import com.github.displace.sdp2022.users.PartialUser
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
 
 
 class ProfileActivity : AppCompatActivity() {
 
-    private lateinit var dbAccess: ProfileDbConnection
+    private val db : RealTimeDatabase = RealTimeDatabase().instantiate("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",false) as RealTimeDatabase
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,21 +35,13 @@ class ProfileActivity : AppCompatActivity() {
 
         /* Active user Information */
         val app = applicationContext as MyApplication
-        dbAccess = app.getProfileDb()
         val activeUser = app.getActiveUser()
-        findViewById<TextView>(R.id.profileUsername).text = if(activeUser != null) {
-            activeUser.getPartialUser().username
-        } else {
-            "defaultNotLoggedIn"
-        }
+        findViewById<TextView>(R.id.profileUsername).text =
+            activeUser?.getPartialUser()?.username ?: "defaultNotLoggedIn"
 
         /* Achievements */
         val achRecyclerView = findViewById<RecyclerView>(R.id.recyclerAch)
-        val achs = if(activeUser != null) {
-            activeUser.getAchievements()
-        } else {
-            mutableListOf()
-        }
+        val achs = activeUser?.getAchievements() ?: mutableListOf()
 
         val achAdapter =
             AchViewAdapter(applicationContext, achs)
@@ -55,11 +51,7 @@ class ProfileActivity : AppCompatActivity() {
         /* Statistics */
         val statRecyclerView = findViewById<RecyclerView>(R.id.recyclerStats)
 
-        val stats = if(activeUser != null) {
-            activeUser.getStats()
-        } else {
-            mutableListOf()
-        }
+        val stats = activeUser?.getStats() ?: mutableListOf()
 
         val statAdapter =
             StatViewAdapter(applicationContext, stats)
@@ -69,11 +61,7 @@ class ProfileActivity : AppCompatActivity() {
         /* Games History */
         val historyRecyclerView = findViewById<RecyclerView>(R.id.recyclerHist)
 
-        val hist = if(activeUser != null) {
-            activeUser.getGameHistory()
-        } else {
-            mutableListOf()
-        }
+        val hist = activeUser?.getGameHistory() ?: mutableListOf()
 
         val historyAdapter =
             HistoryViewAdapter(applicationContext, hist)
@@ -83,38 +71,69 @@ class ProfileActivity : AppCompatActivity() {
         /* Friends */
         val friendRecyclerView = findViewById<RecyclerView>(R.id.recyclerFriend)
 
-        val friends = if(activeUser != null) {
-            activeUser.getFriendsList()
-        } else {
-            mutableListOf()
-        }
+        val friends = activeUser?.getFriendsList() ?: mutableListOf()
         val friendAdapter = FriendViewAdapter(
             applicationContext,
             friends,
-            dbAccess, 0
+            0
         )
         friendRecyclerView.adapter = friendAdapter
         friendRecyclerView.layoutManager = LinearLayoutManager(applicationContext)
 
         /* Messages */
-        val messageRecyclerView = findViewById<RecyclerView>(R.id.recyclerMsg)
-        val messageAdapter = MsgViewAdapter(
-            applicationContext,
-            listOf(
-                Message(
-                    "MESSAGE 1 IT IS A VERY LONG MESSAGEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE",
-                    "1",
-                    PartialUser("dummy_username", "dummy_friend_id")
-                )
-            ),//dbAccess.getMsgList(3, app.getActiveUser().ID),       //TODO: CompleteUsers/id/MessageHistory in database to implement
-            dbAccess
-        )
-        messageRecyclerView.adapter = messageAdapter
-        messageRecyclerView.layoutManager = LinearLayoutManager(applicationContext)
+        var activePartialUser = PartialUser("defaultName","dummy_id")
+        if(activeUser != null){
+            activePartialUser = activeUser.getPartialUser()
+        }
+        db.referenceGet( "CompleteUsers/" + activePartialUser.uid, "MessageHistory" ).addOnSuccessListener { msg ->
+            val ls = msg.value as ArrayList<HashMap<String,Any>>?
+            val messageRecyclerView = findViewById<RecyclerView>(R.id.recyclerMsg)
+            val list = mutableListOf<Message>()
+            if(ls != null){
+                for( map in ls ){
+                    val sender = map["sender"] as HashMap<String,Any>
+                    val m = Message(map["message"] as String,map["date"] as String, PartialUser(sender["username"] as String,sender["uid"] as String) )
+                    list.add(m)
+                }
+            }
+            val messageAdapter = MsgViewAdapter(
+                applicationContext,
+                list
+            )
+            messageRecyclerView.adapter = messageAdapter
+            messageRecyclerView.layoutManager = LinearLayoutManager(applicationContext)
+        }
+
+        db.getDbReference("CompleteUsers/" + activePartialUser.uid + "/MessageHistory").addValueEventListener(messageListener())
 
 
         /*Set the default at the start*/
         activityStart()
+
+    }
+
+    private fun messageListener() = object : ValueEventListener {
+        override fun onDataChange(snapshot: DataSnapshot) {
+            val ls = snapshot.value as ArrayList<HashMap<String,Any>>?
+            val messageRecyclerView = findViewById<RecyclerView>(R.id.recyclerMsg)
+            val list = mutableListOf<Message>()
+            if(ls != null){
+                for( map in ls ){
+                    val sender = map["sender"] as HashMap<String,Any>
+                    val m = Message(map["message"] as String,map["date"] as String, PartialUser(sender["username"] as String,sender["uid"] as String) )
+                    list.add(m)
+                }
+            }
+            val messageAdapter = MsgViewAdapter(
+                applicationContext,
+                list
+            )
+            messageRecyclerView.adapter = messageAdapter
+            messageRecyclerView.layoutManager = LinearLayoutManager(applicationContext)
+        }
+
+        override fun onCancelled(error: DatabaseError) {
+        }
 
     }
 
@@ -149,9 +168,4 @@ class ProfileActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-
-    /*
-    TODO IN THIS ACTIVITY
-    - See someone else's profile : needs to go back to active user profile (little button to go back) : only see the PROFILE part of it
-     */
 }

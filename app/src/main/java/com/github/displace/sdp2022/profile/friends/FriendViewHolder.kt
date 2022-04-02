@@ -2,13 +2,22 @@ package com.github.displace.sdp2022.profile.friends
 
 import android.content.Intent
 import android.view.View
+import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.R
+import com.github.displace.sdp2022.RealTimeDatabase
+import com.github.displace.sdp2022.profile.ProfileActivity
 import com.github.displace.sdp2022.profile.ProfileDbConnection
+import com.github.displace.sdp2022.profile.messages.Message
 import com.github.displace.sdp2022.profile.messages.SendMessageActivity
 import com.github.displace.sdp2022.users.PartialUser
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.MutableData
+import com.google.firebase.database.Transaction
 
 class FriendViewHolder(itemview: View) : RecyclerView.ViewHolder(itemview) {
 
@@ -16,8 +25,8 @@ class FriendViewHolder(itemview: View) : RecyclerView.ViewHolder(itemview) {
     val messageButton: ImageButton = itemView.findViewById(R.id.messageButton)
     val inviteButton: ImageButton = itemView.findViewById(R.id.inviteButton)
 
-    lateinit var dbAdapter: ProfileDbConnection
     lateinit var friend: PartialUser
+    var tapUser : Boolean = false
 
     init {
         messageButton.setOnClickListener { v ->
@@ -28,9 +37,48 @@ class FriendViewHolder(itemview: View) : RecyclerView.ViewHolder(itemview) {
             v.context.startActivity(intent)
         }
 
-        inviteButton.setOnClickListener { dbAdapter.sendInvite(friend) }
+        inviteButton.setOnClickListener { v ->
+            val app = v.context.applicationContext as MyApplication
+            val lobbyID = app.getLobbyID()
+            val message: String = lobbyID
+            val db : RealTimeDatabase = RealTimeDatabase().noCacheInstantiate("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",false) as RealTimeDatabase
+            val activeUser = app.getActiveUser()
+            var activePartialUser = PartialUser("defaultName","dummy_id")
+            if(activeUser != null){
+                activePartialUser = activeUser.getPartialUser()
+            }
+
+            db.getDbReference("CompleteUsers/" + friend.uid + "/MessageHistory").runTransaction( object : Transaction.Handler{
+                override fun doTransaction(currentData: MutableData): Transaction.Result {
+                    val ls = currentData.value as ArrayList<MutableMap<String,Any>>?
+                    val msg = Message(message,app.getCurrentDate(), activePartialUser)
+                    if(ls == null){
+                        return Transaction.success(currentData)
+                    }else{
+                        val msgMap = HashMap<String,Any>()
+                        msgMap["message"] = msg.message
+                        msgMap["date"] = app.getCurrentDate()
+                        msgMap["sender"] = msg.sender
+                        ls.add(0,msgMap)
+                    }
+                    currentData.value = ls
+                    return Transaction.success(currentData)
+                }
+
+                override fun onComplete(
+                    error: DatabaseError?,
+                    committed: Boolean,
+                    currentData: DataSnapshot?
+                ) {
+                }
+
+            })
+        }
 
         itemview.setOnClickListener { v ->
+            if(!tapUser){
+                return@setOnClickListener
+            }
             val intent = Intent(v.context, FriendProfile::class.java).apply {
                 putExtra("FriendId", friend.uid)
                 putExtra("FriendUsername", friend.username)
