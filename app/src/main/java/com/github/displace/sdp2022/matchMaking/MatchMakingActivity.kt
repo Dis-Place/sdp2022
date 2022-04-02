@@ -19,6 +19,7 @@ import com.github.displace.sdp2022.R
 import com.github.displace.sdp2022.profile.friends.FriendViewAdapter
 import com.github.displace.sdp2022.users.PartialUser
 import com.google.firebase.database.*
+import org.w3c.dom.Text
 import kotlin.random.Random
 import kotlin.random.nextUInt
 
@@ -65,7 +66,7 @@ class MatchMakingActivity : AppCompatActivity() {
      */
     private val lobbyListener = object : ValueEventListener {
         override fun onDataChange(snapshot: DataSnapshot) {
-            if(isVisible(R.id.setupGroup)){    //nothing should be done if the player is not in a lobby
+            if(isGroupVisible(R.id.setupGroup)){    //nothing should be done if the player is not in a lobby
                 return
             }
             val lobby = snapshot.value as MutableMap<String,Any>? ?: return
@@ -287,7 +288,7 @@ class MatchMakingActivity : AppCompatActivity() {
         lobbyType = "private"
         val id = findViewById<EditText>(R.id.lobbyIdInsert).text
         if(id.isEmpty()){   //the ID can not be empty
-            findViewById<TextView>(R.id.errorIdNonEmpty).visibility = View.VISIBLE
+            changeTextVisible(R.id.errorIdNonEmpty,View.VISIBLE)
             return
         }
 
@@ -295,7 +296,7 @@ class MatchMakingActivity : AppCompatActivity() {
         db.referenceGet("MM/$gamemode/$map/$lobbyType","freeList").addOnSuccessListener { free ->
             val ls = free.value as MutableList<String>
             if(ls.contains(id.toString())){
-                findViewById<TextView>(R.id.errorIdExists).visibility = View.VISIBLE
+                changeTextVisible(R.id.errorIdExists,View.VISIBLE)
             }else{
                 currentLobbyId = id.toString()
                 app.setLobbyID(currentLobbyId)
@@ -316,7 +317,7 @@ class MatchMakingActivity : AppCompatActivity() {
         lobbyType = "private"
         val id = findViewById<EditText>(R.id.lobbyIdInsert).text
         if(id.isEmpty()){
-            findViewById<TextView>(R.id.errorIdNotFound).visibility = View.VISIBLE
+            changeTextVisible(R.id.errorIdNonEmpty,View.VISIBLE)
             return
         }
         db.referenceGet("MM/$gamemode/$map/$lobbyType","freeList").addOnSuccessListener { free ->
@@ -325,7 +326,7 @@ class MatchMakingActivity : AppCompatActivity() {
                 checkOutLobby(id.toString())
                 app.setLobbyID(id.toString())
             }else{
-                findViewById<TextView>(R.id.errorIdNotFound).visibility = View.VISIBLE
+                changeTextVisible(R.id.errorIdNotFound,View.VISIBLE)
             }
         }
     }
@@ -365,7 +366,7 @@ class MatchMakingActivity : AppCompatActivity() {
      * - the player is alone in the lobby , meaning the lobby has to be deleted
      */
     private fun leaveMM(toGame : Boolean){
-        if(isVisible(R.id.setupGroup)){    //nothing should be done if the player is not in a lobby
+        if(isGroupVisible(R.id.setupGroup)){    //nothing should be done if the player is not in a lobby
             return
         }
         db.getDbReference("MM/$gamemode/$map/$lobbyType").runTransaction( object : Transaction.Handler{
@@ -429,12 +430,16 @@ class MatchMakingActivity : AppCompatActivity() {
 
     }
 
-    private fun isVisible(id : Int) : Boolean{
+    private fun isGroupVisible(id : Int) : Boolean{
         return findViewById<Group>(id).visibility == View.VISIBLE
     }
 
-    private fun changeVisibility(id : Int, visibility : Int ) {
+    private fun changeGroupVisibility(id : Int, visibility : Int ) {
         findViewById<Group>(id).visibility = visibility
+    }
+
+    private fun changeTextVisible(id : Int, visibility : Int ) {
+        findViewById<TextView>(id).visibility = visibility
     }
 
     override fun onDestroy() {
@@ -463,22 +468,22 @@ class MatchMakingActivity : AppCompatActivity() {
      * UI transition between multiple groups of UI elements : done to keep the same activity
      */
     private fun uiToSetup(){
-        changeVisibility(R.id.setupGroup,View.VISIBLE)
-        changeVisibility(R.id.waitGroup,View.INVISIBLE)
+        changeGroupVisibility(R.id.setupGroup,View.VISIBLE)
+        changeGroupVisibility(R.id.waitGroup,View.INVISIBLE)
         if(lobbyType == "private" ){
-            changeVisibility(R.id.privateGroup,View.INVISIBLE)
+            changeGroupVisibility(R.id.privateGroup,View.INVISIBLE)
         }
-        changeVisibility(R.id.errorGroup,View.INVISIBLE)
+        changeGroupVisibility(R.id.errorGroup,View.INVISIBLE)
     }
 
     private fun uiToSearch(){
-        changeVisibility(R.id.setupGroup,View.INVISIBLE)
-        changeVisibility(R.id.waitGroup,View.VISIBLE)
+        changeGroupVisibility(R.id.setupGroup,View.INVISIBLE)
+        changeGroupVisibility(R.id.waitGroup,View.VISIBLE)
         if(lobbyType == "private" ){
-            changeVisibility(R.id.privateGroup,View.VISIBLE)
+            changeGroupVisibility(R.id.privateGroup,View.VISIBLE)
             findViewById<TextView>(R.id.lobbyIdWaitShowing).text = currentLobbyId
         }
-        changeVisibility(R.id.errorGroup,View.INVISIBLE)
+        changeGroupVisibility(R.id.errorGroup,View.INVISIBLE)
     }
 
     /**
