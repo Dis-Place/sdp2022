@@ -31,7 +31,6 @@ class TempLoginActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
     private lateinit var signInClient: GoogleSignInClient
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_temp_login)
@@ -49,7 +48,7 @@ class TempLoginActivity : AppCompatActivity() {
         val logout = findViewById<Button>(R.id.btnGoogleSignOut)
         logout.setOnClickListener {
             if (Firebase.auth.currentUser != null) {
-                AuthUI.getInstance().signOut(this).addOnCompleteListener {
+                AuthUI.getInstance().signOut(this@TempLoginActivity).addOnCompleteListener {
                     Toast.makeText(this, "Logging Out", Toast.LENGTH_SHORT).show()
                 }
             } else {
@@ -57,6 +56,21 @@ class TempLoginActivity : AppCompatActivity() {
                     .show()
             }
         }
+
+        //val offlineSignIn = findViewById<Button>(R.id.btnOfflineSignIn)
+        //offlineSignIn.setOnClickListener {
+        //    //Check if internet is available
+        //    if (Connectivity.isConnected(applicationContext)) {
+        //        Toast.makeText(
+        //            this,
+        //            "You are connected to the internet, so you cannot use the offline mode",
+        //            Toast.LENGTH_LONG
+        //        ).show()
+        //    } else {
+        //
+        //        Toast.makeText(this, "AAAAAAAAAAAAAAAAAAAAAAA", Toast.LENGTH_LONG).show()
+        //    }
+        //}
     }
 
     private fun googleAuthForFirebase(account: GoogleSignInAccount) {

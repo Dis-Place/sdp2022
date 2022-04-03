@@ -12,19 +12,17 @@ import com.github.displace.sdp2022.profile.ProfileActivity
 
 class MainMenuActivity : AppCompatActivity() {
 
+
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContentView(R.layout.activity_main_menu)
 
         //load the username from the application
         val app = applicationContext as MyApplication
         val activeUser = app.getActiveUser()
-        val message = if(activeUser == null) {
-            "defaultNotLoggedIn"
-        } else {
-            activeUser.getPartialUser().username
-        }
+        val message = activeUser?.getPartialUser()?.username ?: "defaultNotLoggedIn"
         findViewById<TextView>(R.id.WelcomeText).apply {
             text =
                 "Welcome $message!"

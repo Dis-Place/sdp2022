@@ -9,7 +9,7 @@ import com.google.firebase.auth.FirebaseUser
 import java.text.SimpleDateFormat
 import java.util.*
 
-class CompleteUser(private val firebaseUser: FirebaseUser?) {
+class CompleteUser(private val firebaseUser: FirebaseUser?) : User {
 
     private val dbReference: String = if (firebaseUser != null) {
         "CompleteUsers/${firebaseUser.uid}/CompleteUser"
@@ -39,12 +39,12 @@ class CompleteUser(private val firebaseUser: FirebaseUser?) {
         db.insert(dbReference, "", this)
     }
 
-    fun addAchievement(ach: Achievement) {
+    override fun addAchievement(ach: Achievement) {
         achievements.add(ach)
         db.update(dbReference, "achievements/${achievements.size - 1}", ach)
     }
 
-    fun updateStats(statName: String, newValue: Long) {
+    override fun updateStats(statName: String, newValue: Long) {
         for (i in 0..stats.size) {
             if (statName == stats[i].name) {
                 stats[i].value = newValue
@@ -54,14 +54,14 @@ class CompleteUser(private val firebaseUser: FirebaseUser?) {
         }
     }
 
-    fun addFriend(partialU: PartialUser) {
+    override fun addFriend(partialU: PartialUser) {
         if (!containsPartialUser(friendsList, partialU)) {
             friendsList.add(partialU)
             db.update(dbReference, "friendsList/${friendsList.size - 1}", partialU)
         }
     }
 
-    fun removeFriend(partialU: PartialUser) {
+    override fun removeFriend(partialU: PartialUser) {
         if (containsPartialUser(friendsList, partialU)) {
             friendsList.remove(partialU)
             db.update(dbReference, "friendsList", friendsList)
@@ -80,24 +80,25 @@ class CompleteUser(private val firebaseUser: FirebaseUser?) {
         return false
     }
 
-    fun addGameInHistory(map: String, date: String, result: String) {
+    override fun addGameInHistory(map: String, date: String, result: String) {
         val history = History(map, date, result)
         gameHistory.add(history)
         db.update(dbReference, "gameHistory/${gameHistory.size - 1}", history)
     }
 
-    fun changeUsername(newName: String) {
+    override fun changeUsername(newName: String) {
         partialUser.username = newName
         db.update(dbReference, "partialUser/username", newName)
     }
 
+    @Suppress("UNCHECKED_CAST")
     private fun initializeUser() {
         db.referenceGet(dbReference, "").addOnSuccessListener { usr ->
             if (usr.value != null) {
-                val completeUser = usr.value as HashMap<String, *>
+                val completeUser = usr.value as HashMap<*, *>
 
                 // Get achievements from the database
-                val achievementsDB =
+                val achievementsDB: ArrayList<HashMap<String, String>>? =
                     completeUser["achievements"] as ArrayList<HashMap<String, String>>
                 achievements = mutableListOf()
                 if (achievementsDB != null) {
@@ -107,7 +108,8 @@ class CompleteUser(private val firebaseUser: FirebaseUser?) {
                 }
 
                 // Get statistics from the database
-                val statsDB = completeUser["stats"] as ArrayList<HashMap<String, String>>
+                val statsDB: ArrayList<HashMap<String, String>>? =
+                    completeUser["stats"] as ArrayList<HashMap<String, String>>
                 stats = mutableListOf()
                 if (statsDB != null) {
                     for (s in statsDB) {
@@ -115,7 +117,7 @@ class CompleteUser(private val firebaseUser: FirebaseUser?) {
                     }
                 }
 
-                val friendsListHash =
+                val friendsListHash: ArrayList<HashMap<String, String>>? =
                     completeUser["friendsList"] as ArrayList<HashMap<String, String>>
 
                 friendsList = mutableListOf()
@@ -125,7 +127,7 @@ class CompleteUser(private val firebaseUser: FirebaseUser?) {
                     }
                 }
 
-                val gameHistoryHash =
+                val gameHistoryHash: ArrayList<HashMap<String, String>>? =
                     completeUser["gameHistory"] as ArrayList<HashMap<String, String>>
                 gameHistory = mutableListOf()
                 if (gameHistoryHash != null) {
@@ -135,7 +137,7 @@ class CompleteUser(private val firebaseUser: FirebaseUser?) {
                 }
 
                 val partialUserMap = completeUser["partialUser"] as HashMap<String, String>
-                partialUser = PartialUser(partialUserMap["username"]!!, partialUserMap.get("uid")!!)
+                partialUser = PartialUser(partialUserMap["username"]!!, partialUserMap["uid"]!!)
             } else {
                 achievements = initializeAchievements()
                 stats = initializeStats()
@@ -151,7 +153,7 @@ class CompleteUser(private val firebaseUser: FirebaseUser?) {
         }
     }
 
-    fun removeUserFromDatabase() {
+    override fun removeUserFromDatabase() {
         db.delete(dbReference, "")
     }
 
@@ -162,6 +164,7 @@ class CompleteUser(private val firebaseUser: FirebaseUser?) {
         )
     }
 
+    @SuppressLint("SimpleDateFormat")
     private fun getCurrentDate(): String {
         val simpleDate = SimpleDateFormat("dd-MM-yyyy")
         return simpleDate.format(Date())
@@ -187,23 +190,23 @@ class CompleteUser(private val firebaseUser: FirebaseUser?) {
 
     }
 
-    fun getPartialUser(): PartialUser {
+    override fun getPartialUser(): PartialUser {
         return partialUser
     }
 
-    fun getAchievements(): MutableList<Achievement> {
+    override fun getAchievements(): MutableList<Achievement> {
         return achievements
     }
 
-    fun getStats(): List<Statistic> {
+    override fun getStats(): List<Statistic> {
         return stats
     }
 
-    fun getFriendsList(): MutableList<PartialUser> {
+    override fun getFriendsList(): MutableList<PartialUser> {
         return friendsList
     }
 
-    fun getGameHistory(): MutableList<History> {
+    override fun getGameHistory(): MutableList<History> {
         return gameHistory
     }
 
