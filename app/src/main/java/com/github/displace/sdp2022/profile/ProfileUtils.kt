@@ -31,12 +31,6 @@ class MessageUpdater(val custom : Boolean,val applicationContext : Context, val 
         committed: Boolean,
         currentData: DataSnapshot?
     ) {
-        if(committed && custom){
-            val intent = Intent(applicationContext, ProfileActivity::class.java)
-            startActivity(applicationContext,intent,null)
-        }else{
-            //       TODO("ERROR MESSAGE : COULD NOT BE SENT")
-        }
     }
 
 }

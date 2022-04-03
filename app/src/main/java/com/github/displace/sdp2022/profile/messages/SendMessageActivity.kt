@@ -7,6 +7,7 @@ import android.view.View
 import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.profile.ProfileActivity
 import com.github.displace.sdp2022.R
@@ -55,7 +56,8 @@ class SendMessageActivity : AppCompatActivity() {
         db.getDbReference("CompleteUsers/$receiverId/MessageHistory").runTransaction(
             MessageUpdater(true, applicationContext,message,activePartialUser)
         )
-
+        val intent = Intent(applicationContext, ProfileActivity::class.java)
+        startActivity(intent)
     }
 
 
