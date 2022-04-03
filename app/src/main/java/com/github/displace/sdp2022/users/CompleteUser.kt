@@ -190,7 +190,7 @@ class CompleteUser(private val firebaseUser: FirebaseUser?) : User {
 
     }
 
-    override fun getPartialUser(): PartialUser {
+    override fun getPartialUser(): PartialUser? {
         return partialUser
     }
 

@@ -22,7 +22,7 @@ interface User {
 
     fun removeUserFromDatabase()
 
-    fun getPartialUser(): PartialUser
+    fun getPartialUser(): PartialUser?
 
     fun getAchievements(): MutableList<Achievement>
 

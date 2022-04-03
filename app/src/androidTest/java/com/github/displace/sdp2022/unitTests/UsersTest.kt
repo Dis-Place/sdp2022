@@ -1,5 +1,6 @@
 package com.github.displace.sdp2022.unitTests
 
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.displace.sdp2022.profile.achievements.Achievement
 import com.github.displace.sdp2022.profile.history.History
 import com.github.displace.sdp2022.users.CompleteUser
@@ -9,10 +10,10 @@ import com.google.firebase.auth.FirebaseUser
 import org.junit.Assert.*
 import org.junit.Test
 import org.junit.Rule
+import org.junit.runner.RunWith
 
 
-
-
+@RunWith(AndroidJUnit4::class)
 class UsersTest {
 
     @Test
@@ -20,7 +21,7 @@ class UsersTest {
         val partialUser1 = PartialUser("dummy_name", "dummy_id")
         val partialUser2 = PartialUser("dummy_name", "dummy_id")
 
-        assertTrue(partialUser1.equals(partialUser2))
+        assertTrue(partialUser1 == partialUser2)
     }
 
     @Test
@@ -28,7 +29,7 @@ class UsersTest {
         val partialUser1 = PartialUser("dummy_name", "dummy_id")
         val partialUser2 = PartialUser("dummy_name", "other_id")
 
-        assertFalse(partialUser1.equals(partialUser2))
+        assertFalse(partialUser1 == partialUser2)
     }
 
     @Test
@@ -36,7 +37,7 @@ class UsersTest {
         val completeUser1 = CompleteUser(null)
         val completeUser2 = CompleteUser(null)
 
-        assertTrue(completeUser1.equals(completeUser2))
+        assertTrue(completeUser1 == completeUser2)
     }
 
     @Test
