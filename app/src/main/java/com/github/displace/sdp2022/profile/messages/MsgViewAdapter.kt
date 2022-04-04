@@ -7,11 +7,11 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.github.displace.sdp2022.profile.ProfileDbConnection
 import com.github.displace.sdp2022.R
+import com.github.displace.sdp2022.RealTimeDatabase
 
 class MsgViewAdapter(
     val context: Context,
     private val data: List<Message>,
-    private val dbAdapter: ProfileDbConnection
 ) : RecyclerView.Adapter<MsgViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MsgViewHolder {
         val parentContext = parent.context
@@ -26,7 +26,6 @@ class MsgViewAdapter(
         holder.content.text = data[index].message
         holder.sender.text = data[index].sender.username
         holder.date.text = data[index].date
-        holder.dbAdapter = dbAdapter
         holder.friend = data[index].sender
 
     }
