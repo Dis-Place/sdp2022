@@ -16,12 +16,14 @@ object CoordinatesConversionUtil {
 
     fun geoPoint(coordinates: Coordinates): GeoPoint {
         if(!isValid(coordinates)) throw IllegalArgumentException("invalid geographic coordinates")
-        return GeoPoint(coordinates.pos.first as Double,coordinates.pos.second as Double)
+        return GeoPoint(
+            coordinates.pos.first, coordinates.pos.second
+        )
     }
 
-    fun isValid(coordinates: Coordinates): Boolean {
-        return coordinates.pos.first as Double in Constants.MIN_LATITUDE..Constants.MAX_LATITUDE
-                && coordinates.pos.second as Double in Constants.MIN_LONGITUDE..Constants.MAX_LONGITUDE
+    private fun isValid(coordinates: Coordinates): Boolean {
+        return coordinates.pos.first in Constants.MIN_LATITUDE..Constants.MAX_LATITUDE
+                && coordinates.pos.second in Constants.MIN_LONGITUDE..Constants.MAX_LONGITUDE
     }
 
     fun coordinates(geoPoint: GeoPoint): Coordinates {

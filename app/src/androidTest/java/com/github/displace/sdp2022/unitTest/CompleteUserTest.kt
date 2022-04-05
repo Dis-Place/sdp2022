@@ -1,4 +1,4 @@
-package com.github.displace.sdp2022.user
+package com.github.displace.sdp2022.unitTest
 
 import com.github.displace.sdp2022.profile.achievements.Achievement
 import com.github.displace.sdp2022.profile.history.History
@@ -9,10 +9,28 @@ import org.junit.Test
 
 
 class CompleteUserTest {
+
+    @Test
+    fun partialUserEqualsWorksWhenTrue() {
+        val partialUser1 = PartialUser("dummy_name", "dummy_id")
+        val partialUser2 = PartialUser("dummy_name", "dummy_id")
+        Thread.sleep(3000)
+        assertTrue(partialUser1 == partialUser2)
+    }
+
+    @Test
+    fun partialUserEqualsWorksWhenFalse() {
+        val partialUser1 = PartialUser("dummy_name", "dummy_id")
+        val partialUser2 = PartialUser("dummy_name", "other_id")
+        Thread.sleep(3000)
+        assertFalse(partialUser1 == partialUser2)
+    }
+
     @Test
     fun completeUserEqualsWorksWhenTrue() {
         val completeUser1 = CompleteUser(null)
         val completeUser2 = CompleteUser(null)
+        Thread.sleep(3000)
 
         assertTrue(completeUser1 == completeUser2)
     }
@@ -20,6 +38,7 @@ class CompleteUserTest {
     @Test
     fun achievementUpdates() {
         val completeUser = CompleteUser(null)
+        Thread.sleep(3000)
         val achSize = completeUser.getAchievements().size
         val ach = Achievement("AchievementTest1", "28-03-2022")
         completeUser.addAchievement(ach)
@@ -31,6 +50,7 @@ class CompleteUserTest {
     @Test
     fun statisticsAreInitializedCorrectly() {
         val completeUser = CompleteUser(null)
+        Thread.sleep(3000)
         val dummyStats = completeUser.getStats()
         assertTrue(
             dummyStats[0].name == "stat1" &&
@@ -44,6 +64,7 @@ class CompleteUserTest {
     @Test
     fun statisticsUpdates() {
         val completeUser = CompleteUser(null)
+        Thread.sleep(3000)
         completeUser.updateStats("stat1", 10)
         assertTrue(completeUser.getStats()[0].value == 10L)
         completeUser.updateStats("stat1", 0)
@@ -53,6 +74,7 @@ class CompleteUserTest {
     @Test
     fun addingAndRemovingFriendWorksCorrectly() {
         val completeUser = CompleteUser(null)
+        Thread.sleep(3000)
         val friendsSize = completeUser.getFriendsList().size
         val partialUser = PartialUser("dummy_name", "dummy_other_id")
         completeUser.addFriend(partialUser)
@@ -65,8 +87,9 @@ class CompleteUserTest {
     @Test
     fun addExistingFriendDoesNothing() {
         val completeUser = CompleteUser(null)
+        Thread.sleep(3000)
         val friendsSize = completeUser.getFriendsList().size
-        val partialUser = PartialUser("dummy_username", "dummy_friend_id")
+        val partialUser = PartialUser("dummy_username", "dummy_id")
         completeUser.addFriend(partialUser)
         assertEquals(friendsSize, completeUser.getFriendsList().size)
         completeUser.removeUserFromDatabase()
@@ -75,6 +98,7 @@ class CompleteUserTest {
     @Test
     fun removeNonExistingFriendDoesNothing() {
         val completeUser = CompleteUser(null)
+        Thread.sleep(3000)
         val friendsSize = completeUser.getFriendsList().size
         val partialUser = PartialUser("dummy_name", "dummy_other_id")
         completeUser.removeFriend(partialUser)
@@ -85,6 +109,7 @@ class CompleteUserTest {
     @Test
     fun updateGameHistoryWorks() {
         val completeUser = CompleteUser(null)
+        Thread.sleep(3000)
         val historySize = completeUser.getGameHistory().size
         val gameHistory = History("dummyMap", "28-03-2022", "VICTORY")
         completeUser.addGameInHistory("dummyMap", "28-03-2022", "VICTORY")
