@@ -1,4 +1,4 @@
-package com.github.displace.sdp2022.unitTests
+package com.github.displace.sdp2022.unitTest
 
 import com.github.displace.sdp2022.profile.achievements.Achievement
 import com.github.displace.sdp2022.profile.history.History
@@ -15,7 +15,7 @@ class CompleteUserTest {
         val partialUser1 = PartialUser("dummy_name", "dummy_id")
         val partialUser2 = PartialUser("dummy_name", "dummy_id")
         Thread.sleep(3000)
-        assertTrue(partialUser1.equals(partialUser2))
+        assertTrue(partialUser1 == partialUser2)
         Thread.sleep(3000)
         assertTrue(partialUser1 == partialUser2)
     }
@@ -33,7 +33,7 @@ class CompleteUserTest {
         val completeUser1 = CompleteUser(null)
         val completeUser2 = CompleteUser(null)
         Thread.sleep(3000)
-        assertTrue(completeUser1.equals(completeUser2))
+        assertTrue(completeUser1 == completeUser2)
         Thread.sleep(3000)
 
         assertTrue(completeUser1 == completeUser2)
@@ -95,6 +95,8 @@ class CompleteUserTest {
         val friendsSize = completeUser.getFriendsList().size
         val partialUser = PartialUser("dummy_username", "dummy_id")
         completeUser.addFriend(partialUser)
+        completeUser.addFriend(partialUser)
+
         assertEquals(friendsSize, completeUser.getFriendsList().size)
         completeUser.removeUserFromDatabase()
     }
