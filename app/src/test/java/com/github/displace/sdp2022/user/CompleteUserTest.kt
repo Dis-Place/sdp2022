@@ -1,37 +1,14 @@
-package com.github.displace.sdp2022.unitTests
+package com.github.displace.sdp2022.user
 
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.displace.sdp2022.profile.achievements.Achievement
 import com.github.displace.sdp2022.profile.history.History
 import com.github.displace.sdp2022.users.CompleteUser
 import com.github.displace.sdp2022.users.PartialUser
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 import org.junit.Assert.*
 import org.junit.Test
-import org.junit.Rule
-import org.junit.runner.RunWith
 
 
-@RunWith(AndroidJUnit4::class)
-class UsersTest {
-
-    @Test
-    fun partialUserEqualsWorksWhenTrue() {
-        val partialUser1 = PartialUser("dummy_name", "dummy_id")
-        val partialUser2 = PartialUser("dummy_name", "dummy_id")
-
-        assertTrue(partialUser1 == partialUser2)
-    }
-
-    @Test
-    fun partialUserEqualsWorksWhenFalse() {
-        val partialUser1 = PartialUser("dummy_name", "dummy_id")
-        val partialUser2 = PartialUser("dummy_name", "other_id")
-
-        assertFalse(partialUser1 == partialUser2)
-    }
-
+class CompleteUserTest {
     @Test
     fun completeUserEqualsWorksWhenTrue() {
         val completeUser1 = CompleteUser(null)
@@ -55,10 +32,12 @@ class UsersTest {
     fun statisticsAreInitializedCorrectly() {
         val completeUser = CompleteUser(null)
         val dummyStats = completeUser.getStats()
-        assertTrue(dummyStats[0].name == "stat1" &&
-                dummyStats[1].name == "stat2" &&
-                0L == dummyStats[0].value &&
-                0L == dummyStats[1].value)
+        assertTrue(
+            dummyStats[0].name == "stat1" &&
+                    dummyStats[1].name == "stat2" &&
+                    0L == dummyStats[0].value &&
+                    0L == dummyStats[1].value
+        )
         completeUser.removeUserFromDatabase()
     }
 
@@ -89,7 +68,7 @@ class UsersTest {
         val friendsSize = completeUser.getFriendsList().size
         val partialUser = PartialUser("dummy_username", "dummy_friend_id")
         completeUser.addFriend(partialUser)
-        assertEquals(friendsSize,completeUser.getFriendsList().size)
+        assertEquals(friendsSize, completeUser.getFriendsList().size)
         completeUser.removeUserFromDatabase()
     }
 
@@ -110,9 +89,11 @@ class UsersTest {
         val gameHistory = History("dummyMap", "28-03-2022", "VICTORY")
         completeUser.addGameInHistory("dummyMap", "28-03-2022", "VICTORY")
         val completeHistory = completeUser.getGameHistory()[historySize]
-        assertTrue(completeHistory.map == gameHistory.map
-                && completeHistory.date == gameHistory.date
-                && completeHistory.result == gameHistory.result)
+        assertTrue(
+            completeHistory.map == gameHistory.map
+                    && completeHistory.date == gameHistory.date
+                    && completeHistory.result == gameHistory.result
+        )
         completeUser.removeUserFromDatabase()
     }
 

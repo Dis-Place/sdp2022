@@ -6,12 +6,9 @@ import android.util.Log
 import com.github.displace.sdp2022.profile.achievements.Achievement
 import com.github.displace.sdp2022.profile.history.History
 import com.github.displace.sdp2022.profile.statistics.Statistic
-import kotlinx.serialization.KSerializer
-import kotlinx.serialization.Serializable
+import kotlinx.serialization.*
 import kotlinx.serialization.builtins.ArraySerializer
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.descriptors.SerialDescriptor
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.Json
@@ -127,11 +124,15 @@ class OfflineUser(private val context: Context?, private val debug: Boolean = fa
 
     init {
         initUser()
-        Thread.sleep(3000)
+        if (!debug)
+            Thread.sleep(3000)
     }
 
     override fun getPartialUser(): PartialUser? {
-        return readFile(PARTIAL_USER_PATH) as PartialUser?
+        return if (debug)
+            partialUser
+        else
+            readFile(PARTIAL_USER_PATH) as PartialUser?
     }
 
     @Suppress("CAST_NEVER_SUCCEEDS")
@@ -145,7 +146,7 @@ class OfflineUser(private val context: Context?, private val debug: Boolean = fa
 
     @Suppress("CAST_NEVER_SUCCEEDS")
     override fun updateStats(statName: String, newValue: Long) {
-        for (i in 0..stats.array.size) {
+        for (i in 0 until stats.array.size) {
             if (statName == stats.array[i].name) {
                 stats.array[i].value = newValue
                 writeToFile(STATS_PATH, stats.array[i])
@@ -209,6 +210,7 @@ class OfflineUser(private val context: Context?, private val debug: Boolean = fa
 
     override fun equals(other: Any?): Boolean {
         val otherUser = other as OfflineUser
+
         return partialUser == otherUser.getPartialUser()
     }
 
@@ -291,11 +293,13 @@ class OfflineUser(private val context: Context?, private val debug: Boolean = fa
     private fun initializeGameHistory() {
         val riddenGameHistory: MutableList<History>? =
             readFile(GAME_HISTORY_PATH) as MutableList<History>?
-        gameHistory = Histories(riddenGameHistory ?: mutableListOf(
-            History(
-                "dummy_map", getCurrentDate(), "VICTORY"
+        gameHistory = Histories(
+            riddenGameHistory ?: mutableListOf(
+                History(
+                    "dummy_map", getCurrentDate(), "VICTORY"
+                )
             )
-        ))
+        )
 
         if (riddenGameHistory == null) {
             writeToFile(GAME_HISTORY_PATH, gameHistory)

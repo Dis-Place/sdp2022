@@ -45,7 +45,7 @@ class CompleteUser(private val firebaseUser: FirebaseUser?) : User {
     }
 
     override fun updateStats(statName: String, newValue: Long) {
-        for (i in 0..stats.size) {
+        for (i in 0..stats.size-1) {
             if (statName == stats[i].name) {
                 stats[i].value = newValue
                 db.update(dbReference, "stats/$i/value", newValue)
