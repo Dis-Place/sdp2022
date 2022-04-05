@@ -7,6 +7,8 @@ import com.github.displace.sdp2022.profile.MockDB
 import com.github.displace.sdp2022.profile.ProfileDbConnection
 import com.github.displace.sdp2022.profile.friends.Friend
 import com.github.displace.sdp2022.users.CompleteUser
+import java.text.SimpleDateFormat
+import java.util.*
 
 class MyApplication : Application() {
 
@@ -14,6 +16,21 @@ class MyApplication : Application() {
     private lateinit var db: MockDB
 
     private var completeUser: CompleteUser? = null
+
+    private var lobbyID : String = ""
+
+    fun setLobbyID(ID : String){
+        lobbyID = ID
+    }
+
+    fun getLobbyID(): String {
+        return lobbyID
+    }
+
+    fun getCurrentDate(): String {
+        val simpleDate = SimpleDateFormat("dd-MM-yyyy")
+        return simpleDate.format(Date())
+    }
 
   //  private lateinit var rTdb : RealTimeDatabase
    // private lateinit var rTdbNoCache : RealTimeDatabase

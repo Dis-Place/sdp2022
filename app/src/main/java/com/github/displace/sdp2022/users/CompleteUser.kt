@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import com.github.displace.sdp2022.RealTimeDatabase
 import com.github.displace.sdp2022.profile.achievements.Achievement
 import com.github.displace.sdp2022.profile.history.History
+import com.github.displace.sdp2022.profile.messages.Message
 import com.github.displace.sdp2022.profile.statistics.Statistic
 import com.google.firebase.auth.FirebaseUser
 import java.text.SimpleDateFormat
@@ -21,6 +22,7 @@ class CompleteUser(private val firebaseUser: FirebaseUser?) {
         "CompleteUsers/dummy_id/CompleteUser"
     }
 
+
     private lateinit var partialUser: PartialUser
 
     private lateinit var achievements: MutableList<Achievement>
@@ -31,7 +33,6 @@ class CompleteUser(private val firebaseUser: FirebaseUser?) {
 
     init {
         initializeUser()
-        Thread.sleep(3000)
     }
 
     private fun addUserToDatabase() {
@@ -136,19 +137,26 @@ class CompleteUser(private val firebaseUser: FirebaseUser?) {
                 achievements = initializeAchievements()
                 stats = initializeStats()
                 friendsList = mutableListOf(
-                    PartialUser("dummy_friend_username", "dummy_friend_id")
+                    PartialUser("THE SYSTEM", "dummy_id")
                 )
                 gameHistory = mutableListOf(
                     History("dummy_map", getCurrentDate(), "VICTORY")
                 )
                 initializePartialUser()
                 addUserToDatabase()
+                createFirstMessageList()
             }
         }
     }
 
+    private fun createFirstMessageList(){
+        val uid = partialUser.uid
+        db.update("CompleteUsers/$uid","MessageHistory", listOf(Message("Welcome to DisPlace",getCurrentDate(),PartialUser("THE SYSTEM","dummy_id"))))
+    }
+
     fun removeUserFromDatabase() {
-        db.delete(dbReference, "")
+        val uid = partialUser.uid
+        db.delete("CompleteUsers",uid)
     }
 
     @SuppressLint("SimpleDateFormat")

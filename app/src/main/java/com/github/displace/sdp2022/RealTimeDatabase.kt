@@ -39,7 +39,7 @@ class RealTimeDatabase : Database {
     }
 
     override fun insert(reference: String, key: String, obj: Any): Any {
-        return update(debug+reference, key, obj)
+        return update(reference, key, obj)
     }
 
     override fun delete(reference: String, key: String) {
