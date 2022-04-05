@@ -49,7 +49,7 @@ class GameVersusViewActivity : AppCompatActivity() {
         markerListener = GeoPointListener.markerPlacer(mapView)
         gpsPositionManager = GPSPositionManager(this)
         gpsPositionUpdater = GPSPositionUpdater(this,gpsPositionManager)
-        gpsPositionUpdater.listenersManager.addCall(markerListener)
+        //gpsPositionUpdater.listenersManager.addCall(GeoPointListener { geoPoint ->  game.handleEvent(GameEvent.OnUpdate(0, Point(geoPoint.latitude,geoPoint.longitude)))})
 
         mapViewManager.addCallOnLongClick(markerListener)
 
@@ -71,7 +71,7 @@ class GameVersusViewActivity : AppCompatActivity() {
                     if (res == 1) {
                         findViewById<TextView>(R.id.TryText).apply {
                             text =
-                                "status : fail, nombre d'essais restant : " + (4 - game.getNbEssai())
+                                "status : fail, nombre d'essais restant : " + (4 - game.getNbEssai()) + " True : x=" + game.getGoal().pos.first + " y=" + game.getGoal().pos.second
                         }
                     } else {
                         if (res == 2) {

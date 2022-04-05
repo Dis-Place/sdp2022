@@ -16,6 +16,7 @@ class GameVersusViewModel {
             is GameEvent.OnStart -> return SetGoal(event.Goal, event.PlayerId)
             is GameEvent.OnPointSelected -> return TryLocation(event.PlayerId, event.test)
             is GameEvent.OnSurrend -> return OnSurrend(event.PlayerId)
+            is GameEvent.OnUpdate -> return UpdatePos(event.goal,event.PlayerId)
         }
     }
 
@@ -39,7 +40,13 @@ class GameVersusViewModel {
         return 0
     }
 
-    fun getGoal(): Coordinates {
+    fun UpdatePos(pos : Coordinates, id: Int): Int {
+        reseau.SendDataToOther(pos, id)
+
+        return 0
+    }
+
+    fun getGoal() : Coordinates {
         return reseau.game.goal
     }
 

@@ -3,6 +3,9 @@ package com.github.displace.sdp2022.gameComponents
 //definition of the possible event during a gameversus
 
 sealed class GameEvent {
+    data class OnUpdate(val PlayerId: Int, val goal: Coordinates) :
+        GameEvent()
+
     data class OnPointSelected(val PlayerId: Int, val test: Coordinates) :
         GameEvent() //Try of one of the player
 
