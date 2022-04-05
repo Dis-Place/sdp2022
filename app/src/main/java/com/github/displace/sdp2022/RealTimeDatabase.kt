@@ -8,7 +8,7 @@ import com.google.firebase.database.FirebaseDatabase
 /**
  * Implementation of the database
  */
-class RealTimeDatabase: Database {
+class RealTimeDatabase : Database {
 
     private lateinit var db: FirebaseDatabase
     private var debug: String = ""
@@ -39,7 +39,7 @@ class RealTimeDatabase: Database {
     }
 
     override fun insert(reference: String, key: String, obj: Any): Any {
-        return update( reference, key, obj)
+        return update(reference, key, obj)
     }
 
     override fun delete(reference: String, key: String) {
@@ -62,8 +62,8 @@ class RealTimeDatabase: Database {
     override fun getDbReference(path: String): DatabaseReference {
         return if (path == "") {
             db.reference
-        }else{
-            db.getReference(debug+path)
+        } else {
+            db.getReference(debug + path)
         }
     }
 

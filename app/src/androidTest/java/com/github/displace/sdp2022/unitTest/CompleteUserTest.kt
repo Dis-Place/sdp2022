@@ -92,9 +92,9 @@ class CompleteUserTest {
     fun addExistingFriendDoesNothing() {
         val completeUser = CompleteUser(null)
         Thread.sleep(3000)
-        val friendsSize = completeUser.getFriendsList().size
         val partialUser = PartialUser("dummy_username", "dummy_id")
         completeUser.addFriend(partialUser)
+        val friendsSize = completeUser.getFriendsList().size
         completeUser.addFriend(partialUser)
 
         assertEquals(friendsSize, completeUser.getFriendsList().size)
