@@ -8,10 +8,10 @@ import com.google.firebase.database.FirebaseDatabase
 /**
  * Implementation of the database
  */
-class RealTimeDatabase : Database {
+class RealTimeDatabase: Database {
 
-     private lateinit var db: FirebaseDatabase
-     private var debug : String = ""
+    private lateinit var db: FirebaseDatabase
+    private var debug: String = ""
 
     private fun firebaseSetValue(reference: String, key: String, obj: Any): Task<Void> {
         return getRefAndChild(reference, key).setValue(obj)
@@ -21,9 +21,9 @@ class RealTimeDatabase : Database {
         return db.getReference(reference).child(key)
     }
 
-    override fun instantiate(url: String, debug : Boolean): Database {
+    override fun instantiate(url: String, debug: Boolean): Database {
         //get the instance of the database
-        if(debug){
+        if (debug) {
             this.debug = "debug/"
         }
         db = FirebaseDatabase.getInstance(url)
@@ -34,39 +34,38 @@ class RealTimeDatabase : Database {
     }
 
     override fun update(reference: String, key: String, obj: Any): Any {
-        firebaseSetValue(debug+reference, key, obj)
+        firebaseSetValue(debug + reference, key, obj)
         return obj
     }
 
     override fun insert(reference: String, key: String, obj: Any): Any {
-        return update(reference, key, obj)
+        return update(debug + reference, key, obj)
     }
 
     override fun delete(reference: String, key: String) {
-        getRefAndChild(debug+reference, key).removeValue()
+        getRefAndChild(debug + reference, key).removeValue()
     }
 
     override fun referenceGet(reference: String, key: String): Task<DataSnapshot> {
-        return getRefAndChild(debug+reference, key).get()
+        return getRefAndChild(debug + reference, key).get()
     }
 
-    override fun noCacheInstantiate(url: String, debug : Boolean): Database {
+    override fun noCacheInstantiate(url: String, debug: Boolean): Database {
         //get the instance of the database
-        if(debug){
+        if (debug) {
             this.debug = "debug/"
         }
         db = FirebaseDatabase.getInstance(url)
         return this
     }
 
-    override fun getDbReference(path : String) : DatabaseReference  {
-        return if(path == ""){
+    override fun getDbReference(path: String): DatabaseReference {
+        return if (path == "") {
             db.reference
         }else{
             db.getReference(debug+path)
         }
     }
-
 
 
 }
