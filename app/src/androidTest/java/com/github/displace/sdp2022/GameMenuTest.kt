@@ -10,7 +10,6 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.github.displace.sdp2022.R
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -18,12 +17,13 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class GameMenuTest {
     @get:Rule
-    val testRule = ActivityScenarioRule(com.github.displace.sdp2022.GameVersusViewActivity::class.java)
+    val testRule =
+        ActivityScenarioRule(com.github.displace.sdp2022.GameVersusViewActivity::class.java)
 
     /*
      Test if the input of the main screen is correctly shown in the main menu
      */
-/*
+
     @Test
     fun testPlayButton() {
         Espresso.onView(withId(R.id.TryText)).check(matches(withText("neutral")))
@@ -65,6 +65,6 @@ class GameMenuTest {
         Intents.intended(IntentMatchers.hasComponent(GameListActivity::class.java.name))
         Intents.release()
     }
-    
- */
+
+
 }

@@ -115,6 +115,8 @@ class GameSummaryActivityTest {
 
         app.setActiveUser(CompleteUser(null))
 
+        Thread.sleep(3_000)
+
         ActivityScenario.launch<GameSummaryActivity>(intent).use {
             onView(withId(R.id.mainMenuButton)).perform(click())
             intended(IntentMatchers.hasComponent(MainMenuActivity::class.java.name))
