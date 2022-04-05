@@ -1,20 +1,23 @@
 package com.github.displace.sdp2022
 
-import android.content.Intent
-import android.os.Bundle
-import android.view.View
-import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
 import com.github.displace.sdp2022.gameComponents.GameEvent
 import com.github.displace.sdp2022.gameComponents.Point
 import com.github.displace.sdp2022.gameVersus.GameVersusViewModel
+import android.content.Intent
+import android.os.Bundle
+import android.view.View
+import org.osmdroid.views.MapView
+import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import com.github.displace.sdp2022.map.MapViewManager
 import com.github.displace.sdp2022.util.PreferencesUtil
 import com.github.displace.sdp2022.util.gps.GPSPositionManager
-import com.github.displace.sdp2022.util.gps.GPSPositionUpdater
 import com.github.displace.sdp2022.util.gps.GeoPointListener
-import org.osmdroid.views.MapView
-
+import org.osmdroid.config.Configuration.*
+import java.util.ArrayList
+import android.widget.Toast
+import android.widget.ToggleButton
+import org.osmdroid.util.GeoPoint
 
 const val EXTRA_STATS = "com.github.displace.sdp2022.GAMESTAT"
 const val EXTRA_RESULT = "com.github.displace.sdp2022.GAMERESULT"
@@ -24,90 +27,97 @@ const val EXTRA_SCORE_P2 = "com.github.displace.sdp2022.SCOREP2"
 
 class GameVersusViewActivity : AppCompatActivity() {
 
-    val statsList: ArrayList<String> = arrayListOf()
-
-    var goal = Point(46.52048,6.56782)
     val game = GameVersusViewModel()
-    private val extras: Bundle = Bundle()
 
     private lateinit var mapView: MapView
     private lateinit var mapViewManager: MapViewManager
-    private lateinit var gpsPositionUpdater: GPSPositionUpdater
     private lateinit var gpsPositionManager: GPSPositionManager
     private lateinit var markerListener: GeoPointListener
+    private lateinit var tryListener: GeoPointListener
+
+    val statsList: ArrayList<String> = arrayListOf()
+    val extras: Bundle = Bundle()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        game.handleEvent(GameEvent.OnStart(Point(46.52048, 6.56782),3,0))
+
         PreferencesUtil.initOsmdroidPref(this)
-        setContentView(R.layout.activity_game_versus)
 
-        game.handleEvent(GameEvent.OnStart(goal,0))
-
-
+        setContentView(R.layout.activity_demo_map)
         mapView = findViewById<MapView>(R.id.map)
         mapViewManager = MapViewManager(mapView)
         markerListener = GeoPointListener.markerPlacer(mapView)
-        gpsPositionManager = GPSPositionManager(this)
-        gpsPositionUpdater = GPSPositionUpdater(this,gpsPositionManager)
-        gpsPositionUpdater.listenersManager.addCall(markerListener)
+        tryListener = GeoPointListener { geoPoint -> run {
+            val res = game.handleEvent(GameEvent.OnPointSelected(Point(geoPoint.latitude,geoPoint.longitude)))
 
-        mapViewManager.addCallOnLongClick(markerListener)
-
-        mapViewManager.addCallOnLongClick(GeoPointListener { geoPoint -> run {
-                val res = game.handleEvent(
-                    GameEvent.OnPointSelected(
-                        0,
-                        Point(geoPoint.latitude ,geoPoint.longitude )
-                    )
-                )
-                if(res == 0){
-                    findViewById<TextView>(R.id.TryText).apply { text = "win" }
-                    extras.putBoolean(EXTRA_RESULT, true)
-                    extras.putInt(EXTRA_SCORE_P1, 1)
-                    extras.putInt(EXTRA_SCORE_P2, 0)
-                    statsList.add("18:43")      // Example Time
-                    showGameSummaryActivity()
-                }else {
-                    if (res == 1) {
+            if(res == 0){
+                findViewById<TextView>(R.id.TryText).apply {
+                    text =
+                            "win"
+                }
+                extras.putBoolean(EXTRA_RESULT, true)
+                extras.putInt(EXTRA_SCORE_P1, 1)
+                extras.putInt(EXTRA_SCORE_P2, 0)
+                statsList.add("18:43")      // Example Time
+                showGameSummaryActivity()
+            }else{
+                if(res == 1){ //failed
+                    findViewById<TextView>(R.id.TryText).apply {
+                        text =
+                                "fail"
+                    }
+                }else{
+                    if(res == 2){ //more than 3 tri
                         findViewById<TextView>(R.id.TryText).apply {
                             text =
-                                "status : fail, nombre d'essais restant : " + (4 - game.getNbEssai())
+                                    "end of game"
                         }
-                    } else {
-                        if (res == 2) {
-                            findViewById<TextView>(R.id.TryText).apply {
-                                text =
-                                    "status : end of game"
-                            }
-                            extras.putBoolean(EXTRA_RESULT, false)
-                            extras.putInt(EXTRA_SCORE_P1, 0)
-                            extras.putInt(EXTRA_SCORE_P2, 1)
-                            statsList.add("15:04")      // Example Time
-                            showGameSummaryActivity()
-                        }
+                        extras.putBoolean(EXTRA_RESULT, false)
+                        extras.putInt(EXTRA_SCORE_P1, 0)
+                        extras.putInt(EXTRA_SCORE_P2, 1)
+                        statsList.add("15:04")      // Example Time
+                        showGameSummaryActivity()
                     }
-                }}})
+                }
+            }
+            }
+        }
+
+        gpsPositionManager = GPSPositionManager(this)
+
+        mapViewManager.addCallOnLongClick(markerListener)
+        mapViewManager.addCallOnLongClick(tryListener)
 
         findViewById<TextView>(R.id.TryText).apply { text =
-            "status : neutral, nombre d'essais restant : " + (4 - game.getNbEssai())
+            "neutral"
         }
     }
 
-
     //close the screen
+    @Suppress("UNUSED_PARAMETER")
     fun closeButton(view: View) {
-        game.handleEvent(GameEvent.OnSurrend(0))
-        val intent = Intent(this, GameListActivity::class.java)
-        startActivity(intent)
+        val res = game.handleEvent(GameEvent.OnSurrend(0))
+        if(res == 3) {
+            val intent = Intent(this, GameListActivity::class.java)
+            startActivity(intent)
+        }
     }
 
-    fun centerButton(view: View) {
-        val gpsPos = gpsPositionManager.getPosition()
-        if (gpsPos != null)
-            mapViewManager.center(gpsPos)
+    @Suppress("UNUSED_PARAMETER")
+    fun winButton(view: View) {
+        val res = game.handleEvent(GameEvent.OnPointSelected(Point(46.52048, 6.56782)))
+        if(res == 0) {
+            extras.putBoolean(EXTRA_RESULT, true)
+            extras.putInt(EXTRA_SCORE_P1, 1)
+            extras.putInt(EXTRA_SCORE_P2, 0)
+            statsList.add("18:43")      // Example Time
+            showGameSummaryActivity()
+        }
     }
 
-    private fun showGameSummaryActivity() {
+    fun showGameSummaryActivity() {
         val intent = Intent(this, GameSummaryActivity::class.java)
         extras.putStringArrayList(EXTRA_STATS, statsList)
         extras.putString(EXTRA_MODE, "Versus")

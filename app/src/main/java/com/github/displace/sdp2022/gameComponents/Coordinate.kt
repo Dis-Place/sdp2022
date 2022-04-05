@@ -1,7 +1,9 @@
 package com.github.displace.sdp2022.gameComponents
 
-// modelisation of a coordinates
+import android.util.Pair
 
-interface Coordinates {
+// modelisation of a coordiante
+
+interface Coordinate {
     val pos : Pair<Double,Double>
 }

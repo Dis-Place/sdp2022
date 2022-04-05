@@ -16,15 +16,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:bufferType="editable"
-                    android:text="status : neutral nbEssai : 3" />
-
-                <Button
-                    android:id="@+id/centerButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:onClick="centerButton"
-                    android:text="Center" />
+                    android:text="neutral" />
 
                 <Button
                     android:id="@+id/closeButton"
@@ -32,6 +24,14 @@
                     android:layout_height="wrap_content"
                     android:onClick="closeButton"
                     android:text="quit" />
+
+                <Button
+                    android:id="@+id/triButtonWin"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:onClick="winButton"
+                    android:text="Win" />
         </LinearLayout>
 
         <org.osmdroid.views.MapView
