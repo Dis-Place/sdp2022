@@ -92,7 +92,7 @@ class GameMenuTest {
             onView(withId(R.id.map)).perform(swipeUp())
             onView(withId(R.id.map)).perform(ViewActions.longClick())
             onView(withId(R.id.TryText))
-                .check(matches(withText("status : fail, nombre d'essais restant : 3 True : x=46.52648 y=6.56782")))
+                .check(matches(withText("status : fail, nombre d'essais restant : 3 True : x=46.52048 y=6.56782")))
             Intents.release()
         }
 
