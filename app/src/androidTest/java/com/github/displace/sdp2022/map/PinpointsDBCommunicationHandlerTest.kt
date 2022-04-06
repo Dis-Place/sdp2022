@@ -35,7 +35,7 @@ class PinpointsDBCommunicationHandlerTest {
     )
 
     @Test
-    fun communicationIsSuccessful(){
+    fun communicationIsSuccessfulOnNonEmptyPinpoints(){
         val scenario = testRule.scenario
         onView(ViewMatchers.withId(R.id.DBButton)).perform(click())
         Thread.sleep(DB_DELAY)
@@ -46,6 +46,25 @@ class PinpointsDBCommunicationHandlerTest {
         scenario.onActivity { a ->
             assertCorrectPositions(MOCK_MARKERS_POSITIONS, a.mockPinpointsRef.get())
             assertCorrectPositions(MOCK_MARKERS_POSITIONS, a.remoteMockPinpointsRef.get())
+        }
+    }
+
+    @Test
+    fun communicationIsSuccessfulOnEmptyPinpoints(){
+        val scenario = testRule.scenario
+        onView(ViewMatchers.withId(R.id.DBButton)).perform(click())
+        Thread.sleep(DB_DELAY)
+        onView(ViewMatchers.withId(R.id.toggleMockMarkersButton)).perform(click())
+        Thread.sleep(DB_DELAY)
+        onView(ViewMatchers.withId(R.id.updateButton)).perform(click())
+        Thread.sleep(DB_DELAY)
+        onView(ViewMatchers.withId(R.id.toggleMockMarkersButton)).perform(click())
+        Thread.sleep(DB_DELAY)
+        onView(ViewMatchers.withId(R.id.updateButton)).perform(click())
+        Thread.sleep(DB_DELAY)
+        scenario.onActivity { a ->
+            assertCorrectPositions(listOf(), a.mockPinpointsRef.get())
+            assertCorrectPositions(listOf(), a.remoteMockPinpointsRef.get())
         }
     }
 
