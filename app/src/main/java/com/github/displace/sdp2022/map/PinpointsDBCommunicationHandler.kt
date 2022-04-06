@@ -19,7 +19,7 @@ class PinpointsDBCommunicationHandler(private val db: Database, private val game
      */
     fun updateDBPinpoints(player: Player, pinpointsRef: MarkerManager.PinpointsRef){
         val positions = pinpointsRef.get()
-        db.update("GameInstance/${gameInstanceName}/id:" + player.uid,"pinpoints",positions.map { p -> listOf(p.latitude,p.longitude) })
+        db.update("GameInstance/${gameInstanceName}/id:${player.uid}","pinpoints",positions.map { p -> listOf(p.latitude,p.longitude) })
     }
 
     /**
@@ -28,9 +28,9 @@ class PinpointsDBCommunicationHandler(private val db: Database, private val game
      * @param pinpointsRef local reference to the pinpoints
      */
     fun updateLocalPinpoints(player: Player, pinpointsRef: MarkerManager.PinpointsRef){
-        db.referenceGet("GameInstance/${gameInstanceName}/id:" + player.uid,"pinpoints").addOnSuccessListener { r ->
-            pinpointsRef.set( (r.value as List<List<Double>>).map{x ->
-                GeoPoint(x[0],x[1])
+        db.referenceGet("GameInstance/${gameInstanceName}/id:${player.uid}","pinpoints").addOnSuccessListener { r ->
+            pinpointsRef.set( ( (r.value ?: listOf<List<Double>>()) as List<List<Double>>).map{ l ->
+                GeoPoint(l[0],l[1])
             } )
         }
     }
