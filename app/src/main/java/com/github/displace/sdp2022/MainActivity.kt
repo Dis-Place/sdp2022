@@ -8,11 +8,8 @@ import android.view.View
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.PreferenceManager
-import com.github.displace.sdp2022.profile.MockDB
-import com.github.displace.sdp2022.profile.friends.Friend
-import com.github.displace.sdp2022.R
 import com.github.displace.sdp2022.authentication.TempLoginActivity
-import com.github.displace.sdp2022.users.CompleteUser
+import com.github.displace.sdp2022.profile.MockDB
 
 
 class MainActivity : AppCompatActivity() {
@@ -24,6 +21,15 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        val app = applicationContext as MyApplication
+        app.setDb(MockDB())
+
+        PreferenceManager.setDefaultValues(this, R.xml.preferences, false)
+
+        val intent =
+            Intent(this, TempLoginActivity::class.java).apply { }
+        startActivity(intent)
     }
 
     @Suppress("UNUSED_PARAMETER")
@@ -57,6 +63,11 @@ class MainActivity : AppCompatActivity() {
         val intent =
             Intent(this, TempLoginActivity::class.java).apply { }
         startActivity(intent)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        startActivity(Intent(this, TempLoginActivity::class.java))
     }
 
 
