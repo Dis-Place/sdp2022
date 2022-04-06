@@ -1,10 +1,10 @@
 package com.github.displace.sdp2022.util.gps
 
 import android.annotation.TargetApi
-import com.github.displace.sdp2022.gameComponents.Coordinates
 import android.location.Location
 import android.os.Build
 import android.util.Pair
+import com.github.displace.sdp2022.gameComponents.Coordinates
 import org.osmdroid.util.GeoPoint
 import com.github.displace.sdp2022.util.math.Constants
 import java.lang.IllegalArgumentException

@@ -3,6 +3,7 @@ package com.github.displace.sdp2022.gameComponents
 import android.annotation.TargetApi
 import android.os.Build
 import android.util.Pair
+import com.github.displace.sdp2022.gameComponents.Coordinates
 
 //com.github.displace.sdp2022.model of a point
 @TargetApi(Build.VERSION_CODES.ECLAIR)
