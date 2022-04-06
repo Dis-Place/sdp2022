@@ -71,6 +71,19 @@ class MarkerManagerTest {
 
     }
 
+    @Test
+    fun clearRemovesAllPinpointsFromPinpointsRef(){
+        val scenario = testRule.scenario
+        onView(ViewMatchers.withId(R.id.toggleMockMarkersButton))
+            .perform(click())
+        onView(ViewMatchers.withId(R.id.toggleMockMarkersButton))
+            .perform(click())
+        Thread.sleep(MARKER_DESTROY_DELAY)
+        scenario.onActivity { a ->
+            assertCorrectPositions(listOf(),a.mockPinpointsRef.get())
+        }
+    }
+
     companion object{
         val MARKER_DESTROY_DELAY = 50.toLong()
         val EPSILON = 1e-4
