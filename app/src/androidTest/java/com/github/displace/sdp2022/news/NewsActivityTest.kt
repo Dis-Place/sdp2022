@@ -20,7 +20,7 @@ class NewsActivityTest {
 
     @Test
     fun startToNewsTest() {
-        Espresso.onView(ViewMatchers.withId(R.id.mainGoButton)).perform(ViewActions.click())
+        Espresso.onView(ViewMatchers.withId(R.id.goToAppOfflineButton)).perform(ViewActions.click())
         Espresso.onView(ViewMatchers.withId(R.id.newsButton)).perform(ViewActions.click())
         Espresso.onView(ViewMatchers.withId(R.id.textView)).check(
             ViewAssertions.matches(

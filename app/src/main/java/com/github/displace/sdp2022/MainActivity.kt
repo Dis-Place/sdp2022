@@ -25,41 +25,13 @@ class MainActivity : AppCompatActivity() {
         val app = applicationContext as MyApplication
         app.setDb(MockDB())
 
-        PreferenceManager.setDefaultValues(this, R.xml.preferences, false)
-
-        val intent =
-            Intent(this, TempLoginActivity::class.java).apply { }
-        startActivity(intent)
-    }
-
-    @Suppress("UNUSED_PARAMETER")
-    fun startAppUse(view: View) {
-
-        //set application data : start DB connection
-        val app = applicationContext as MyApplication
-        app.setDb(MockDB())
-
-        val nameText = findViewById<EditText>(R.id.mainName)
-        val name = nameText.text.toString()
-        //load the username in the preferences for later use
+        // load the username in the preferences for later use
         sharedpreferences = getSharedPreferences(myPreferences, Context.MODE_PRIVATE)
 
         //Load the default settings values
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false)
 
-        val intent = Intent(this, MainMenuActivity::class.java)
-        startActivity(intent)
-    }
 
-    @Suppress("UNUSED_PARAMETER")
-    fun openMap(view: View) {
-        val intent =
-            Intent(this, DemoMapActivity::class.java).apply { }
-        startActivity(intent)
-    }
-
-    @Suppress("UNUSED_PARAMETER")
-    fun toLogin(view: View) {
         val intent =
             Intent(this, TempLoginActivity::class.java).apply { }
         startActivity(intent)

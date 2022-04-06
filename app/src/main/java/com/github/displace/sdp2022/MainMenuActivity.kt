@@ -101,10 +101,10 @@ class MainMenuActivity : AppCompatActivity() {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        updateUI()
-    }
+//    override fun onResume() {
+//        super.onResume()
+//        updateUI()
+//    }
 
 
 }
