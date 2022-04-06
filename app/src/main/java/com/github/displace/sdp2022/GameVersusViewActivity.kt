@@ -49,7 +49,7 @@ class GameVersusViewActivity : AppCompatActivity() {
         markerListener = GeoPointListener.markerPlacer(mapView)
         gpsPositionManager = GPSPositionManager(this)
         gpsPositionUpdater = GPSPositionUpdater(this,gpsPositionManager)
-        gpsPositionUpdater.listenersManager.addCall(GeoPointListener { geoPoint ->  game.handleEvent(GameEvent.OnUpdate(intent.getStringExtra("uid")!!, Point(geoPoint.latitude,geoPoint.longitude)))})
+        //gpsPositionUpdater.listenersManager.addCall(GeoPointListener { geoPoint ->  game.handleEvent(GameEvent.OnUpdate(intent.getStringExtra("uid")!!, Point(geoPoint.latitude,geoPoint.longitude)))})
 
         mapViewManager.addCallOnLongClick(markerListener)
 
