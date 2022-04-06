@@ -4,6 +4,7 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 
 /**
  * Implementation of the database
@@ -44,6 +45,14 @@ class RealTimeDatabase : Database {
 
     override fun delete(reference: String, key: String) {
         getRefAndChild(debug+reference, key).removeValue()
+    }
+
+    fun removeList(reference: String, key: String, list: ValueEventListener) {
+        getRefAndChild(debug+reference, key).removeEventListener(list)
+    }
+
+    fun addList(reference: String, key: String, list: ValueEventListener) {
+        getRefAndChild(debug+reference, key).addValueEventListener(list)
     }
 
     override fun referenceGet(reference: String, key: String): Task<DataSnapshot> {

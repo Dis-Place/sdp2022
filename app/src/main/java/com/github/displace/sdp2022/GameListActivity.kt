@@ -18,7 +18,7 @@ class GameListActivity : AppCompatActivity() {
     //send the user to the Play screen : start a match
     @Suppress("UNUSED_PARAMETER")
     fun playButton(view: View) {
-        val intent = Intent(this, GameVersusViewActivity::class.java)
+        val intent = Intent(this, MatchMakingActivity::class.java)
         startActivity(intent)
     }
 }

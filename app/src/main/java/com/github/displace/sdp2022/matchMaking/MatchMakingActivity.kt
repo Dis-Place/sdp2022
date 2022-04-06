@@ -48,7 +48,7 @@ class MatchMakingActivity : AppCompatActivity() {
     private val gamemode = "Versus"
     private val map = "Map2"
     //This has to be chaged to the real active user
-    private var activeUser = PartialUser("active","ha ha ha")
+    private var activeUser = PartialUser("active","0")
     //indicates if the lobby is public or private
     private var lobbyType : String = "private"
     //keeps a map of the lobby : just how the DB stores it
@@ -107,7 +107,7 @@ class MatchMakingActivity : AppCompatActivity() {
             val lobby = snapshot.value as MutableMap<String,Any>? ?: return
             lobbyMap = lobby
             if(lobbyMap["lobbyLeader"] as String == activeUser.uid ){
-                gameScreenTransition()
+                leaveMM(true)
             }
         }
 
@@ -355,7 +355,18 @@ class MatchMakingActivity : AppCompatActivity() {
      * Transition to the game screen : leaving the match making
      */
     private fun gameScreenTransition(){
-        leaveMM(true)
+        val intent = Intent(applicationContext, GameVersusViewActivity::class.java)
+        db.update("GameInstance/Game" + this.currentLobbyId + "/id:" + activeUser.uid,"other",0) // change 0 by other id
+        db.update("GameInstance/Game" + this.currentLobbyId + "/id:" + activeUser.uid, "finish", 0)
+        db.update("GameInstance/Game" + this.currentLobbyId + "/id:" + activeUser.uid, "x", 0.0)
+        db.update("GameInstance/Game" + this.currentLobbyId + "/id:" + activeUser.uid, "y", 0.0)
+
+        intent.putExtra("gid",this.currentLobbyId)
+        intent.putExtra("uid",activeUser.uid)
+        intent.putExtra("nbPlayer",2) // change 2 by nbPlayer when implemented
+        intent.putExtra("other","0") // change 0 by other id
+        Thread.sleep(3000)
+        startActivity(intent)
     }
 
     /**
@@ -410,8 +421,7 @@ class MatchMakingActivity : AppCompatActivity() {
                 currentData: DataSnapshot?
             ) {
                if(toGame){
-                   val intent = Intent(applicationContext, GameVersusViewActivity::class.java)
-                   startActivity(intent)
+                   gameScreenTransition()
                }
             }
 
