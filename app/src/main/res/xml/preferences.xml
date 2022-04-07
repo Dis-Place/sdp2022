@@ -6,7 +6,7 @@
         android:defaultValue="false"
 
         android:key="darkMode"
-        android:summary="[May come later] You will soon be able to use the app with a dark mode"
+        android:summary="Choose your style"
         android:title="Enable Dark Mode" />
     <SwitchPreference
         android:contentDescription="sfx button"
