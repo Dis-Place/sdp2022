@@ -96,6 +96,7 @@ class MarkerManager(private val mapView: MapView) {
          */
         fun clear(){
             pinPointsMap[this]?.map { m -> mapView.overlayManager.remove(m) }
+            pinPointsMap[this] = listOf()
             mapView.invalidate()
         }
 
