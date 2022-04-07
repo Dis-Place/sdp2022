@@ -77,15 +77,6 @@ class MatchMakingTest {
 
         scenario.use {
 
-            //create mock lobby in DB
-            var last : Long = 0
-            //get lobby last : "join" that one
-            db.referenceGet("MM/Versus/Map2/public","last").addOnSuccessListener { l ->
-                if(l.value != null){
-                    last = l.value as Long
-                }
-            }
-            Thread.sleep(1000)
 
             db.update("MM/Versus/Map2/public","freeList",listOf("head","test"))
             db.update("MM/Versus/Map2/public/freeLobbies","test",Lobby("test", 3, PartialUser("FREE", "FREE")))
