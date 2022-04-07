@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.github.displace.sdp2022.profile.ProfileDbConnection
 import com.github.displace.sdp2022.profile.friends.Friend
 import com.github.displace.sdp2022.R
+import com.github.displace.sdp2022.RealTimeDatabase
 import com.github.displace.sdp2022.users.PartialUser
 
 class MsgViewHolder(itemview: View) : RecyclerView.ViewHolder(itemview) {
@@ -19,7 +20,6 @@ class MsgViewHolder(itemview: View) : RecyclerView.ViewHolder(itemview) {
     private val replyButton: ImageButton = itemview.findViewById(R.id.replyButton)
 
 
-    lateinit var dbAdapter: ProfileDbConnection
     lateinit var friend: PartialUser
 
     init {
