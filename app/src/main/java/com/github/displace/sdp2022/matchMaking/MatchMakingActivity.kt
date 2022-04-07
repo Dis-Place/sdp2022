@@ -47,14 +47,14 @@ class MatchMakingActivity : AppCompatActivity() {
     private val map = "Map2"
 
     //This has to be chaged to the real active user
-    private var activeUser = PartialUser("active", "ha ha ha")
-
+    private var activeUser = PartialUser("active","0")
     //indicates if the lobby is public or private
     private var lobbyType: String = "private"
-
     //keeps a map of the lobby : just how the DB stores it
-    private var lobbyMap: MutableMap<String, Any> = HashMap<String, Any>()
-    private lateinit var app: MyApplication
+    private var lobbyMap : MutableMap<String,Any> = HashMap<String,Any>()
+    private lateinit var app : MyApplication
+    private var otherId : String = ""
+
 
     private var debug: Boolean = false
 
@@ -73,7 +73,11 @@ class MatchMakingActivity : AppCompatActivity() {
             val lobby = snapshot.value as MutableMap<String, Any>? ?: return
             lobbyMap = lobby
             updateUI()
-            if (lobbyMap["lobbyCount"] as Long == lobbyMap["lobbyMax"] as Long) {
+            if(lobbyMap["lobbyCount"] as Long == lobbyMap["lobbyMax"] as Long  ){
+                if(((lobbyMap["lobbyPlayers"] as ArrayList<MutableMap<String, Any>>).filter { p -> p["uid"] != activeUser.uid }).size != 0) {
+                    otherId =
+                        (((lobbyMap["lobbyPlayers"] as ArrayList<MutableMap<String, Any>>).filter { p -> p["uid"] != activeUser.uid })[0]["uid"] as String)
+                }
                 lobbyMap["lobbyLaunch"] = true
                 setupLaunchListener()
                 findViewById<Button>(R.id.MMCancelButton).visibility = View.INVISIBLE
@@ -112,8 +116,8 @@ class MatchMakingActivity : AppCompatActivity() {
         override fun onDataChange(snapshot: DataSnapshot) {
             val lobby = snapshot.value as MutableMap<String, Any>? ?: return
             lobbyMap = lobby
-            if (lobbyMap["lobbyLeader"] as String == activeUser.uid) {
-                gameScreenTransition()
+            if(lobbyMap["lobbyLeader"] as String == activeUser.uid ){
+                leaveMM(true)
             }
         }
 
@@ -367,8 +371,19 @@ class MatchMakingActivity : AppCompatActivity() {
     /**
      * Transition to the game screen : leaving the match making
      */
-    private fun gameScreenTransition() {
-        leaveMM(true)
+    private fun gameScreenTransition(){
+        val intent = Intent(applicationContext, GameVersusViewActivity::class.java)
+        db.update("GameInstance/Game" + this.currentLobbyId + "/id:" + activeUser.uid,"other",otherId) // change 0 by other id
+        db.update("GameInstance/Game" + this.currentLobbyId + "/id:" + activeUser.uid, "finish", 0)
+        db.update("GameInstance/Game" + this.currentLobbyId + "/id:" + activeUser.uid, "x", 0.0)
+        db.update("GameInstance/Game" + this.currentLobbyId + "/id:" + activeUser.uid, "y", 0.0)
+
+        intent.putExtra("gid",this.currentLobbyId)
+        intent.putExtra("uid",activeUser.uid)
+        intent.putExtra("nbPlayer",2) // change 2 by nbPlayer when implemented
+        intent.putExtra("other",otherId) // change 0 by other id
+        Thread.sleep(3000)
+        startActivity(intent)
     }
 
     /**
@@ -426,16 +441,15 @@ class MatchMakingActivity : AppCompatActivity() {
                     return Transaction.success(currentData)
                 }
 
-                override fun onComplete(
-                    error: DatabaseError?,
-                    committed: Boolean,
-                    currentData: DataSnapshot?
-                ) {
-                    if (toGame) {
-                        val intent = Intent(applicationContext, GameVersusViewActivity::class.java)
-                        startActivity(intent)
-                    }
-                }
+            override fun onComplete(
+                error: DatabaseError?,
+                committed: Boolean,
+                currentData: DataSnapshot?
+            ) {
+               if(toGame){
+                   gameScreenTransition()
+               }
+            }
 
             })
 
