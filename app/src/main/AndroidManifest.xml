@@ -24,8 +24,7 @@
             android:parentActivityName=".MainMenuActivity"/>
         <activity
             android:name=".authentication.TempLoginActivity"
-            android:exported="false"
-            android:parentActivityName=".MainActivity"/>
+            android:exported="false" />
         <activity
             android:name=".matchMaking.MatchMakingActivity"
             android:exported="false" />
