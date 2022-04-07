@@ -28,11 +28,6 @@ class TempLoginActivityTest {
     @get:Rule
     val testRule = ActivityScenarioRule(TempLoginActivity::class.java)
 
-    val intent = Intent(ApplicationProvider.getApplicationContext(), TempLoginActivity::class.java)
-
-    // to put in test
-//    val scenario = ActivityScenario.launch<TempLoginActivity>(intent)
-
     @Test
     fun signInButtonIsDisplayedTest() {
         Espresso.onView(ViewMatchers.withId(R.id.btnGoogleSignIn))
