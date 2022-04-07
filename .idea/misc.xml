@@ -12,7 +12,6 @@
         <entry key="..\:/EPFL/B3 S2/SDP/sdp2022/app/src/main/res/layout/activity_news.xml" value="0.358695652173913" />
         <entry key="..\:/EPFL/B3 S2/SDP/sdp2022/app/src/main/res/layout/activity_play.xml" value="0.358695652173913" />
         <entry key="..\:/EPFL/B3 S2/SDP/sdp2022/app/src/main/res/layout/activity_profile.xml" value="0.358695652173913" />
-        <entry key="..\:/EPFL/B3 S2/SDP/sdp2022/app/src/main/res/layout/activity_send_message.xml" value="0.22" />
         <entry key="..\:/EPFL/B3 S2/SDP/sdp2022/app/src/main/res/layout/activity_settings.xml" value="0.358695652173913" />
         <entry key="..\:/EPFL/B3 S2/SDP/sdp2022/app/src/main/res/layout/msg.xml" value="0.17753623188405798" />
         <entry key="..\:/Users/Franck/Desktop/EPFL/BA6/SDP/Displace_hopeful/sdp2022/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.271" />
@@ -36,8 +35,10 @@
         <entry key="..\:/Users/bapti/BA6/SDP/sdp2022/app/src/main/res/layout/activity_profile.xml" value="0.18227848101265823" />
         <entry key="..\:/Users/bapti/BA6/SDP/sdp2022/app/src/main/res/layout/activity_search_dummy_user.xml" value="0.153125" />
         <entry key="..\:/Users/bapti/BA6/SDP/sdp2022/app/src/main/res/layout/activity_upload_image.xml" value="0.25" />
+        <entry key="..\:/Users/bapti/sdp2022/app/src/main/res/layout/activity_game_versus.xml" value="0.1524822695035461" />
         <entry key="..\:/Users/bapti/sdp2022/app/src/main/res/layout/activity_main.xml" value="0.1" />
         <entry key="..\:/Users/bapti/sdp2022/app/src/main/res/layout/activity_settings.xml" value="0.1" />
+        <entry key="..\:/Users/bapti/sdp2022/app/src/main/res/layout/activity_temp_login.xml" value="0.2264151024877837" />
         <entry key="..\:/Users/bapti/sdp2022/app/src/main/res/layout/fragment_settings.xml" value="0.153125" />
         <entry key="..\:/Users/bapti/sdp2022/app/src/main/res/layout/friend.xml" value="0.153125" />
         <entry key="..\:/Users/bapti/sdp2022/app/src/main/res/xml/preferences.xml" value="0.2988679352838745" />

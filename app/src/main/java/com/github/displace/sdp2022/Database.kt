@@ -5,15 +5,17 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseReference
 
 interface Database {
-    fun instantiate(url: String, debug : Boolean) : Database
+    fun instantiate(url: String, debug: Boolean): Database
 
-    fun update(reference: String, key: String, obj: Any) : Any
+    fun update(reference: String, key: String, obj: Any): Any
 
     fun insert(reference: String, key: String, obj: Any): Any
 
     fun delete(reference: String, key: String)
 
     fun referenceGet(reference: String, key: String): Task<DataSnapshot>
+
     fun noCacheInstantiate(url: String, debug: Boolean): Database
-    fun getDbReference(path: String) : DatabaseReference
+
+    fun getDbReference(path: String): DatabaseReference
 }

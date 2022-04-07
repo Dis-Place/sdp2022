@@ -54,39 +54,39 @@ class GameVersusViewActivity : AppCompatActivity() {
         mapViewManager.addCallOnLongClick(markerListener)
 
         mapViewManager.addCallOnLongClick(GeoPointListener { geoPoint -> run {
-                val res = game.handleEvent(
-                    GameEvent.OnPointSelected(
-                        0,
-                        Point(geoPoint.latitude ,geoPoint.longitude )
-                    )
+            val res = game.handleEvent(
+                GameEvent.OnPointSelected(
+                    0,
+                    Point(geoPoint.latitude ,geoPoint.longitude )
                 )
-                if(res == 0){
-                    findViewById<TextView>(R.id.TryText).apply { text = "win" }
-                    extras.putBoolean(EXTRA_RESULT, true)
-                    extras.putInt(EXTRA_SCORE_P1, 1)
-                    extras.putInt(EXTRA_SCORE_P2, 0)
-                    statsList.add("18:43")      // Example Time
-                    showGameSummaryActivity()
-                }else {
-                    if (res == 1) {
+            )
+            if(res == 0){
+                findViewById<TextView>(R.id.TryText).apply { text = "win" }
+                extras.putBoolean(EXTRA_RESULT, true)
+                extras.putInt(EXTRA_SCORE_P1, 1)
+                extras.putInt(EXTRA_SCORE_P2, 0)
+                statsList.add("18:43")      // Example Time
+                showGameSummaryActivity()
+            }else {
+                if (res == 1) {
+                    findViewById<TextView>(R.id.TryText).apply {
+                        text =
+                            "status : fail, nombre d'essais restant : " + (4 - game.getNbEssai())
+                    }
+                } else {
+                    if (res == 2) {
                         findViewById<TextView>(R.id.TryText).apply {
                             text =
-                                "status : fail, nombre d'essais restant : " + (4 - game.getNbEssai())
+                                "status : end of game"
                         }
-                    } else {
-                        if (res == 2) {
-                            findViewById<TextView>(R.id.TryText).apply {
-                                text =
-                                    "status : end of game"
-                            }
-                            extras.putBoolean(EXTRA_RESULT, false)
-                            extras.putInt(EXTRA_SCORE_P1, 0)
-                            extras.putInt(EXTRA_SCORE_P2, 1)
-                            statsList.add("15:04")      // Example Time
-                            showGameSummaryActivity()
-                        }
+                        extras.putBoolean(EXTRA_RESULT, false)
+                        extras.putInt(EXTRA_SCORE_P1, 0)
+                        extras.putInt(EXTRA_SCORE_P2, 1)
+                        statsList.add("15:04")      // Example Time
+                        showGameSummaryActivity()
                     }
-                }}})
+                }
+            }}})
 
         findViewById<TextView>(R.id.TryText).apply { text =
             "status : neutral, nombre d'essais restant : " + (4 - game.getNbEssai())

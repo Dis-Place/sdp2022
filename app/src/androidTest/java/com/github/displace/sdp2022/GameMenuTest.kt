@@ -25,13 +25,13 @@ class GameMenuTest {
 
     @Test
     fun testPlayButton() {
-            onView(withId(R.id.TryText))
-                .check(matches(withText("status : neutral, nombre d'essais restant : 4")))
+        onView(withId(R.id.TryText))
+            .check(matches(withText("status : neutral, nombre d'essais restant : 4")))
     }
 
     @Test
     fun testMap() {
-            onView(withId(R.id.map)).check(matches(ViewMatchers.isDisplayed()))
+        onView(withId(R.id.map)).check(matches(ViewMatchers.isDisplayed()))
 
     }
 
