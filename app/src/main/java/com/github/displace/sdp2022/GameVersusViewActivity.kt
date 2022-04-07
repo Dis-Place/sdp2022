@@ -87,8 +87,14 @@ class GameVersusViewActivity : AppCompatActivity() {
                             statsList.add("15:04")      // Example Time
                             showGameSummaryActivity()
                         }
+                        extras.putBoolean(EXTRA_RESULT, false)
+                        extras.putInt(EXTRA_SCORE_P1, 0)
+                        extras.putInt(EXTRA_SCORE_P2, 1)
+                        statsList.add("15:04")      // Example Time
+                        showGameSummaryActivity()
                     }
-                }}})
+                }
+            }})
 
         findViewById<TextView>(R.id.TryText).apply { text =
             "status : neutral, nombre d'essais restant : " + (4 - game.getNbEssai())

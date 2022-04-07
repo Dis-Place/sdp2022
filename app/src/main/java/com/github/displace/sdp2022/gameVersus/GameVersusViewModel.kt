@@ -2,8 +2,7 @@ package com.github.displace.sdp2022.gameVersus
 
 import com.github.displace.sdp2022.gameComponents.Coordinates
 import com.github.displace.sdp2022.gameComponents.GameEvent
-import com.github.displace.sdp2022.model.GameVersus
-import kotlin.concurrent.thread
+
 
 class GameVersusViewModel {
 
