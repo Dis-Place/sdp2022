@@ -54,6 +54,7 @@ class MatchMakingActivity : AppCompatActivity() {
     //keeps a map of the lobby : just how the DB stores it
     private var lobbyMap : MutableMap<String,Any> = HashMap<String,Any>()
     private lateinit var app : MyApplication
+    private lateinit var otherId : String
 
     private var debug : Boolean = false
 
@@ -73,6 +74,7 @@ class MatchMakingActivity : AppCompatActivity() {
             lobbyMap = lobby
             updateUI()
             if(lobbyMap["lobbyCount"] as Long == lobbyMap["lobbyMax"] as Long  ){
+                otherId = (((lobbyMap["lobbyPlayers"] as ArrayList<MutableMap<String,Any>>).filter { p -> p["uid"] != activeUser.uid } )[0]["uid"] as String)
                 lobbyMap["lobbyLaunch"] = true
                 setupLaunchListener()
                 findViewById<Button>(R.id.MMCancelButton).visibility = View.INVISIBLE
@@ -356,7 +358,7 @@ class MatchMakingActivity : AppCompatActivity() {
      */
     private fun gameScreenTransition(){
         val intent = Intent(applicationContext, GameVersusViewActivity::class.java)
-        db.update("GameInstance/Game" + this.currentLobbyId + "/id:" + activeUser.uid,"other",0) // change 0 by other id
+        db.update("GameInstance/Game" + this.currentLobbyId + "/id:" + activeUser.uid,"other",otherId) // change 0 by other id
         db.update("GameInstance/Game" + this.currentLobbyId + "/id:" + activeUser.uid, "finish", 0)
         db.update("GameInstance/Game" + this.currentLobbyId + "/id:" + activeUser.uid, "x", 0.0)
         db.update("GameInstance/Game" + this.currentLobbyId + "/id:" + activeUser.uid, "y", 0.0)
@@ -364,7 +366,7 @@ class MatchMakingActivity : AppCompatActivity() {
         intent.putExtra("gid",this.currentLobbyId)
         intent.putExtra("uid",activeUser.uid)
         intent.putExtra("nbPlayer",2) // change 2 by nbPlayer when implemented
-        intent.putExtra("other","0") // change 0 by other id
+        intent.putExtra("other",otherId) // change 0 by other id
         Thread.sleep(3000)
         startActivity(intent)
     }
