@@ -32,9 +32,8 @@ const val REQUEST_CODE_SIGN_IN = 0
 
 class TempLoginActivity : AppCompatActivity() {
 
-    private lateinit var auth : FirebaseAuth
-    private lateinit var signInClient :GoogleSignInClient
-
+    private lateinit var auth: FirebaseAuth
+    private lateinit var signInClient: GoogleSignInClient
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,8 +42,8 @@ class TempLoginActivity : AppCompatActivity() {
 
         val signInButton = findViewById<Button>(R.id.btnGoogleSignIn)
         signInButton.setOnClickListener {
-            val options  = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken( getString(R.string.webclient_id)).requestEmail().build()
+            val options = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.webclient_id)).requestEmail().build()
             signInClient = GoogleSignIn.getClient(this, options)
 
             startActivityForResult(signInClient.signInIntent, REQUEST_CODE_SIGN_IN)
@@ -52,36 +51,58 @@ class TempLoginActivity : AppCompatActivity() {
         }
         val logout = findViewById<Button>(R.id.btnGoogleSignOut)
         logout.setOnClickListener {
-//            val intent = Intent(this, MainMenuActivity::class.java)
-//            startActivity(intent)
-            if(Firebase.auth.currentUser != null){
-                AuthUI.getInstance().signOut(this).addOnCompleteListener {
-                    Toast.makeText(this,"Logging Out",Toast.LENGTH_SHORT).show()
+
+            if (Firebase.auth.currentUser != null) {
+                AuthUI.getInstance().signOut(this@TempLoginActivity).addOnCompleteListener {
+                    Toast.makeText(this, "Logging Out", Toast.LENGTH_SHORT).show()
 
                 }
-            }
-            else{
-                Toast.makeText(this, "Cannot log out you're not logged in", Toast.LENGTH_LONG).show()
+            } else {
+                Toast.makeText(this, "Cannot log out you're not logged in", Toast.LENGTH_LONG)
+                    .show()
             }
             updateUI(false)
         }
+
+        //val offlineSignIn = findViewById<Button>(R.id.btnOfflineSignIn)
+        //offlineSignIn.setOnClickListener {
+        //    //Check if internet is available
+        //    if (Connectivity.isConnected(applicationContext)) {
+        //        Toast.makeText(
+        //            this,
+        //            "You are connected to the internet, so you cannot use the offline mode",
+        //            Toast.LENGTH_LONG
+        //        ).show()
+        //    } else {
+        //
+        //        Toast.makeText(this, "AAAAAAAAAAAAAAAAAAAAAAA", Toast.LENGTH_LONG).show()
+        //    }
+        //}
     }
 
-        private fun googleAuthForFirebase(account : GoogleSignInAccount, intent : Intent) {
+    private fun googleAuthForFirebase(account: GoogleSignInAccount) {
         val credentials = GoogleAuthProvider.getCredential(account.idToken, null)
         val job = CoroutineScope(Dispatchers.IO).launch {
             try {
                 auth.signInWithCredential(credentials).await()
-                withContext(Dispatchers.Main){
+                withContext(Dispatchers.Main) {
 
                     val app = applicationContext as MyApplication
                     val current = auth.currentUser
-                    val name : String? = current?.displayName
-                    if( name.isNullOrEmpty()){
-                        Toast.makeText(this@TempLoginActivity, "Failed to authenticate ", Toast.LENGTH_LONG).show()
-                    }
-                    else{
-                        Toast.makeText(this@TempLoginActivity, "Successfully logged in $name ", Toast.LENGTH_LONG).show()
+
+                    val name: String? = current?.displayName
+                    if (name.isNullOrEmpty()) {
+                        Toast.makeText(
+                            this@TempLoginActivity,
+                            "Failed to authenticate",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    } else {
+                        Toast.makeText(
+                            this@TempLoginActivity,
+                            "Successfully logged in $name ",
+                            Toast.LENGTH_LONG
+                        ).show()
                         app.setActiveUser(CompleteUser(current))
 
 
@@ -90,10 +111,9 @@ class TempLoginActivity : AppCompatActivity() {
                 }
 
 
-
-            } catch(e : Exception) {
-                withContext(Dispatchers.Main){
-                    Toast.makeText( this@TempLoginActivity, e.message, Toast.LENGTH_LONG).show()
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(this@TempLoginActivity, e.message, Toast.LENGTH_LONG).show()
                 }
             }
         }
@@ -103,22 +123,20 @@ class TempLoginActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if( requestCode == REQUEST_CODE_SIGN_IN) {
+        if (requestCode == REQUEST_CODE_SIGN_IN) {
             try {
                 val account = GoogleSignIn.getSignedInAccountFromIntent(data).result
 
                 account?.let {
 
-                    googleAuthForFirebase(it, intent)
+                    googleAuthForFirebase(it)
                 }
-            } catch(e: Exception) {
+            } catch (e: Exception) {
                 Log.e("test", e.message!!)
             }
         }
 
         updateUI(true)
-
-//        startActivity(Intent(this@TempLoginActivity, MainMenuActivity::class.java))
     }
 
     private fun updateUI(loggingIn : Boolean){

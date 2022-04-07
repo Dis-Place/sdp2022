@@ -1,7 +1,6 @@
 package com.github.displace.sdp2022
 
 import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.Espresso.pressBack
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.longClick
 import androidx.test.espresso.assertion.ViewAssertions.matches
@@ -10,7 +9,6 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.GrantPermissionRule
-import com.github.displace.sdp2022.util.gps.GPSPositionUpdater
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
@@ -40,6 +38,7 @@ class DemoMapActivityTest {
         }
     }
 
+
     @Test
     fun longClickClickDoesNotCauseException() {
         testRule.scenario.use {
@@ -48,6 +47,7 @@ class DemoMapActivityTest {
         }
     }
 
+
     @Test
     fun centerButtonDoesNotCrashApp() {
         testRule.scenario.use {
@@ -55,11 +55,12 @@ class DemoMapActivityTest {
         }
     }
 
+
     @Test
     fun listenersIsEmptyOnStart() {
         val scenario = testRule.scenario
         scenario.onActivity { activity ->
-            assertEquals(activity.mapViewListeners().size,0)
+            assertEquals(activity.mapViewListeners().size, 0)
         }
     }
 
@@ -68,7 +69,7 @@ class DemoMapActivityTest {
         val scenario = testRule.scenario
         onView(withId(R.id.markersToggleButton)).perform(click())
         scenario.onActivity { activity ->
-            assertEquals(activity.mapViewListeners().size,1)
+            assertEquals(activity.mapViewListeners().size, 1)
         }
     }
 
@@ -77,7 +78,7 @@ class DemoMapActivityTest {
         val scenario = testRule.scenario
         onView(withId(R.id.toastPosToggleButton)).perform(click())
         scenario.onActivity { activity ->
-            assertEquals(activity.mapViewListeners().size,1)
+            assertEquals(activity.mapViewListeners().size, 1)
         }
     }
 
@@ -88,7 +89,7 @@ class DemoMapActivityTest {
             .perform(click())
             .perform(click())
         scenario.onActivity { activity ->
-            assertEquals(activity.mapViewListeners().size,0)
+            assertEquals(activity.mapViewListeners().size, 0)
         }
     }
 
@@ -99,7 +100,7 @@ class DemoMapActivityTest {
             .perform(click())
             .perform(click())
         scenario.onActivity { activity ->
-            assertEquals(activity.mapViewListeners().size,0)
+            assertEquals(activity.mapViewListeners().size, 0)
         }
     }
 
@@ -113,12 +114,12 @@ class DemoMapActivityTest {
         onView(withId(R.id.disableAllButton))
             .perform(click())
         scenario.onActivity { activity ->
-            assertEquals(0,activity.mapViewListeners().size)
+            assertEquals(0, activity.mapViewListeners().size)
         }
     }
 
     @Test
-    fun longClickClickWithListenersDoesNotCauseCrash(){
+    fun longClickClickWithListenersDoesNotCauseCrash() {
         testRule.scenario
         onView(withId(R.id.toastPosToggleButton))
             .perform(click())
@@ -128,4 +129,6 @@ class DemoMapActivityTest {
             .perform(longClick())
             .perform(click())
     }
+
+
 }

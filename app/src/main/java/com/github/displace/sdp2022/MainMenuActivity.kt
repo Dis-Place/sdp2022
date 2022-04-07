@@ -18,10 +18,13 @@ import com.google.firebase.ktx.Firebase
 
 class MainMenuActivity : AppCompatActivity() {
 
+
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContentView(R.layout.activity_main_menu)
+
         updateUI()
 
     }
@@ -69,23 +72,6 @@ class MainMenuActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-//    fun logout(view: View) {
-//        if(Firebase.auth.currentUser != null){
-//            AuthUI.getInstance().signOut(this).addOnCompleteListener {
-//                Toast.makeText(this,"Logging Out", Toast.LENGTH_SHORT).show()
-//
-//            }
-//        }
-//        else{
-//            Toast.makeText(this, "Returning to login screen", Toast.LENGTH_LONG).show()
-//        }
-//        startActivity(Intent(this, TempLoginActivity::class.java))
-//
-////        val intent =
-////            Intent(this, TempLoginActivity::class.java).apply { }
-////        startActivity(intent)
-//    }
-
     private fun updateUI(){
         //load the username from the application
         val app = applicationContext as MyApplication
@@ -100,11 +86,6 @@ class MainMenuActivity : AppCompatActivity() {
                 "Welcome $message!"
         }
     }
-
-//    override fun onResume() {
-//        super.onResume()
-//        updateUI()
-//    }
 
 
 }
