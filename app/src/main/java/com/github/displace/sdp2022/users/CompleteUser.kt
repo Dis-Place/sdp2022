@@ -1,6 +1,8 @@
 package com.github.displace.sdp2022.users
 
 import android.annotation.SuppressLint
+import android.util.Log
+import android.widget.Toast
 import com.github.displace.sdp2022.ImageDatabase
 import com.github.displace.sdp2022.RealTimeDatabase
 import com.github.displace.sdp2022.profile.achievements.Achievement
@@ -14,6 +16,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
+import kotlin.random.Random
 
 class CompleteUser(private val firebaseUser: FirebaseUser?) : User {
 
@@ -22,10 +25,12 @@ class CompleteUser(private val firebaseUser: FirebaseUser?) : User {
         false
     ) as RealTimeDatabase
 
+    private val guestNumber = Random.nextLong()
+
     private val dbReference: String = if (firebaseUser != null) {
         "CompleteUsers/${firebaseUser.uid}/CompleteUser"
     } else {
-        "CompleteUsers/dummy_id/CompleteUser"
+        "CompleteUsers/guest_$guestNumber/CompleteUser"
     }
 
 
@@ -161,6 +166,8 @@ class CompleteUser(private val firebaseUser: FirebaseUser?) : User {
                 addUserToDatabase()
                 createFirstMessageList()
             }
+        }.addOnFailureListener{ e ->
+            e.message?.let { Log.e("tag", it) }
         }
     }
 
@@ -213,7 +220,7 @@ class CompleteUser(private val firebaseUser: FirebaseUser?) : User {
                 googleName = firebaseUser.displayName!!
             }
         } else {
-            partialUser = PartialUser("defaultName", "dummy_id")
+            partialUser = PartialUser("Guest$guestNumber", "guest_$guestNumber")
         }
 
     }

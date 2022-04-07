@@ -104,7 +104,7 @@ class TempLoginActivity : AppCompatActivity() {
                             Toast.LENGTH_LONG
                         ).show()
                         app.setActiveUser(CompleteUser(current))
-
+                        Thread.sleep(3000)
 
                     }
 
