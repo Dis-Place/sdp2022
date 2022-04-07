@@ -82,11 +82,11 @@ class ClientServerLink {
 
     fun verify(test: Coordinates): Int {
         if (game.verify(test)) {
-            endGame()
+            endGame(1)
             return 0
         } else {
             if (game.nbTry >= game.nbTryMax) {
-                endGame()
+                endGame(-1)
                 return 2
             } else {
                 game = GameVersus(
@@ -102,9 +102,9 @@ class ClientServerLink {
 
     }
 
-    fun endGame() {
+    fun endGame(winOrLose: Int) {
         db.removeList("GameInstance/Game" + gid + "/id:" + other, "x", posXListener)
         db.removeList("GameInstance/Game" + gid + "/id:" + other, "y", posYListener)
-        db.update("GameInstance/Game" + gid + "/id:" + playerId,"finish",1)
+        db.update("GameInstance/Game" + gid + "/id:" + playerId,"finish",winOrLose)
     }
 }

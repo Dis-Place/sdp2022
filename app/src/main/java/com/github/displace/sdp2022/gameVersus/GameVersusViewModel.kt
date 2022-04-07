@@ -36,7 +36,7 @@ class GameVersusViewModel {
 
     //End the game and add a lose the the one who surrended
     fun OnSurrend(UserId: String): Int {
-        reseau.endGame()
+        reseau.endGame(-1)
 
         return 0
     }
