@@ -3,10 +3,13 @@ package com.github.displace.sdp2022.authentication
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.firebase.ui.auth.AuthUI
+import com.github.displace.sdp2022.GameListActivity
+import com.github.displace.sdp2022.MainMenuActivity
 import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.R
 import com.github.displace.sdp2022.users.CompleteUser
@@ -23,6 +26,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import kotlin.math.sign
 
 const val REQUEST_CODE_SIGN_IN = 0
 
@@ -47,14 +51,17 @@ class TempLoginActivity : AppCompatActivity() {
         }
         val logout = findViewById<Button>(R.id.btnGoogleSignOut)
         logout.setOnClickListener {
+
             if (Firebase.auth.currentUser != null) {
                 AuthUI.getInstance().signOut(this@TempLoginActivity).addOnCompleteListener {
                     Toast.makeText(this, "Logging Out", Toast.LENGTH_SHORT).show()
+
                 }
             } else {
                 Toast.makeText(this, "Cannot log out you're not logged in", Toast.LENGTH_LONG)
                     .show()
             }
+            updateUI(false)
         }
 
         //val offlineSignIn = findViewById<Button>(R.id.btnOfflineSignIn)
@@ -75,18 +82,19 @@ class TempLoginActivity : AppCompatActivity() {
 
     private fun googleAuthForFirebase(account: GoogleSignInAccount) {
         val credentials = GoogleAuthProvider.getCredential(account.idToken, null)
-        CoroutineScope(Dispatchers.IO).launch {
+        val job = CoroutineScope(Dispatchers.IO).launch {
             try {
                 auth.signInWithCredential(credentials).await()
                 withContext(Dispatchers.Main) {
 
                     val app = applicationContext as MyApplication
                     val current = auth.currentUser
+
                     val name: String? = current?.displayName
                     if (name.isNullOrEmpty()) {
                         Toast.makeText(
                             this@TempLoginActivity,
-                            "Successfully logged in ",
+                            "Failed to authenticate",
                             Toast.LENGTH_LONG
                         ).show()
                     } else {
@@ -96,7 +104,10 @@ class TempLoginActivity : AppCompatActivity() {
                             Toast.LENGTH_LONG
                         ).show()
                         app.setActiveUser(CompleteUser(current))
+
+
                     }
+
                 }
 
 
@@ -106,6 +117,7 @@ class TempLoginActivity : AppCompatActivity() {
                 }
             }
         }
+
     }
 
 
@@ -116,13 +128,49 @@ class TempLoginActivity : AppCompatActivity() {
                 val account = GoogleSignIn.getSignedInAccountFromIntent(data).result
 
                 account?.let {
+
                     googleAuthForFirebase(it)
                 }
             } catch (e: Exception) {
                 Log.e("test", e.message!!)
             }
         }
+
+        updateUI(true)
     }
 
+    private fun updateUI(loggingIn : Boolean){
+        val signInButton = findViewById<Button>(R.id.btnGoogleSignIn)
+        val onlineButton = findViewById<Button>(R.id.goToAppOnlineButton)
+        val offlineButton = findViewById<Button>(R.id.goToAppOfflineButton)
+
+        if(loggingIn){
+            signInButton.visibility = View.GONE
+            onlineButton.visibility = View.VISIBLE
+            offlineButton.visibility = View.GONE
+        }
+        else{
+            signInButton.visibility = View.VISIBLE
+            onlineButton.visibility = View.GONE
+            offlineButton.visibility = View.VISIBLE
+        }
+
+    }
+
+    @Suppress("UNUSED_PARAMETER")
+    fun startOffline(view: View) {
+        goToMainMenuActivity(view)
+    }
+
+
+    @Suppress("UNUSED_PARAMETER")
+    fun enterMenu(view: View) {
+        goToMainMenuActivity(view)
+    }
+
+    @Suppress("UNUSED_PARAMETER")
+    private fun goToMainMenuActivity(view: View){
+        startActivity(Intent(this@TempLoginActivity, MainMenuActivity::class.java))
+    }
 
 }

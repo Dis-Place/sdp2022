@@ -4,10 +4,16 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.firebase.ui.auth.AuthUI
+import com.github.displace.sdp2022.authentication.TempLoginActivity
 import com.github.displace.sdp2022.news.NewsActivity
 import com.github.displace.sdp2022.profile.ProfileActivity
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 
 
 class MainMenuActivity : AppCompatActivity() {
@@ -19,14 +25,7 @@ class MainMenuActivity : AppCompatActivity() {
 
         setContentView(R.layout.activity_main_menu)
 
-        //load the username from the application
-        val app = applicationContext as MyApplication
-        val activeUser = app.getActiveUser()
-        val message = activeUser?.getPartialUser()?.username ?: "defaultNotLoggedIn"
-        findViewById<TextView>(R.id.WelcomeText).apply {
-            text =
-                "Welcome $message!"
-        }
+        updateUI()
 
     }
 
@@ -64,6 +63,28 @@ class MainMenuActivity : AppCompatActivity() {
     fun databaseDemoButton(view: View) {
         val intent = Intent(this, UploadImageActivity::class.java)
         startActivity(intent)
+    }
+
+    @Suppress("UNUSED_PARAMETER")
+    fun openMap(view: View) {
+        val intent =
+            Intent(this, DemoMapActivity::class.java).apply { }
+        startActivity(intent)
+    }
+
+    private fun updateUI(){
+        //load the username from the application
+        val app = applicationContext as MyApplication
+        val activeUser = app.getActiveUser()
+        val message = if(activeUser == null  ) {
+            "defaultNotLoggedIn"
+        } else {
+            activeUser.getPartialUser().username
+        }
+        findViewById<TextView>(R.id.WelcomeText).apply {
+            text =
+                "Welcome $message!"
+        }
     }
 
 
