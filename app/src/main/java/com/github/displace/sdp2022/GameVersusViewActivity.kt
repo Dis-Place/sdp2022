@@ -41,7 +41,7 @@ class GameVersusViewActivity : AppCompatActivity() {
         PreferencesUtil.initOsmdroidPref(this)
         setContentView(R.layout.activity_game_versus)
 
-        game.handleEvent(GameEvent.OnStart(goal,0))
+        game.handleEvent(GameEvent.OnStart(goal,intent.getStringExtra("uid")!!, intent.getStringExtra("gid")!!, intent.getStringExtra("other")!!))
 
 
         mapView = findViewById<MapView>(R.id.map)
@@ -49,18 +49,19 @@ class GameVersusViewActivity : AppCompatActivity() {
         markerListener = GeoPointListener.markerPlacer(mapView)
         gpsPositionManager = GPSPositionManager(this)
         gpsPositionUpdater = GPSPositionUpdater(this,gpsPositionManager)
-        gpsPositionUpdater.listenersManager.addCall(markerListener)
+        gpsPositionUpdater.listenersManager.addCall(GeoPointListener { geoPoint ->  game.handleEvent(GameEvent.OnUpdate(intent.getStringExtra("uid")!!, Point(geoPoint.latitude,geoPoint.longitude)))})
 
         mapViewManager.addCallOnLongClick(markerListener)
 
         mapViewManager.addCallOnLongClick(GeoPointListener { geoPoint -> run {
                 val res = game.handleEvent(
                     GameEvent.OnPointSelected(
-                        0,
+                        intent.getStringExtra("uid")!!,
                         Point(geoPoint.latitude ,geoPoint.longitude )
                     )
                 )
                 if(res == 0){
+                    gpsPositionUpdater.listenersManager.clearAllCalls()
                     findViewById<TextView>(R.id.TryText).apply { text = "win" }
                     extras.putBoolean(EXTRA_RESULT, true)
                     extras.putInt(EXTRA_SCORE_P1, 1)
@@ -71,10 +72,11 @@ class GameVersusViewActivity : AppCompatActivity() {
                     if (res == 1) {
                         findViewById<TextView>(R.id.TryText).apply {
                             text =
-                                "status : fail, nombre d'essais restant : " + (4 - game.getNbEssai())
+                                "status : fail, nombre d'essais restant : " + (4 - game.getNbEssai()) + " True : x=" + game.getGoal().pos.first + " y=" + game.getGoal().pos.second
                         }
                     } else {
                         if (res == 2) {
+                            gpsPositionUpdater.listenersManager.clearAllCalls()
                             findViewById<TextView>(R.id.TryText).apply {
                                 text =
                                     "status : end of game"
@@ -86,7 +88,8 @@ class GameVersusViewActivity : AppCompatActivity() {
                             showGameSummaryActivity()
                         }
                     }
-                }}})
+                }
+            }})
 
         findViewById<TextView>(R.id.TryText).apply { text =
             "status : neutral, nombre d'essais restant : " + (4 - game.getNbEssai())
@@ -96,7 +99,8 @@ class GameVersusViewActivity : AppCompatActivity() {
 
     //close the screen
     fun closeButton(view: View) {
-        game.handleEvent(GameEvent.OnSurrend(0))
+        game.handleEvent(GameEvent.OnSurrend(intent.getStringExtra("uid")!!))
+        gpsPositionUpdater.listenersManager.clearAllCalls()
         val intent = Intent(this, GameListActivity::class.java)
         startActivity(intent)
     }
