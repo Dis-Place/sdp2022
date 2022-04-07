@@ -10,7 +10,7 @@ class GameVersusViewModel {
     //Test class until we got a real server side
 
     private val reseau = ClientServerLink()
-    private var gid = 0L
+    private var gid = ""
 
     //handle the 3 different possibility
     fun handleEvent(event: GameEvent): Int {
@@ -23,7 +23,7 @@ class GameVersusViewModel {
     }
 
     //Set the goal at the start of the game (each player set the goal of the other)
-    fun SetGoal(goal: Coordinates, playerId: String, gid: Long, other: String): Int {
+    fun SetGoal(goal: Coordinates, playerId: String, gid: String, other: String): Int {
         this.gid = gid
         reseau.GetData(playerId, gid, other)
         reseau.SendDataToOther(goal)

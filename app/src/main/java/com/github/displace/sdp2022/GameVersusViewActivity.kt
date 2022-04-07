@@ -41,7 +41,7 @@ class GameVersusViewActivity : AppCompatActivity() {
         PreferencesUtil.initOsmdroidPref(this)
         setContentView(R.layout.activity_game_versus)
 
-        game.handleEvent(GameEvent.OnStart(goal,intent.getStringExtra("uid")!!, intent.getStringExtra("gid")!!.toLong(), intent.getStringExtra("other")!!))
+        game.handleEvent(GameEvent.OnStart(goal,intent.getStringExtra("uid")!!, intent.getStringExtra("gid")!!, intent.getStringExtra("other")!!))
 
 
         mapView = findViewById<MapView>(R.id.map)

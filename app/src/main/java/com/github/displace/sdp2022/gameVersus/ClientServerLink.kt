@@ -14,7 +14,7 @@ class ClientServerLink {
         false
     ) as RealTimeDatabase
     private val goal = Point(3.0, 5.0)
-    private var gid = 0L
+    private var gid = ""
     private var other = ""
     private var playerId = ""
     var game = GameVersus(goal, 0, 3, 0.0001, 2)
@@ -27,7 +27,7 @@ class ClientServerLink {
         db.update("GameInstance/Game" + gid + "/id:" + playerId, "y", goal.pos.second)
     }
 
-    fun GetData(playerId: String, gid: Long, other: String) {
+    fun GetData(playerId: String, gid: String, other: String) {
         this.playerId = playerId
         this.gid = gid
         this.other = other

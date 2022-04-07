@@ -54,7 +54,7 @@ class MatchMakingActivity : AppCompatActivity() {
     //keeps a map of the lobby : just how the DB stores it
     private var lobbyMap : MutableMap<String,Any> = HashMap<String,Any>()
     private lateinit var app : MyApplication
-    private lateinit var otherId : String
+    private var otherId : String = ""
 
     private var debug : Boolean = false
 
@@ -74,7 +74,10 @@ class MatchMakingActivity : AppCompatActivity() {
             lobbyMap = lobby
             updateUI()
             if(lobbyMap["lobbyCount"] as Long == lobbyMap["lobbyMax"] as Long  ){
-                otherId = (((lobbyMap["lobbyPlayers"] as ArrayList<MutableMap<String,Any>>).filter { p -> p["uid"] != activeUser.uid } )[0]["uid"] as String)
+                if((lobbyMap["lobbyPlayers"] as ArrayList<MutableMap<String,Any>>).size != 1) {
+                    otherId =
+                        (((lobbyMap["lobbyPlayers"] as ArrayList<MutableMap<String, Any>>).filter { p -> p["uid"] != activeUser.uid })[0]["uid"] as String)
+                }
                 lobbyMap["lobbyLaunch"] = true
                 setupLaunchListener()
                 findViewById<Button>(R.id.MMCancelButton).visibility = View.INVISIBLE

@@ -9,7 +9,7 @@ sealed class GameEvent {
     data class OnPointSelected(val PlayerId: String, val test: Coordinates) :
         GameEvent() //Try of one of the player
 
-    data class OnStart(val Goal: Coordinates, val PlayerId: String, val gid: Long, val other: String) :
+    data class OnStart(val Goal: Coordinates, val PlayerId: String, val gid: String, val other: String) :
         GameEvent()
 
     // Goal represent the coordinate that one of the player set for the other, Photo is the photo of the location and player id make it possible to know which player send the goal
