@@ -8,6 +8,9 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.github.displace.sdp2022.news.NewsActivity
 import com.github.displace.sdp2022.profile.ProfileActivity
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.userProfileChangeRequest
+import com.google.firebase.ktx.Firebase
 
 
 class MainMenuActivity : AppCompatActivity() {
@@ -29,7 +32,6 @@ class MainMenuActivity : AppCompatActivity() {
             text =
                 "Welcome $message!"
         }
-
     }
 
 

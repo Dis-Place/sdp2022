@@ -30,7 +30,7 @@ import org.junit.runner.RunWith
 class AccountSettingsActivityTest {
 
 
-    @Test
+    /*@Test
     fun passwordIsUpdated() {
         val intent = Intent(getApplicationContext(), AccountSettingsActivity::class.java)
         val scenario: ActivityScenario<AccountSettingsActivity> = ActivityScenario.launch(intent)
@@ -90,7 +90,7 @@ class AccountSettingsActivityTest {
             onView(withId(R.id.actualPassword)).check(matches(withText("password")))
             // needs a Toast.maketext check
         }
-    }
+    }*/
 
     @get:Rule
     val permissionRule = GrantPermissionRule.grant(

@@ -34,13 +34,13 @@ class AccountSettingsActivityLoggedInTest {
 
     @Before
     fun login() {
-        onView(withId(R.id.mockSignInButton)).perform(click())
-        Thread.sleep(2000)
+        //onView(withId(R.id.mockSignInButton)).perform(click())
+        //Thread.sleep(2000)
     }
 
     @After
     fun logout() {
-        onView(withId(R.id.mockSignOutButton)).perform(click())
+        //onView(withId(R.id.mockSignOutButton)).perform(click())
     }
 
     @Test

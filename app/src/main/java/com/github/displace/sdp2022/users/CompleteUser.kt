@@ -1,12 +1,15 @@
 package com.github.displace.sdp2022.users
 
 import android.annotation.SuppressLint
+import com.github.displace.sdp2022.ImageDatabase
 import com.github.displace.sdp2022.RealTimeDatabase
 import com.github.displace.sdp2022.profile.achievements.Achievement
 import com.github.displace.sdp2022.profile.history.History
 import com.github.displace.sdp2022.profile.messages.Message
 import com.github.displace.sdp2022.profile.statistics.Statistic
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
@@ -23,7 +26,10 @@ class CompleteUser(private val firebaseUser: FirebaseUser?) {
     }
 
 
+
     private lateinit var partialUser: PartialUser
+
+    private lateinit var googleName: String
 
     private lateinit var achievements: MutableList<Achievement>
     private lateinit var stats: MutableList<Statistic>
@@ -181,11 +187,13 @@ class CompleteUser(private val firebaseUser: FirebaseUser?) {
     }
 
     private fun initializePartialUser() {
+        googleName = "defaultName"
         if(firebaseUser != null) {
             if (firebaseUser.displayName == null) {        // maybe add the profile picture later
                 partialUser = PartialUser("defaultName", firebaseUser.uid)
             } else {
                 partialUser = PartialUser(firebaseUser.displayName!!, firebaseUser.uid)
+                googleName = firebaseUser.displayName!!
             }
         } else {
             partialUser = PartialUser("defaultName", "dummy_id")
