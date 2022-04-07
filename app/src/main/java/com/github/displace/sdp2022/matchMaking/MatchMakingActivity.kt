@@ -74,7 +74,7 @@ class MatchMakingActivity : AppCompatActivity() {
             lobbyMap = lobby
             updateUI()
             if(lobbyMap["lobbyCount"] as Long == lobbyMap["lobbyMax"] as Long  ){
-                if((lobbyMap["lobbyPlayers"] as ArrayList<MutableMap<String,Any>>).size != 1) {
+                if(((lobbyMap["lobbyPlayers"] as ArrayList<MutableMap<String, Any>>).filter { p -> p["uid"] != activeUser.uid }).size != 0) {
                     otherId =
                         (((lobbyMap["lobbyPlayers"] as ArrayList<MutableMap<String, Any>>).filter { p -> p["uid"] != activeUser.uid })[0]["uid"] as String)
                 }
