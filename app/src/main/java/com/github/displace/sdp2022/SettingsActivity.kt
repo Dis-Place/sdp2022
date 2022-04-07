@@ -7,6 +7,9 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO
+import androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES
 import androidx.preference.PreferenceManager
 
 const val DARK_MODE_SETTINGS_SWITCH: String = "darkMode"
@@ -45,11 +48,22 @@ class SettingsActivity : AppCompatActivity() {
             else -> "Unknown settings"
         }
 
+        darkMode(prefs)
+
         val stringToDisplay: String = contentString + enabledDisabledString
 
         //Display a toast message
         Toast.makeText(this, stringToDisplay, Toast.LENGTH_SHORT).show()
     }
 
+    private fun darkMode(prefs: SharedPreferences){
+        val cur = prefs.getBoolean("darkMode", false)
+        if( cur) {
+            AppCompatDelegate.setDefaultNightMode(MODE_NIGHT_YES)
+        }
+        else{
+            AppCompatDelegate.setDefaultNightMode(MODE_NIGHT_NO)
+        }
+    }
 
 }
