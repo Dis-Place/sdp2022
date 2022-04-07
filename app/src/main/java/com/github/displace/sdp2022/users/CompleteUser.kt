@@ -113,8 +113,8 @@ class CompleteUser(private val firebaseUser: FirebaseUser?) {
                     }
                 }
 
+                // Get friends list from the database
                 val friendsListHash = completeUser["friendsList"] as ArrayList<HashMap<String, String>>
-
                 friendsList = mutableListOf()
                 if(friendsListHash != null) {
                     for(f in friendsListHash) {
@@ -122,6 +122,7 @@ class CompleteUser(private val firebaseUser: FirebaseUser?) {
                     }
                 }
 
+                // Get game history from the database
                 val gameHistoryHash = completeUser["gameHistory"] as ArrayList<HashMap<String, String>>
                 gameHistory = mutableListOf()
                 if(gameHistoryHash != null){
@@ -130,11 +131,13 @@ class CompleteUser(private val firebaseUser: FirebaseUser?) {
                     }
                 }
 
+                // Get Partial User from the database
                 val partialUserMap = completeUser["partialUser"] as HashMap<String, String>
                 partialUser = PartialUser(partialUserMap["username"]!!, partialUserMap.get("uid")!!)
             } else{
-                achievements = initializeAchievements()
-                stats = initializeStats()
+
+                initializeAchievements()
+                initializeStats()
                 friendsList = mutableListOf(
                     PartialUser("dummy_friend_username", "dummy_friend_id")
                 )
@@ -152,8 +155,8 @@ class CompleteUser(private val firebaseUser: FirebaseUser?) {
     }
 
     @SuppressLint("SimpleDateFormat")
-    private fun initializeAchievements(): MutableList<Achievement> {
-        return mutableListOf(
+    private fun initializeAchievements(){
+        achievements = mutableListOf(
             Achievement("Create your account !", getCurrentDate())
         )
     }
@@ -163,8 +166,8 @@ class CompleteUser(private val firebaseUser: FirebaseUser?) {
         return simpleDate.format(Date())
     }
 
-    private fun initializeStats(): MutableList<Statistic>{
-        return mutableListOf(
+    private fun initializeStats(){
+        stats = mutableListOf(
             Statistic("stat1", 0),
             Statistic("stat2", 0))      // It's a dummy list for now, will be replaced with a list of all the possible statistics initialized to 0
     }

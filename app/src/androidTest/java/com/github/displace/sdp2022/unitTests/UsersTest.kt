@@ -37,6 +37,7 @@ class UsersTest {
         val completeUser2 = CompleteUser(null)
 
         assertTrue(completeUser1.equals(completeUser2))
+        completeUser1.removeUserFromDatabase()
     }
 
     @Test
@@ -66,7 +67,6 @@ class UsersTest {
         val completeUser = CompleteUser(null)
         completeUser.updateStats("stat1", 10)
         assertTrue(completeUser.getStats()[0].value == 10L)
-        completeUser.updateStats("stat1", 0)
         completeUser.removeUserFromDatabase()
     }
 
