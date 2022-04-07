@@ -107,7 +107,7 @@ class MatchMakingTest {
 
         }
     }
-/*
+
     @Test
     fun testPublicLobbyGameLaunch(){
         Intents.init()
@@ -135,7 +135,7 @@ class MatchMakingTest {
         }
         Intents.release()
     }
-    */
+
 
     @Test
     fun testPrivateLobbyCreation(){
