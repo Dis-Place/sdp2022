@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.ScrollView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -98,6 +99,14 @@ class ProfileActivity : AppCompatActivity() {
 
     }
 
+    override fun onResume() {
+        super.onResume()
+        val app = applicationContext as MyApplication
+        val activeUser = app.getActiveUser()
+        findViewById<TextView>(R.id.profileUsername).text =
+            activeUser?.getPartialUser()?.username ?: "defaultNotLoggedIn"
+    }
+
     private fun messageListener() = object : ValueEventListener {
         override fun onDataChange(snapshot: DataSnapshot) {
             val ls = snapshot.value as ArrayList<HashMap<String,Any>>?
@@ -136,8 +145,16 @@ class ProfileActivity : AppCompatActivity() {
 
     @Suppress("UNUSED_PARAMETER")
     fun settingsButton(view: View) {
-        val intent = Intent(this, AccountSettingsActivity::class.java)
-        startActivity(intent)
+        val app = applicationContext as MyApplication
+        val activeUser = app.getActiveUser()
+
+        if(activeUser != null) {
+            val intent = Intent(this, AccountSettingsActivity::class.java)
+            startActivity(intent)
+        } else {
+            Toast.makeText(this, "You're in guest mode !", Toast.LENGTH_LONG).show()
+        }
+
     }
 
     private fun messageList(ls : ArrayList<HashMap<String,Any>>?){

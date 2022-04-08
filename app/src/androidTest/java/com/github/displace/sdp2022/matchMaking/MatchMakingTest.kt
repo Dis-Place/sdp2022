@@ -32,7 +32,7 @@ class MatchMakingTest {
     @Before
     fun before(){
         val app = ApplicationProvider.getApplicationContext() as MyApplication
-        app.setActiveUser(CompleteUser(null))
+        app.setActiveUser(CompleteUser(null, false))
 
         Thread.sleep(3000)
     }

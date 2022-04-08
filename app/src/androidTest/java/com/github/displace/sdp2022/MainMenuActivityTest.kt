@@ -39,7 +39,7 @@ class MainMenuActivityTest {
 
         val app = ApplicationProvider.getApplicationContext() as MyApplication
         app.setDb(MockDB())
-        app.setActiveUser(CompleteUser(null))
+        app.setActiveUser(CompleteUser(null, false))
 
         Thread.sleep(3000)
 

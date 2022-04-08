@@ -34,7 +34,7 @@ class ProfileActivityTest {
     fun before(){
         val app = ApplicationProvider.getApplicationContext() as MyApplication
         app.setDb(MockDB())
-        completeUser = CompleteUser(null)
+        completeUser = CompleteUser(null, false)
         app.setActiveUser(completeUser)
     }
 

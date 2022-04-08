@@ -113,7 +113,7 @@ class GameSummaryActivityTest {
 
         val app = getApplicationContext() as MyApplication
 
-        app.setActiveUser(CompleteUser(null))
+        app.setActiveUser(CompleteUser(null, false))
 
         Thread.sleep(3_000)
 

@@ -103,9 +103,7 @@ class TempLoginActivity : AppCompatActivity() {
                             "Successfully logged in $name ",
                             Toast.LENGTH_LONG
                         ).show()
-                        app.setActiveUser(CompleteUser(current))
-
-
+                        app.setActiveUser(CompleteUser(current, false))
                     }
 
                 }
@@ -159,6 +157,8 @@ class TempLoginActivity : AppCompatActivity() {
 
     @Suppress("UNUSED_PARAMETER")
     fun startOffline(view: View) {
+        val app = applicationContext as MyApplication
+        app.setActiveUser(CompleteUser(null, true))
         goToMainMenuActivity(view)
     }
 
