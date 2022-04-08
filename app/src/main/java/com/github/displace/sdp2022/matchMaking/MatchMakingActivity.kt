@@ -53,7 +53,7 @@ class MatchMakingActivity : AppCompatActivity() {
     //keeps a map of the lobby : just how the DB stores it
     private var lobbyMap : MutableMap<String,Any> = HashMap<String,Any>()
     private lateinit var app : MyApplication
-    private var otherId : String = ""
+    private var other : MutableMap<String,Any> = HashMap<String,Any>()
 
 
     private var debug: Boolean = false
@@ -74,9 +74,10 @@ class MatchMakingActivity : AppCompatActivity() {
             lobbyMap = lobby
             updateUI()
             if(lobbyMap["lobbyCount"] as Long == lobbyMap["lobbyMax"] as Long  ){
+                other["uid"] = "ok"
                 if(((lobbyMap["lobbyPlayers"] as ArrayList<MutableMap<String, Any>>).filter { p -> p["uid"] != activeUser.uid }).size != 0) {
-                    otherId =
-                        (((lobbyMap["lobbyPlayers"] as ArrayList<MutableMap<String, Any>>).filter { p -> p["uid"] != activeUser.uid })[0]["uid"] as String)
+                    other =
+                        ((lobbyMap["lobbyPlayers"] as ArrayList<MutableMap<String, Any>>).filter { p -> p["uid"] != activeUser.uid })[0]
                 }
                 lobbyMap["lobbyLaunch"] = true
                 setupLaunchListener()
@@ -373,7 +374,7 @@ class MatchMakingActivity : AppCompatActivity() {
      */
     private fun gameScreenTransition(){
         val intent = Intent(applicationContext, GameVersusViewActivity::class.java)
-        db.update("GameInstance/Game" + this.currentLobbyId + "/id:" + activeUser.uid,"other",otherId) // change 0 by other id
+        db.update("GameInstance/Game" + this.currentLobbyId + "/id:" + activeUser.uid,"other",other) // change 0 by other id
         db.update("GameInstance/Game" + this.currentLobbyId + "/id:" + activeUser.uid, "finish", 0)
         db.update("GameInstance/Game" + this.currentLobbyId + "/id:" + activeUser.uid, "x", 0.0)
         db.update("GameInstance/Game" + this.currentLobbyId + "/id:" + activeUser.uid, "y", 0.0)
@@ -381,7 +382,7 @@ class MatchMakingActivity : AppCompatActivity() {
         intent.putExtra("gid",this.currentLobbyId)
         intent.putExtra("uid",activeUser.uid)
         intent.putExtra("nbPlayer",2) // change 2 by nbPlayer when implemented
-        intent.putExtra("other",otherId) // change 0 by other id
+        intent.putExtra("other",other["uid"] as String) // change 0 by other id
         Thread.sleep(3000)
         startActivity(intent)
     }

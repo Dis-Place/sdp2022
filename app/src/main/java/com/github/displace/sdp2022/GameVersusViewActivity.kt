@@ -13,6 +13,9 @@ import com.github.displace.sdp2022.util.PreferencesUtil
 import com.github.displace.sdp2022.util.gps.GPSPositionManager
 import com.github.displace.sdp2022.util.gps.GPSPositionUpdater
 import com.github.displace.sdp2022.util.gps.GeoPointListener
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
 import org.osmdroid.views.MapView
 
 
@@ -36,6 +39,11 @@ class GameVersusViewActivity : AppCompatActivity() {
     private lateinit var gpsPositionManager: GPSPositionManager
     private lateinit var markerListener: GeoPointListener
 
+    private val db = RealTimeDatabase().noCacheInstantiate(
+        "https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",
+        false
+    ) as RealTimeDatabase
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         PreferencesUtil.initOsmdroidPref(this)
@@ -50,6 +58,39 @@ class GameVersusViewActivity : AppCompatActivity() {
         gpsPositionManager = GPSPositionManager(this)
         gpsPositionUpdater = GPSPositionUpdater(this,gpsPositionManager)
         gpsPositionUpdater.listenersManager.addCall(GeoPointListener { geoPoint ->  game.handleEvent(GameEvent.OnUpdate(intent.getStringExtra("uid")!!, Point(geoPoint.latitude,geoPoint.longitude)))})
+
+        val endListener = object : ValueEventListener {
+
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val x = dataSnapshot.getValue()
+                if (x == 1L || x == -1L) {
+                    db.delete("GameInstance", "Game" + intent.getStringExtra("gid")!!)
+                    gpsPositionUpdater.listenersManager.clearAllCalls()
+                    if (x == 1L) {
+                        findViewById<TextView>(R.id.TryText).apply {
+                            text =
+                                "status : end of game"
+                        }
+                        extras.putBoolean(EXTRA_RESULT, false)
+                        extras.putInt(EXTRA_SCORE_P1, 0)
+                        extras.putInt(EXTRA_SCORE_P2, 1)
+                        statsList.add("15:04")      // Example Time
+                        showGameSummaryActivity()
+                    } else {
+                        findViewById<TextView>(R.id.TryText).apply { text = "win" }
+                        extras.putBoolean(EXTRA_RESULT, true)
+                        extras.putInt(EXTRA_SCORE_P1, 1)
+                        extras.putInt(EXTRA_SCORE_P2, 0)
+                        statsList.add("18:43")      // Example Time
+                        showGameSummaryActivity()
+                    }
+                }
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {}
+        }
+
+        db.addList("GameInstance/Game" + intent.getStringExtra("gid")!! + "/id:" + intent.getStringExtra("other")!!,"finish",endListener)
 
         mapViewManager.addCallOnLongClick(markerListener)
 
