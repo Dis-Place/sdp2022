@@ -1,9 +1,11 @@
 package com.github.displace.sdp2022
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.github.displace.sdp2022.gameComponents.GameEvent
 import com.github.displace.sdp2022.gameComponents.Point
@@ -17,6 +19,8 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import org.osmdroid.views.MapView
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 
 const val EXTRA_STATS = "com.github.displace.sdp2022.GAMESTAT"
@@ -44,6 +48,7 @@ class GameVersusViewActivity : AppCompatActivity() {
         false
     ) as RealTimeDatabase
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         PreferencesUtil.initOsmdroidPref(this)
@@ -58,6 +63,7 @@ class GameVersusViewActivity : AppCompatActivity() {
         gpsPositionManager = GPSPositionManager(this)
         gpsPositionUpdater = GPSPositionUpdater(this,gpsPositionManager)
         gpsPositionUpdater.listenersManager.addCall(GeoPointListener { geoPoint ->  game.handleEvent(GameEvent.OnUpdate(intent.getStringExtra("uid")!!, Point(geoPoint.latitude,geoPoint.longitude)))})
+        val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")
 
         val endListener = object : ValueEventListener {
 
@@ -74,14 +80,18 @@ class GameVersusViewActivity : AppCompatActivity() {
                         extras.putBoolean(EXTRA_RESULT, false)
                         extras.putInt(EXTRA_SCORE_P1, 0)
                         extras.putInt(EXTRA_SCORE_P2, 1)
-                        statsList.add("15:04")      // Example Time
+                        val current = LocalDateTime.now()
+                        val formatted = current.format(formatter)
+                        statsList.add(formatted)
                         showGameSummaryActivity()
                     } else {
                         findViewById<TextView>(R.id.TryText).apply { text = "win" }
                         extras.putBoolean(EXTRA_RESULT, true)
                         extras.putInt(EXTRA_SCORE_P1, 1)
                         extras.putInt(EXTRA_SCORE_P2, 0)
-                        statsList.add("18:43")      // Example Time
+                        val current = LocalDateTime.now()
+                        val formatted = current.format(formatter)
+                        statsList.add(formatted)
                         showGameSummaryActivity()
                     }
                 }
@@ -107,7 +117,9 @@ class GameVersusViewActivity : AppCompatActivity() {
                     extras.putBoolean(EXTRA_RESULT, true)
                     extras.putInt(EXTRA_SCORE_P1, 1)
                     extras.putInt(EXTRA_SCORE_P2, 0)
-                    statsList.add("18:43")      // Example Time
+                    val current = LocalDateTime.now()
+                    val formatted = current.format(formatter)
+                    statsList.add(formatted)
                     showGameSummaryActivity()
                 }else {
                     if (res == 1) {
@@ -125,7 +137,9 @@ class GameVersusViewActivity : AppCompatActivity() {
                             extras.putBoolean(EXTRA_RESULT, false)
                             extras.putInt(EXTRA_SCORE_P1, 0)
                             extras.putInt(EXTRA_SCORE_P2, 1)
-                            statsList.add("15:04")      // Example Time
+                            val current = LocalDateTime.now()
+                            val formatted = current.format(formatter)
+                            statsList.add(formatted)
                             showGameSummaryActivity()
                         }
                     }
