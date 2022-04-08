@@ -17,20 +17,25 @@ import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 import kotlin.random.Random
+import kotlin.random.nextUInt
 
-class CompleteUser(private val firebaseUser: FirebaseUser?) : User {
+class CompleteUser(private val firebaseUser: FirebaseUser?, val guestBoolean: Boolean) : User {
 
     private val db: RealTimeDatabase = RealTimeDatabase().instantiate(
         "https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",
         false
     ) as RealTimeDatabase
 
-    private val guestNumber = Random.nextLong()
+    private val guestNumber = Random.nextUInt()
 
     private val dbReference: String = if (firebaseUser != null) {
         "CompleteUsers/${firebaseUser.uid}/CompleteUser"
     } else {
-        "CompleteUsers/guest_$guestNumber/CompleteUser"
+        if(guestBoolean) {
+            "CompleteUsers/guest_$guestNumber/CompleteUser"
+        } else {
+            "CompleteUsers/dummy_id/CompleteUser"
+        }
     }
 
 
@@ -105,69 +110,65 @@ class CompleteUser(private val firebaseUser: FirebaseUser?) : User {
     }
 
     private fun initializeUser() {
-        db.referenceGet(dbReference, "").addOnSuccessListener { usr ->
-            if (usr.value != null) {
-                val completeUser = usr.value as HashMap<String, *>
+        if(guestBoolean) {
+            initializeAchievements()
+            initializeStats()
+            friendsList = mutableListOf(
+                PartialUser("THE SYSTEM", "dummy_friend_id")
+            )
+            gameHistory = mutableListOf(
+                History("dummy_map", getCurrentDate(), "VICTORY")
+            )
+            initializePartialUser()
+            addUserToDatabase()
+            createFirstMessageList()
+        } else {
+            db.referenceGet(dbReference, "").addOnSuccessListener { usr ->
+                if (usr.value != null) {
+                    val completeUser = usr.value as HashMap<String, *>
 
-                // Get achievements from the database
-                val achievementsDB =
-                    completeUser.get("achievements") as ArrayList<HashMap<String, String>>
-                achievements = mutableListOf()
-                if (achievementsDB != null) {
-                    for (ach in achievementsDB) {
-                        achievements.add(Achievement(ach["name"]!!, ach["date"]!!))
-                    }
+                    // Get achievements from the database
+                    val achievementsDB =
+                        completeUser.get("achievements") as ArrayList<HashMap<String, String>>
+
+                    achievements = achievementsDB.map{ ach -> Achievement(ach["name"]!!, ach["date"]!!) } as MutableList<Achievement>
+
+                    // Get statistics from the database
+                    val statsDB = completeUser["stats"] as ArrayList<HashMap<String, String>>
+                    stats = statsDB.map { s -> Statistic(s["name"]!!, s["value"] as Long)} as MutableList<Statistic>
+
+                    // Get friends list from the database
+                    val friendsListHash =
+                        completeUser["friendsList"] as ArrayList<HashMap<String, String>>
+
+                    friendsList = friendsListHash.map { f -> PartialUser(f["username"]!!, f["uid"]!!) } as MutableList<PartialUser>
+
+                    // Get game history from the database
+                    val gameHistoryHash =
+                        completeUser["gameHistory"] as ArrayList<HashMap<String, String>>
+                    gameHistory = gameHistoryHash.map { g -> History(g["map"]!!, g["date"]!!, g["result"]!!)} as MutableList<History>
+
+                    // Get Partial User from the database
+                    val partialUserMap = completeUser["partialUser"] as HashMap<String, String>
+                    partialUser =
+                        PartialUser(partialUserMap["username"]!!, partialUserMap.get("uid")!!)
+                } else {
+
+                    initializeAchievements()
+                    initializeStats()
+                    friendsList = mutableListOf(
+                        PartialUser("THE SYSTEM", "dummy_friend_id")
+                    )
+                    gameHistory = mutableListOf(
+                        History("dummy_map", getCurrentDate(), "VICTORY")
+                    )
+                    initializePartialUser()
+                    addUserToDatabase()
+                    createFirstMessageList()
                 }
-
-                // Get statistics from the database
-                val statsDB = completeUser["stats"] as ArrayList<HashMap<String, String>>
-                stats = mutableListOf()
-                if (statsDB != null) {
-                    for (s in statsDB) {
-                        stats.add(Statistic(s["name"]!!, s["value"] as Long))
-                    }
-                }
-
-                // Get friends list from the database
-                val friendsListHash =
-                    completeUser["friendsList"] as ArrayList<HashMap<String, String>>
-
-                friendsList = mutableListOf()
-                if (friendsListHash != null) {
-                    for (f in friendsListHash) {
-                        friendsList.add(PartialUser(f["username"]!!, f["uid"]!!))
-                    }
-                }
-
-                // Get game history from the database
-                val gameHistoryHash =
-                    completeUser["gameHistory"] as ArrayList<HashMap<String, String>>
-                gameHistory = mutableListOf()
-                if (gameHistoryHash != null) {
-                    for (g in gameHistoryHash) {
-                        gameHistory.add(History(g["map"]!!, g["date"]!!, g["result"]!!))
-                    }
-                }
-
-                // Get Partial User from the database
-                val partialUserMap = completeUser["partialUser"] as HashMap<String, String>
-                partialUser = PartialUser(partialUserMap["username"]!!, partialUserMap.get("uid")!!)
-            } else{
-
-                initializeAchievements()
-                initializeStats()
-                friendsList = mutableListOf(
-                    PartialUser("THE SYSTEM", "dummy_friend_id")
-                )
-                gameHistory = mutableListOf(
-                    History("dummy_map", getCurrentDate(), "VICTORY")
-                )
-                initializePartialUser()
-                addUserToDatabase()
-                createFirstMessageList()
+            }.addOnFailureListener { e ->
+                e.message?.let { Log.e("DBFailure", it) }
             }
-        }.addOnFailureListener{ e ->
-            e.message?.let { Log.e("tag", it) }
         }
     }
 
@@ -220,7 +221,11 @@ class CompleteUser(private val firebaseUser: FirebaseUser?) : User {
                 googleName = firebaseUser.displayName!!
             }
         } else {
-            partialUser = PartialUser("Guest$guestNumber", "guest_$guestNumber")
+            if(guestBoolean) {
+                partialUser = PartialUser("Guest$guestNumber", "guest_$guestNumber")
+            } else {
+                partialUser = PartialUser("defaultName", "dummy_id")
+            }
         }
 
     }

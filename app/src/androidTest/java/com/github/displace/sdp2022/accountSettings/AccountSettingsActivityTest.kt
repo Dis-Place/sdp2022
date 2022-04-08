@@ -26,7 +26,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
-@RunWith(AndroidJUnit4::class)
+//@RunWith(AndroidJUnit4::class)
 class AccountSettingsActivityTest {
 
 
@@ -90,7 +90,7 @@ class AccountSettingsActivityTest {
             onView(withId(R.id.actualPassword)).check(matches(withText("password")))
             // needs a Toast.maketext check
         }
-    }*/
+    }
 
     @get:Rule
     val permissionRule = GrantPermissionRule.grant(
@@ -186,5 +186,5 @@ class AccountSettingsActivityTest {
             onView(withId(R.id.updateUsernameButton)).perform(click())
             onView(withId(R.id.username)).check(matches(withText("Name")))
         }
-    }
+    }*/
 }

@@ -99,6 +99,14 @@ class ProfileActivity : AppCompatActivity() {
 
     }
 
+    override fun onResume() {
+        super.onResume()
+        val app = applicationContext as MyApplication
+        val activeUser = app.getActiveUser()
+        findViewById<TextView>(R.id.profileUsername).text =
+            activeUser?.getPartialUser()?.username ?: "defaultNotLoggedIn"
+    }
+
     private fun messageListener() = object : ValueEventListener {
         override fun onDataChange(snapshot: DataSnapshot) {
             val ls = snapshot.value as ArrayList<HashMap<String,Any>>?

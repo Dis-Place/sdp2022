@@ -28,6 +28,22 @@ class MainMenuActivity : AppCompatActivity() {
 
     }
 
+    override fun onResume() {
+        super.onResume()
+        updateUI()
+    }
+
+
+
+    override fun onDestroy() {
+        super.onDestroy()
+        val app = applicationContext as MyApplication
+        val user = app.getActiveUser()!!
+        if(user.guestBoolean) {
+            user.removeUserFromDatabase()
+        }
+    }
+
 
     //send the user to the Play screen : start a match
     @Suppress("UNUSED_PARAMETER")
@@ -75,7 +91,7 @@ class MainMenuActivity : AppCompatActivity() {
         //load the username from the application
         val app = applicationContext as MyApplication
         val activeUser = app.getActiveUser()
-        val message = if(activeUser == null  ) {
+        val message = if(activeUser == null) {
             "defaultNotLoggedIn"
         } else {
             activeUser.getPartialUser().username

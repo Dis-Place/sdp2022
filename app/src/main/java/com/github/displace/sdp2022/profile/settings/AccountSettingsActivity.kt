@@ -61,8 +61,8 @@ class AccountSettingsActivity : AppCompatActivity() {
     private lateinit var profilePic: ImageView
     private var imageUri: Uri = Uri.EMPTY
     //private var processingAlert: AlertDialog? = null
-    //private var firebaseAuth: FirebaseAuth? = null
-    //private var firebaseUser: FirebaseUser? = null
+    private var firebaseAuth: FirebaseAuth? = null      // to remove
+    private var firebaseUser: FirebaseUser? = null      // to remove
     //private var user: User? = null
 
     private val storageReference = Firebase.storage("gs://displace-dd51e.appspot.com/").reference
@@ -78,6 +78,8 @@ class AccountSettingsActivity : AppCompatActivity() {
         val profilePicUpdate = findViewById<TextView>(R.id.profilePicUpdate)
         val usernameUpdate = findViewById<TextView>(R.id.usernameUpdate)
         //val passwordUpdate = findViewById<TextView>(R.id.passwordUpdate)
+        //val mockSignInButton = findViewById<Button>(R.id.mockSignInButton)
+        //val mockSignOutButton = findViewById<Button>(R.id.mockSignOutButton)
 
         username = findViewById(R.id.username)
         profilePic = findViewById(R.id.profilePic)
@@ -96,14 +98,14 @@ class AccountSettingsActivity : AppCompatActivity() {
 
         username.text = activeUser.getPartialUser().username
 
-        /*firebaseAuth = FirebaseAuth.getInstance()
+        /*firebaseAuth = FirebaseAuth.getInstance()      // to remove
 
-        if (firebaseAuth?.currentUser == null) {
-            showToastText("Not signed in")
-        } else {
-            firebaseUser = firebaseAuth?.currentUser
-            firebaseUser?.let {
-                username.text = firebaseUser?.displayName
+        if (firebaseAuth?.currentUser == null) {      // to remove
+            showToastText("Not signed in")      // to remove
+        } else {      // to remove
+            firebaseUser = firebaseAuth?.currentUser      // to remove
+            firebaseUser?.let {      // to remove
+                username.text = firebaseUser?.displayName      // to remove
                 //profilePic.setImageURI(firebaseUser?.photoUrl)
             }
         }*/
@@ -139,9 +141,22 @@ class AccountSettingsActivity : AppCompatActivity() {
         usernameUpdate.setOnClickListener {
             changeUsername()
         }
+
+        /*mockSignInButton.setOnClickListener {      // to remove
+            mockSignin()
+        }
+
+        mockSignOutButton.setOnClickListener {      // to remove
+            if (firebaseAuth?.currentUser == null) {
+                showToastText("Not signed in")
+            } else {
+                FirebaseAuth.getInstance().signOut()
+                showToastText("Signed out")
+            }
+        }*/
     }
 
-    /*private fun mockSignin() {
+    /*private fun mockSignin() {      // to remove
         firebaseAuth?.signInWithEmailAndPassword("franck.khayat@gmail.com", "password")
             ?.addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {

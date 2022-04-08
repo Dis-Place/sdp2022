@@ -28,8 +28,8 @@ class CompleteUserTest {
 
     @Test
     fun completeUserEqualsWorksWhenTrue() {
-        val completeUser1 = CompleteUser(null)
-        val completeUser2 = CompleteUser(null)
+        val completeUser1 = CompleteUser(null, false)
+        val completeUser2 = CompleteUser(null, false)
         Thread.sleep(3000)
         assertTrue(completeUser1 == completeUser2)
         completeUser1.removeUserFromDatabase()
@@ -37,7 +37,7 @@ class CompleteUserTest {
 
     @Test
     fun achievementUpdates() {
-        val completeUser = CompleteUser(null)
+        val completeUser = CompleteUser(null, false)
         Thread.sleep(3000)
         val achSize = completeUser.getAchievements().size
         val ach = Achievement("AchievementTest1", "28-03-2022")
@@ -49,7 +49,7 @@ class CompleteUserTest {
 
     @Test
     fun statisticsAreInitializedCorrectly() {
-        val completeUser = CompleteUser(null)
+        val completeUser = CompleteUser(null, false)
         Thread.sleep(3000)
         val dummyStats = completeUser.getStats()
         assertTrue(
@@ -63,7 +63,7 @@ class CompleteUserTest {
 
     @Test
     fun statisticsUpdates() {
-        val completeUser = CompleteUser(null)
+        val completeUser = CompleteUser(null, false)
         Thread.sleep(3000)
         completeUser.updateStats("stat1", 10)
         assertTrue(completeUser.getStats()[0].value == 10L)
@@ -72,7 +72,7 @@ class CompleteUserTest {
 
     @Test
     fun addingAndRemovingFriendWorksCorrectly() {
-        val completeUser = CompleteUser(null)
+        val completeUser = CompleteUser(null, false)
         Thread.sleep(3000)
         val friendsSize = completeUser.getFriendsList().size
         val partialUser = PartialUser("dummy_name", "dummy_other_id")
@@ -85,7 +85,7 @@ class CompleteUserTest {
 
     @Test
     fun addExistingFriendDoesNothing() {
-        val completeUser = CompleteUser(null)
+        val completeUser = CompleteUser(null, false)
         Thread.sleep(3000)
         val partialUser = PartialUser("dummy_username", "dummy_id")
         completeUser.addFriend(partialUser)
@@ -98,7 +98,7 @@ class CompleteUserTest {
 
     @Test
     fun removeNonExistingFriendDoesNothing() {
-        val completeUser = CompleteUser(null)
+        val completeUser = CompleteUser(null, false)
         Thread.sleep(3000)
         val friendsSize = completeUser.getFriendsList().size
         val partialUser = PartialUser("dummy_name", "dummy_other_id")
@@ -109,7 +109,7 @@ class CompleteUserTest {
 
     @Test
     fun updateGameHistoryWorks() {
-        val completeUser = CompleteUser(null)
+        val completeUser = CompleteUser(null, false)
         Thread.sleep(3000)
         val historySize = completeUser.getGameHistory().size
         val gameHistory = History("dummyMap", "28-03-2022", "VICTORY")
