@@ -18,7 +18,6 @@ import com.google.firebase.ktx.Firebase
 
 class MainMenuActivity : AppCompatActivity() {
 
-
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,6 +26,22 @@ class MainMenuActivity : AppCompatActivity() {
 
         updateUI()
 
+    }
+
+    override fun onResume() {
+        super.onResume()
+        updateUI()
+    }
+
+
+
+    override fun onDestroy() {
+        super.onDestroy()
+        val app = applicationContext as MyApplication
+        val user = app.getActiveUser()!!
+        if(user.guestBoolean) {
+            user.removeUserFromDatabase()
+        }
     }
 
 
@@ -76,7 +91,7 @@ class MainMenuActivity : AppCompatActivity() {
         //load the username from the application
         val app = applicationContext as MyApplication
         val activeUser = app.getActiveUser()
-        val message = if(activeUser == null  ) {
+        val message = if(activeUser == null) {
             "defaultNotLoggedIn"
         } else {
             activeUser.getPartialUser().username

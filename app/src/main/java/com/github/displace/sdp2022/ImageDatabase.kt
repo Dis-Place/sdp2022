@@ -6,6 +6,7 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FileDownloadTask
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.ktx.storage
@@ -16,6 +17,7 @@ import java.io.IOException
 class ImageDatabase : Database {
     private lateinit var storage: FirebaseStorage
     private lateinit var imageRef: StorageReference
+
 
     private fun getChild(key: String): StorageReference {
         return imageRef.child(key)
@@ -70,6 +72,10 @@ class ImageDatabase : Database {
         val uploadTask = getChild(reference).getBytes(TWENTY_MEGA_BYTE)
 
         return uploadTask.result as Any
+    }
+
+    fun getOnLocalFileTask(reference: String, file: File): FileDownloadTask {
+        return getChild(reference).getFile(file)
     }
 
     fun getOnLocalFile(reference: String, key: String): Any {

@@ -6,6 +6,7 @@ import android.app.AlertDialog
 import android.content.ContentValues
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -15,12 +16,18 @@ import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import com.github.displace.sdp2022.ImageDatabase
+import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.R
+import com.github.displace.sdp2022.users.CompleteUser
 import com.google.firebase.auth.*
 import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.google.firebase.database.*
+import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
+import com.google.firebase.storage.ktx.storage
+import java.io.File
 
 class AccountSettingsActivity : AppCompatActivity() {
 
@@ -52,17 +59,17 @@ class AccountSettingsActivity : AppCompatActivity() {
 
     private lateinit var username: TextView
     private lateinit var profilePic: ImageView
-    private var imageUri: Uri? = null
-    private lateinit var actualPassword: TextView
-    private var processingAlert: AlertDialog? = null
-    private var firebaseAuth: FirebaseAuth? = null
-    private var firebaseUser: FirebaseUser? = null
+    private var imageUri: Uri = Uri.EMPTY
+    //private var processingAlert: AlertDialog? = null
+    private var firebaseAuth: FirebaseAuth? = null      // to remove
+    private var firebaseUser: FirebaseUser? = null      // to remove
     //private var user: User? = null
 
-    private var firebaseDatabase: FirebaseDatabase? = null
-    private var databaseReference: DatabaseReference? = null
-    private var storageReference: StorageReference? = null
+    private val storageReference = Firebase.storage("gs://displace-dd51e.appspot.com/").reference
 
+    private lateinit var activeUser: CompleteUser
+
+    private lateinit var imgDBReference: StorageReference
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,31 +77,41 @@ class AccountSettingsActivity : AppCompatActivity() {
 
         val profilePicUpdate = findViewById<TextView>(R.id.profilePicUpdate)
         val usernameUpdate = findViewById<TextView>(R.id.usernameUpdate)
-        val passwordUpdate = findViewById<TextView>(R.id.passwordUpdate)
-        val mockSignInButton = findViewById<Button>(R.id.mockSignInButton)
-        val mockSignOutButton = findViewById<Button>(R.id.mockSignOutButton)
+        //val passwordUpdate = findViewById<TextView>(R.id.passwordUpdate)
+        //val mockSignInButton = findViewById<Button>(R.id.mockSignInButton)
+        //val mockSignOutButton = findViewById<Button>(R.id.mockSignOutButton)
 
         username = findViewById(R.id.username)
-
         profilePic = findViewById(R.id.profilePic)
 
-        actualPassword = findViewById(R.id.actualPassword)
-        actualPassword.text = "password"
+        val app = applicationContext as MyApplication
+        activeUser = app.getActiveUser()!!
 
-        firebaseAuth = FirebaseAuth.getInstance()
+        imgDBReference = storageReference.child("images/profilePictures/${activeUser.getPartialUser().uid}")
 
-        if (firebaseAuth?.currentUser == null) {
-            showToastText("Not signed in")
-        } else {
-            firebaseUser = firebaseAuth?.currentUser
-            firebaseUser?.let {
-                username.text = firebaseUser?.displayName
-                profilePic.setImageURI(firebaseUser?.photoUrl)
-            }
+        val localFile = File.createTempFile("profilePic", "jpg")
+
+        imgDBReference.getFile(localFile).addOnSuccessListener {
+            val bitmap = BitmapFactory.decodeFile(localFile.absolutePath)
+            profilePic.setImageBitmap(bitmap)
         }
 
+        username.text = activeUser.getPartialUser().username
 
-        storageReference = FirebaseStorage.getInstance().reference
+        /*firebaseAuth = FirebaseAuth.getInstance()      // to remove
+
+        if (firebaseAuth?.currentUser == null) {      // to remove
+            showToastText("Not signed in")      // to remove
+        } else {      // to remove
+            firebaseUser = firebaseAuth?.currentUser      // to remove
+            firebaseUser?.let {      // to remove
+                username.text = firebaseUser?.displayName      // to remove
+                //profilePic.setImageURI(firebaseUser?.photoUrl)
+            }
+        }*/
+
+
+        /*storageReference = FirebaseStorage.getInstance().reference
 
         firebaseDatabase = FirebaseDatabase.getInstance()
         databaseReference = firebaseDatabase?.getReference("Users")
@@ -110,37 +127,36 @@ class AccountSettingsActivity : AppCompatActivity() {
 
             override fun onCancelled(error: DatabaseError) {}
 
-        })
+        })*/
 
 
         profilePicUpdate.setOnClickListener {
             selectPic()
         }
 
-        passwordUpdate.setOnClickListener {
+        /*passwordUpdate.setOnClickListener {
             showChangePasswordDialog()
-        }
+        }*/
 
         usernameUpdate.setOnClickListener {
             changeUsername()
         }
 
-        mockSignInButton.setOnClickListener {
+        /*mockSignInButton.setOnClickListener {      // to remove
             mockSignin()
         }
 
-        mockSignOutButton.setOnClickListener {
+        mockSignOutButton.setOnClickListener {      // to remove
             if (firebaseAuth?.currentUser == null) {
                 showToastText("Not signed in")
             } else {
                 FirebaseAuth.getInstance().signOut()
                 showToastText("Signed out")
             }
-        }
-
+        }*/
     }
 
-    private fun mockSignin() {
+    /*private fun mockSignin() {      // to remove
         firebaseAuth?.signInWithEmailAndPassword("franck.khayat@gmail.com", "password")
             ?.addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
@@ -152,7 +168,7 @@ class AccountSettingsActivity : AppCompatActivity() {
                     showToastText("Sign in failed")
                 }
             }
-    }
+    }*/
 
     private fun selectPic() {
         val options = arrayOf("Camera", "Gallery")
@@ -201,7 +217,7 @@ class AccountSettingsActivity : AppCompatActivity() {
         contentValues.put(MediaStore.Images.Media.TITLE, "Temp_pic")
         contentValues.put(MediaStore.Images.Media.DESCRIPTION, "Temp Description")
         imageUri =
-            contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
+            contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)!!
         val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
         startActivityForResult(cameraIntent, IMAGE_CAMERA_REQUEST)
@@ -229,8 +245,8 @@ class AccountSettingsActivity : AppCompatActivity() {
             if (requestCode == IMAGE_CAMERA_REQUEST) {
                 profilePic.setImageURI(imageUri)
             } else if (requestCode == IMAGE_GALLERY_REQUEST) {
-                imageUri = data?.data
-                profilePic.setImageURI(data?.data)
+                imageUri = data?.data!!
+                profilePic.setImageURI(data.data)
             }
             uploadProfilePhoto(imageUri)
         }
@@ -242,36 +258,36 @@ class AccountSettingsActivity : AppCompatActivity() {
         if (imageUri == null) {
             showToastText("Unable to upload profile photo")
         } else {
-            val profileUpdates = userProfileChangeRequest {
+            /*val profileUpdates = userProfileChangeRequest {
                 photoUri = imageUri
             }
-            if (firebaseUser != null) {
 
-                updateUser(profileUpdates, "Profile picture updated")
+            updateUser(profileUpdates, "Profile picture updated")*/
 
-                val filepathname: String = "Users_Profile_Cover_image/image_" + firebaseUser!!.uid
-                val storageReference1 = storageReference!!.child(filepathname)
-                storageReference1.putFile(imageUri).addOnSuccessListener { taskSnapshot ->
-                    val uriTask = taskSnapshot.storage.downloadUrl
-                    while (!uriTask.isSuccessful) {
-                    }
+            imgDBReference.putFile(imageUri).addOnSuccessListener { /*taskSnapshot ->
 
-                    val downloadUri = uriTask.result
-                    if (uriTask.isSuccessful) {
-                        val map: HashMap<String, Any> = HashMap()
-                        map["image"] = downloadUri.toString()
-                        databaseReference?.child(firebaseUser!!.uid)?.updateChildren(map)
-                            ?.addOnFailureListener {
-                                showToastText("Unable to update Profile Picture")
-                            }
-                    }
+                val uriTask = taskSnapshot.storage.downloadUrl
+                while (!uriTask.isSuccessful) {
                 }
+
+                val downloadUri = uriTask.result
+                if (uriTask.isSuccessful) {
+                    val map: HashMap<String, Any> = HashMap()
+                    map["image"] = downloadUri.toString()
+                    databaseReference?.child(activeUser.getPartialUser().uid)?.updateChildren(map)
+                        ?.addOnFailureListener {
+                            showToastText("Unable to update Profile Picture")
+                        }
+
+                }*/
+
+                profilePic.setImageURI(imageUri)
             }
-            profilePic.setImageURI(imageUri)
+
         }
     }
 
-    private fun showChangePasswordDialog() {
+    /*private fun showChangePasswordDialog() {
         val view = LayoutInflater.from(this).inflate(R.layout.password_update_dialog, null)
         val oldPassword = view.findViewById<EditText>(R.id.oldPasswordLog)
         val newPassword = view.findViewById<EditText>(R.id.newPasswordLog)
@@ -300,9 +316,9 @@ class AccountSettingsActivity : AppCompatActivity() {
             dialogPassword.dismiss()
             updatePassword(oldP, newP)
         }
-    }
+    }*/
 
-    private fun updatePassword(oldP: String, newP: String) {
+    /*private fun updatePassword(oldP: String, newP: String) {
         val authCredential: AuthCredential? =
             firebaseUser?.email?.let { EmailAuthProvider.getCredential(it, oldP) }
 
@@ -328,7 +344,7 @@ class AccountSettingsActivity : AppCompatActivity() {
                 actualPassword.text = newP
             }
         }
-    }
+    }*/
 
     private fun changeUsername() {
         val view = LayoutInflater.from(this).inflate(R.layout.username_update_dialog, null)
@@ -348,7 +364,7 @@ class AccountSettingsActivity : AppCompatActivity() {
             if (checkIfEmpty(name)) {
                 showToastText("New Username can't be empty")
             } else {
-                val profileUpdates = userProfileChangeRequest {
+                /*val profileUpdates = userProfileChangeRequest {
                     displayName = name
                 }
 
@@ -362,8 +378,9 @@ class AccountSettingsActivity : AppCompatActivity() {
                         ?.updateChildren(map as Map<String, Any>)?.addOnFailureListener {
                             showToastText("Unable to update name")
                         }
-                }
+                }*/
 
+                activeUser.changeUsername(name)
                 username.text = name
             }
         }
@@ -429,11 +446,11 @@ class AccountSettingsActivity : AppCompatActivity() {
         Toast.makeText(this, string, Toast.LENGTH_LONG).show()
     }
 
-    private fun updateUser(profileUpdates: UserProfileChangeRequest, msg: String) {
+    /*private fun updateUser(profileUpdates: UserProfileChangeRequest, msg: String) {
         firebaseUser!!.updateProfile(profileUpdates).addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 showToastText(msg)
             }
         }
-    }
+    }*/
 }
