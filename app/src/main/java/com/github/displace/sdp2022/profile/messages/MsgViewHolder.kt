@@ -17,7 +17,7 @@ class MsgViewHolder(itemview: View) : RecyclerView.ViewHolder(itemview) {
     val date: TextView = itemview.findViewById(R.id.msgDate)
     val sender: TextView = itemview.findViewById(R.id.msgSender)
 
-    private val replyButton: ImageButton = itemview.findViewById(R.id.replyButton)
+    val replyButton: ImageButton = itemview.findViewById(R.id.replyButton)
 
 
     lateinit var friend: PartialUser

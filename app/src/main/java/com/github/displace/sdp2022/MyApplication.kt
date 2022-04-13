@@ -32,6 +32,11 @@ class MyApplication : Application() {
         return simpleDate.format(Date())
     }
 
+    fun getCurrentTime(): String {
+        val simpleTime = SimpleDateFormat("HH:mm")
+        return simpleTime.format(Date())
+    }
+
   //  private lateinit var rTdb : RealTimeDatabase
    // private lateinit var rTdbNoCache : RealTimeDatabase
 

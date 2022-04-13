@@ -169,7 +169,8 @@ class ProfileActivity : AppCompatActivity() {
         }
         val messageAdapter = MsgViewAdapter(
             applicationContext,
-            list
+            list,
+            0
         )
         messageRecyclerView.adapter = messageAdapter
         messageRecyclerView.layoutManager = LinearLayoutManager(applicationContext)
