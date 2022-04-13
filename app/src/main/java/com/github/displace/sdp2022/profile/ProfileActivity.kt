@@ -1,14 +1,24 @@
 package com.github.displace.sdp2022.profile
 
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
+import android.graphics.BitmapFactory
+import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.ScrollView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.github.displace.sdp2022.MainMenuActivity
 import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.R
 import com.github.displace.sdp2022.RealTimeDatabase
@@ -16,6 +26,7 @@ import com.github.displace.sdp2022.profile.achievements.AchViewAdapter
 import com.github.displace.sdp2022.profile.friends.FriendViewAdapter
 import com.github.displace.sdp2022.profile.history.HistoryViewAdapter
 import com.github.displace.sdp2022.profile.messages.Message
+import com.github.displace.sdp2022.profile.messages.MessageHandler
 import com.github.displace.sdp2022.profile.messages.MsgViewAdapter
 import com.github.displace.sdp2022.profile.settings.AccountSettingsActivity
 import com.github.displace.sdp2022.profile.statistics.StatViewAdapter
@@ -29,6 +40,9 @@ class ProfileActivity : AppCompatActivity() {
 
     private val db : RealTimeDatabase = RealTimeDatabase().instantiate("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",false) as RealTimeDatabase
 
+    private lateinit var msgLs : ArrayList<HashMap<String,Any>>
+
+    private lateinit var activePartialUser : PartialUser
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,6 +53,7 @@ class ProfileActivity : AppCompatActivity() {
         val activeUser = app.getActiveUser()
         findViewById<TextView>(R.id.profileUsername).text =
             activeUser?.getPartialUser()?.username ?: "defaultNotLoggedIn"
+
 
         /* Achievements */
         val achRecyclerView = findViewById<RecyclerView>(R.id.recyclerAch)
@@ -97,6 +112,7 @@ class ProfileActivity : AppCompatActivity() {
         /*Set the default at the start*/
         activityStart()
 
+
     }
 
     override fun onResume() {
@@ -105,17 +121,6 @@ class ProfileActivity : AppCompatActivity() {
         val activeUser = app.getActiveUser()
         findViewById<TextView>(R.id.profileUsername).text =
             activeUser?.getPartialUser()?.username ?: "defaultNotLoggedIn"
-    }
-
-    private fun messageListener() = object : ValueEventListener {
-        override fun onDataChange(snapshot: DataSnapshot) {
-            val ls = snapshot.value as ArrayList<HashMap<String,Any>>?
-            messageList(ls)
-        }
-
-        override fun onCancelled(error: DatabaseError) {
-        }
-
     }
 
     private fun activityStart() {
@@ -157,6 +162,18 @@ class ProfileActivity : AppCompatActivity() {
 
     }
 
+    private fun messageListener() = object : ValueEventListener {
+
+        override fun onDataChange(snapshot: DataSnapshot) {
+            val ls = snapshot.value as ArrayList<HashMap<String,Any>>?
+            messageList(ls)
+        }
+
+        override fun onCancelled(error: DatabaseError) {
+        }
+
+    }
+
     private fun messageList(ls : ArrayList<HashMap<String,Any>>?){
         val messageRecyclerView = findViewById<RecyclerView>(R.id.recyclerMsg)
         val list = mutableListOf<Message>()
@@ -175,5 +192,8 @@ class ProfileActivity : AppCompatActivity() {
         messageRecyclerView.adapter = messageAdapter
         messageRecyclerView.layoutManager = LinearLayoutManager(applicationContext)
     }
+
+
+
 
 }

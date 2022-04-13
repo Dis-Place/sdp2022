@@ -6,6 +6,7 @@ import com.github.displace.sdp2022.news.NewsDbConnection
 import com.github.displace.sdp2022.profile.MockDB
 import com.github.displace.sdp2022.profile.ProfileDbConnection
 import com.github.displace.sdp2022.profile.friends.Friend
+import com.github.displace.sdp2022.profile.messages.MessageHandler
 import com.github.displace.sdp2022.users.CompleteUser
 import java.text.SimpleDateFormat
 import java.util.*
@@ -19,12 +20,22 @@ class MyApplication : Application() {
 
     private var lobbyID : String = ""
 
+    private lateinit var msgHandler : MessageHandler
+
     fun setLobbyID(ID : String){
         lobbyID = ID
     }
 
     fun getLobbyID(): String {
         return lobbyID
+    }
+
+    fun setMessageHandler(handler : MessageHandler){
+        msgHandler = handler
+    }
+
+    fun getMessageHandler(): MessageHandler {
+        return msgHandler
     }
 
     fun getCurrentDate(): String {
