@@ -10,21 +10,27 @@ import com.github.displace.sdp2022.profile.messages.MessageHandler
 
 class NewsActivity : AppCompatActivity() {
 
-    private lateinit var dbAccess: NewsDbConnection
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_news)
 
-        val app = applicationContext as MyApplication
-        dbAccess = app.getNewsDb()
-
         val newsRecyclerView = findViewById<RecyclerView>(R.id.recyclerNews)
-        val newsAdapter = NewsViewAdapter(applicationContext, dbAccess.getNewsList(3))
+        val newsAdapter = NewsViewAdapter(applicationContext, getNewsList())
         newsRecyclerView.adapter = newsAdapter
         newsRecyclerView.layoutManager = LinearLayoutManager(applicationContext)
 
 
+    }
+
+    private fun getNewsList(): List<News> {
+        return listOf(
+            News(
+                "WEEKLY UPDATE",
+                "Profiles and News are now also available!",
+                "14/03/2022"
+            )
+        )
     }
 
 

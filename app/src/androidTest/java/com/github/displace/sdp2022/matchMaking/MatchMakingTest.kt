@@ -1,6 +1,7 @@
 package com.github.displace.sdp2022.matchMaking
 
 import android.content.Intent
+import android.os.Message
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso
@@ -9,19 +10,12 @@ import androidx.test.espresso.assertion.ViewAssertions
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.espresso.matcher.ViewMatchers
-import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.displace.sdp2022.*
-import com.github.displace.sdp2022.matchMaking.Lobby
-import com.github.displace.sdp2022.matchMaking.MatchMakingActivity
-import com.github.displace.sdp2022.news.NewsActivity
-import com.github.displace.sdp2022.profile.MockDB
-import com.github.displace.sdp2022.profile.ProfileActivity
-import com.github.displace.sdp2022.profile.friends.Friend
+import com.github.displace.sdp2022.profile.messages.MessageHandler
 import com.github.displace.sdp2022.users.CompleteUser
 import com.github.displace.sdp2022.users.PartialUser
 import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -35,6 +29,8 @@ class MatchMakingTest {
         app.setActiveUser(CompleteUser(null, false))
 
         Thread.sleep(3000)
+        app.setMessageHandler(MessageHandler(app.getActiveUser()!!.getPartialUser(),app))
+        Thread.sleep(1000)
     }
 
     @Test

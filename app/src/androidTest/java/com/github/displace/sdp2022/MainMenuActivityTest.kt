@@ -17,9 +17,7 @@ import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
-import androidx.test.rule.GrantPermissionRule
 import com.github.displace.sdp2022.news.NewsActivity
-import com.github.displace.sdp2022.profile.MockDB
 import com.github.displace.sdp2022.profile.ProfileActivity
 import com.github.displace.sdp2022.users.CompleteUser
 import org.junit.Rule
@@ -38,7 +36,6 @@ class MainMenuActivityTest {
     fun testingInput() {
 
         val app = ApplicationProvider.getApplicationContext() as MyApplication
-        app.setDb(MockDB())
         app.setActiveUser(CompleteUser(null, false))
 
         Thread.sleep(3000)
@@ -79,7 +76,6 @@ class MainMenuActivityTest {
         Intents.init()
 
         val app = ApplicationProvider.getApplicationContext() as MyApplication
-        app.setDb(MockDB())
         Espresso.onView(withId(R.id.newsButton)).perform(click())
 
         intended(hasComponent(NewsActivity::class.java.name))
