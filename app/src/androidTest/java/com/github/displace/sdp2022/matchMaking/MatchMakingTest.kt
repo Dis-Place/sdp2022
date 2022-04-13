@@ -190,4 +190,17 @@ class MatchMakingTest {
         }
     }
 
+    @Test
+    fun testGameListToMM(){
+        val intent = Intent(ApplicationProvider.getApplicationContext(), GameListActivity::class.java)
+        val scenario = ActivityScenario.launch<MatchMakingActivity>(intent)
+
+        val db : RealTimeDatabase = RealTimeDatabase().noCacheInstantiate("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",true) as RealTimeDatabase
+        Thread.sleep(1000)
+
+        scenario.use {
+            Espresso.onView(ViewMatchers.withId(R.id.playVersusButton)).perform(ViewActions.click())
+        }
+    }
+
 }
