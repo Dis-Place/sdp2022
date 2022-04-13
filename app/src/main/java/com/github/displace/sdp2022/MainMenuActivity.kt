@@ -12,6 +12,7 @@ import com.firebase.ui.auth.AuthUI
 import com.github.displace.sdp2022.authentication.TempLoginActivity
 import com.github.displace.sdp2022.news.NewsActivity
 import com.github.displace.sdp2022.profile.ProfileActivity
+import com.github.displace.sdp2022.profile.messages.MessageHandler
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
@@ -26,6 +27,9 @@ class MainMenuActivity : AppCompatActivity() {
 
         updateUI()
 
+        val app = applicationContext as MyApplication
+        val handler = MessageHandler(app.getActiveUser()!!.getPartialUser(),app)
+        app.setMessageHandler(handler)
     }
 
     override fun onResume() {
@@ -42,6 +46,15 @@ class MainMenuActivity : AppCompatActivity() {
         if(user.guestBoolean) {
             user.removeUserFromDatabase()
         }
+
+
+    }
+
+    override fun onPause() {
+        super.onPause()
+
+        val app = applicationContext as MyApplication
+        app.getMessageHandler().removeListener()
     }
 
 
@@ -50,6 +63,7 @@ class MainMenuActivity : AppCompatActivity() {
     fun playButton(view: View) {
         val intent = Intent(this, GameListActivity::class.java)
         startActivity(intent)
+
     }
 
     //send the user to the Profile screen : view stats + edit profile

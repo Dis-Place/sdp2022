@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.R
+import com.github.displace.sdp2022.profile.messages.MessageHandler
 
 class NewsActivity : AppCompatActivity() {
 
@@ -23,5 +24,8 @@ class NewsActivity : AppCompatActivity() {
         newsRecyclerView.adapter = newsAdapter
         newsRecyclerView.layoutManager = LinearLayoutManager(applicationContext)
 
+
     }
+
+
 }
