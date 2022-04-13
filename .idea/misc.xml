@@ -51,7 +51,7 @@
         <entry key="app/src/main/res/layout/ach.xml" value="0.17325227963525835" />
         <entry key="app/src/main/res/layout/activity_account_settings.xml" value="0.17325227963525835" />
         <entry key="app/src/main/res/layout/activity_demo_map.xml" value="0.17325227963525835" />
-        <entry key="app/src/main/res/layout/activity_friend_profile.xml" value="0.17325227963525835" />
+        <entry key="app/src/main/res/layout/activity_friend_profile.xml" value="0.25" />
         <entry key="app/src/main/res/layout/activity_game_list.xml" value="0.17325227963525835" />
         <entry key="app/src/main/res/layout/activity_game_summary.xml" value="0.17325227963525835" />
         <entry key="app/src/main/res/layout/activity_login_menu.xml" value="0.17325227963525835" />
@@ -60,7 +60,7 @@
         <entry key="app/src/main/res/layout/activity_match_making.xml" value="0.17325227963525835" />
         <entry key="app/src/main/res/layout/activity_news.xml" value="0.17325227963525835" />
         <entry key="app/src/main/res/layout/activity_play.xml" value="0.17325227963525835" />
-        <entry key="app/src/main/res/layout/activity_profile.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/activity_profile.xml" value="0.22" />
         <entry key="app/src/main/res/layout/activity_send_message.xml" value="0.17325227963525835" />
         <entry key="app/src/main/res/layout/activity_temp_login.xml" value="0.25" />
         <entry key="app/src/main/res/layout/activity_upload_image.xml" value="0.17325227963525835" />

@@ -175,4 +175,6 @@ class ProfileActivity : AppCompatActivity() {
         messageRecyclerView.layoutManager = LinearLayoutManager(applicationContext)
     }
 
+    fun addFriendButton(view: View) {}
+
 }
