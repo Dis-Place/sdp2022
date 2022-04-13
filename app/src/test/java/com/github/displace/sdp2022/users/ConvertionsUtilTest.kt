@@ -1,4 +1,4 @@
-package com.github.displace.sdp2022
+package com.github.displace.sdp2022.users
 
 import com.github.displace.sdp2022.gameComponents.Coordinates
 import org.junit.Assert.assertEquals
