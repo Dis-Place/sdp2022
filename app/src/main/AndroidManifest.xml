@@ -19,9 +19,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Bootcamp">
         <activity
+            android:name=".profile.AddFriendActivity"
+            android:exported="false" />
+        <activity
             android:name=".SettingsActivity"
             android:exported="false"
-            android:parentActivityName=".MainMenuActivity"/>
+            android:parentActivityName=".MainMenuActivity" />
         <activity
             android:name=".authentication.TempLoginActivity"
             android:exported="false" />
@@ -119,4 +122,5 @@
             </intent-filter>
         </activity>
     </application>
+
 </manifest>

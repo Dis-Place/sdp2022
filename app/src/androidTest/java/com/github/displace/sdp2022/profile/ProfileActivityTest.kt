@@ -99,6 +99,11 @@ class ProfileActivityTest {
     }
 
     @Test
+    fun testAddFriendButtonGoesToAddFriendActivity(){
+        //TODO: add the test once problems with lateinitvariable are gone
+    }
+
+    @Test
     fun testFriendsButton() {
 
         val intent =
@@ -187,5 +192,7 @@ class ProfileActivityTest {
             }
         }
     }
+
+
 
 }

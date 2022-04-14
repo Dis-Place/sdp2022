@@ -9,9 +9,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.github.displace.sdp2022.MyApplication
-import com.github.displace.sdp2022.R
-import com.github.displace.sdp2022.RealTimeDatabase
+import com.github.displace.sdp2022.*
 import com.github.displace.sdp2022.profile.achievements.AchViewAdapter
 import com.github.displace.sdp2022.profile.friends.FriendViewAdapter
 import com.github.displace.sdp2022.profile.history.HistoryViewAdapter
@@ -175,6 +173,9 @@ class ProfileActivity : AppCompatActivity() {
         messageRecyclerView.layoutManager = LinearLayoutManager(applicationContext)
     }
 
-    fun addFriendButton(view: View) {}
+    @Suppress("UNUSED_PARAMETER")
+    fun addFriendButton(view: View) {
+        startActivity(Intent(this, AddFriendActivity::class.java))
+    }
 
 }
