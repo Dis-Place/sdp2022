@@ -5,10 +5,10 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Button
+import android.widget.CheckBox
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.firebase.ui.auth.AuthUI
-import com.github.displace.sdp2022.GameListActivity
 import com.github.displace.sdp2022.MainMenuActivity
 import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.R
@@ -26,7 +26,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
-import kotlin.math.sign
 
 const val REQUEST_CODE_SIGN_IN = 0
 
@@ -40,6 +39,15 @@ class TempLoginActivity : AppCompatActivity() {
         setContentView(R.layout.activity_temp_login)
         auth = Firebase.auth
 
+        val sharedPreferences = getSharedPreferences("checkbox", MODE_PRIVATE)
+        if (sharedPreferences.getBoolean("checkbox", false)) {
+            val app = applicationContext as MyApplication
+            app.setActiveUser(CompleteUser(null, false, true))
+            Toast.makeText(this, "You are already logged in", Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(this, "Please login", Toast.LENGTH_LONG).show()
+        }
+
         val signInButton = findViewById<Button>(R.id.btnGoogleSignIn)
         signInButton.setOnClickListener {
             val options = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -47,7 +55,6 @@ class TempLoginActivity : AppCompatActivity() {
             signInClient = GoogleSignIn.getClient(this, options)
 
             startActivityForResult(signInClient.signInIntent, REQUEST_CODE_SIGN_IN)
-
         }
         val logout = findViewById<Button>(R.id.btnGoogleSignOut)
         logout.setOnClickListener {
@@ -62,6 +69,21 @@ class TempLoginActivity : AppCompatActivity() {
                     .show()
             }
             updateUI(false)
+        }
+
+        val remember = findViewById<CheckBox>(R.id.loginRememberCheckBox)
+        remember.setOnClickListener {
+            if (remember.isChecked) {
+                val editor = sharedPreferences.edit()
+                editor.putBoolean("remember", true)
+                editor.apply()
+                Toast.makeText(this, "Remember Me is checked", Toast.LENGTH_SHORT).show()
+            } else {
+                val editor = sharedPreferences.edit()
+                editor.putBoolean("remember", false)
+                editor.apply()
+                Toast.makeText(this, "Remember Me is unchecked", Toast.LENGTH_SHORT).show()
+            }
         }
 
         //val offlineSignIn = findViewById<Button>(R.id.btnOfflineSignIn)
@@ -103,7 +125,7 @@ class TempLoginActivity : AppCompatActivity() {
                             "Successfully logged in $name ",
                             Toast.LENGTH_LONG
                         ).show()
-                        app.setActiveUser(CompleteUser(current, false))
+                        app.setActiveUser(CompleteUser(current, false, false))
                     }
 
                 }
@@ -137,17 +159,16 @@ class TempLoginActivity : AppCompatActivity() {
         updateUI(true)
     }
 
-    private fun updateUI(loggingIn : Boolean){
+    private fun updateUI(loggingIn: Boolean) {
         val signInButton = findViewById<Button>(R.id.btnGoogleSignIn)
         val onlineButton = findViewById<Button>(R.id.goToAppOnlineButton)
         val offlineButton = findViewById<Button>(R.id.goToAppOfflineButton)
 
-        if(loggingIn){
+        if (loggingIn) {
             signInButton.visibility = View.GONE
             onlineButton.visibility = View.VISIBLE
             offlineButton.visibility = View.GONE
-        }
-        else{
+        } else {
             signInButton.visibility = View.VISIBLE
             onlineButton.visibility = View.GONE
             offlineButton.visibility = View.VISIBLE
@@ -158,7 +179,7 @@ class TempLoginActivity : AppCompatActivity() {
     @Suppress("UNUSED_PARAMETER")
     fun startOffline(view: View) {
         val app = applicationContext as MyApplication
-        app.setActiveUser(CompleteUser(null, true))
+        app.setActiveUser(CompleteUser(null, true, false))
         goToMainMenuActivity(view)
     }
 
@@ -169,7 +190,7 @@ class TempLoginActivity : AppCompatActivity() {
     }
 
     @Suppress("UNUSED_PARAMETER")
-    private fun goToMainMenuActivity(view: View){
+    private fun goToMainMenuActivity(view: View) {
         startActivity(Intent(this@TempLoginActivity, MainMenuActivity::class.java))
     }
 
