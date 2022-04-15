@@ -16,8 +16,8 @@ import kotlin.random.nextUInt
 
 class CompleteUser(
     private val firebaseUser: FirebaseUser?,
-    val guestBoolean: Boolean,
-    val offlineMode: Boolean
+    val guestBoolean: Boolean = false,
+    val offlineMode: Boolean = false
 ) : User {
 
     private val db: RealTimeDatabase = RealTimeDatabase().instantiate(
