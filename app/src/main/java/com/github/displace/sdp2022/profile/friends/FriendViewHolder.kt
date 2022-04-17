@@ -2,7 +2,6 @@ package com.github.displace.sdp2022.profile.friends
 
 import android.content.Intent
 import android.view.View
-import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
@@ -10,15 +9,8 @@ import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.R
 import com.github.displace.sdp2022.RealTimeDatabase
 import com.github.displace.sdp2022.profile.MessageUpdater
-import com.github.displace.sdp2022.profile.ProfileActivity
-import com.github.displace.sdp2022.profile.ProfileDbConnection
-import com.github.displace.sdp2022.profile.messages.Message
 import com.github.displace.sdp2022.profile.messages.SendMessageActivity
 import com.github.displace.sdp2022.users.PartialUser
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.MutableData
-import com.google.firebase.database.Transaction
 
 class FriendViewHolder(itemview: View) : RecyclerView.ViewHolder(itemview) {
 

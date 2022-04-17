@@ -17,6 +17,7 @@ import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.R
 import com.github.displace.sdp2022.RealTimeDatabase
 import com.github.displace.sdp2022.profile.friends.FriendViewAdapter
+import com.github.displace.sdp2022.profile.messages.MessageHandler
 import com.github.displace.sdp2022.users.PartialUser
 import com.google.firebase.database.*
 import kotlin.random.Random
@@ -294,6 +295,11 @@ class MatchMakingActivity : AppCompatActivity() {
         db.update("MM/$gamemode/$map/$lobbyType/freeLobbies", id, lobby)
         setupLobbyListener()
         uiToSearch()
+
+
+
+
+
     }
 
     /**
@@ -508,6 +514,9 @@ class MatchMakingActivity : AppCompatActivity() {
             changeVisibility<Group>(R.id.privateGroup, View.INVISIBLE)
         }
         changeVisibility<Group>(R.id.errorGroup, View.INVISIBLE)
+
+        val app = applicationContext as MyApplication
+        app.getMessageHandler().addListener()
     }
 
     private fun uiToSearch() {
@@ -518,6 +527,9 @@ class MatchMakingActivity : AppCompatActivity() {
             findViewById<TextView>(R.id.lobbyIdWaitShowing).text = currentLobbyId
         }
         changeVisibility<Group>(R.id.errorGroup, View.INVISIBLE)
+
+        val app = applicationContext as MyApplication
+        app.getMessageHandler().removeListener()
     }
 
     /**

@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.github.displace.sdp2022.profile.ProfileDbConnection
 import com.github.displace.sdp2022.R
 import com.github.displace.sdp2022.users.PartialUser
 
