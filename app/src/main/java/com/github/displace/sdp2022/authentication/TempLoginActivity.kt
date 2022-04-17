@@ -42,7 +42,10 @@ class TempLoginActivity : AppCompatActivity() {
         val sharedPreferences = getSharedPreferences("checkbox", MODE_PRIVATE)
         if (sharedPreferences.getBoolean("checkbox", false)) {
             val app = applicationContext as MyApplication
-            app.setActiveUser(CompleteUser(null, offlineMode = true))
+            val user = CompleteUser(null, offlineMode = true)
+            user.setContext(this)
+            app.setActiveUser(user)
+
             Toast.makeText(this, "You are already logged in", Toast.LENGTH_SHORT).show()
         } else {
             Toast.makeText(this, "Please login", Toast.LENGTH_LONG).show()
@@ -50,6 +53,10 @@ class TempLoginActivity : AppCompatActivity() {
 
         val signInButton = findViewById<Button>(R.id.btnGoogleSignIn)
         signInButton.setOnClickListener {
+            if (sharedPreferences.getBoolean("checkbox", false)){
+                val intent = Intent(this, MainMenuActivity::class.java)
+                startActivity(intent)
+            }
             val options = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.webclient_id)).requestEmail().build()
             signInClient = GoogleSignIn.getClient(this, options)
@@ -125,7 +132,9 @@ class TempLoginActivity : AppCompatActivity() {
                             "Successfully logged in $name ",
                             Toast.LENGTH_LONG
                         ).show()
-                        app.setActiveUser(CompleteUser(current))
+                        val user = CompleteUser(current)
+                        user.setContext(this@TempLoginActivity)
+                        app.setActiveUser(user)
                     }
 
                 }
@@ -179,7 +188,9 @@ class TempLoginActivity : AppCompatActivity() {
     @Suppress("UNUSED_PARAMETER")
     fun startOffline(view: View) {
         val app = applicationContext as MyApplication
-        app.setActiveUser(CompleteUser(null, guestBoolean = true))
+        val user = CompleteUser(null, guestBoolean = true)
+        user.setContext(this)
+        app.setActiveUser(user)
         goToMainMenuActivity(view)
     }
 

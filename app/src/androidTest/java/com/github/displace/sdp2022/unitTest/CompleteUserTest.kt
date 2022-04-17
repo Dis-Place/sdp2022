@@ -10,6 +10,49 @@ import org.junit.Test
 
 class CompleteUserTest {
 
+    private fun checkThatUserIsReadOnly(completeUser: CompleteUser) {
+        val achievementsSizeBefore = completeUser.getAchievements().size
+        completeUser.addAchievement(Achievement("aaa", "2020-01-01"))
+        assertTrue(completeUser.getAchievements().size == achievementsSizeBefore)
+
+        completeUser.updateStats("stats1", 99L)
+        val stats = completeUser.getStats()
+        for (i in 0..stats.size) {
+            if ("stat1" == stats[i].name) {
+                assertTrue(stats[i].value != 99L)
+            }
+        }
+
+        val friendListBefore = completeUser.getFriendsList().size
+        completeUser.addFriend(PartialUser("friend1", "aaaa"))
+        assertTrue(completeUser.getFriendsList().size == friendListBefore)
+
+        completeUser.removeFriend(PartialUser("friend1", "aaaa"))
+        assertTrue(completeUser.getFriendsList().size == friendListBefore)
+
+        val historySizeBefore = completeUser.getGameHistory().size
+        completeUser.addGameInHistory("game1", "2020-01-01", "lost")
+        assertTrue(completeUser.getGameHistory().size == historySizeBefore)
+
+        val currentUserName = completeUser.getPartialUser().username
+        completeUser.changeUsername("avatar")
+        assertTrue(completeUser.getPartialUser().username == currentUserName)
+    }
+
+    @Test
+    fun completeUserGuestModeWorks() {
+        val completeUser = CompleteUser(null, guestBoolean = true)
+        Thread.sleep(3_000)
+        checkThatUserIsReadOnly(completeUser)
+    }
+
+    @Test
+    fun completeUserOfflineModeWorks() {
+        val completeUser = CompleteUser(null, offlineMode = true)
+        Thread.sleep(3_000)
+        checkThatUserIsReadOnly(completeUser)
+    }
+
     @Test
     fun partialUserEqualsWorksWhenTrue() {
         val partialUser1 = PartialUser("dummy_name", "dummy_id")
