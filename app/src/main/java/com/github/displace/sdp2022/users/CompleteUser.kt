@@ -18,7 +18,8 @@ import kotlin.random.nextUInt
 class CompleteUser(
     private val firebaseUser: FirebaseUser?,
     val guestBoolean: Boolean = false,
-    val offlineMode: Boolean = false
+    val offlineMode: Boolean = false,
+    val debug: Boolean = false
 ) : User {
 
     private val db: RealTimeDatabase = RealTimeDatabase().instantiate(
@@ -127,34 +128,34 @@ class CompleteUser(
 
     private fun initializeUser() {
         if (offlineMode) {
-            val offlineUser = OfflineUser(context)
-            achievements = try{
+            val offlineUser = OfflineUser(context, debug)
+            achievements = try {
                 offlineUser.getAchievements()
-            }catch (fnf: FileNotFoundException){
+            } catch (fnf: FileNotFoundException) {
                 mutableListOf()
             }
 
-            friendsList = try{
+            friendsList = try {
                 offlineUser.getFriendsList()
-            }catch (fnf: FileNotFoundException){
+            } catch (fnf: FileNotFoundException) {
                 mutableListOf()
             }
 
-            gameHistory = try{
+            gameHistory = try {
                 offlineUser.getGameHistory()
-            }catch (fnf: FileNotFoundException){
+            } catch (fnf: FileNotFoundException) {
                 mutableListOf()
             }
 
-            partialUser = try{
+            partialUser = try {
                 offlineUser.getPartialUser()!!
-            }catch (fnf: FileNotFoundException){
+            } catch (fnf: FileNotFoundException) {
                 PartialUser("", "")
             }
 
-            stats = try{
+            stats = try {
                 offlineUser.getStats() as MutableList<Statistic>
-            }catch (fnf: FileNotFoundException){
+            } catch (fnf: FileNotFoundException) {
                 mutableListOf()
             }
             return

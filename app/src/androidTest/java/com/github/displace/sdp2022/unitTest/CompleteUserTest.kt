@@ -48,7 +48,7 @@ class CompleteUserTest {
 
     @Test
     fun completeUserOfflineModeWorks() {
-        val completeUser = CompleteUser(null, offlineMode = true)
+        val completeUser = CompleteUser(null, offlineMode = true, debug = true)
         Thread.sleep(3_000)
         checkThatUserIsReadOnly(completeUser)
     }
@@ -73,7 +73,7 @@ class CompleteUserTest {
     fun completeUserEqualsWorksWhenTrue() {
         val completeUser1 = CompleteUser(null, false)
         val completeUser2 = CompleteUser(null, false)
-        Thread.sleep(3000)
+        Thread.sleep(4000)
         assertTrue(completeUser1 == completeUser2)
         completeUser1.removeUserFromDatabase()
     }
