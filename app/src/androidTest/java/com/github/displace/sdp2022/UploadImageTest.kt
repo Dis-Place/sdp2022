@@ -19,6 +19,7 @@ class UploadImageTest {
     @get:Rule
     val testRule = ActivityScenarioRule(UploadImageActivity::class.java)
 
+    /*
     @Test
     fun canSearchImage() {
         Intents.init()
@@ -36,4 +37,5 @@ class UploadImageTest {
 
         Intents.release()
     }
+     */
 }
