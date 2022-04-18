@@ -40,14 +40,12 @@ class MainMenuActivity : AppCompatActivity() {
 
 
     override fun onDestroy() {
-        super.onDestroy()
         val app = applicationContext as MyApplication
         val user = app.getActiveUser()!!
         if(user.guestBoolean) {
             user.removeUserFromDatabase()
         }
-
-
+        super.onDestroy()
     }
 
     override fun onPause() {
