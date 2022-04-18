@@ -20,10 +20,10 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class UploadImageTest {
+    /*
     @get:Rule
     val testRule = ActivityScenarioRule(UploadImageActivity::class.java)
 
-    /*
     @Before
     fun before(){
         val app = ApplicationProvider.getApplicationContext() as MyApplication
