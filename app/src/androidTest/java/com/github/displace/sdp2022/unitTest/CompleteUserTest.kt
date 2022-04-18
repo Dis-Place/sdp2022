@@ -17,7 +17,7 @@ class CompleteUserTest {
 
         completeUser.updateStats("stats1", 99L)
         val stats = completeUser.getStats()
-        for (i in 0..stats.size) {
+        for (i in stats.indices) {
             if ("stat1" == stats[i].name) {
                 assertTrue(stats[i].value != 99L)
             }

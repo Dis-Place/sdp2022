@@ -9,6 +9,7 @@ import com.github.displace.sdp2022.profile.history.History
 import com.github.displace.sdp2022.profile.messages.Message
 import com.github.displace.sdp2022.profile.statistics.Statistic
 import com.google.firebase.auth.FirebaseUser
+import java.io.FileNotFoundException
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.random.Random
@@ -127,11 +128,35 @@ class CompleteUser(
     private fun initializeUser() {
         if (offlineMode) {
             val offlineUser = OfflineUser(context)
-            this.achievements = offlineUser.getAchievements()
-            this.friendsList = offlineUser.getFriendsList()
-            this.gameHistory = offlineUser.getGameHistory()
-            this.partialUser = offlineUser.getPartialUser()!!
-            this.stats = offlineUser.getStats() as MutableList<Statistic>
+            achievements = try{
+                offlineUser.getAchievements()
+            }catch (fnf: FileNotFoundException){
+                mutableListOf()
+            }
+
+            friendsList = try{
+                offlineUser.getFriendsList()
+            }catch (fnf: FileNotFoundException){
+                mutableListOf()
+            }
+
+            gameHistory = try{
+                offlineUser.getGameHistory()
+            }catch (fnf: FileNotFoundException){
+                mutableListOf()
+            }
+
+            partialUser = try{
+                offlineUser.getPartialUser()!!
+            }catch (fnf: FileNotFoundException){
+                PartialUser("", "")
+            }
+
+            stats = try{
+                offlineUser.getStats() as MutableList<Statistic>
+            }catch (fnf: FileNotFoundException){
+                mutableListOf()
+            }
             return
         }
         if (guestBoolean) {
