@@ -37,7 +37,7 @@ class CompleteUser(
         }
     }
 
-    private lateinit var context: Context
+    private var context: Context? = null
     private lateinit var partialUser: PartialUser
 
     private lateinit var googleName: String

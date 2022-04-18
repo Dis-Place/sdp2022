@@ -25,6 +25,7 @@ class UploadImageTest {
         intended(IntentMatchers.anyIntent())
         Intents.release()
     }
+
     /**
     @Test
     fun canUploadImage() {
