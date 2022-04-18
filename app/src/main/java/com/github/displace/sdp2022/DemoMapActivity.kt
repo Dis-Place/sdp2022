@@ -30,7 +30,7 @@ class DemoMapActivity : AppCompatActivity() {
     lateinit var mockPinpointsRef: MarkerManager.PinpointsRef
     lateinit var remoteMockPinpointsRef: MarkerManager.PinpointsRef
     private lateinit var dbHandler: PinpointsDBCommunicationHandler
-    private var useDB = false
+    private var useDB = true
 
     /**
      * @param savedInstanceState
@@ -53,7 +53,7 @@ class DemoMapActivity : AppCompatActivity() {
         mockPinpointsRef = markerManager.PinpointsRef()
         remoteMockPinpointsRef = markerManager.PinpointsRef()
         val db = RealTimeDatabase().noCacheInstantiate("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",false)
-        dbHandler = PinpointsDBCommunicationHandler(db,MOCK_GAME_INSTANCE_NAME)
+        dbHandler = PinpointsDBCommunicationHandler(db as RealTimeDatabase,MOCK_GAME_INSTANCE_NAME)
     }
 
     override fun onBackPressed() {
@@ -128,14 +128,14 @@ class DemoMapActivity : AppCompatActivity() {
             removeMockMarkers()
         }
         if(useDB){
-            dbHandler.updateDBPinpoints(MOCK_PLAYER,mockPinpointsRef)
+            dbHandler.updateDBPinpoints(MOCK_PLAYER.uid,mockPinpointsRef)
         }
     }
 
     @Suppress("UNUSED_PARAMETER")
     fun updateRemoteMockPinPoints(view: View){
         if(useDB){
-            dbHandler.updateLocalPinpoints(MOCK_PLAYER,remoteMockPinpointsRef)
+            dbHandler.updateLocalPinpoints(MOCK_PLAYER.uid,remoteMockPinpointsRef)
         }
     }
 
@@ -147,7 +147,7 @@ class DemoMapActivity : AppCompatActivity() {
     companion object {
         val MOCK_MARKERS_POSITIONS = listOf(DEFAULT_CENTER, GeoPoint(6.5,-4.0), GeoPoint(6.7,47.0))
         const val MOCK_GAME_INSTANCE_NAME = "demoMapMock"
-        val MOCK_PLAYER = Player(0.0,0.0,0)
+        val MOCK_PLAYER = Player(0.0,0.0,"dummy_A")
     }
 
 
