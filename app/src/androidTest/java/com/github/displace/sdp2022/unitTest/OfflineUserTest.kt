@@ -1,7 +1,9 @@
-package com.github.displace.sdp2022.users
+package com.github.displace.sdp2022.unitTest
 
 import com.github.displace.sdp2022.profile.achievements.Achievement
 import com.github.displace.sdp2022.profile.history.History
+import com.github.displace.sdp2022.users.OfflineUser
+import com.github.displace.sdp2022.users.PartialUser
 import junit.framework.Assert.assertFalse
 import junit.framework.Assert.assertTrue
 import org.junit.Test
