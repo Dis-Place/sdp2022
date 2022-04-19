@@ -1,6 +1,7 @@
 package com.github.displace.sdp2022.authentication
 
 import android.content.Intent
+import android.media.session.MediaSession
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -39,6 +40,13 @@ class TempLoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_temp_login)
         auth = Firebase.auth
+
+        /*if(auth.currentUser != null) {
+            val app = applicationContext as MyApplication
+            app.setActiveUser(CompleteUser(auth.currentUser, false))
+            Thread.sleep(1000)
+            goToMainMenuActivity()
+        }*/
 
         val signInButton = findViewById<Button>(R.id.btnGoogleSignIn)
         signInButton.setOnClickListener {
@@ -79,6 +87,10 @@ class TempLoginActivity : AppCompatActivity() {
         //        Toast.makeText(this, "AAAAAAAAAAAAAAAAAAAAAAA", Toast.LENGTH_LONG).show()
         //    }
         //}
+    }
+
+    private fun setActiveUserAsync() {
+
     }
 
     private fun googleAuthForFirebase(account: GoogleSignInAccount) {
@@ -160,17 +172,17 @@ class TempLoginActivity : AppCompatActivity() {
     fun startOffline(view: View) {
         val app = applicationContext as MyApplication
         app.setActiveUser(CompleteUser(null, true))
-        goToMainMenuActivity(view)
+        goToMainMenuActivity()
     }
 
 
     @Suppress("UNUSED_PARAMETER")
     fun enterMenu(view: View) {
-        goToMainMenuActivity(view)
+        goToMainMenuActivity()
     }
 
     @Suppress("UNUSED_PARAMETER")
-    private fun goToMainMenuActivity(view: View){
+    private fun goToMainMenuActivity(){
         startActivity(Intent(this@TempLoginActivity, MainMenuActivity::class.java))
     }
 
