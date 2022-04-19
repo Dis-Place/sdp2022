@@ -5,10 +5,7 @@ import android.view.View
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.github.displace.sdp2022.profile.ProfileDbConnection
-import com.github.displace.sdp2022.profile.friends.Friend
 import com.github.displace.sdp2022.R
-import com.github.displace.sdp2022.RealTimeDatabase
 import com.github.displace.sdp2022.users.PartialUser
 
 class MsgViewHolder(itemview: View) : RecyclerView.ViewHolder(itemview) {
@@ -17,7 +14,7 @@ class MsgViewHolder(itemview: View) : RecyclerView.ViewHolder(itemview) {
     val date: TextView = itemview.findViewById(R.id.msgDate)
     val sender: TextView = itemview.findViewById(R.id.msgSender)
 
-    private val replyButton: ImageButton = itemview.findViewById(R.id.replyButton)
+    val replyButton: ImageButton = itemview.findViewById(R.id.replyButton)
 
 
     lateinit var friend: PartialUser

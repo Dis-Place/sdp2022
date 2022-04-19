@@ -69,8 +69,9 @@ class TempLoginActivity : AppCompatActivity() {
             if (Firebase.auth.currentUser != null) {
                 AuthUI.getInstance().signOut(this@TempLoginActivity).addOnCompleteListener {
                     Toast.makeText(this, "Logging Out", Toast.LENGTH_SHORT).show()
-
+                    (applicationContext as MyApplication).getMessageHandler().removeListener()
                 }
+
             } else {
                 Toast.makeText(this, "Cannot log out you're not logged in", Toast.LENGTH_LONG)
                     .show()
