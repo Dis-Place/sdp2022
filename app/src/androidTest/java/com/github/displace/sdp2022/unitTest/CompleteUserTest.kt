@@ -1,8 +1,10 @@
 package com.github.displace.sdp2022.unitTest
 
+import androidx.test.platform.app.InstrumentationRegistry
 import com.github.displace.sdp2022.profile.achievements.Achievement
 import com.github.displace.sdp2022.profile.history.History
 import com.github.displace.sdp2022.users.CompleteUser
+import com.github.displace.sdp2022.users.OfflineUser
 import com.github.displace.sdp2022.users.PartialUser
 import org.junit.Assert.*
 import org.junit.Test
@@ -73,7 +75,7 @@ class CompleteUserTest {
     fun completeUserEqualsWorksWhenTrue() {
         val completeUser1 = CompleteUser(null, false)
         val completeUser2 = CompleteUser(null, false)
-        Thread.sleep(4000)
+        Thread.sleep(6_000)
         assertTrue(completeUser1 == completeUser2)
         completeUser1.removeUserFromDatabase()
     }
@@ -166,4 +168,19 @@ class CompleteUserTest {
         completeUser.removeUserFromDatabase()
     }
 
+    @Test
+    fun hashCodeWorks() {
+        val completeUser = CompleteUser(null, true)
+        Thread.sleep(3000)
+        val hashCode = completeUser.hashCode()
+        assertTrue(hashCode != 0)
+    }
+
+    @Test
+    fun offlineUserHashCodeWorks() {
+        val offlineUser = OfflineUser(InstrumentationRegistry.getInstrumentation().context, true)
+        Thread.sleep(3000)
+        val hashCode = offlineUser.hashCode()
+        assertTrue(hashCode != 0)
+    }
 }
