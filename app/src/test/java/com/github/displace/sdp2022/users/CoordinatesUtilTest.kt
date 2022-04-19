@@ -50,7 +50,7 @@ class CoordinatesUtilTest {
     @Test
     fun distanceIsWellBehavedOnDuplicatePoint() {
         val point = Point(6.0,34.0)
-        assertEquals(0.0, distance(point,point), DELTA_GEO)
+        assertEquals(0.0, distance(point,point), DELTA_METERS)
     }
 
     @Test
