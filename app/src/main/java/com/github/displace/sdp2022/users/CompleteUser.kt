@@ -93,8 +93,7 @@ class CompleteUser(
     override fun removeFriend(partialU: PartialUser) {
         if (guestBoolean || offlineMode)
             return
-        if (containsPartialUser(friendsList, partialU)) {
-            friendsList.remove(partialU)
+        if (friendsList.remove(partialU)) {
             db.update(dbReference, "friendsList", friendsList)
         }
     }
@@ -129,35 +128,11 @@ class CompleteUser(
     private fun initializeUser() {
         if (offlineMode) {
             val offlineUser = OfflineUser(context, debug)
-            achievements = try {
-                offlineUser.getAchievements()
-            } catch (fnf: FileNotFoundException) {
-                mutableListOf()
-            }
-
-            friendsList = try {
-                offlineUser.getFriendsList()
-            } catch (fnf: FileNotFoundException) {
-                mutableListOf()
-            }
-
-            gameHistory = try {
-                offlineUser.getGameHistory()
-            } catch (fnf: FileNotFoundException) {
-                mutableListOf()
-            }
-
-            partialUser = try {
-                offlineUser.getPartialUser()!!
-            } catch (fnf: FileNotFoundException) {
-                PartialUser("", "")
-            }
-
-            stats = try {
-                offlineUser.getStats() as MutableList<Statistic>
-            } catch (fnf: FileNotFoundException) {
-                mutableListOf()
-            }
+            achievements = offlineUser.getAchievements()
+            friendsList = offlineUser.getFriendsList()
+            gameHistory = offlineUser.getGameHistory()
+            partialUser = offlineUser.getPartialUser()!!
+            stats = offlineUser.getStats() as MutableList<Statistic>
             return
         }
         if (guestBoolean) {
@@ -179,7 +154,7 @@ class CompleteUser(
 
                 // Get achievements from the database
                 val achievementsDB =
-                    completeUser.get("achievements") as ArrayList<HashMap<String, String>>
+                    completeUser["achievements"] as ArrayList<HashMap<String, String>>
 
                 achievements = achievementsDB.map { ach ->
                     Achievement(
@@ -222,7 +197,7 @@ class CompleteUser(
                 // Get Partial User from the database
                 val partialUserMap = completeUser["partialUser"] as HashMap<String, String>
                 partialUser =
-                    PartialUser(partialUserMap["username"]!!, partialUserMap.get("uid")!!)
+                    PartialUser(partialUserMap["username"]!!, partialUserMap["uid"]!!)
             } else {
 
                 initializeAchievements()
@@ -296,10 +271,10 @@ class CompleteUser(
                 googleName = firebaseUser.displayName!!
             }
         } else {
-            if (guestBoolean) {
-                partialUser = PartialUser("Guest$guestNumber", "guest_$guestNumber")
+            partialUser = if (guestBoolean) {
+                PartialUser("Guest$guestNumber", "guest_$guestNumber")
             } else {
-                partialUser = PartialUser("defaultName", "dummy_id")
+                PartialUser("defaultName", "dummy_id")
             }
         }
 

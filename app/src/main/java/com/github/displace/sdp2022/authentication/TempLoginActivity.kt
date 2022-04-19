@@ -39,8 +39,8 @@ class TempLoginActivity : AppCompatActivity() {
         setContentView(R.layout.activity_temp_login)
         auth = Firebase.auth
 
-        val sharedPreferences = getSharedPreferences("checkbox", MODE_PRIVATE)
-        if (sharedPreferences.getBoolean("checkbox", false)) {
+        val sharedPreferences = getSharedPreferences("login-checkbox", MODE_PRIVATE)
+        if (sharedPreferences.getBoolean("login-checkbox", false)) {
             val app = applicationContext as MyApplication
             val user = CompleteUser(null, offlineMode = true)
             user.setContext(this)
@@ -53,7 +53,7 @@ class TempLoginActivity : AppCompatActivity() {
 
         val signInButton = findViewById<Button>(R.id.btnGoogleSignIn)
         signInButton.setOnClickListener {
-            if (sharedPreferences.getBoolean("checkbox", false)){
+            if (sharedPreferences.getBoolean("login-remember", false)){
                 val intent = Intent(this, MainMenuActivity::class.java)
                 startActivity(intent)
             }
@@ -82,12 +82,12 @@ class TempLoginActivity : AppCompatActivity() {
         remember.setOnClickListener {
             if (remember.isChecked) {
                 val editor = sharedPreferences.edit()
-                editor.putBoolean("remember", true)
+                editor.putBoolean("login-remember", true)
                 editor.apply()
                 Toast.makeText(this, "Remember Me is checked", Toast.LENGTH_SHORT).show()
             } else {
                 val editor = sharedPreferences.edit()
-                editor.putBoolean("remember", false)
+                editor.putBoolean("login-remember", false)
                 editor.apply()
                 Toast.makeText(this, "Remember Me is unchecked", Toast.LENGTH_SHORT).show()
             }

@@ -332,7 +332,6 @@ class OfflineUser(private val context: Context?, private val debug: Boolean = fa
         if (debug)
             return null
 
-
         //Get the cached file
         val cachedFile = File(context?.cacheDir ?: File(RDM_PATH), path)
 
