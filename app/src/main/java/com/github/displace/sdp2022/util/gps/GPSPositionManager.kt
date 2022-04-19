@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.location.LocationManager
 import androidx.core.app.ActivityCompat
+import com.github.displace.sdp2022.util.math.CoordinatesUtil
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import org.osmdroid.util.GeoPoint
@@ -66,7 +67,7 @@ class GPSPositionManager(private val activity: Activity) {
             fusedLocationProviderClient.lastLocation.addOnCompleteListener() { task ->
                 val location = task.result
                 if (location != null) {
-                    lastLocation = CoordinatesConversionUtil.geoPoint(location)
+                    lastLocation = CoordinatesUtil.geoPoint(location)
                 }
             }
         }
