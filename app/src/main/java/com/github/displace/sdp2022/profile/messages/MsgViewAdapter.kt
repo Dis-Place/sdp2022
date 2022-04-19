@@ -5,13 +5,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.github.displace.sdp2022.profile.ProfileDbConnection
 import com.github.displace.sdp2022.R
-import com.github.displace.sdp2022.RealTimeDatabase
 
 class MsgViewAdapter(
     val context: Context,
     private val data: List<Message>,
+    private val type : Int
 ) : RecyclerView.Adapter<MsgViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MsgViewHolder {
         val parentContext = parent.context
@@ -27,6 +26,12 @@ class MsgViewAdapter(
         holder.sender.text = data[index].sender.username
         holder.date.text = data[index].date
         holder.friend = data[index].sender
+
+        when(type){
+            1 -> {
+                holder.replyButton.visibility = View.GONE
+            }
+        }
 
     }
 
