@@ -14,7 +14,7 @@ import org.osmdroid.views.MapView
  */
 class MarkerManager(private val mapView: MapView) {
     private var pinPointsMap = mutableMapOf<PinpointsRef,List<Pinpoint>>()
-    private val playerPinPointsRef = PinpointsRef()
+    val playerPinPointsRef = PinpointsRef()
 
     /**
      * adds a marker to a position. the marker is removable by click

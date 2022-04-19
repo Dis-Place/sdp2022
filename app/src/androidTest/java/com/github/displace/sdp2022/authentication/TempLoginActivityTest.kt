@@ -1,4 +1,3 @@
-
 package com.github.displace.sdp2022.authentication
 
 import androidx.test.espresso.Espresso
@@ -22,9 +21,16 @@ class TempLoginActivityTest {
     @get:Rule
     val testRule = ActivityScenarioRule(TempLoginActivity::class.java)
 
+
     @Test
     fun signInButtonIsDisplayedTest() {
         Espresso.onView(ViewMatchers.withId(R.id.btnGoogleSignIn))
+            .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
+    }
+
+    @Test
+    fun checkboxIsDisplayedTest() {
+        Espresso.onView(ViewMatchers.withId(R.id.loginRememberCheckBox))
             .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
     }
 
@@ -35,14 +41,14 @@ class TempLoginActivityTest {
     }
 
     @Test
-    fun tryingToLogOutWhileNotLoggedInTest(){
+    fun tryingToLogOutWhileNotLoggedInTest() {
         Espresso.onView(ViewMatchers.withId(R.id.btnGoogleSignOut)).perform(click())
         Espresso.onView(ViewMatchers.withId(R.id.btnGoogleSignOut))
             .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
     }
 
     @Test
-    fun offLineLogginGoesToMainMenuActivityTest(){
+    fun offLineLogginGoesToMainMenuActivityTest() {
         Intents.init()
         Espresso.onView(ViewMatchers.withId(R.id.goToAppOfflineButton)).perform(click())
 
@@ -51,7 +57,7 @@ class TempLoginActivityTest {
     }
 
     @Test
-    fun readyButtonIsNotVisibleTest(){
+    fun readyButtonIsNotVisibleTest() {
         Espresso.onView(ViewMatchers.withId(R.id.goToAppOnlineButton))
             .check(ViewAssertions.matches(not(ViewMatchers.isDisplayed())))
 

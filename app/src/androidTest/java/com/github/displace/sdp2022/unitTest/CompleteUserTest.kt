@@ -1,14 +1,59 @@
 package com.github.displace.sdp2022.unitTest
 
+import androidx.test.platform.app.InstrumentationRegistry
 import com.github.displace.sdp2022.profile.achievements.Achievement
 import com.github.displace.sdp2022.profile.history.History
 import com.github.displace.sdp2022.users.CompleteUser
+import com.github.displace.sdp2022.users.OfflineUser
 import com.github.displace.sdp2022.users.PartialUser
 import org.junit.Assert.*
 import org.junit.Test
 
 
 class CompleteUserTest {
+
+    private fun checkThatUserIsReadOnly(completeUser: CompleteUser) {
+        val achievementsSizeBefore = completeUser.getAchievements().size
+        completeUser.addAchievement(Achievement("aaa", "2020-01-01"))
+        assertTrue(completeUser.getAchievements().size == achievementsSizeBefore)
+
+        completeUser.updateStats("stats1", 99L)
+        val stats = completeUser.getStats()
+        for (i in stats.indices) {
+            if ("stat1" == stats[i].name) {
+                assertTrue(stats[i].value != 99L)
+            }
+        }
+
+        val friendListBefore = completeUser.getFriendsList().size
+        completeUser.addFriend(PartialUser("friend1", "aaaa"))
+        assertTrue(completeUser.getFriendsList().size == friendListBefore)
+
+        completeUser.removeFriend(PartialUser("friend1", "aaaa"))
+        assertTrue(completeUser.getFriendsList().size == friendListBefore)
+
+        val historySizeBefore = completeUser.getGameHistory().size
+        completeUser.addGameInHistory("game1", "2020-01-01", "lost")
+        assertTrue(completeUser.getGameHistory().size == historySizeBefore)
+
+        val currentUserName = completeUser.getPartialUser().username
+        completeUser.changeUsername("avatar")
+        assertTrue(completeUser.getPartialUser().username == currentUserName)
+    }
+
+    @Test
+    fun completeUserGuestModeWorks() {
+        val completeUser = CompleteUser(null, guestBoolean = true)
+        Thread.sleep(3_000)
+        checkThatUserIsReadOnly(completeUser)
+    }
+
+    @Test
+    fun completeUserOfflineModeWorks() {
+        val completeUser = CompleteUser(null, offlineMode = true, debug = true)
+        Thread.sleep(3_000)
+        checkThatUserIsReadOnly(completeUser)
+    }
 
     @Test
     fun partialUserEqualsWorksWhenTrue() {
@@ -30,7 +75,7 @@ class CompleteUserTest {
     fun completeUserEqualsWorksWhenTrue() {
         val completeUser1 = CompleteUser(null, false)
         val completeUser2 = CompleteUser(null, false)
-        Thread.sleep(3000)
+        Thread.sleep(6_000)
         assertTrue(completeUser1 == completeUser2)
         completeUser1.removeUserFromDatabase()
     }
@@ -123,4 +168,19 @@ class CompleteUserTest {
         completeUser.removeUserFromDatabase()
     }
 
+    @Test
+    fun hashCodeWorks() {
+        val completeUser = CompleteUser(null, true)
+        Thread.sleep(3000)
+        val hashCode = completeUser.hashCode()
+        assertTrue(hashCode != 0)
+    }
+
+    @Test
+    fun offlineUserHashCodeWorks() {
+        val offlineUser = OfflineUser(InstrumentationRegistry.getInstrumentation().context, true)
+        Thread.sleep(3000)
+        val hashCode = offlineUser.hashCode()
+        assertTrue(hashCode != 0)
+    }
 }

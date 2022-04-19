@@ -20,6 +20,7 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class UploadImageTest {
+ 
     @get:Rule
     val testRule = ActivityScenarioRule(UploadImageActivity::class.java)
 
@@ -41,13 +42,13 @@ class UploadImageTest {
         Intents.release()
     }
 
+    /**
     @Test
     fun canUploadImage() {
         Intents.init()
-
-     //   Espresso.onView(withId(R.id.uploadButton)).perform(click())
-     //   intended(IntentMatchers.hasComponent(MainMenuActivity::class.java.name))
-
+        Espresso.onView(withId(R.id.uploadButton)).perform(click())
+        intended(IntentMatchers.hasComponent(MainMenuActivity::class.java.name))
         Intents.release()
     }
+     **/
 }

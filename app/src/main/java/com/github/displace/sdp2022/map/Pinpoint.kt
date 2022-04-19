@@ -4,7 +4,7 @@ import android.graphics.Paint
 import androidx.appcompat.content.res.AppCompatResources
 import com.github.displace.sdp2022.R
 import com.github.displace.sdp2022.gameComponents.Coordinates
-import com.github.displace.sdp2022.util.gps.CoordinatesConversionUtil
+import com.github.displace.sdp2022.util.math.CoordinatesUtil
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.util.constants.GeoConstants
 import org.osmdroid.views.MapView
@@ -76,7 +76,7 @@ class Pinpoint(private val mapView: MapView, private val pos: GeoPoint, private 
     }
 
     fun get2DPos() : Coordinates {
-        return CoordinatesConversionUtil.coordinates(pos)
+        return CoordinatesUtil.coordinates(pos)
     }
 
     companion object {
