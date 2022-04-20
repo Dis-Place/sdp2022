@@ -33,7 +33,7 @@ class ProfileActivityTest {
     @Before
     fun before(){
         val app = ApplicationProvider.getApplicationContext() as MyApplication
-        completeUser = CompleteUser(null, false)
+        completeUser = CompleteUser(app,null, false)
         app.setActiveUser(completeUser)
     }
 
