@@ -7,9 +7,14 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.location.LocationManager
 import androidx.core.app.ActivityCompat
-import com.google.android.gms.location.*
+
 import com.google.android.gms.location.LocationRequest.*
 import com.google.android.gms.tasks.CancellationTokenSource
+
+
+import com.github.displace.sdp2022.util.math.CoordinatesUtil
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 
 
 class GPSPositionManager(private val activity: Activity) {
