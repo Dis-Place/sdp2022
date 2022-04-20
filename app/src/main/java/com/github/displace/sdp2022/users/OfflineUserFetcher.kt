@@ -2,17 +2,21 @@ package com.github.displace.sdp2022.users
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.util.Log
 import com.github.displace.sdp2022.profile.achievements.Achievement
 import com.github.displace.sdp2022.profile.history.History
 import com.github.displace.sdp2022.profile.statistics.Statistic
-import kotlinx.serialization.*
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.ArraySerializer
+import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonObject
 import java.io.File
+import java.io.FileNotFoundException
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -255,7 +259,8 @@ class OfflineUser(private val context: Context?, private val debug: Boolean = fa
 
     @Suppress("UNCHECKED_CAST")
     private fun initializeStats() {
-        val riddenStats: MutableList<Statistic>? = readFile(STATS_PATH) as MutableList<Statistic>?
+        val riddenStats: MutableList<Statistic>? =
+            readFile(STATS_PATH) as MutableList<Statistic>?
         stats = Statistics(
             riddenStats ?: mutableListOf(
                 Statistic(
@@ -327,12 +332,16 @@ class OfflineUser(private val context: Context?, private val debug: Boolean = fa
         if (debug)
             return null
 
-
         //Get the cached file
         val cachedFile = File(context?.cacheDir ?: File(RDM_PATH), path)
 
         //Read it
-        val jsonFormatObject = cachedFile.bufferedReader().use { it.readText() }
+        val jsonFormatObject =
+            try {
+                cachedFile.bufferedReader().use { it.readText() }
+            } catch (e: FileNotFoundException) {
+                return null
+            }
 
         //Deserialize the object
         return if (jsonFormatObject.isEmpty()) {

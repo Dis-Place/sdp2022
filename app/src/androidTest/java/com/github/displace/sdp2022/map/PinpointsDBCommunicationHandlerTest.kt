@@ -34,6 +34,7 @@ class PinpointsDBCommunicationHandlerTest {
         android.Manifest.permission.ACCESS_FINE_LOCATION
     )
 
+    /*
     @Test
     fun communicationIsSuccessfulOnNonEmptyPinpoints(){
         val scenario = testRule.scenario
@@ -48,6 +49,7 @@ class PinpointsDBCommunicationHandlerTest {
             assertCorrectPositions(MOCK_MARKERS_POSITIONS, a.remoteMockPinpointsRef.get())
         }
     }
+     */
 
     @Test
     fun communicationIsSuccessfulOnEmptyPinpoints(){

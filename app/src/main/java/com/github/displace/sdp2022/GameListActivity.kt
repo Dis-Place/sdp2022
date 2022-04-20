@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.github.displace.sdp2022.matchMaking.MatchMakingActivity
+import com.github.displace.sdp2022.profile.messages.MessageHandler
 
 
 class GameListActivity : AppCompatActivity() {
@@ -12,6 +13,7 @@ class GameListActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_game_list)
+
     }
 
 
@@ -20,5 +22,7 @@ class GameListActivity : AppCompatActivity() {
     fun playButton(view: View) {
         val intent = Intent(this, MatchMakingActivity::class.java)
         startActivity(intent)
+
     }
+
 }

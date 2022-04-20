@@ -17,6 +17,7 @@ import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.R
 import com.github.displace.sdp2022.RealTimeDatabase
 import com.github.displace.sdp2022.profile.friends.FriendViewAdapter
+import com.github.displace.sdp2022.profile.messages.MessageHandler
 import com.github.displace.sdp2022.users.PartialUser
 import com.google.firebase.database.*
 import kotlin.random.Random
@@ -53,7 +54,7 @@ class MatchMakingActivity : AppCompatActivity() {
     //keeps a map of the lobby : just how the DB stores it
     private var lobbyMap : MutableMap<String,Any> = HashMap<String,Any>()
     private lateinit var app : MyApplication
-    private var other : MutableMap<String,Any> = HashMap<String,Any>()
+
 
 
     private var debug: Boolean = false
@@ -74,11 +75,6 @@ class MatchMakingActivity : AppCompatActivity() {
             lobbyMap = lobby
             updateUI()
             if(lobbyMap["lobbyCount"] as Long == lobbyMap["lobbyMax"] as Long  ){
-                other["uid"] = "ok"
-                if(((lobbyMap["lobbyPlayers"] as ArrayList<MutableMap<String, Any>>).filter { p -> p["uid"] != activeUser.uid }).size != 0) {
-                    other =
-                        ((lobbyMap["lobbyPlayers"] as ArrayList<MutableMap<String, Any>>).filter { p -> p["uid"] != activeUser.uid })[0]
-                }
                 lobbyMap["lobbyLaunch"] = true
                 setupLaunchListener()
                 findViewById<Button>(R.id.MMCancelButton).visibility = View.INVISIBLE
@@ -294,6 +290,11 @@ class MatchMakingActivity : AppCompatActivity() {
         db.update("MM/$gamemode/$map/$lobbyType/freeLobbies", id, lobby)
         setupLobbyListener()
         uiToSearch()
+
+
+
+
+
     }
 
     /**
@@ -374,7 +375,7 @@ class MatchMakingActivity : AppCompatActivity() {
      */
     private fun gameScreenTransition(){
         val intent = Intent(applicationContext, GameVersusViewActivity::class.java)
-        db.update("GameInstance/Game" + this.currentLobbyId + "/id:" + activeUser.uid,"other",other) // change 0 by other id
+
         db.update("GameInstance/Game" + this.currentLobbyId + "/id:" + activeUser.uid, "finish", 0)
         db.update("GameInstance/Game" + this.currentLobbyId + "/id:" + activeUser.uid, "x", 0.0)
         db.update("GameInstance/Game" + this.currentLobbyId + "/id:" + activeUser.uid, "y", 0.0)
@@ -382,8 +383,7 @@ class MatchMakingActivity : AppCompatActivity() {
         intent.putExtra("gid",this.currentLobbyId)
         intent.putExtra("uid",activeUser.uid)
         intent.putExtra("nbPlayer",2) // change 2 by nbPlayer when implemented
-        intent.putExtra("other",other["uid"] as String) // change 0 by other id
-        Thread.sleep(3000)
+
         startActivity(intent)
     }
 
@@ -508,6 +508,9 @@ class MatchMakingActivity : AppCompatActivity() {
             changeVisibility<Group>(R.id.privateGroup, View.INVISIBLE)
         }
         changeVisibility<Group>(R.id.errorGroup, View.INVISIBLE)
+
+        val app = applicationContext as MyApplication
+        app.getMessageHandler().addListener()
     }
 
     private fun uiToSearch() {
@@ -518,6 +521,9 @@ class MatchMakingActivity : AppCompatActivity() {
             findViewById<TextView>(R.id.lobbyIdWaitShowing).text = currentLobbyId
         }
         changeVisibility<Group>(R.id.errorGroup, View.INVISIBLE)
+
+        val app = applicationContext as MyApplication
+        app.getMessageHandler().removeListener()
     }
 
     /**

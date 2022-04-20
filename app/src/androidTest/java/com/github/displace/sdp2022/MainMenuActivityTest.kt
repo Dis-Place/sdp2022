@@ -17,31 +17,31 @@ import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
-import androidx.test.rule.GrantPermissionRule
 import com.github.displace.sdp2022.news.NewsActivity
-import com.github.displace.sdp2022.profile.MockDB
 import com.github.displace.sdp2022.profile.ProfileActivity
+import com.github.displace.sdp2022.profile.messages.MessageHandler
 import com.github.displace.sdp2022.users.CompleteUser
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class MainMenuActivityTest {
-    @get:Rule
-    val testRule = ActivityScenarioRule(MainMenuActivity::class.java)
+
+    @Before
+    fun before(){
+        val app = ApplicationProvider.getApplicationContext() as MyApplication
+        app.setActiveUser(CompleteUser(null, false))
+
+        Thread.sleep(3000)
+    }
 
     /*
      Test if the input of the main screen is correctly shown in the main menu
      */
     @Test
     fun testingInput() {
-
-        val app = ApplicationProvider.getApplicationContext() as MyApplication
-        app.setDb(MockDB())
-        app.setActiveUser(CompleteUser(null, false))
-
-        Thread.sleep(3000)
 
         val intent =
             Intent(ApplicationProvider.getApplicationContext(), MainMenuActivity::class.java)
@@ -57,8 +57,13 @@ class MainMenuActivityTest {
     fun testProfileButton() {
         Intents.init()
 
-//        Espresso.onView(withId(R.id.mainGoButton)).perform(click())
-        Espresso.onView(withId(R.id.profileButton)).perform(click())
+        val intent =
+            Intent(ApplicationProvider.getApplicationContext(), MainMenuActivity::class.java)
+        val scenario = ActivityScenario.launch<MainMenuActivity>(intent)
+
+        scenario.use {
+            Espresso.onView(withId(R.id.profileButton)).perform(click())
+        }
 
         intended(hasComponent(ProfileActivity::class.java.name))
         Intents.release()
@@ -68,7 +73,13 @@ class MainMenuActivityTest {
     fun testSettingsButton() {
         Intents.init()
 
-        Espresso.onView(withId(R.id.settingsButton)).perform(click())
+        val intent =
+            Intent(ApplicationProvider.getApplicationContext(), MainMenuActivity::class.java)
+        val scenario = ActivityScenario.launch<MainMenuActivity>(intent)
+
+        scenario.use {
+            Espresso.onView(withId(R.id.settingsButton)).perform(click())
+        }
 
         intended(hasComponent(SettingsActivity::class.java.name))
         Intents.release()
@@ -78,9 +89,13 @@ class MainMenuActivityTest {
     fun testNewsButton() {
         Intents.init()
 
-        val app = ApplicationProvider.getApplicationContext() as MyApplication
-        app.setDb(MockDB())
-        Espresso.onView(withId(R.id.newsButton)).perform(click())
+        val intent =
+            Intent(ApplicationProvider.getApplicationContext(), MainMenuActivity::class.java)
+        val scenario = ActivityScenario.launch<MainMenuActivity>(intent)
+
+        scenario.use {
+            Espresso.onView(withId(R.id.newsButton)).perform(click())
+        }
 
         intended(hasComponent(NewsActivity::class.java.name))
         Intents.release()
@@ -90,7 +105,13 @@ class MainMenuActivityTest {
     @Test
     fun testPlayButton() {
         Intents.init()
-        Espresso.onView(withId(R.id.playButton)).perform(click())
+        val intent =
+            Intent(ApplicationProvider.getApplicationContext(), MainMenuActivity::class.java)
+        val scenario = ActivityScenario.launch<MainMenuActivity>(intent)
+
+        scenario.use {
+            Espresso.onView(withId(R.id.playButton)).perform(click())
+        }
 
         intended(hasComponent(GameListActivity::class.java.name))
         Intents.release()
@@ -99,7 +120,13 @@ class MainMenuActivityTest {
     @Test
     fun testDemoButton() {
         Intents.init()
-        Espresso.onView(withId(R.id.dataBaseDemoButton)).perform(click())
+        val intent =
+            Intent(ApplicationProvider.getApplicationContext(), MainMenuActivity::class.java)
+        val scenario = ActivityScenario.launch<MainMenuActivity>(intent)
+
+        scenario.use {
+            Espresso.onView(withId(R.id.dataBaseDemoButton)).perform(click())
+        }
 
         intended(hasComponent(UploadImageActivity::class.java.name))
         Intents.release()
@@ -110,8 +137,14 @@ class MainMenuActivityTest {
         getInstrumentation().uiAutomation.executeShellCommand(
             "pm grant " + getTargetContext().packageName
                     + " android.permission.ACCESS_FINE_LOCATION");
-        Espresso.onView(withId(R.id.mapButton)).perform(click())
-        Espresso.onView(withId(R.id.map)).check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
+        val intent =
+            Intent(ApplicationProvider.getApplicationContext(), MainMenuActivity::class.java)
+        val scenario = ActivityScenario.launch<MainMenuActivity>(intent)
+
+        scenario.use {
+            Espresso.onView(withId(R.id.mapButton)).perform(click())
+            Espresso.onView(withId(R.id.map)).check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
+        }
     }
 
 }

@@ -1,13 +1,11 @@
 package com.github.displace.sdp2022.profile.friends
 
-import android.content.pm.ApkChecksum
 import android.os.Bundle
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.github.displace.sdp2022.MyApplication
-import com.github.displace.sdp2022.profile.ProfileDbConnection
 import com.github.displace.sdp2022.profile.achievements.AchViewAdapter
 import com.github.displace.sdp2022.profile.history.HistoryViewAdapter
 import com.github.displace.sdp2022.profile.statistics.StatViewAdapter
