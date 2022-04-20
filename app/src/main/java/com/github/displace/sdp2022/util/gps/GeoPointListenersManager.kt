@@ -1,5 +1,8 @@
 package com.github.displace.sdp2022.util.gps
 
+import kotlinx.coroutines.InternalCoroutinesApi
+import kotlinx.coroutines.internal.SynchronizedObject
+import kotlinx.coroutines.internal.synchronized
 import org.osmdroid.util.GeoPoint
 
 /**
@@ -21,11 +24,9 @@ class GeoPointListenersManager {
         listeners.clear()
     }
 
-    fun invokeAll(geoPoint: GeoPoint?){
-        if(geoPoint!=null){
-            for(l in listeners){
-                l.invoke(geoPoint)
-            }
+    fun invokeAll(geoPoint: GeoPoint){
+        for(l in current()){
+            l.invoke(geoPoint)
         }
     }
 

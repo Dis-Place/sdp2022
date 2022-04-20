@@ -7,15 +7,14 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.location.LocationManager
 import androidx.core.app.ActivityCompat
-import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.*
 import com.google.android.gms.location.LocationRequest.*
-import com.google.android.gms.location.LocationServices
 import com.google.android.gms.tasks.CancellationTokenSource
-import org.osmdroid.util.GeoPoint
+
 
 class GPSPositionManager(private val activity: Activity) {
-    private var currentLocation: GeoPoint? = null
     private var fusedLocationProviderClient: FusedLocationProviderClient
+    val listenersManager = GeoPointListenersManager()
 
     fun isGPSDisabled(): Boolean {
         return ActivityCompat.checkSelfPermission(
@@ -29,16 +28,15 @@ class GPSPositionManager(private val activity: Activity) {
 
     init {
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(activity)
-        if (isGPSDisabled()) {
+
+        if(isGPSDisabled()) {
             requestGPSPermissions()
-        } else if(isLocationProviderEnabled()){
-            updateCurrentLocation()
         }
+
     }
 
-    fun getPosition(): GeoPoint? {
-        updateCurrentLocation()
-        return currentLocation
+    private fun isLocationEnabled(): Boolean {
+        return (activity.getSystemService(Context.LOCATION_SERVICE) as LocationManager).isProviderEnabled(LocationManager.GPS_PROVIDER)
     }
 
     private fun requestGPSPermissions() {
@@ -48,27 +46,24 @@ class GPSPositionManager(private val activity: Activity) {
                 Manifest.permission.ACCESS_COARSE_LOCATION,
                 Manifest.permission.ACCESS_FINE_LOCATION
             ),
-            REQUEST_CODE
-        )
-    }
-
-    fun isLocationProviderEnabled(): Boolean {
-        return (activity.getSystemService(Context.LOCATION_SERVICE) as LocationManager).isProviderEnabled(
-            LocationManager.GPS_PROVIDER
+            REQUEST_CODE,
         )
     }
 
     @SuppressLint("MissingPermission") // test is done in isGPSDisabled() but Lint does not detect it
-    fun updateCurrentLocation() {
-        if (isLocationProviderEnabled()) {
-            if (isGPSDisabled()) {
-                requestGPSPermissions()
-                return
-            }
+    fun updateLocation() {
+        if (isGPSDisabled()) {
+            requestGPSPermissions()
+            return
+        }
+
+        if(isLocationEnabled()) {
             fusedLocationProviderClient.getCurrentLocation(PRIORITY_HIGH_ACCURACY, CancellationTokenSource().token).addOnCompleteListener { task ->
                 val location = task.result
-                if (location != null) {
-                    currentLocation = CoordinatesConversionUtil.geoPoint(location)
+                if(task.isSuccessful && location != null){
+                    if(!activity.isDestroyed) {
+                        listenersManager.invokeAll(CoordinatesUtil.geoPoint(location))
+                    }
                 }
             }
         }

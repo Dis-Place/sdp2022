@@ -11,7 +11,7 @@ import java.lang.IllegalArgumentException
 /**
  * com.github.displace.sdp2022.util object for conversion between coordinates system (game com.github.displace.sdp2022.model abstraction 'Coordinates',
  */
-object CoordinatesConversionUtil {
+object CoordinatesUtil {
     fun geoPoint(location : Location): GeoPoint {
         return GeoPoint(location.latitude,location.longitude)
     }
