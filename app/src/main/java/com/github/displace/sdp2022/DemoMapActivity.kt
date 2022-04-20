@@ -6,6 +6,7 @@ import android.widget.Toast
 import android.widget.ToggleButton
 import androidx.appcompat.app.AppCompatActivity
 import com.github.displace.sdp2022.gameComponents.Player
+import com.github.displace.sdp2022.map.GPSLocationMarker
 import com.github.displace.sdp2022.map.MapViewManager
 import com.github.displace.sdp2022.map.MapViewManager.Companion.DEFAULT_CENTER
 import com.github.displace.sdp2022.map.MarkerManager
@@ -22,8 +23,9 @@ class DemoMapActivity : AppCompatActivity() {
 
     private lateinit var mapView: MapView
     private lateinit var mapViewManager: MapViewManager
-    //private lateinit var gpsPositionUpdater: GPSPositionUpdater
+    private lateinit var gpsPositionUpdater: GPSPositionUpdater
     private lateinit var gpsPositionManager: GPSPositionManager
+    private lateinit var gpsLocationMarker: GPSLocationMarker
     private lateinit var markerListener: GeoPointListener
     private lateinit var posToastListener: GeoPointListener
     private lateinit var markerManager: MarkerManager
@@ -47,8 +49,9 @@ class DemoMapActivity : AppCompatActivity() {
         markerListener = GeoPointListener {p -> markerManager.putMarker(p)}
         posToastListener = GeoPointListener { geoPoint -> Toast.makeText(this,String.format("( %.4f ; %.4f )",geoPoint.latitude,geoPoint.longitude),Toast.LENGTH_SHORT).show() }
         gpsPositionManager = GPSPositionManager(this)
-        //gpsPositionUpdater = GPSPositionUpdater(this,gpsPositionManager)
-        //gpsPositionUpdater.listenersManager.addCall(markerListener)
+        gpsPositionUpdater = GPSPositionUpdater(this,gpsPositionManager)
+        gpsLocationMarker = GPSLocationMarker(mapView,gpsPositionManager)
+        gpsLocationMarker.add()
 
         mockPinpointsRef = markerManager.PinpointsRef()
         remoteMockPinpointsRef = markerManager.PinpointsRef()
@@ -58,7 +61,7 @@ class DemoMapActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         super.onBackPressed()
-        //gpsPositionUpdater.stopUpdates()
+        gpsPositionUpdater.stopUpdates()
     }
 
 
