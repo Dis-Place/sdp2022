@@ -130,7 +130,7 @@ class OfflineUserFetcher(private val context: Context?, private val debug: Boole
     }
 
     fun getOfflineAchievements(): MutableList<Achievement> {
-        var offlineAchievements: MutableList<Achievement>? = readFile(ACHIEVEMENT_PATH) as MutableList<Achievement>
+        var offlineAchievements: MutableList<Achievement>? = readFile(ACHIEVEMENT_PATH) as MutableList<Achievement>?
 
         if(offlineAchievements == null) {
             offlineAchievements = mutableListOf(
@@ -145,7 +145,7 @@ class OfflineUserFetcher(private val context: Context?, private val debug: Boole
     }
 
     fun getOfflineStats(): MutableList<Statistic> {
-        var offlineStats: MutableList<Statistic>? = readFile(STATS_PATH) as MutableList<Statistic>
+        var offlineStats: MutableList<Statistic>? = readFile(STATS_PATH) as MutableList<Statistic>?
 
         if(offlineStats == null) {
             offlineStats = mutableListOf(
@@ -164,7 +164,7 @@ class OfflineUserFetcher(private val context: Context?, private val debug: Boole
     }
 
     fun getOfflineFriendsList(): MutableList<PartialUser> {
-        var offlineFriendsList: MutableList<PartialUser>? = readFile(FRIEND_LIST_PATH) as MutableList<PartialUser>
+        var offlineFriendsList: MutableList<PartialUser>? = readFile(FRIEND_LIST_PATH) as MutableList<PartialUser>?
 
         if(offlineFriendsList == null) {
             offlineFriendsList = mutableListOf(
@@ -179,7 +179,7 @@ class OfflineUserFetcher(private val context: Context?, private val debug: Boole
     }
 
     fun getOfflineGameHistory(): MutableList<History> {
-        var offlineGameHistory: MutableList<History>? = readFile(GAME_HISTORY_PATH) as MutableList<History>
+        var offlineGameHistory: MutableList<History>? = readFile(GAME_HISTORY_PATH) as MutableList<History>?
 
         if(offlineGameHistory == null) {
             offlineGameHistory = mutableListOf(

@@ -65,8 +65,11 @@ class CompleteUser(
             return
         achievements.add(ach)
         db.update(dbReference, "achievements/${achievements.size - 1}", ach)
-        offlineUserFetcher.setOfflineAchievements(achievements)     // We have to choose if we do this or if we update an achievements
-                                                                    // list in the fetcher and update the files periodically (same for all the others)
+        if(firebaseUser != null) {
+            offlineUserFetcher.setOfflineAchievements(achievements)     // We have to choose if we do this or if we update an achievements
+                                                                        // list in the fetcher and update the files periodically (same for all the others)
+        }
+
     }
 
     override fun updateStats(statName: String, newValue: Long) {
@@ -76,7 +79,9 @@ class CompleteUser(
             if (statName == stats[i].name) {
                 stats[i].value = newValue
                 db.update(dbReference, "stats/$i/value", newValue)
-                offlineUserFetcher.setOfflineStats(stats)
+                if(firebaseUser != null) {
+                    offlineUserFetcher.setOfflineStats(stats)
+                }
                 return
             }
         }
@@ -88,7 +93,9 @@ class CompleteUser(
         if (!containsPartialUser(friendsList, partialU)) {
             friendsList.add(partialU)
             db.update(dbReference, "friendsList/${friendsList.size - 1}", partialU)
-            offlineUserFetcher.setOfflineFriendsList(friendsList)
+            if(firebaseUser != null) {
+                offlineUserFetcher.setOfflineFriendsList(friendsList)
+            }
         }
     }
 
@@ -97,7 +104,9 @@ class CompleteUser(
             return
         if (friendsList.remove(partialU)) {
             db.update(dbReference, "friendsList", friendsList)
-            offlineUserFetcher.setOfflineFriendsList(friendsList)
+            if(firebaseUser != null) {
+                offlineUserFetcher.setOfflineFriendsList(friendsList)
+            }
         }
     }
 
@@ -119,7 +128,9 @@ class CompleteUser(
         val history = History(map, date, result)
         gameHistory.add(history)
         db.update(dbReference, "gameHistory/${gameHistory.size - 1}", history)
-        offlineUserFetcher.setOfflineGameHistory(gameHistory)
+        if(firebaseUser != null) {
+            offlineUserFetcher.setOfflineGameHistory(gameHistory)
+        }
     }
 
     override fun changeUsername(newName: String) {
@@ -127,7 +138,9 @@ class CompleteUser(
             return
         partialUser.username = newName
         db.update(dbReference, "partialUser/username", newName)
-        offlineUserFetcher.setOfflinePartialUser(partialUser)
+        if(firebaseUser != null) {
+            offlineUserFetcher.setOfflinePartialUser(partialUser)
+        }
     }
 
     private fun initializeUser() {
@@ -255,7 +268,9 @@ class CompleteUser(
         achievements = mutableListOf(
             Achievement("Create your account !", getCurrentDate())
         )
-        offlineUserFetcher.setOfflineAchievements(achievements)
+        if(firebaseUser != null) {
+            offlineUserFetcher.setOfflineAchievements(achievements)
+        }
     }
 
     @SuppressLint("SimpleDateFormat")
@@ -270,7 +285,9 @@ class CompleteUser(
             Statistic("stat2", 0)
         )      // It's a dummy list for now, will be replaced with a list of all the possible statistics initialized to 0
 
-        offlineUserFetcher.setOfflineStats(stats)
+        if(firebaseUser != null) {
+            offlineUserFetcher.setOfflineStats(stats)
+        }
     }
 
     private fun initializePartialUser() {
@@ -289,8 +306,9 @@ class CompleteUser(
                 PartialUser("defaultName", "dummy_id")
             }
         }
-
-        offlineUserFetcher.setOfflinePartialUser(partialUser)
+        if(firebaseUser != null) {
+            offlineUserFetcher.setOfflinePartialUser(partialUser)
+        }
 
     }
 

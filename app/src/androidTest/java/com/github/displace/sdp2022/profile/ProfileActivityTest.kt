@@ -35,6 +35,7 @@ class ProfileActivityTest {
         val app = ApplicationProvider.getApplicationContext() as MyApplication
         completeUser = CompleteUser(app,null, false)
         app.setActiveUser(completeUser)
+        Thread.sleep(100)
     }
 
     @After
