@@ -17,10 +17,18 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 
 
+/**
+ * provides an API for GPS Position retrieval
+ * @param activity context in which to retrieve the GPS position
+ * @author LeoLgdr
+ */
 class GPSPositionManager(private val activity: Activity) {
     private var fusedLocationProviderClient: FusedLocationProviderClient
     val listenersManager = GeoPointListenersManager()
 
+    /**
+     * true iff the user enabled the required permissions for GPS
+     */
     fun isGPSDisabled(): Boolean {
         return ActivityCompat.checkSelfPermission(
             activity,
@@ -55,6 +63,9 @@ class GPSPositionManager(private val activity: Activity) {
         )
     }
 
+    /**
+     * update the gps position and call listeners depending on it
+     */
     @SuppressLint("MissingPermission") // test is done in isGPSDisabled() but Lint does not detect it
     fun updateLocation() {
         if (isGPSDisabled()) {
