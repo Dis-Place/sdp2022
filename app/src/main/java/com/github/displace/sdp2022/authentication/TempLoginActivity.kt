@@ -42,8 +42,7 @@ class TempLoginActivity : AppCompatActivity() {
         val sharedPreferences = getSharedPreferences("login-checkbox", MODE_PRIVATE)
         if (sharedPreferences.getBoolean("login-checkbox", false)) {
             val app = applicationContext as MyApplication
-            val user = CompleteUser(null, offlineMode = true)
-            user.setContext(this)
+            val user = CompleteUser(this,null, offlineMode = true)
             app.setActiveUser(user)
 
             Toast.makeText(this, "You are already logged in", Toast.LENGTH_SHORT).show()
@@ -133,8 +132,7 @@ class TempLoginActivity : AppCompatActivity() {
                             "Successfully logged in $name ",
                             Toast.LENGTH_LONG
                         ).show()
-                        val user = CompleteUser(current)
-                        user.setContext(this@TempLoginActivity)
+                        val user = CompleteUser(this@TempLoginActivity, current)
                         app.setActiveUser(user)
                     }
 
@@ -189,8 +187,7 @@ class TempLoginActivity : AppCompatActivity() {
     @Suppress("UNUSED_PARAMETER")
     fun startOffline(view: View) {
         val app = applicationContext as MyApplication
-        val user = CompleteUser(null, guestBoolean = true)
-        user.setContext(this)
+        val user = CompleteUser(this,null, guestBoolean = true)
         app.setActiveUser(user)
         goToMainMenuActivity(view)
     }
