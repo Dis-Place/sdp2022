@@ -8,7 +8,6 @@ import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.github.displace.sdp2022.gameComponents.GameEvent
-import com.github.displace.sdp2022.gameComponents.Player
 import com.github.displace.sdp2022.gameComponents.Point
 import com.github.displace.sdp2022.gameVersus.GameVersusViewModel
 import com.github.displace.sdp2022.map.MapViewManager
@@ -111,8 +110,8 @@ class GameVersusViewActivity : AppCompatActivity() {
             override fun onCancelled(databaseError: DatabaseError) {}
         }
         
-        pinpointHandler = PinpointsDBCommunicationHandler(db,"Game" + intent.getStringExtra("gid")!!)
-        pinpointHandler.start(intent.getStringExtra("uid")!!)
+        pinpointHandler = PinpointsDBCommunicationHandler(db,"Game" + intent.getStringExtra("gid")!!, this)
+        pinpointHandler.initializePinpoints(intent.getStringExtra("uid")!!)
 
         mapViewManager.addCallOnLongClick(GeoPointListener { geoPoint -> run {
                 marker.putMarker(geoPoint)
@@ -165,7 +164,7 @@ class GameVersusViewActivity : AppCompatActivity() {
             other.forEach { t, u ->
                 val other = t.replace("id:","")
                 db.addList("GameInstance/Game" + intent.getStringExtra("gid")!! + "/id:" + other,"finish",endListener)
-                pinpointHandler.updateLocalPinpoints(other,markerOther.playerPinPointsRef)
+                pinpointHandler.enableAutoupdateLocalPinpoints(other,markerOther.playerPinPointsRef)
                 game.handleEvent(GameEvent.OnStart(goal,intent.getStringExtra("uid")!!, intent.getStringExtra("gid")!!, other))
              }
         }
