@@ -62,7 +62,7 @@ class MapViewManager(val mapView: MapView) {
                 return false
             }
 
-            override fun longPressHelper(p: GeoPoint?): Boolean {
+            override fun longPressHelper(p: GeoPoint): Boolean {
                 listenersManager.invokeAll(p)
                 return false
             }

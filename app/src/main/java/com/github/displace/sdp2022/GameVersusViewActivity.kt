@@ -21,6 +21,7 @@ import com.github.displace.sdp2022.util.gps.GeoPointListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
+import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -68,7 +69,7 @@ class GameVersusViewActivity : AppCompatActivity() {
         gpsPositionUpdater = GPSPositionUpdater(this,gpsPositionManager)
         marker = MarkerManager(mapView)
         markerOther = MarkerManager(mapView)
-        gpsPositionUpdater.listenersManager.addCall(GeoPointListener { geoPoint ->
+        gpsPositionManager.listenersManager.addCall(GeoPointListener { geoPoint ->
             game.handleEvent(GameEvent.OnUpdate(intent.getStringExtra("uid")!!,
                 Point(geoPoint.latitude,geoPoint.longitude)))})
 
@@ -83,7 +84,7 @@ class GameVersusViewActivity : AppCompatActivity() {
                 val x = dataSnapshot.getValue()
                 if (x == 1L || x == -1L) {
                     db.delete("GameInstance", "Game" + intent.getStringExtra("gid")!!)
-                    gpsPositionUpdater.listenersManager.clearAllCalls()
+                    gpsPositionManager.listenersManager.clearAllCalls()
                     statsList.clear()
                     val current = LocalDateTime.now()
                     val formatted = current.format(formatter)
@@ -122,7 +123,7 @@ class GameVersusViewActivity : AppCompatActivity() {
                     )
                 )
                 if(res == 0){
-                    gpsPositionUpdater.listenersManager.clearAllCalls()
+                    gpsPositionManager.listenersManager.clearAllCalls()
                     findViewById<TextView>(R.id.TryText).apply { text = "win" }
                     extras.putBoolean(EXTRA_RESULT, true)
                     extras.putInt(EXTRA_SCORE_P1, 1)
@@ -141,7 +142,7 @@ class GameVersusViewActivity : AppCompatActivity() {
                         pinpointHandler.updateDBPinpoints(intent.getStringExtra("uid")!!,marker.playerPinPointsRef)
                     } else {
                         if (res == 2) {
-                            gpsPositionUpdater.listenersManager.clearAllCalls()
+                            gpsPositionManager.listenersManager.clearAllCalls()
                             findViewById<TextView>(R.id.TryText).apply {
                                 text =
                                     "status : end of game"
@@ -178,15 +179,23 @@ class GameVersusViewActivity : AppCompatActivity() {
     //close the screen
     fun closeButton(view: View) {
         game.handleEvent(GameEvent.OnSurrend(intent.getStringExtra("uid")!!))
-        gpsPositionUpdater.listenersManager.clearAllCalls()
+        gpsPositionManager.listenersManager.clearAllCalls()
         val intent = Intent(this, GameListActivity::class.java)
         startActivity(intent)
     }
 
+    @Suppress("UNUSED_PARAMETER")
     fun centerButton(view: View) {
-        val gpsPos = gpsPositionManager.getPosition()
-        if (gpsPos != null)
-            mapViewManager.center(gpsPos)
+
+        val centerListener = object : GeoPointListener {
+            override fun invoke(geoPoint: GeoPoint) {
+                mapViewManager.center(geoPoint)
+                gpsPositionManager.listenersManager.removeCall(this)
+            }
+        }
+
+        gpsPositionManager.listenersManager.addCall(centerListener)
+        gpsPositionManager.updateLocation()
     }
 
     private fun showGameSummaryActivity() {

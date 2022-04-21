@@ -1,79 +1,91 @@
 package com.github.displace.sdp2022.util.gps
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
 import android.location.LocationManager
 import androidx.core.app.ActivityCompat
+
+import com.google.android.gms.location.LocationRequest.*
+import com.google.android.gms.tasks.CancellationTokenSource
+
+
 import com.github.displace.sdp2022.util.math.CoordinatesUtil
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import org.osmdroid.util.GeoPoint
 
+
+/**
+ * provides an API for GPS Position retrieval
+ * @param activity context in which to retrieve the GPS position
+ * @author LeoLgdr
+ */
 class GPSPositionManager(private val activity: Activity) {
-    private var lastLocation: GeoPoint? = null
     private var fusedLocationProviderClient: FusedLocationProviderClient
+    val listenersManager = GeoPointListenersManager()
+
+    /**
+     * true iff the user enabled the required permissions for GPS
+     */
+    fun isGPSDisabled(): Boolean {
+        return ActivityCompat.checkSelfPermission(
+            activity,
+            Manifest.permission.ACCESS_FINE_LOCATION
+        ) != PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(
+            activity,
+            Manifest.permission.ACCESS_COARSE_LOCATION
+        ) != PackageManager.PERMISSION_GRANTED
+    }
 
     init {
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(activity)
-        if (ActivityCompat.checkSelfPermission(
-                activity,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(
-                activity,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
+
+        if(isGPSDisabled()) {
             requestGPSPermissions()
         }
+
     }
 
-    fun getPosition(): GeoPoint? {
-        initLastLocation()
-        return lastLocation
+    private fun isLocationEnabled(): Boolean {
+        return (activity.getSystemService(Context.LOCATION_SERVICE) as LocationManager).isProviderEnabled(LocationManager.GPS_PROVIDER)
     }
 
     private fun requestGPSPermissions() {
         ActivityCompat.requestPermissions(
             activity,
             arrayOf(
-                android.Manifest.permission.ACCESS_COARSE_LOCATION,
-                android.Manifest.permission.ACCESS_FINE_LOCATION
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+                Manifest.permission.ACCESS_FINE_LOCATION
             ),
-            REQUEST_CODE
+            REQUEST_CODE,
         )
     }
 
-    fun isLocationProviderEnabled(): Boolean {
-        return (activity.getSystemService(Context.LOCATION_SERVICE) as LocationManager).isProviderEnabled(
-            LocationManager.GPS_PROVIDER
-        )
-    }
+    /**
+     * update the gps position and call listeners depending on it
+     */
+    @SuppressLint("MissingPermission") // test is done in isGPSDisabled() but Lint does not detect it
+    fun updateLocation() {
+        if (isGPSDisabled()) {
+            requestGPSPermissions()
+            return
+        }
 
-    fun initLastLocation() {
-        if (isLocationProviderEnabled()) {
-            if (ActivityCompat.checkSelfPermission(
-                    activity,
-                    Manifest.permission.ACCESS_FINE_LOCATION
-                ) != PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(
-                    activity,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                requestGPSPermissions()
-                return
-            }
-            fusedLocationProviderClient.lastLocation.addOnCompleteListener() { task ->
+        if(isLocationEnabled()) {
+            fusedLocationProviderClient.getCurrentLocation(PRIORITY_HIGH_ACCURACY, CancellationTokenSource().token).addOnCompleteListener { task ->
                 val location = task.result
-                if (location != null) {
-                    lastLocation = CoordinatesUtil.geoPoint(location)
+                if(task.isSuccessful && location != null){
+                    if(!activity.isDestroyed) {
+                        listenersManager.invokeAll(CoordinatesUtil.geoPoint(location))
+                    }
                 }
             }
         }
     }
 
     companion object {
-        private val REQUEST_CODE = 99
+        private const val REQUEST_CODE = 99
     }
 }

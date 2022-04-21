@@ -6,6 +6,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertThrows
 import org.junit.Test
 import org.osmdroid.util.GeoPoint
+
 import com.github.displace.sdp2022.util.math.Constants
 import com.github.displace.sdp2022.util.math.CoordinatesUtil.coordinates
 import com.github.displace.sdp2022.util.math.CoordinatesUtil.distance
@@ -21,6 +22,7 @@ class CoordinatesUtilTest {
     @Test
     fun geoPointIsCorrectOnValidCoordinates(){
         val coordinates = DummyCoordinates(Pair(1.8,3.0))
+
         val geoPoint = geoPoint(coordinates)
         assertEquals(coordinates.pos.first,geoPoint.latitude,DELTA_GEO)
         assertEquals(coordinates.pos.second,geoPoint.longitude,DELTA_GEO)
