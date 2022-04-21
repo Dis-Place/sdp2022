@@ -3,7 +3,9 @@ package com.github.displace.sdp2022
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import android.widget.Button
 import android.widget.EditText
+import androidx.constraintlayout.widget.Group
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.github.displace.sdp2022.profile.messages.Message
@@ -20,7 +22,7 @@ class ChatActivity : AppCompatActivity() {
         setContentView(R.layout.activity_chat)
 
         db.getDbReference("debug/Chat").addValueEventListener(chatListener())
-
+        showButton( findViewById<Group>(R.id.ChatActiveGroup))
     }
 
     private fun chatListener() = object : ValueEventListener {
@@ -58,7 +60,7 @@ class ChatActivity : AppCompatActivity() {
         val msg : String = findViewById<EditText>(R.id.chatEditText).text.toString()
         val partialUser : PartialUser = (applicationContext as MyApplication).getActiveUser()?.getPartialUser()!!
         val date : String = (applicationContext as MyApplication).getCurrentTime()
-        if(msg.length == 0){
+        if(msg.isEmpty()){
             return
         }
         db.getDbReference("debug/Chat")
@@ -91,6 +93,20 @@ class ChatActivity : AppCompatActivity() {
                 }
 
             })
+    }
+
+    fun showChat(view : View){
+        val chatGroup = findViewById<Group>(R.id.ChatActiveGroup)
+        val chatButton = findViewById<Button>(R.id.button3)
+        chatButton.visibility = View.INVISIBLE
+        chatGroup.visibility = View.VISIBLE
+    }
+
+    fun showButton(view : View){
+        val chatGroup = findViewById<Group>(R.id.ChatActiveGroup)
+        val chatButton = findViewById<Button>(R.id.button3)
+        chatButton.visibility = View.VISIBLE
+        chatGroup.visibility = View.INVISIBLE
     }
 
 }

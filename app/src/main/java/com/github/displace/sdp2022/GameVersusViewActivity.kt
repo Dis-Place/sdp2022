@@ -4,9 +4,15 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.view.View
+import android.widget.Button
+import android.widget.EditText
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.Group
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.github.displace.sdp2022.gameComponents.GameEvent
 import com.github.displace.sdp2022.gameComponents.Player
 import com.github.displace.sdp2022.gameComponents.Point
@@ -14,13 +20,14 @@ import com.github.displace.sdp2022.gameVersus.GameVersusViewModel
 import com.github.displace.sdp2022.map.MapViewManager
 import com.github.displace.sdp2022.map.MarkerManager
 import com.github.displace.sdp2022.map.PinpointsDBCommunicationHandler
+import com.github.displace.sdp2022.profile.messages.Message
+import com.github.displace.sdp2022.profile.messages.MsgViewAdapter
+import com.github.displace.sdp2022.users.PartialUser
 import com.github.displace.sdp2022.util.PreferencesUtil
 import com.github.displace.sdp2022.util.gps.GPSPositionManager
 import com.github.displace.sdp2022.util.gps.GPSPositionUpdater
 import com.github.displace.sdp2022.util.gps.GeoPointListener
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.*
 import org.osmdroid.views.MapView
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -172,13 +179,25 @@ class GameVersusViewActivity : AppCompatActivity() {
         findViewById<TextView>(R.id.TryText).apply { text =
             "status : neutral, nombre d'essais restant : " + (4 - game.getNbEssai())
         }
+
+        db.getDbReference("GameInstance/Game/"+ intent.getStringExtra("gid")!! + "/Chat").addValueEventListener(chatListener())
+        closeChatButton( findViewById<Group>(R.id.ChatActiveGroup) )
+
     }
 
+
+    /**
+     * GAME VERSUS BASIC USES
+     */
 
     //close the screen
     fun closeButton(view: View) {
         game.handleEvent(GameEvent.OnSurrend(intent.getStringExtra("uid")!!))
         gpsPositionUpdater.listenersManager.clearAllCalls()
+
+        //CHAT
+        db.getDbReference("GameInstance/Game/"+ intent.getStringExtra("gid")!! + "/Chat").removeEventListener(chatListener())
+
         val intent = Intent(this, GameListActivity::class.java)
         startActivity(intent)
     }
@@ -189,7 +208,101 @@ class GameVersusViewActivity : AppCompatActivity() {
             mapViewManager.center(gpsPos)
     }
 
+
+    /**
+     * CHAT SECTION OF THE ACTIVITY
+     */
+
+    private fun chatListener() = object : ValueEventListener {
+        override fun onDataChange(snapshot: DataSnapshot) {
+
+            val messageRecyclerView = findViewById<RecyclerView>(R.id.recyclerView)
+            val list = mutableListOf<Message>()
+
+            val ls = snapshot.value as ArrayList<HashMap<String,Any>>?
+            if(ls != null){
+                for( map in ls ){
+                    val sender = map["sender"] as HashMap<String,Any>
+                    val m = Message(map["message"] as String,map["date"] as String, PartialUser(sender["username"] as String,sender["uid"] as String) )
+                    list.add(m)
+                }
+            }
+
+            val messageAdapter = MsgViewAdapter(
+                applicationContext,
+                list,
+                1
+            )
+            messageRecyclerView.adapter = messageAdapter
+            messageRecyclerView.layoutManager = LinearLayoutManager(applicationContext)
+
+        }
+
+        override fun onCancelled(error: DatabaseError) {
+            TODO("Not yet implemented")
+        }
+    }
+
+
+    fun addToChat(view : View){
+        val msg : String = findViewById<EditText>(R.id.chatEditText).text.toString()
+        val partialUser : PartialUser = (applicationContext as MyApplication).getActiveUser()?.getPartialUser()!!
+        val date : String = (applicationContext as MyApplication).getCurrentTime()
+        if(msg.isEmpty()){
+            return
+        }
+        db.getDbReference("GameInstance/Game/"+ intent.getStringExtra("gid")!! + "/Chat")
+            .runTransaction(object : Transaction.Handler {
+                override fun doTransaction(currentData: MutableData): Transaction.Result {
+                    var ls = currentData.value as ArrayList<HashMap<String,Any>>?
+                    val map = HashMap<String,Any>()
+                    map["message"] = msg
+                    map["date"] = date
+                    map["sender"] = partialUser
+                    val msgLs = arrayListOf(map)
+                    if(ls != null) {
+                        ls.addAll(msgLs)
+                        if(ls.size >= 6){
+                            ls = ls.takeLast(5) as ArrayList<HashMap<String, Any>>
+                        }
+                        currentData.value = ls
+                    }else {
+                        currentData.value = msgLs
+                    }
+                    return Transaction.success(currentData)
+                }
+
+                override fun onComplete(
+                    error: DatabaseError?,
+                    committed: Boolean,
+                    currentData: DataSnapshot?
+                ) {
+                    //  TODO("Not yet implemented")
+                }
+
+            })
+    }
+
+    fun showChatButton(view : View){
+        val chatGroup = findViewById<ConstraintLayout>(R.id.chatLayout)
+        chatGroup.visibility = View.VISIBLE
+        db.getDbReference("GameInstance/Game/"+ intent.getStringExtra("gid")!! + "/Chat").addListenerForSingleValueEvent(chatListener())
+    }
+
+    fun closeChatButton(view : View){
+        val chatGroup = findViewById<ConstraintLayout>(R.id.chatLayout)
+        chatGroup.visibility = View.GONE
+    }
+
+
+    /**
+     * TRANSITION TO GAME SUMMARY
+     */
     private fun showGameSummaryActivity() {
+
+        //CHAT
+        db.getDbReference("GameInstance/Game/"+ intent.getStringExtra("gid")!! + "/Chat").removeEventListener(chatListener())
+
         val intent = Intent(this, GameSummaryActivity::class.java)
         extras.putStringArrayList(EXTRA_STATS, statsList)
         extras.putString(EXTRA_MODE, "Versus")

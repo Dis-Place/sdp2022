@@ -26,7 +26,7 @@ class ChatActivityTest {
 
 
     @Test
-    fun testPublicLobbyCreation(){
+    fun testChatView(){
         val intent =
             Intent(ApplicationProvider.getApplicationContext(), ChatActivity::class.java)
         val scenario = ActivityScenario.launch<ChatActivity>(intent)
