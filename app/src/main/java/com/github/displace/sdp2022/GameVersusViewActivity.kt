@@ -57,6 +57,9 @@ class GameVersusViewActivity : AppCompatActivity() {
     private lateinit var marker: MarkerManager
     private lateinit var markerOther: MarkerManager
 
+    //CHAT
+    private lateinit var chatPath : String
+
     private val db = RealTimeDatabase().noCacheInstantiate(
         "https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",
         false
@@ -81,6 +84,8 @@ class GameVersusViewActivity : AppCompatActivity() {
 
         centerButton(mapView) // to initialise the gps position
         //centerButton(mapView) // to set the center of the screen
+
+        chatPath = chatPath
 
         val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")
 
@@ -180,7 +185,7 @@ class GameVersusViewActivity : AppCompatActivity() {
             "status : neutral, nombre d'essais restant : " + (4 - game.getNbEssai())
         }
 
-        db.getDbReference("GameInstance/Game/"+ intent.getStringExtra("gid")!! + "/Chat").addValueEventListener(chatListener())
+        db.getDbReference(chatPath).addValueEventListener(chatListener())
         closeChatButton( findViewById<Group>(R.id.ChatActiveGroup) )
 
     }
@@ -196,7 +201,7 @@ class GameVersusViewActivity : AppCompatActivity() {
         gpsPositionUpdater.listenersManager.clearAllCalls()
 
         //CHAT
-        db.getDbReference("GameInstance/Game/"+ intent.getStringExtra("gid")!! + "/Chat").removeEventListener(chatListener())
+        db.getDbReference(chatPath).removeEventListener(chatListener())
 
         val intent = Intent(this, GameListActivity::class.java)
         startActivity(intent)
@@ -251,7 +256,7 @@ class GameVersusViewActivity : AppCompatActivity() {
         if(msg.isEmpty()){
             return
         }
-        db.getDbReference("GameInstance/Game/"+ intent.getStringExtra("gid")!! + "/Chat")
+        db.getDbReference(chatPath)
             .runTransaction(object : Transaction.Handler {
                 override fun doTransaction(currentData: MutableData): Transaction.Result {
                     var ls = currentData.value as ArrayList<HashMap<String,Any>>?
@@ -286,7 +291,7 @@ class GameVersusViewActivity : AppCompatActivity() {
     fun showChatButton(view : View){
         val chatGroup = findViewById<ConstraintLayout>(R.id.chatLayout)
         chatGroup.visibility = View.VISIBLE
-        db.getDbReference("GameInstance/Game/"+ intent.getStringExtra("gid")!! + "/Chat").addListenerForSingleValueEvent(chatListener())
+        db.getDbReference(chatPath).addListenerForSingleValueEvent(chatListener())
     }
 
     fun closeChatButton(view : View){
@@ -301,7 +306,7 @@ class GameVersusViewActivity : AppCompatActivity() {
     private fun showGameSummaryActivity() {
 
         //CHAT
-        db.getDbReference("GameInstance/Game/"+ intent.getStringExtra("gid")!! + "/Chat").removeEventListener(chatListener())
+        db.getDbReference(chatPath).removeEventListener(chatListener())
 
         val intent = Intent(this, GameSummaryActivity::class.java)
         extras.putStringArrayList(EXTRA_STATS, statsList)
