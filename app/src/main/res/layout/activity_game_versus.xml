@@ -9,11 +9,10 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/chatLayout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="gone">
+            android:layout_height="match_parent">
 
                 <Button
-                    android:id="@+id/button2"
+                    android:id="@+id/sendChatMessage"
                     android:layout_width="210dp"
                     android:layout_height="123dp"
                     android:onClick="addToChat"
@@ -42,7 +41,7 @@
                     android:ems="10"
                     android:hint="message"
                     android:inputType="textPersonName"
-                    app:layout_constraintBottom_toTopOf="@+id/button2"
+                    app:layout_constraintBottom_toTopOf="@+id/sendChatMessage"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.502"
                     app:layout_constraintStart_toStartOf="parent" />
@@ -60,7 +59,7 @@
                     android:id="@+id/ChatActiveGroup"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:constraint_referenced_ids="chatEditText,recyclerView,button2,button4"
+                    app:constraint_referenced_ids="chatEditText,recyclerView,sendChatMessage,button4"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"

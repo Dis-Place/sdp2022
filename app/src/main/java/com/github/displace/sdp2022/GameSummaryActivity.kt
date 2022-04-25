@@ -49,7 +49,7 @@ class GameSummaryActivity : AppCompatActivity() {
 
     }
 
-    fun addRoundStat(info: String) {
+    private fun addRoundStat(info: String) {
         val tv = TextView(applicationContext)
         tv.text = info
         tv.textSize = 25F
@@ -57,7 +57,7 @@ class GameSummaryActivity : AppCompatActivity() {
         layout.addView(tv)
     }
 
-    fun updateVictoryText(vict: Boolean) {
+    private fun updateVictoryText(vict: Boolean) {
         val victoryText = findViewById<TextView>(R.id.textViewResult)
         if(vict) {
             victoryText.text = "VICTORY"
@@ -68,7 +68,7 @@ class GameSummaryActivity : AppCompatActivity() {
         }
     }
 
-    fun updateScore(scoreP1: Int, scoreP2: Int) {
+    private fun updateScore(scoreP1: Int, scoreP2: Int) {
         val sP1 = findViewById<TextView>(R.id.scoreP1)
         val sP2 = findViewById<TextView>(R.id.scoreP2)
 
@@ -76,13 +76,18 @@ class GameSummaryActivity : AppCompatActivity() {
         sP2.text = scoreP2.toString()
     }
 
-    fun backToMainMenu() {
+    private fun backToMainMenu() {
         val intent = Intent(this, MainMenuActivity::class.java)
         startActivity(intent)
     }
 
-    fun backToGameList() {
+    private fun backToGameList() {
         val intent = Intent(this, GameListActivity::class.java)
         startActivity(intent)
     }
+
+    public fun friendInviteToOpponent(view : View){
+        TODO("WAIT FOR FRIEND INVITES TO BE DONE")
+    }
+
 }
