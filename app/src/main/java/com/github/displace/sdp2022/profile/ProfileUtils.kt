@@ -34,3 +34,18 @@ class MessageUpdater(val custom : Boolean,val applicationContext : Context, val 
     }
 
 }
+
+class MessageReceiver{
+
+    fun getListOfMessages( maps : List<HashMap<String,Any>>) : ArrayList<Message> {
+        val arr : ArrayList<Message> = arrayListOf()
+        for( map in maps ){
+            val sender = map["sender"] as HashMap<String,Any>
+            val m = Message(map["message"] as String,map["date"] as String, PartialUser(sender["username"] as String,sender["uid"] as String) )
+            arr.add(m)
+        }
+        return arr
+    }
+
+}
+

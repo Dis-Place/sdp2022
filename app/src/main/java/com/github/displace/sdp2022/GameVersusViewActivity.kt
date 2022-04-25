@@ -20,6 +20,7 @@ import com.github.displace.sdp2022.gameVersus.GameVersusViewModel
 import com.github.displace.sdp2022.map.MapViewManager
 import com.github.displace.sdp2022.map.MarkerManager
 import com.github.displace.sdp2022.map.PinpointsDBCommunicationHandler
+import com.github.displace.sdp2022.profile.MessageReceiver
 import com.github.displace.sdp2022.profile.messages.Message
 import com.github.displace.sdp2022.profile.messages.MsgViewAdapter
 import com.github.displace.sdp2022.users.PartialUser
@@ -222,15 +223,11 @@ class GameVersusViewActivity : AppCompatActivity() {
         override fun onDataChange(snapshot: DataSnapshot) {
 
             val messageRecyclerView = findViewById<RecyclerView>(R.id.recyclerView)
-            val list = mutableListOf<Message>()
+            var list = mutableListOf<Message>()
 
             val ls = snapshot.value as ArrayList<HashMap<String,Any>>?
             if(ls != null){
-                for( map in ls ){
-                    val sender = map["sender"] as HashMap<String,Any>
-                    val m = Message(map["message"] as String,map["date"] as String, PartialUser(sender["username"] as String,sender["uid"] as String) )
-                    list.add(m)
-                }
+                list = MessageReceiver().getListOfMessages(ls)
             }
 
             val messageAdapter = MsgViewAdapter(
