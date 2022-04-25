@@ -1,5 +1,5 @@
 package com.github.displace.sdp2022
-
+/*
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -109,4 +109,4 @@ class ChatActivity : AppCompatActivity() {
         chatGroup.visibility = View.INVISIBLE
     }
 
-}
+}*/

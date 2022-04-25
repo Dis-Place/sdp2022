@@ -15,7 +15,7 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class ChatActivityTest {
 
-    @Before
+   /* @Before
     fun before(){
         val app = ApplicationProvider.getApplicationContext() as MyApplication
         app.setActiveUser(CompleteUser(null, false))
@@ -23,7 +23,7 @@ class ChatActivityTest {
         Thread.sleep(3000)
     }
 
-/*
+
     @Test
     fun testChatView(){
         val intent =

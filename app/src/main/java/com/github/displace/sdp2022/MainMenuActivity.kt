@@ -81,7 +81,7 @@ class MainMenuActivity : AppCompatActivity() {
     //send the user to the News screen : view news and updates
     @Suppress("UNUSED_PARAMETER")
     fun newsButton(view: View) {
-        val intent = Intent(this, ChatActivity::class.java)
+        val intent = Intent(this, NewsActivity::class.java)
         startActivity(intent)
     }
 

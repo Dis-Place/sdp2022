@@ -6,7 +6,7 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.ViewAction
 import androidx.test.espresso.action.*
-import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers
@@ -133,6 +133,25 @@ class GameMenuTest {
             Swipe.FAST, GeneralLocation.BOTTOM_CENTER,
             GeneralLocation.TOP_CENTER, Press.FINGER
         )
+    }
+
+    @Test
+    fun testChatButton() {
+        intent.putExtra("gid","-4862463398588582910")
+        intent.putExtra("uid","hCkhhJ0dkINs0BIpx8eqhLWzXw43")
+        intent.putExtra("nbPlayer",2)
+        intent.putExtra("other","0")
+
+        ActivityScenario.launch<GameSummaryActivity>(intent).use {
+            Intents.init()
+
+            onView(withId(R.id.chatButton)).perform(click())
+            onView(withId(R.id.chatEditText)).perform(typeText("hh")).perform(closeSoftKeyboard())
+            onView(withId(R.id.sendChatMessage)).perform(click())
+            Intents.intended(IntentMatchers.hasComponent(GameListActivity::class.java.name))
+
+            Intents.release()
+        }
     }
 
 }

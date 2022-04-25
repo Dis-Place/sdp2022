@@ -123,4 +123,10 @@ class GameSummaryActivityTest {
         }
         Intents.release()
     }
+
+
+    @Test
+    fun sendFriendInviteButtonWorks() {
+        //TODO()
+    }
 }
