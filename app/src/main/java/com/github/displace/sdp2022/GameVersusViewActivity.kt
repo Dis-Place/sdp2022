@@ -12,7 +12,7 @@ import com.github.displace.sdp2022.gameComponents.Point
 import com.github.displace.sdp2022.gameVersus.GameVersusViewModel
 import com.github.displace.sdp2022.map.MapViewManager
 import com.github.displace.sdp2022.map.PinpointsManager
-import com.github.displace.sdp2022.map.PinpointsDBCommunicationHandler
+import com.github.displace.sdp2022.map.PinpointsDBHandler
 import com.github.displace.sdp2022.util.DateTimeUtil
 import com.github.displace.sdp2022.util.PreferencesUtil
 import com.github.displace.sdp2022.util.gps.GPSPositionManager
@@ -23,8 +23,6 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -49,7 +47,7 @@ class GameVersusViewActivity : AppCompatActivity() {
     private lateinit var gpsPositionManager: GPSPositionManager
     private lateinit var markerListener: GeoPointListener
     private lateinit var other : Map<String,Any>
-    private lateinit var pinpointsDBHandler: PinpointsDBCommunicationHandler
+    private lateinit var pinpointsDBHandler: PinpointsDBHandler
     private lateinit var pinpointsManager: PinpointsManager
     private lateinit var opponentPinpoints: PinpointsManager.PinpointsRef
     private val calendar = Calendar.getInstance()
@@ -110,7 +108,7 @@ class GameVersusViewActivity : AppCompatActivity() {
             override fun onCancelled(databaseError: DatabaseError) {}
         }
         
-        pinpointsDBHandler = PinpointsDBCommunicationHandler(db,"Game" + intent.getStringExtra("gid")!!, this)
+        pinpointsDBHandler = PinpointsDBHandler(db,"Game" + intent.getStringExtra("gid")!!, this)
         pinpointsDBHandler.initializePinpoints(intent.getStringExtra("uid")!!)
         pinpointsDBHandler.initializePinpoints(intent.getStringExtra("uid")!!)
 

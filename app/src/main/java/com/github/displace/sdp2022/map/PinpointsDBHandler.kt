@@ -13,7 +13,7 @@ import org.osmdroid.util.GeoPoint
  * @param gameInstanceName
  * @author LeoLgdr
  */
-class PinpointsDBCommunicationHandler(private val db: RealTimeDatabase, private val gameInstanceName: String, private val activity: Activity) {
+class PinpointsDBHandler(private val db: RealTimeDatabase, private val gameInstanceName: String, private val activity: Activity) {
 
     /**
      * to send the player's pinpoints

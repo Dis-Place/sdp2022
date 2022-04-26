@@ -10,7 +10,7 @@ import com.github.displace.sdp2022.map.GPSLocationMarker
 import com.github.displace.sdp2022.map.MapViewManager
 import com.github.displace.sdp2022.map.MapViewManager.Companion.DEFAULT_CENTER
 import com.github.displace.sdp2022.map.PinpointsManager
-import com.github.displace.sdp2022.map.PinpointsDBCommunicationHandler
+import com.github.displace.sdp2022.map.PinpointsDBHandler
 import com.github.displace.sdp2022.util.PreferencesUtil
 import com.github.displace.sdp2022.util.gps.GPSPositionManager
 import com.github.displace.sdp2022.util.gps.GPSPositionUpdater
@@ -31,7 +31,7 @@ class DemoMapActivity : AppCompatActivity() {
     private lateinit var pinpointsManager: PinpointsManager
     lateinit var mockPinpointsRef: PinpointsManager.PinpointsRef
     lateinit var remoteMockPinpointsRef: PinpointsManager.PinpointsRef
-    private lateinit var dbHandler: PinpointsDBCommunicationHandler
+    private lateinit var dbHandler: PinpointsDBHandler
     private var useDB = false
 
     /**
@@ -56,7 +56,7 @@ class DemoMapActivity : AppCompatActivity() {
         mockPinpointsRef = pinpointsManager.PinpointsRef()
         remoteMockPinpointsRef = pinpointsManager.PinpointsRef()
         val db = RealTimeDatabase().noCacheInstantiate("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",false)
-        dbHandler = PinpointsDBCommunicationHandler(db as RealTimeDatabase,MOCK_GAME_INSTANCE_NAME, this)
+        dbHandler = PinpointsDBHandler(db as RealTimeDatabase,MOCK_GAME_INSTANCE_NAME, this)
     }
 
     override fun onBackPressed() {
