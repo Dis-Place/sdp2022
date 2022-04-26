@@ -117,9 +117,10 @@ class GameMenuTest {
 
         ActivityScenario.launch<GameSummaryActivity>(intent).use {
             onView(withId(R.id.map)).perform(ViewActions.longClick())
-            Thread.sleep(1000)
-            Intents.intended(IntentMatchers.hasComponent(GameSummaryActivity::class.java.name))
+
         }
+        Intents.intended(IntentMatchers.hasComponent(GameSummaryActivity::class.java.name))
+
     }
 
     @Test

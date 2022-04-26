@@ -1,6 +1,7 @@
 package com.github.displace.sdp2022.model
 
 import com.github.displace.sdp2022.gameComponents.Coordinates
+import com.github.displace.sdp2022.util.math.CoordinatesUtil
 
 //com.github.displace.sdp2022.model of a gameversus
 
@@ -13,10 +14,7 @@ class GameVersus(
 ) : Game(goal,nbPlayer,threshold) {
 
     override fun verify(test: Coordinates): Boolean {
-        return goal.pos.first + threshold > test.pos.first &&
-                goal.pos.first - threshold < test.pos.first &&
-                goal.pos.second + threshold > test.pos.second &&
-                goal.pos.second - threshold < test.pos.second
+        return CoordinatesUtil.distance(goal,test) < threshold
 
     }
 }

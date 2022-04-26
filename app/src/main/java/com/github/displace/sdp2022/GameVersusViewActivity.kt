@@ -112,6 +112,7 @@ class GameVersusViewActivity : AppCompatActivity() {
         
         pinpointsDBHandler = PinpointsDBCommunicationHandler(db,"Game" + intent.getStringExtra("gid")!!, this)
         pinpointsDBHandler.initializePinpoints(intent.getStringExtra("uid")!!)
+        pinpointsDBHandler.initializePinpoints(intent.getStringExtra("uid")!!)
 
         mapViewManager.addCallOnLongClick(GeoPointListener { geoPoint -> run {
                 pinpointsManager.putMarker(geoPoint)
@@ -157,12 +158,16 @@ class GameVersusViewActivity : AppCompatActivity() {
 
         db.referenceGet("GameInstance" , "Game" + intent.getStringExtra("gid")!!).addOnSuccessListener { gi ->
             other = ((gi as DataSnapshot).value as MutableMap<String,Any>).filter { id -> id.key != "id:" + intent.getStringExtra("uid")!! }
-            other.forEach { t, u ->
-                val other = t.replace("id:","")
-                db.addList("GameInstance/Game" + intent.getStringExtra("gid")!! + "/id:" + other,"finish",endListener)
-                pinpointsDBHandler.enableAutoupdateLocalPinpoints(other,opponentPinpoints)
-                game.handleEvent(GameEvent.OnStart(goal,intent.getStringExtra("uid")!!, intent.getStringExtra("gid")!!, other))
+            other.toList().map { t ->
+
              }
+
+            val t = other.toList()[0]
+
+            val other = t.first.replace("id:","")
+            db.addList("GameInstance/Game" + intent.getStringExtra("gid")!! + "/id:" + other,"finish",endListener)
+            pinpointsDBHandler.enableAutoupdateLocalPinpoints(other,opponentPinpoints)
+            game.handleEvent(GameEvent.OnStart(goal,intent.getStringExtra("uid")!!, intent.getStringExtra("gid")!!, other))
         }
 
         findViewById<TextView>(R.id.TryText).apply { text =

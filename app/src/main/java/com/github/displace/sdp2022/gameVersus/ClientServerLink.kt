@@ -4,6 +4,7 @@ import com.github.displace.sdp2022.RealTimeDatabase
 import com.github.displace.sdp2022.gameComponents.Coordinates
 import com.github.displace.sdp2022.gameComponents.Point
 import com.github.displace.sdp2022.model.GameVersus
+import com.github.displace.sdp2022.util.math.Constants
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.DatabaseError
@@ -17,7 +18,7 @@ class ClientServerLink {
     private var gid = ""
     private var other = ""
     private var playerId = ""
-    var game = GameVersus(goal, 0, 3, 0.0001, 2)
+    var game = GameVersus(goal, 0, 3, Constants.THRESHOLD.toDouble(), 2)
     private lateinit var posXListener : ValueEventListener
     private lateinit var posYListener : ValueEventListener
 
