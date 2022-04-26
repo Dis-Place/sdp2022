@@ -86,7 +86,7 @@ class GameVersusViewActivity : AppCompatActivity() {
         centerButton(mapView) // to initialise the gps position
         //centerButton(mapView) // to set the center of the screen
 
-        chatPath = chatPath
+        chatPath = "/GameInstance/Game" + intent.getStringExtra("gid")!!  + "/Chat"
 
         val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")
 
