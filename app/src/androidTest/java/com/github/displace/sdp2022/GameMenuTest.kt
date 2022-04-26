@@ -65,7 +65,7 @@ class GameMenuTest {
         }
 
     }
-
+/*
     @Test
     fun testEndButton() {
         intent.putExtra("gid","-4862463398588582910")
@@ -77,16 +77,20 @@ class GameMenuTest {
             Intents.init()
             onView(withId(R.id.map)).perform(swipeUp())
             onView(withId(R.id.map)).perform(ViewActions.longClick())
+
             onView(withId(R.id.map)).perform(swipeUp())
             onView(withId(R.id.map)).perform(ViewActions.longClick())
+
             onView(withId(R.id.map)).perform(swipeUp())
             onView(withId(R.id.map)).perform(ViewActions.longClick())
+
             onView(withId(R.id.map)).perform(swipeUp())
             onView(withId(R.id.map)).perform(ViewActions.longClick())
+
             Intents.intended(IntentMatchers.hasComponent(GameSummaryActivity::class.java.name))
             Intents.release()
         }
-    }
+    }*/
 
     @Test
     fun testFailButton() {
@@ -151,13 +155,13 @@ class GameMenuTest {
         intent.putExtra("other","0")
 
         ActivityScenario.launch<GameSummaryActivity>(intent).use {
-       //     Intents.init()
+            Intents.init()
 
             onView(withId(R.id.chatButton)).perform(click())
             onView(withId(R.id.chatEditText)).perform(typeText("hh")).perform(closeSoftKeyboard())
             onView(withId(R.id.sendChatMessage)).perform(click())
 
-     //       Intents.release()
+            Intents.release()
         }
     }
 
