@@ -15,6 +15,8 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.github.displace.sdp2022.profile.messages.MessageHandler
+import com.github.displace.sdp2022.users.CompleteUser
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -30,6 +32,12 @@ class GameMenuTest {
     @Before
     fun setup() {
         intent = Intent(ApplicationProvider.getApplicationContext(),GameVersusViewActivity::class.java)
+        val app = ApplicationProvider.getApplicationContext() as MyApplication
+        app.setActiveUser(CompleteUser(null, false))
+
+        Thread.sleep(3000)
+        app.setMessageHandler(MessageHandler(app.getActiveUser()!!.getPartialUser(),app))
+        Thread.sleep(1000)
     }
 
     @Test
@@ -143,14 +151,13 @@ class GameMenuTest {
         intent.putExtra("other","0")
 
         ActivityScenario.launch<GameSummaryActivity>(intent).use {
-            Intents.init()
+       //     Intents.init()
 
             onView(withId(R.id.chatButton)).perform(click())
             onView(withId(R.id.chatEditText)).perform(typeText("hh")).perform(closeSoftKeyboard())
             onView(withId(R.id.sendChatMessage)).perform(click())
-            Intents.intended(IntentMatchers.hasComponent(GameListActivity::class.java.name))
 
-            Intents.release()
+     //       Intents.release()
         }
     }
 

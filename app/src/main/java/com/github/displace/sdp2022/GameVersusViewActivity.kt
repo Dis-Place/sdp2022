@@ -88,6 +88,7 @@ class GameVersusViewActivity : AppCompatActivity() {
 
         chatPath = "/GameInstance/Game" + intent.getStringExtra("gid")!!  + "/Chat"
 
+
         val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")
 
         val endListener = object : ValueEventListener {
