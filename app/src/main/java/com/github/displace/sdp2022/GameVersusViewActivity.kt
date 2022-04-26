@@ -11,7 +11,7 @@ import com.github.displace.sdp2022.gameComponents.GameEvent
 import com.github.displace.sdp2022.gameComponents.Point
 import com.github.displace.sdp2022.gameVersus.GameVersusViewModel
 import com.github.displace.sdp2022.map.MapViewManager
-import com.github.displace.sdp2022.map.MarkerManager
+import com.github.displace.sdp2022.map.PinpointsManager
 import com.github.displace.sdp2022.map.PinpointsDBCommunicationHandler
 import com.github.displace.sdp2022.util.PreferencesUtil
 import com.github.displace.sdp2022.util.gps.GPSPositionManager
@@ -46,9 +46,9 @@ class GameVersusViewActivity : AppCompatActivity() {
     private lateinit var gpsPositionManager: GPSPositionManager
     private lateinit var markerListener: GeoPointListener
     private lateinit var other : Map<String,Any>
-    private lateinit var pinpointHandler: PinpointsDBCommunicationHandler
-    private lateinit var marker: MarkerManager
-    private lateinit var markerOther: MarkerManager
+    private lateinit var pinpointsDBHandler: PinpointsDBCommunicationHandler
+    private lateinit var pinpointsManager: PinpointsManager
+    private lateinit var opponentPinpoints: PinpointsManager.PinpointsRef
 
     private val db = RealTimeDatabase().noCacheInstantiate(
         "https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",
@@ -66,8 +66,8 @@ class GameVersusViewActivity : AppCompatActivity() {
         markerListener = GeoPointListener.markerPlacer(mapView)
         gpsPositionManager = GPSPositionManager(this)
         gpsPositionUpdater = GPSPositionUpdater(this,gpsPositionManager)
-        marker = MarkerManager(mapView)
-        markerOther = MarkerManager(mapView)
+        pinpointsManager = PinpointsManager(mapView)
+        opponentPinpoints = pinpointsManager.PinpointsRef()
         gpsPositionManager.listenersManager.addCall(GeoPointListener { geoPoint ->
             game.handleEvent(GameEvent.OnUpdate(intent.getStringExtra("uid")!!,
                 Point(geoPoint.latitude,geoPoint.longitude)))})
@@ -110,11 +110,11 @@ class GameVersusViewActivity : AppCompatActivity() {
             override fun onCancelled(databaseError: DatabaseError) {}
         }
         
-        pinpointHandler = PinpointsDBCommunicationHandler(db,"Game" + intent.getStringExtra("gid")!!, this)
-        pinpointHandler.initializePinpoints(intent.getStringExtra("uid")!!)
+        pinpointsDBHandler = PinpointsDBCommunicationHandler(db,"Game" + intent.getStringExtra("gid")!!, this)
+        pinpointsDBHandler.initializePinpoints(intent.getStringExtra("uid")!!)
 
         mapViewManager.addCallOnLongClick(GeoPointListener { geoPoint -> run {
-                marker.putMarker(geoPoint)
+                pinpointsManager.putMarker(geoPoint)
                 val res = game.handleEvent(
                     GameEvent.OnPointSelected(
                         intent.getStringExtra("uid")!!,
@@ -138,7 +138,7 @@ class GameVersusViewActivity : AppCompatActivity() {
                             text =
                                 "status : fail, nombre d'essais restant : " + (4 - game.getNbEssai()) + " True : x=" + game.getGoal().pos.first + " y=" + game.getGoal().pos.second
                         }
-                        pinpointHandler.updateDBPinpoints(intent.getStringExtra("uid")!!,marker.playerPinPointsRef)
+                        pinpointsDBHandler.updateDBPinpoints(intent.getStringExtra("uid")!!,pinpointsManager.playerPinPointsRef)
                     } else {
                         if (res == 2) {
                             gpsPositionManager.listenersManager.clearAllCalls()
@@ -164,7 +164,7 @@ class GameVersusViewActivity : AppCompatActivity() {
             other.forEach { t, u ->
                 val other = t.replace("id:","")
                 db.addList("GameInstance/Game" + intent.getStringExtra("gid")!! + "/id:" + other,"finish",endListener)
-                pinpointHandler.enableAutoupdateLocalPinpoints(other,markerOther.playerPinPointsRef)
+                pinpointsDBHandler.enableAutoupdateLocalPinpoints(other,opponentPinpoints)
                 game.handleEvent(GameEvent.OnStart(goal,intent.getStringExtra("uid")!!, intent.getStringExtra("gid")!!, other))
              }
         }
@@ -176,6 +176,7 @@ class GameVersusViewActivity : AppCompatActivity() {
 
 
     //close the screen
+    @Suppress("UNUSED_PARAMETER")
     fun closeButton(view: View) {
         game.handleEvent(GameEvent.OnSurrend(intent.getStringExtra("uid")!!))
         gpsPositionManager.listenersManager.clearAllCalls()

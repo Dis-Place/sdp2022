@@ -1,6 +1,6 @@
 package com.github.displace.sdp2022.util.gps
 
-import com.github.displace.sdp2022.map.MarkerManager
+import com.github.displace.sdp2022.map.PinpointsManager
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
 
@@ -13,8 +13,8 @@ fun interface GeoPointListener {
 
     companion object {
         fun markerPlacer(mapView: MapView) : GeoPointListener {
-            val markerManager = MarkerManager(mapView)
-            return GeoPointListener { geoPoint -> markerManager.putMarker(geoPoint) }
+            val pinpointsManager = PinpointsManager(mapView)
+            return GeoPointListener { geoPoint -> pinpointsManager.putMarker(geoPoint) }
         }
     }
 }

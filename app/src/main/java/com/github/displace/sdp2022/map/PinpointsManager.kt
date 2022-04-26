@@ -13,7 +13,7 @@ import org.osmdroid.views.MapView
  * @param mapView on which we put the markers
  * @author LeoLgdr
  */
-class MarkerManager(private val mapView: MapView) {
+class PinpointsManager(private val mapView: MapView) {
     private var pinPointsMap = mutableMapOf<PinpointsRef,List<Pinpoint>>()
     val playerPinPointsRef = PinpointsRef()
 

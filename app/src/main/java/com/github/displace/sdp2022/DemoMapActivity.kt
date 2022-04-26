@@ -9,7 +9,7 @@ import com.github.displace.sdp2022.gameComponents.Player
 import com.github.displace.sdp2022.map.GPSLocationMarker
 import com.github.displace.sdp2022.map.MapViewManager
 import com.github.displace.sdp2022.map.MapViewManager.Companion.DEFAULT_CENTER
-import com.github.displace.sdp2022.map.MarkerManager
+import com.github.displace.sdp2022.map.PinpointsManager
 import com.github.displace.sdp2022.map.PinpointsDBCommunicationHandler
 import com.github.displace.sdp2022.util.PreferencesUtil
 import com.github.displace.sdp2022.util.gps.GPSPositionManager
@@ -28,9 +28,9 @@ class DemoMapActivity : AppCompatActivity() {
     private lateinit var gpsLocationMarker: GPSLocationMarker
     private lateinit var markerListener: GeoPointListener
     private lateinit var posToastListener: GeoPointListener
-    private lateinit var markerManager: MarkerManager
-    lateinit var mockPinpointsRef: MarkerManager.PinpointsRef
-    lateinit var remoteMockPinpointsRef: MarkerManager.PinpointsRef
+    private lateinit var pinpointsManager: PinpointsManager
+    lateinit var mockPinpointsRef: PinpointsManager.PinpointsRef
+    lateinit var remoteMockPinpointsRef: PinpointsManager.PinpointsRef
     private lateinit var dbHandler: PinpointsDBCommunicationHandler
     private var useDB = false
 
@@ -45,16 +45,16 @@ class DemoMapActivity : AppCompatActivity() {
         setContentView(R.layout.activity_demo_map)
         mapView = findViewById<MapView>(R.id.map)
         mapViewManager = MapViewManager(mapView)
-        markerManager = MarkerManager(mapView)
-        markerListener = GeoPointListener {p -> markerManager.putMarker(p)}
+        pinpointsManager = PinpointsManager(mapView)
+        markerListener = GeoPointListener {p -> pinpointsManager.putMarker(p)}
         posToastListener = GeoPointListener { geoPoint -> Toast.makeText(this,String.format("( %.4f ; %.4f )",geoPoint.latitude,geoPoint.longitude),Toast.LENGTH_SHORT).show() }
         gpsPositionManager = GPSPositionManager(this)
         gpsPositionUpdater = GPSPositionUpdater(this,gpsPositionManager)
         gpsLocationMarker = GPSLocationMarker(mapView,gpsPositionManager)
         gpsLocationMarker.add()
 
-        mockPinpointsRef = markerManager.PinpointsRef()
-        remoteMockPinpointsRef = markerManager.PinpointsRef()
+        mockPinpointsRef = pinpointsManager.PinpointsRef()
+        remoteMockPinpointsRef = pinpointsManager.PinpointsRef()
         val db = RealTimeDatabase().noCacheInstantiate("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",false)
         dbHandler = PinpointsDBCommunicationHandler(db as RealTimeDatabase,MOCK_GAME_INSTANCE_NAME, this)
     }
@@ -118,8 +118,8 @@ class DemoMapActivity : AppCompatActivity() {
         return mapViewManager.currentOnLongClickListeners()
     }
 
-    fun markerManager(): MarkerManager{
-        return markerManager
+    fun markerManager(): PinpointsManager{
+        return pinpointsManager
     }
 
     private fun displayMockMarkers(){

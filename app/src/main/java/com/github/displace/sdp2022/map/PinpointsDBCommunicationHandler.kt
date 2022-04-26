@@ -20,7 +20,7 @@ class PinpointsDBCommunicationHandler(private val db: RealTimeDatabase, private 
      * @param playerID local player's unique id
      * @param pinpointsRef local reference to the pinpoints
      */
-    fun updateDBPinpoints(playerID: String, pinpointsRef: MarkerManager.PinpointsRef){
+    fun updateDBPinpoints(playerID: String, pinpointsRef: PinpointsManager.PinpointsRef){
         val positions = pinpointsRef.get()
         db.update("GameInstance/${gameInstanceName}/id:${playerID}","pinpoints",
             listOf(DUMMY_HEAD).plus(positions.map { p -> listOf(p.latitude,p.longitude) })
@@ -32,7 +32,7 @@ class PinpointsDBCommunicationHandler(private val db: RealTimeDatabase, private 
      * @param playerID opponent's ID (ie, the remote user in game with the local player)
      * @param pinpointsRef local reference to the pinpoints
      */
-    fun enableAutoupdateLocalPinpoints(playerID: String, pinpointsRef: MarkerManager.PinpointsRef){
+    fun enableAutoupdateLocalPinpoints(playerID: String, pinpointsRef: PinpointsManager.PinpointsRef){
         val pinpointListener = object : ValueEventListener {
 
             override fun onDataChange(dataSnapshot: DataSnapshot) {

@@ -16,7 +16,7 @@ import org.junit.runner.RunWith
 import org.osmdroid.util.GeoPoint
 
 @RunWith(AndroidJUnit4::class)
-class MarkerManagerTest {
+class PinpointsManagerTest {
     @get:Rule
     val testRule = ActivityScenarioRule(DemoMapActivity::class.java)
 
