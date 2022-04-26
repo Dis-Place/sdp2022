@@ -13,6 +13,7 @@ import com.github.displace.sdp2022.gameVersus.GameVersusViewModel
 import com.github.displace.sdp2022.map.MapViewManager
 import com.github.displace.sdp2022.map.PinpointsManager
 import com.github.displace.sdp2022.map.PinpointsDBCommunicationHandler
+import com.github.displace.sdp2022.util.DateTimeUtil
 import com.github.displace.sdp2022.util.PreferencesUtil
 import com.github.displace.sdp2022.util.gps.GPSPositionManager
 import com.github.displace.sdp2022.util.gps.GPSPositionUpdater
@@ -24,6 +25,8 @@ import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 const val EXTRA_STATS = "com.github.displace.sdp2022.GAMESTAT"
@@ -49,13 +52,14 @@ class GameVersusViewActivity : AppCompatActivity() {
     private lateinit var pinpointsDBHandler: PinpointsDBCommunicationHandler
     private lateinit var pinpointsManager: PinpointsManager
     private lateinit var opponentPinpoints: PinpointsManager.PinpointsRef
+    private val calendar = Calendar.getInstance()
 
     private val db = RealTimeDatabase().noCacheInstantiate(
         "https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",
         false
     ) as RealTimeDatabase
 
-    @RequiresApi(Build.VERSION_CODES.O)
+    @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         PreferencesUtil.initOsmdroidPref(this)
@@ -75,8 +79,6 @@ class GameVersusViewActivity : AppCompatActivity() {
         centerButton(mapView) // to initialise the gps position
         //centerButton(mapView) // to set the center of the screen
 
-        val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")
-
         val endListener = object : ValueEventListener {
 
             override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -85,9 +87,7 @@ class GameVersusViewActivity : AppCompatActivity() {
                     db.delete("GameInstance", "Game" + intent.getStringExtra("gid")!!)
                     gpsPositionManager.listenersManager.clearAllCalls()
                     statsList.clear()
-                    val current = LocalDateTime.now()
-                    val formatted = current.format(formatter)
-                    statsList.add(formatted)
+                    statsList.add(DateTimeUtil.currentTime())
                     if (x == 1L) {
                         findViewById<TextView>(R.id.TryText).apply {
                             text =
@@ -127,10 +127,8 @@ class GameVersusViewActivity : AppCompatActivity() {
                     extras.putBoolean(EXTRA_RESULT, true)
                     extras.putInt(EXTRA_SCORE_P1, 1)
                     extras.putInt(EXTRA_SCORE_P2, 0)
-                    val current = LocalDateTime.now()
-                    val formatted = current.format(formatter)
                     statsList.clear()
-                    statsList.add(formatted)
+                    statsList.add(DateTimeUtil.currentTime())
                     showGameSummaryActivity()
                 }else {
                     if (res == 1) {
@@ -149,10 +147,8 @@ class GameVersusViewActivity : AppCompatActivity() {
                             extras.putBoolean(EXTRA_RESULT, false)
                             extras.putInt(EXTRA_SCORE_P1, 0)
                             extras.putInt(EXTRA_SCORE_P2, 1)
-                            val current = LocalDateTime.now()
-                            val formatted = current.format(formatter)
                             statsList.clear()
-                            statsList.add(formatted)
+                            statsList.add(DateTimeUtil.currentTime())
                             showGameSummaryActivity()
                         }
                     }
