@@ -7,5 +7,6 @@ object Constants {
     const val MIN_LATITUDE = -90.0
     const val TWENTY_MEGA_BYTE: Long = 20 * 1024 * 1024
     const val THRESHOLD = 15
+    const val GAME_AREA_RADIUS = 200
 
 }

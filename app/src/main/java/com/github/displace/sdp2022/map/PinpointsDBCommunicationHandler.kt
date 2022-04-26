@@ -37,7 +37,9 @@ class PinpointsDBCommunicationHandler(private val db: RealTimeDatabase, private 
 
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val r = (dataSnapshot.value ?: listOf<List<Double>>()) as List<List<Double>>
-                if(r.size > 1 && !activity.isDestroyed) {
+                if(activity.isDestroyed){
+                    db.removeList("GameInstance/${gameInstanceName}/id:${playerID}","pinpoints",this)
+                } else if(r.size > 1) {
                     pinpointsRef.set(
                         r.subList(1,r.size).map { l ->
                             GeoPoint(l[0], l[1])
