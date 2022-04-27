@@ -39,10 +39,12 @@ class AddFriendActivity : AppCompatActivity() {
         val friendId = editText.text.toString()
         Toast.makeText(this , friendId, Toast.LENGTH_LONG).show()
 
+
+
+        checkIfUserExists("")
+
         editText.text.clear()
         editText.hint = "Enter Another Friend"
-
-        checkIfUserExists("chad")
 
     }
 
@@ -55,7 +57,7 @@ class AddFriendActivity : AppCompatActivity() {
     }
 
     private fun checkIfUserExists(userName : String) : Boolean{
-        Log.d(TAG,"CHECK IF USER EXISTS")
+        Log.d(TAG,"CHECK IF USER $userName EXISTS")
 
 
         val usersRef: DatabaseReference = rootRef.child("CompleteUsers")
@@ -65,10 +67,16 @@ class AddFriendActivity : AppCompatActivity() {
             override fun onDataChange(dataSnapshot: DataSnapshot){
                 var partialUsers = mutableListOf<PartialUser>()
                 for (ds in dataSnapshot.children) {
-                    val partialUser = ds.child("CompleteUser").child("partialUser").child("uid").toString()
-                        Log.d(TAG, partialUser)
-//                    partialUsers.add(partialUser)
+                    val uid = ds.child("CompleteUser").child("partialUser").child("uid").value.toString()
+                    val username = ds.child("CompleteUser").child("partialUser").child("username").value.toString()
+
+                    val partialUser = PartialUser(username,uid)
+                    Log.d(TAG, partialUser.toString())
+                    partialUsers.add(partialUser)
                 }
+
+                val res = checkUserExists(partialUsers, userName)
+                Log.d(TAG, res.toString())
 
             }
 
@@ -84,5 +92,14 @@ class AddFriendActivity : AppCompatActivity() {
 
     private fun sendInvite(){
         //TODO: implement
+    }
+
+    private fun checkUserExists(users : List<PartialUser>, target : String) : Boolean {
+        for (user in users) {
+            if( user.username == target ){
+                return true
+            }
+        }
+        return false
     }
 }
