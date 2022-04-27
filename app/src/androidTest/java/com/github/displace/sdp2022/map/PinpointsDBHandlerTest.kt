@@ -1,30 +1,21 @@
 package com.github.displace.sdp2022.map
 
-import android.app.TaskStackBuilder
-import android.provider.ContactsContract
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.GrantPermissionRule
-import com.github.displace.sdp2022.Database
 import com.github.displace.sdp2022.DemoMapActivity
 import com.github.displace.sdp2022.DemoMapActivity.Companion.MOCK_MARKERS_POSITIONS
 import com.github.displace.sdp2022.R
-import com.github.displace.sdp2022.RealTimeDatabase
-import com.github.displace.sdp2022.map.MarkerManagerTest.Companion.assertCorrectPositions
-import com.google.android.gms.tasks.Task
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseReference
-import org.junit.Assert.assertEquals
+import com.github.displace.sdp2022.map.PinpointsManagerTest.Companion.assertCorrectPositions
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import java.lang.UnsupportedOperationException
 
 @RunWith(AndroidJUnit4::class)
-class PinpointsDBCommunicationHandlerTest {
+class PinpointsDBHandlerTest {
     @get:Rule
     val testRule = ActivityScenarioRule(DemoMapActivity::class.java)
 

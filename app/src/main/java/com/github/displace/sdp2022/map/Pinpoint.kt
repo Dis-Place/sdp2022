@@ -40,7 +40,7 @@ class Pinpoint(private val mapView: MapView, private val pos: GeoPoint, private 
         marker.setOnMarkerClickListener { _, _ -> false }
     }
 
-    fun removeOnClick(ref: MarkerManager.PinpointsRef) {
+    fun removeOnClick(ref: PinpointsManager.PinpointsRef) {
         marker.setOnMarkerClickListener { _, _ ->
             ref.remove(this)
             false
