@@ -11,6 +11,7 @@ import android.widget.ScrollView
 import android.widget.TextView
 import com.github.displace.sdp2022.profile.FriendRequest
 import com.github.displace.sdp2022.users.PartialUser
+import com.google.firebase.database.FirebaseDatabase
 
 class GameSummaryActivity : AppCompatActivity() {
 
@@ -98,7 +99,9 @@ class GameSummaryActivity : AppCompatActivity() {
         ) as RealTimeDatabase
         db.referenceGet("CompleteUsers/$otherId/CompleteUser/partialUser","username").addOnSuccessListener { snapshot ->
             val name = snapshot.value as String? ?: ""
-            FriendRequest.Companion.sendInvite(app.getActiveUser()?.getPartialUser()!! , PartialUser( otherId, name ))
+            FriendRequest.sendFriendRequest(otherId,FirebaseDatabase.getInstance("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/").reference,
+                app.getActiveUser()!!.getPartialUser()
+            )
         }
 
     }
