@@ -40,7 +40,7 @@ class CompleteUser(
         }
     }
 
-    private val offlineUserFetcher: OfflineUserFetcher = OfflineUserFetcher(context, debug)
+    //private val offlineUserFetcher: OfflineUserFetcher = OfflineUserFetcher(context, debug)
 
     private lateinit var partialUser: PartialUser
 
@@ -66,7 +66,7 @@ class CompleteUser(
         achievements.add(ach)
         db.update(dbReference, "achievements/${achievements.size - 1}", ach)
         if(firebaseUser != null) {
-            offlineUserFetcher.setOfflineAchievements(achievements)     // We have to choose if we do this or if we update an achievements
+            //offlineUserFetcher.setOfflineAchievements(achievements)     // We have to choose if we do this or if we update an achievements
                                                                         // list in the fetcher and update the files periodically (same for all the others)
         }
 
@@ -80,7 +80,7 @@ class CompleteUser(
                 stats[i].value = newValue
                 db.update(dbReference, "stats/$i/value", newValue)
                 if(firebaseUser != null) {
-                    offlineUserFetcher.setOfflineStats(stats)
+                    //offlineUserFetcher.setOfflineStats(stats)
                 }
                 return
             }
@@ -94,7 +94,7 @@ class CompleteUser(
             friendsList.add(partialU)
             db.update(dbReference, "friendsList/${friendsList.size - 1}", partialU)
             if(firebaseUser != null) {
-                offlineUserFetcher.setOfflineFriendsList(friendsList)
+                //offlineUserFetcher.setOfflineFriendsList(friendsList)
             }
         }
     }
@@ -105,7 +105,7 @@ class CompleteUser(
         if (friendsList.remove(partialU)) {
             db.update(dbReference, "friendsList", friendsList)
             if(firebaseUser != null) {
-                offlineUserFetcher.setOfflineFriendsList(friendsList)
+                //offlineUserFetcher.setOfflineFriendsList(friendsList)
             }
         }
     }
@@ -129,7 +129,7 @@ class CompleteUser(
         gameHistory.add(history)
         db.update(dbReference, "gameHistory/${gameHistory.size - 1}", history)
         if(firebaseUser != null) {
-            offlineUserFetcher.setOfflineGameHistory(gameHistory)
+            //offlineUserFetcher.setOfflineGameHistory(gameHistory)
         }
     }
 
@@ -139,20 +139,20 @@ class CompleteUser(
         partialUser.username = newName
         db.update(dbReference, "partialUser/username", newName)
         if(firebaseUser != null) {
-            offlineUserFetcher.setOfflinePartialUser(partialUser)
+            //offlineUserFetcher.setOfflinePartialUser(partialUser)
         }
     }
 
     private fun initializeUser() {
         // Initialization if the user is offline, using the cache
-        if (offlineMode) {
+        /*if (offlineMode) {
             achievements = offlineUserFetcher.getOfflineAchievements()
             stats = offlineUserFetcher.getOfflineStats()
             friendsList = offlineUserFetcher.getOfflineFriendsList()
             gameHistory = offlineUserFetcher.getOfflineGameHistory()
             partialUser = offlineUserFetcher.getOfflinePartialUser()
             return
-        }
+        }*/
 
         // Initialization if it's a guest
         if (guestBoolean) {
@@ -269,7 +269,7 @@ class CompleteUser(
             Achievement("Create your account !", getCurrentDate())
         )
         if(firebaseUser != null) {
-            offlineUserFetcher.setOfflineAchievements(achievements)
+            //offlineUserFetcher.setOfflineAchievements(achievements)
         }
     }
 
@@ -286,7 +286,7 @@ class CompleteUser(
         )      // It's a dummy list for now, will be replaced with a list of all the possible statistics initialized to 0
 
         if(firebaseUser != null) {
-            offlineUserFetcher.setOfflineStats(stats)
+            //offlineUserFetcher.setOfflineStats(stats)
         }
     }
 
@@ -307,7 +307,7 @@ class CompleteUser(
             }
         }
         if(firebaseUser != null) {
-            offlineUserFetcher.setOfflinePartialUser(partialUser)
+            //offlineUserFetcher.setOfflinePartialUser(partialUser)
         }
 
     }
