@@ -9,6 +9,8 @@ import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.ScrollView
 import android.widget.TextView
+import com.github.displace.sdp2022.profile.FriendRequest
+import com.github.displace.sdp2022.users.PartialUser
 
 class GameSummaryActivity : AppCompatActivity() {
 
@@ -85,4 +87,20 @@ class GameSummaryActivity : AppCompatActivity() {
         val intent = Intent(this, GameListActivity::class.java)
         startActivity(intent)
     }
+
+    fun friendInviteToOpponent(view : View){
+        val app = applicationContext as MyApplication
+        val otherId = intent.extras!!.getString("OPPONENT_ID")!!
+        var otherName = ""
+        val db = RealTimeDatabase().noCacheInstantiate(
+            "https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",
+            false
+        ) as RealTimeDatabase
+        db.referenceGet("CompleteUsers/$otherId/CompleteUser/partialUser","username").addOnSuccessListener { snapshot ->
+            val name = snapshot.value as String? ?: ""
+            FriendRequest.Companion.sendInvite(app.getActiveUser()?.getPartialUser()!! , PartialUser( otherId, name ))
+        }
+
+    }
+
 }

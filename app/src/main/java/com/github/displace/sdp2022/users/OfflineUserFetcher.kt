@@ -21,14 +21,15 @@ import java.io.FileNotFoundException
 import java.text.SimpleDateFormat
 import java.util.*
 
-private const val PARTIAL_USER_PATH = "user/partial"
-private const val ACHIEVEMENT_PATH = "user/partial"
-private const val STATS_PATH = "user/partial"
-private const val FRIEND_LIST_PATH = "user/friends"
-private const val GAME_HISTORY_PATH = "user/game_history"
-private const val RDM_PATH = "user/rdm"
+private const val PARTIAL_USER_PATH = "user-partial"
+private const val ACHIEVEMENT_PATH = "user-achievement"
+private const val STATS_PATH = "user-stats"
+private const val FRIEND_LIST_PATH = "user-friends"
+private const val GAME_HISTORY_PATH = "user-game_history"
+private const val RDM_PATH = "user-rdm"
 
 class OfflineUserFetcher(private val context: Context?, private val debug: Boolean = false) {
+
     /**
      * Achievements
      *
@@ -220,8 +221,9 @@ class OfflineUserFetcher(private val context: Context?, private val debug: Boole
         if (debug)
             return
 
+        val directory = context?.cacheDir ?: File(RDM_PATH)
         //Create cache file in the cachedFile directory
-        File.createTempFile(path, null, context?.cacheDir ?: File(RDM_PATH))
+        File.createTempFile(path, ".json", directory)
 
         //Open the file and write the serializable object
         val cachedFile = File(context?.cacheDir ?: File(RDM_PATH), path)
