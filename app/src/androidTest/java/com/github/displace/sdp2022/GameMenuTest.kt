@@ -102,7 +102,6 @@ class GameMenuTest {
         ActivityScenario.launch<GameSummaryActivity>(intent).use {
             onView(withId(R.id.map)).perform(swipeUp())
             onView(withId(R.id.map)).perform(ViewActions.longClick())
-            Thread.sleep(5000)
             onView(withId(R.id.TryText))
                 .check(matches(withText("wrong guess, remaining tries : 3")))
         }

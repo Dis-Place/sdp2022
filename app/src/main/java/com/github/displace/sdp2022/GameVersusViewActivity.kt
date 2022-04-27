@@ -102,7 +102,7 @@ class GameVersusViewActivity : AppCompatActivity() {
                 gpsPositionManager.listenersManager.clearAllCalls()
                 statsList.clear()
                 statsList.add(DateTimeUtil.currentTime())
-                if (x == GameVersusViewModel.LOSE) {
+                if (x == GameVersusViewModel.WIN) {
                     findViewById<TextView>(R.id.TryText).apply {
                         text =
                             "status : end of game"
