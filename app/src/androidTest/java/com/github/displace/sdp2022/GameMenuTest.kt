@@ -65,8 +65,8 @@ class GameMenuTest {
         }
 
     }
-/*
-    @Test
+
+   /* @Test
     fun testEndButton() {
         intent.putExtra("gid","-4862463398588582910")
         intent.putExtra("uid","hCkhhJ0dkINs0BIpx8eqhLWzXw43")
