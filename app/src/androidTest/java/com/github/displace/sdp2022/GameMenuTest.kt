@@ -17,6 +17,8 @@ import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.displace.sdp2022.profile.messages.MessageHandler
 import com.github.displace.sdp2022.users.CompleteUser
+import androidx.test.rule.GrantPermissionRule
+import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -31,8 +33,20 @@ class GameMenuTest {
 
     @Before
     fun setup() {
+        Intents.init()
         intent = Intent(ApplicationProvider.getApplicationContext(),GameVersusViewActivity::class.java)
     }
+
+    @After
+    fun releaseIntents() {
+        Intents.release()
+    }
+
+    @get:Rule
+    val permissionRule = GrantPermissionRule.grant(
+        android.Manifest.permission.ACCESS_COARSE_LOCATION,
+        android.Manifest.permission.ACCESS_FINE_LOCATION
+    )
 
     @Test
     fun testPlayButton() {
@@ -43,7 +57,7 @@ class GameMenuTest {
 
         ActivityScenario.launch<GameSummaryActivity>(intent).use {
             onView(withId(R.id.TryText))
-                .check(matches(withText("status : neutral, nombre d'essais restant : 4")))
+                .check(matches(withText("remaining tries : 4")))
         }
     }
 
@@ -54,7 +68,7 @@ class GameMenuTest {
         intent.putExtra("nbPlayer",2)
         intent.putExtra("other","0")
 
-        ActivityScenario.launch<GameSummaryActivity>(intent).use {
+        ActivityScenario.launch<GameVersusViewActivity>(intent).use {
             onView(withId(R.id.map)).check(matches(ViewMatchers.isDisplayed()))
         }
 
@@ -68,7 +82,6 @@ class GameMenuTest {
         intent.putExtra("other","0")
 
         ActivityScenario.launch<GameSummaryActivity>(intent).use {
-            Intents.init()
             onView(withId(R.id.map)).perform(swipeUp())
             onView(withId(R.id.map)).perform(ViewActions.longClick())
             onView(withId(R.id.map)).perform(swipeUp())
@@ -77,8 +90,9 @@ class GameMenuTest {
             onView(withId(R.id.map)).perform(ViewActions.longClick())
             onView(withId(R.id.map)).perform(swipeUp())
             onView(withId(R.id.map)).perform(ViewActions.longClick())
-       //     Intents.intended(IntentMatchers.hasComponent(GameSummaryActivity::class.java.name))
-            Intents.release()
+
+            Intents.intended(IntentMatchers.hasComponent(GameSummaryActivity::class.java.name))
+
         }
     }
 
@@ -90,12 +104,11 @@ class GameMenuTest {
         intent.putExtra("other","0")
 
         ActivityScenario.launch<GameSummaryActivity>(intent).use {
-            Intents.init()
             onView(withId(R.id.map)).perform(swipeUp())
             onView(withId(R.id.map)).perform(ViewActions.longClick())
             onView(withId(R.id.TryText))
-        //        .check(matches(withText("status : fail, nombre d'essais restant : 3 True : x=46.52048 y=6.56782")))
-            Intents.release()
+                .check(matches(withText("wrong guess, remaining tries : 3")))
+
         }
 
     }
@@ -108,11 +121,11 @@ class GameMenuTest {
         intent.putExtra("other","0")
 
         ActivityScenario.launch<GameSummaryActivity>(intent).use {
-            Intents.init()
             onView(withId(R.id.map)).perform(ViewActions.longClick())
-        //    Intents.intended(IntentMatchers.hasComponent(GameSummaryActivity::class.java.name))
-            Intents.release()
+            Intents.intended(IntentMatchers.hasComponent(GameSummaryActivity::class.java.name))
+
         }
+
     }
 
     @Test
@@ -123,10 +136,8 @@ class GameMenuTest {
         intent.putExtra("other","0")
 
         ActivityScenario.launch<GameSummaryActivity>(intent).use {
-            Intents.init()
             onView(withId(R.id.closeButton)).perform(click())
             Intents.intended(IntentMatchers.hasComponent(GameListActivity::class.java.name))
-            Intents.release()
         }
     }
 
@@ -154,6 +165,7 @@ class GameMenuTest {
 
             onView(withId(R.id.chatButton)).perform(click())
             onView(withId(R.id.chatEditText)).perform(typeText("hh")).perform(closeSoftKeyboard())
+            Thread.sleep(1000)
             onView(withId(R.id.sendChatMessage)).perform(click())
 
         }
