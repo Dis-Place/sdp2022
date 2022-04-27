@@ -66,7 +66,7 @@ class GameMenuTest {
 
     }
 
-   /* @Test
+    @Test
     fun testEndButton() {
         intent.putExtra("gid","-4862463398588582910")
         intent.putExtra("uid","hCkhhJ0dkINs0BIpx8eqhLWzXw43")
@@ -90,8 +90,8 @@ class GameMenuTest {
             Intents.intended(IntentMatchers.hasComponent(GameSummaryActivity::class.java.name))
             Intents.release()
         }
-    }*/
-/*
+    }
+
     @Test
     fun testFailButton() {
         intent.putExtra("gid","-4862463398588582910")
@@ -108,7 +108,7 @@ class GameMenuTest {
             Intents.release()
         }
 
-    }*/
+    }
 
     @Test
     fun testWinButton() {
@@ -146,7 +146,7 @@ class GameMenuTest {
             GeneralLocation.TOP_CENTER, Press.FINGER
         )
     }
-
+/*
     @Test
     fun testChatButton() {
         intent.putExtra("gid","-4862463398588582910")
@@ -163,6 +163,6 @@ class GameMenuTest {
 
             Intents.release()
         }
-    }
+    }*/
 
 }
