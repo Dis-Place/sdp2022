@@ -185,7 +185,7 @@ class GameVersusViewActivity : AppCompatActivity() {
         chatPath = "/GameInstance/Game" + intent.getStringExtra("gid")!!  + "/Chat"
 
         db.getDbReference(chatPath).addValueEventListener(chatListener())
-        closeChatButton( findViewById<Group>(R.id.ChatActiveGroup) )
+     //   closeChatButton( findViewById<Group>(R.id.ChatActiveGroup) )
 
     }
 
