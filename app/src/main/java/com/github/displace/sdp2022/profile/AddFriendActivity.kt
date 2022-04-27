@@ -45,29 +45,10 @@ class AddFriendActivity : AppCompatActivity() {
         val friendId = editText.text.toString()
         Toast.makeText(this , friendId, Toast.LENGTH_LONG).show()
 
+        val target = editText.text.toString()
 
-
-        checkIfUserExists(editText.text.toString())
-
-        editText.text.clear()
-        editText.hint = "Enter Another Friend"
-
-    }
-
-    private fun closeKeyBoard() {
-        val view = this.currentFocus
-        if (view != null) {
-            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            imm.hideSoftInputFromWindow(view.windowToken, 0)
-        }
-    }
-
-    private fun checkIfUserExists(target : String) : Boolean{
         Log.d(TAG,"CHECK IF USER $target EXISTS")
-
-
         val usersRef: DatabaseReference = rootRef.child("CompleteUsers")
-
 
         val eventListener: ValueEventListener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot){
@@ -77,29 +58,52 @@ class AddFriendActivity : AppCompatActivity() {
                     val target = getTargetUser(dataSnapshot, partialUsers, target)
                     sendInvite(source, target)
                 }
-
-
-
-
             }
-
             override fun onCancelled(databaseError: DatabaseError) {}
         }
-
-
         usersRef.addListenerForSingleValueEvent(eventListener)
 
+        editText.text.clear()
+        editText.hint = "Enter Another Friend"
 
-        return true
     }
 
-    private fun sendInvite(source : PartialUser, target : PartialUser){
+    fun closeKeyBoard() {
+        val view = this.currentFocus
+        if (view != null) {
+            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(view.windowToken, 0)
+        }
+    }
+
+//    fun checkIfUserExists(target : String) : Boolean{
+//        Log.d(TAG,"CHECK IF USER $target EXISTS")
+//        val usersRef: DatabaseReference = rootRef.child("CompleteUsers")
+//
+//        val eventListener: ValueEventListener = object : ValueEventListener {
+//            override fun onDataChange(dataSnapshot: DataSnapshot){
+//                var partialUsers = getPartialUsers(dataSnapshot)
+//                if( checkUserExists(partialUsers, target) ){
+//                    val source = currentUser
+//                    val target = getTargetUser(dataSnapshot, partialUsers, target)
+//                    sendInvite(source, target)
+//                }
+//            }
+//            override fun onCancelled(databaseError: DatabaseError) {}
+//        }
+//        usersRef.addListenerForSingleValueEvent(eventListener)
+//
+//
+//        return true
+//    }
+
+    fun sendInvite(source : PartialUser, target : PartialUser){
         val inviteDbRef = rootRef.child("Invites")
         val invite = Invite(source, target)
         inviteDbRef.push().setValue(invite)
     }
 
-    private fun checkUserExists(users : List<PartialUser>, target : String) : Boolean {
+    fun checkUserExists(users : List<PartialUser>, target : String) : Boolean {
         Log.d(TAG, "Searching if $target")
         for (user in users) {
             if( user.username == target ){
@@ -109,7 +113,7 @@ class AddFriendActivity : AppCompatActivity() {
         return false
     }
 
-    private fun getPartialUsers(dataSnapshot: DataSnapshot) : MutableList<PartialUser>{
+    fun getPartialUsers(dataSnapshot: DataSnapshot) : MutableList<PartialUser>{
         var partialUsers = mutableListOf<PartialUser>()
         for (ds in dataSnapshot.children) {
             val uid = ds.child("CompleteUser").child("partialUser").child("uid").value.toString()
@@ -122,7 +126,7 @@ class AddFriendActivity : AppCompatActivity() {
         return partialUsers
     }
 
-    private fun getTargetUser(dataSnapshot: DataSnapshot, users : List<PartialUser>, target : String) : PartialUser {
+    fun getTargetUser(dataSnapshot: DataSnapshot, users : List<PartialUser>, target : String) : PartialUser {
         for (user in users) {
             if( user.username == target ){
                 return user
