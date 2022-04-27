@@ -31,6 +31,15 @@ class GoalPositionMarker(private val mapView: MapView, private val pos: GeoPoint
     }
 
     /**
+     * move the marker to specified position
+     * @param position new marker position
+     */
+    fun set(position: GeoPoint) {
+        marker.position = position
+        mapView.invalidate()
+    }
+
+    /**
      * remove marker from mapView
      */
     fun remove() {
