@@ -6,7 +6,7 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.ViewAction
 import androidx.test.espresso.action.*
-import androidx.test.espresso.action.ViewActions.*
+import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers
@@ -15,8 +15,6 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.github.displace.sdp2022.profile.messages.MessageHandler
-import com.github.displace.sdp2022.users.CompleteUser
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -32,12 +30,6 @@ class GameMenuTest {
     @Before
     fun setup() {
         intent = Intent(ApplicationProvider.getApplicationContext(),GameVersusViewActivity::class.java)
-        val app = ApplicationProvider.getApplicationContext() as MyApplication
-        app.setActiveUser(CompleteUser(null, false))
-
-        Thread.sleep(3000)
-        app.setMessageHandler(MessageHandler(app.getActiveUser()!!.getPartialUser(),app))
-        Thread.sleep(1000)
     }
 
     @Test
@@ -77,16 +69,12 @@ class GameMenuTest {
             Intents.init()
             onView(withId(R.id.map)).perform(swipeUp())
             onView(withId(R.id.map)).perform(ViewActions.longClick())
-
             onView(withId(R.id.map)).perform(swipeUp())
             onView(withId(R.id.map)).perform(ViewActions.longClick())
-
             onView(withId(R.id.map)).perform(swipeUp())
             onView(withId(R.id.map)).perform(ViewActions.longClick())
-
             onView(withId(R.id.map)).perform(swipeUp())
             onView(withId(R.id.map)).perform(ViewActions.longClick())
-
             Intents.intended(IntentMatchers.hasComponent(GameSummaryActivity::class.java.name))
             Intents.release()
         }
@@ -146,23 +134,5 @@ class GameMenuTest {
             GeneralLocation.TOP_CENTER, Press.FINGER
         )
     }
-/*
-    @Test
-    fun testChatButton() {
-        intent.putExtra("gid","-4862463398588582910")
-        intent.putExtra("uid","hCkhhJ0dkINs0BIpx8eqhLWzXw43")
-        intent.putExtra("nbPlayer",2)
-        intent.putExtra("other","0")
-
-        ActivityScenario.launch<GameSummaryActivity>(intent).use {
-            Intents.init()
-
-            onView(withId(R.id.chatButton)).perform(click())
-            onView(withId(R.id.chatEditText)).perform(typeText("hh")).perform(closeSoftKeyboard())
-            onView(withId(R.id.sendChatMessage)).perform(click())
-
-            Intents.release()
-        }
-    }*/
 
 }
