@@ -33,6 +33,7 @@ class TempLoginActivity : AppCompatActivity() {
 
     private lateinit var auth: FirebaseAuth
     private lateinit var signInClient: GoogleSignInClient
+    private var rememberMe: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,10 +53,10 @@ class TempLoginActivity : AppCompatActivity() {
 
         val signInButton = findViewById<Button>(R.id.btnGoogleSignIn)
         signInButton.setOnClickListener {
-            if (sharedPreferences.getBoolean("login-remember", false)){
+            /*if (sharedPreferences.getBoolean("login-remember", false)){
                 val intent = Intent(this, MainMenuActivity::class.java)
                 startActivity(intent)
-            }
+            }*/
             val options = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.webclient_id)).requestEmail().build()
             signInClient = GoogleSignIn.getClient(this, options)
@@ -81,14 +82,16 @@ class TempLoginActivity : AppCompatActivity() {
         val remember = findViewById<CheckBox>(R.id.loginRememberCheckBox)
         remember.setOnClickListener {
             if (remember.isChecked) {
-                val editor = sharedPreferences.edit()
+                rememberMe = true
+                /*val editor = sharedPreferences.edit()
                 editor.putBoolean("login-remember", true)
-                editor.apply()
+                editor.apply()*/
                 Toast.makeText(this, "Remember Me is checked", Toast.LENGTH_SHORT).show()
             } else {
-                val editor = sharedPreferences.edit()
+                rememberMe = false
+                /*val editor = sharedPreferences.edit()
                 editor.putBoolean("login-remember", false)
-                editor.apply()
+                editor.apply()*/
                 Toast.makeText(this, "Remember Me is unchecked", Toast.LENGTH_SHORT).show()
             }
         }
@@ -132,7 +135,7 @@ class TempLoginActivity : AppCompatActivity() {
                             "Successfully logged in $name ",
                             Toast.LENGTH_LONG
                         ).show()
-                        val user = CompleteUser(this@TempLoginActivity, current)
+                        val user = CompleteUser(app, current)
                         app.setActiveUser(user)
                     }
 
