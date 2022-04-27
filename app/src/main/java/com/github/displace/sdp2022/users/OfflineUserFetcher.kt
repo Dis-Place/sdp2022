@@ -2,6 +2,7 @@ package com.github.displace.sdp2022.users
 
 import android.annotation.SuppressLint
 import android.content.Context
+import androidx.versionedparcelable.ParcelImpl
 import com.github.displace.sdp2022.profile.achievements.Achievement
 import com.github.displace.sdp2022.profile.history.History
 import com.github.displace.sdp2022.profile.statistics.Statistic
@@ -27,7 +28,7 @@ private const val FRIEND_LIST_PATH = "user/friends"
 private const val GAME_HISTORY_PATH = "user/game_history"
 private const val RDM_PATH = "user/rdm"
 
-class OfflineUser(private val context: Context?, private val debug: Boolean = false) : User {
+class OfflineUserFetcher(private val context: Context?, private val debug: Boolean = false) {
     /**
      * Achievements
      *
@@ -119,197 +120,96 @@ class OfflineUser(private val context: Context?, private val debug: Boolean = fa
         }
     }
 
-
-    private lateinit var partialUser: PartialUser
-    private lateinit var achievements: Achievements
-    private lateinit var stats: Statistics
-    private lateinit var friendsList: FriendList
-    private lateinit var gameHistory: Histories
-
-    init {
-        initUser()
-        if (!debug)
-            Thread.sleep(3000)
-    }
-
-    override fun getPartialUser(): PartialUser? {
-        return if (debug)
-            partialUser
-        else
-            readFile(PARTIAL_USER_PATH) as PartialUser?
-    }
-
-    @Suppress("CAST_NEVER_SUCCEEDS")
-    override fun addAchievement(ach: Achievement) {
-        achievements.array.add(ach)
-        writeToFile(
-            ACHIEVEMENT_PATH,
-            ach
-        )
-    }
-
-    @Suppress("CAST_NEVER_SUCCEEDS")
-    override fun updateStats(statName: String, newValue: Long) {
-        for (i in 0 until stats.array.size) {
-            if (statName == stats.array[i].name) {
-                stats.array[i].value = newValue
-                writeToFile(STATS_PATH, stats.array[i])
-                return
-            }
-        }
-    }
-
-    @Suppress("CAST_NEVER_SUCCEEDS")
-    override fun addFriend(partialU: PartialUser) {
-        if (!containsPartialUser(friendsList.array, partialU)) {
-            friendsList.array.add(partialU)
-            writeToFile(FRIEND_LIST_PATH, friendsList)
-        }
-    }
-
-    @Suppress("CAST_NEVER_SUCCEEDS")
-    override fun removeFriend(partialU: PartialUser) {
-        if (containsPartialUser(friendsList.array, partialU)) {
-            friendsList.array.remove(partialU)
-            writeToFile(FRIEND_LIST_PATH, friendsList)
-        }
-    }
-
-    @Suppress("CAST_NEVER_SUCCEEDS")
-    override fun addGameInHistory(map: String, date: String, result: String) {
-        val history = History(map, date, result)
-        gameHistory.array.add(history)
-        writeToFile(GAME_HISTORY_PATH, gameHistory)
-    }
-
-    @Suppress("CAST_NEVER_SUCCEEDS")
-    override fun changeUsername(newName: String) {
-        partialUser.username = newName
-        writeToFile(PARTIAL_USER_PATH, partialUser)
-    }
-
-    override fun removeUserFromDatabase() {
-        deleteContentFile(PARTIAL_USER_PATH)
-        deleteContentFile(ACHIEVEMENT_PATH)
-        deleteContentFile(STATS_PATH)
-        deleteContentFile(FRIEND_LIST_PATH)
-        deleteContentFile(GAME_HISTORY_PATH)
-    }
-
-    override fun getAchievements(): MutableList<Achievement> {
-        return achievements.array
-    }
-
-    override fun getStats(): List<Statistic> {
-        return stats.array
-    }
-
-    override fun getFriendsList(): MutableList<PartialUser> {
-        return friendsList.array
-    }
-
-    override fun getGameHistory(): MutableList<History> {
-        return gameHistory.array
-    }
-
-    override fun equals(other: Any?): Boolean {
-        val otherUser = other as OfflineUser
-
-        return partialUser == otherUser.getPartialUser()
-    }
-
-    override fun hashCode(): Int {
-        return partialUser.hashCode()
-    }
-
     /*
      * Private methods to initialize the User
      */
 
-
-    private fun initUser() {
-        initializeStats()
-        initializeAchievements()
-        initializeFriendsList()
-        initializeGameHistory()
-        initializePartialUser()
+    fun getOfflinePartialUser(): PartialUser {
+        val partialUser: PartialUser? = readFile(PARTIAL_USER_PATH) as PartialUser?
+        return partialUser ?: PartialUser("defaultName", "dummy_id")
     }
 
-    private fun initializePartialUser() {
-        val riddenUser: PartialUser? = readFile(PARTIAL_USER_PATH) as PartialUser?
-        partialUser = riddenUser ?: PartialUser("defaultName", "dummy_id")
-    }
+    fun getOfflineAchievements(): MutableList<Achievement> {
+        var offlineAchievements: MutableList<Achievement>? = readFile(ACHIEVEMENT_PATH) as MutableList<Achievement>?
 
-    @Suppress("CAST_NEVER_SUCCEEDS", "UNCHECKED_CAST")
-    private fun initializeAchievements() {
-        val riddenAchievements: MutableList<Achievement>? =
-            readFile(ACHIEVEMENT_PATH) as MutableList<Achievement>?
-        achievements = Achievements(
-            riddenAchievements ?: mutableListOf(
+        if(offlineAchievements == null) {
+            offlineAchievements = mutableListOf(
                 Achievement(
                     "Create your account !",
                     getCurrentDate()
                 )
             )
-        )
-        if (riddenAchievements == null) {
-            writeToFile(ACHIEVEMENT_PATH, achievements)
-        }
-    }
-
-    @Suppress("UNCHECKED_CAST")
-    private fun initializeStats() {
-        val riddenStats: MutableList<Statistic>? =
-            readFile(STATS_PATH) as MutableList<Statistic>?
-        stats = Statistics(
-            riddenStats ?: mutableListOf(
-                Statistic(
-                    "stat1",
-                    0
-                ), Statistic("stat2", 0)
-            )
-        )
-
-        if (riddenStats == null) {
-            writeToFile(STATS_PATH, stats)
         }
 
+        return offlineAchievements
     }
 
-    @Suppress("UNCHECKED_CAST")
-    private fun initializeFriendsList() {
-        val riddenFriendsList: MutableList<PartialUser>? =
-            readFile(FRIEND_LIST_PATH) as MutableList<PartialUser>?
-        friendsList = FriendList(
-            riddenFriendsList ?: mutableListOf(
+    fun getOfflineStats(): MutableList<Statistic> {
+        var offlineStats: MutableList<Statistic>? = readFile(STATS_PATH) as MutableList<Statistic>?
+
+        if(offlineStats == null) {
+            offlineStats = mutableListOf(
+                    Statistic(
+                        "stat1",
+                        0
+                    ),
+                    Statistic(
+                        "stat2",
+                        0
+                    )
+                )
+        }
+
+        return offlineStats
+    }
+
+    fun getOfflineFriendsList(): MutableList<PartialUser> {
+        var offlineFriendsList: MutableList<PartialUser>? = readFile(FRIEND_LIST_PATH) as MutableList<PartialUser>?
+
+        if(offlineFriendsList == null) {
+            offlineFriendsList = mutableListOf(
                 PartialUser(
                     "dummy_friend_username",
                     "dummy_friend_id"
                 )
             )
-        )
-
-        if (riddenFriendsList == null) {
-            writeToFile(FRIEND_LIST_PATH, friendsList)
         }
+
+        return offlineFriendsList
     }
 
-    @Suppress("UNCHECKED_CAST")
-    private fun initializeGameHistory() {
-        val riddenGameHistory: MutableList<History>? =
-            readFile(GAME_HISTORY_PATH) as MutableList<History>?
-        gameHistory = Histories(
-            riddenGameHistory ?: mutableListOf(
+    fun getOfflineGameHistory(): MutableList<History> {
+        var offlineGameHistory: MutableList<History>? = readFile(GAME_HISTORY_PATH) as MutableList<History>?
+
+        if(offlineGameHistory == null) {
+            offlineGameHistory = mutableListOf(
                 History(
                     "dummy_map", getCurrentDate(), "VICTORY"
                 )
             )
-        )
-
-        if (riddenGameHistory == null) {
-            writeToFile(GAME_HISTORY_PATH, gameHistory)
         }
 
+        return offlineGameHistory
+    }
+
+    fun setOfflinePartialUser(partialUser: PartialUser) {
+        writeToFile(PARTIAL_USER_PATH, partialUser)
+    }
+
+    fun setOfflineAchievements(achievements: MutableList<Achievement>) {
+        writeToFile(ACHIEVEMENT_PATH, Achievements(achievements))
+    }
+
+    fun setOfflineStats(stats: MutableList<Statistic>) {
+        writeToFile(STATS_PATH, Statistics(stats))
+    }
+
+    fun setOfflineFriendsList(friendsList: MutableList<PartialUser>) {
+        writeToFile(FRIEND_LIST_PATH, FriendList(friendsList))
+    }
+
+    fun setOfflineGameHistory(gameHistory: MutableList<History>) {
+        writeToFile(GAME_HISTORY_PATH, Histories(gameHistory))
     }
 
     /*
@@ -367,17 +267,5 @@ class OfflineUser(private val context: Context?, private val debug: Boolean = fa
     private fun getCurrentDate(): String {
         val simpleDate = SimpleDateFormat("dd-MM-yyyy")
         return simpleDate.format(Date())
-    }
-
-    /**
-     * Check if a partial user is in a list, by using the user id to verify it
-     */
-    private fun containsPartialUser(pUserList: List<PartialUser>, partialU: PartialUser): Boolean {
-        for (f in pUserList) {
-            if (f.uid == partialU.uid) {
-                return true
-            }
-        }
-        return false
     }
 }

@@ -26,7 +26,7 @@ class MatchMakingTest {
     @Before
     fun before(){
         val app = ApplicationProvider.getApplicationContext() as MyApplication
-        app.setActiveUser(CompleteUser(null, false))
+        app.setActiveUser(CompleteUser(app,null, false))
 
         Thread.sleep(3000)
         app.setMessageHandler(MessageHandler(app.getActiveUser()!!.getPartialUser(),app))

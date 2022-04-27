@@ -7,14 +7,12 @@ import java.util.*
 
 
 class GPSPositionUpdater(private val activity: Activity, private val gpsPositionManager: GPSPositionManager) {
-    val listenersManager = GeoPointListenersManager()
+
     lateinit var timer : Timer
     val timerTask = object : TimerTask() {
         override fun run() {
             if(!activity.isDestroyed) {
-                activity.run {
-                    listenersManager.invokeAll(gpsPositionManager.getPosition())
-                }
+                gpsPositionManager.updateLocation()
             }
         }
     }

@@ -1,10 +1,10 @@
 package com.github.displace.sdp2022.unitTest
 
-import androidx.test.platform.app.InstrumentationRegistry
+import androidx.test.core.app.ApplicationProvider
+import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.profile.achievements.Achievement
 import com.github.displace.sdp2022.profile.history.History
 import com.github.displace.sdp2022.users.CompleteUser
-import com.github.displace.sdp2022.users.OfflineUser
 import com.github.displace.sdp2022.users.PartialUser
 import org.junit.Assert.*
 import org.junit.Test
@@ -43,14 +43,14 @@ class CompleteUserTest {
 
     @Test
     fun completeUserGuestModeWorks() {
-        val completeUser = CompleteUser(null, guestBoolean = true)
+        val completeUser = CompleteUser(ApplicationProvider.getApplicationContext() as MyApplication, null, guestBoolean = true)
         Thread.sleep(3_000)
         checkThatUserIsReadOnly(completeUser)
     }
 
     @Test
     fun completeUserOfflineModeWorks() {
-        val completeUser = CompleteUser(null, offlineMode = true, debug = true)
+        val completeUser = CompleteUser(ApplicationProvider.getApplicationContext() as MyApplication, null, offlineMode = true, debug = true)
         Thread.sleep(3_000)
         checkThatUserIsReadOnly(completeUser)
     }
@@ -73,8 +73,8 @@ class CompleteUserTest {
 
     @Test
     fun completeUserEqualsWorksWhenTrue() {
-        val completeUser1 = CompleteUser(null, false)
-        val completeUser2 = CompleteUser(null, false)
+        val completeUser1 = CompleteUser(ApplicationProvider.getApplicationContext() as MyApplication, null, false)
+        val completeUser2 = CompleteUser(ApplicationProvider.getApplicationContext() as MyApplication, null, false)
         Thread.sleep(6_000)
         assertTrue(completeUser1 == completeUser2)
         completeUser1.removeUserFromDatabase()
@@ -82,7 +82,7 @@ class CompleteUserTest {
 
     @Test
     fun achievementUpdates() {
-        val completeUser = CompleteUser(null, false)
+        val completeUser = CompleteUser(ApplicationProvider.getApplicationContext() as MyApplication, null, false)
         Thread.sleep(3000)
         val achSize = completeUser.getAchievements().size
         val ach = Achievement("AchievementTest1", "28-03-2022")
@@ -94,7 +94,7 @@ class CompleteUserTest {
 
     @Test
     fun statisticsAreInitializedCorrectly() {
-        val completeUser = CompleteUser(null, false)
+        val completeUser = CompleteUser(ApplicationProvider.getApplicationContext() as MyApplication, null, false)
         Thread.sleep(3000)
         val dummyStats = completeUser.getStats()
         assertTrue(
@@ -108,7 +108,7 @@ class CompleteUserTest {
 
     @Test
     fun statisticsUpdates() {
-        val completeUser = CompleteUser(null, false)
+        val completeUser = CompleteUser(ApplicationProvider.getApplicationContext() as MyApplication, null, false)
         Thread.sleep(3000)
         completeUser.updateStats("stat1", 10)
         assertTrue(completeUser.getStats()[0].value == 10L)
@@ -117,7 +117,7 @@ class CompleteUserTest {
 
     @Test
     fun addingAndRemovingFriendWorksCorrectly() {
-        val completeUser = CompleteUser(null, false)
+        val completeUser = CompleteUser(ApplicationProvider.getApplicationContext() as MyApplication, null, false)
         Thread.sleep(3000)
         val friendsSize = completeUser.getFriendsList().size
         val partialUser = PartialUser("dummy_name", "dummy_other_id")
@@ -130,7 +130,7 @@ class CompleteUserTest {
 
     @Test
     fun addExistingFriendDoesNothing() {
-        val completeUser = CompleteUser(null, false)
+        val completeUser = CompleteUser(ApplicationProvider.getApplicationContext() as MyApplication, null, false)
         Thread.sleep(3000)
         val partialUser = PartialUser("dummy_username", "dummy_id")
         completeUser.addFriend(partialUser)
@@ -143,7 +143,7 @@ class CompleteUserTest {
 
     @Test
     fun removeNonExistingFriendDoesNothing() {
-        val completeUser = CompleteUser(null, false)
+        val completeUser = CompleteUser(ApplicationProvider.getApplicationContext() as MyApplication, null, false)
         Thread.sleep(3000)
         val friendsSize = completeUser.getFriendsList().size
         val partialUser = PartialUser("dummy_name", "dummy_other_id")
@@ -154,7 +154,7 @@ class CompleteUserTest {
 
     @Test
     fun updateGameHistoryWorks() {
-        val completeUser = CompleteUser(null, false)
+        val completeUser = CompleteUser(ApplicationProvider.getApplicationContext() as MyApplication, null, false)
         Thread.sleep(3000)
         val historySize = completeUser.getGameHistory().size
         val gameHistory = History("dummyMap", "28-03-2022", "VICTORY")
@@ -170,17 +170,10 @@ class CompleteUserTest {
 
     @Test
     fun hashCodeWorks() {
-        val completeUser = CompleteUser(null, true)
+        val completeUser = CompleteUser(ApplicationProvider.getApplicationContext() as MyApplication,null, true)
         Thread.sleep(3000)
         val hashCode = completeUser.hashCode()
         assertTrue(hashCode != 0)
     }
 
-    @Test
-    fun offlineUserHashCodeWorks() {
-        val offlineUser = OfflineUser(InstrumentationRegistry.getInstrumentation().context, true)
-        Thread.sleep(3000)
-        val hashCode = offlineUser.hashCode()
-        assertTrue(hashCode != 0)
-    }
 }
