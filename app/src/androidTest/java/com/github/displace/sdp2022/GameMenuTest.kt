@@ -41,7 +41,7 @@ class GameMenuTest {
         intent.putExtra("nbPlayer",2)
         intent.putExtra("other","0")
 
-        ActivityScenario.launch<GameSummaryActivity>(intent).use {
+        ActivityScenario.launch<GameVersusViewActivity>(intent).use {
             onView(withId(R.id.TryText))
                 .check(matches(withText("status : neutral, nombre d'essais restant : 4")))
         }
@@ -54,7 +54,7 @@ class GameMenuTest {
         intent.putExtra("nbPlayer",2)
         intent.putExtra("other","0")
 
-        ActivityScenario.launch<GameSummaryActivity>(intent).use {
+        ActivityScenario.launch<GameVersusViewActivity>(intent).use {
             onView(withId(R.id.map)).check(matches(ViewMatchers.isDisplayed()))
         }
 
@@ -67,7 +67,7 @@ class GameMenuTest {
         intent.putExtra("nbPlayer",2)
         intent.putExtra("other","0")
 
-        ActivityScenario.launch<GameSummaryActivity>(intent).use {
+        ActivityScenario.launch<GameVersusViewActivity>(intent).use {
             Intents.init()
             onView(withId(R.id.map)).perform(swipeUp())
             onView(withId(R.id.map)).perform(ViewActions.longClick())
@@ -89,7 +89,7 @@ class GameMenuTest {
         intent.putExtra("nbPlayer",2)
         intent.putExtra("other","0")
 
-        ActivityScenario.launch<GameSummaryActivity>(intent).use {
+        ActivityScenario.launch<GameVersusViewActivity>(intent).use {
             Intents.init()
             onView(withId(R.id.map)).perform(swipeUp())
             onView(withId(R.id.map)).perform(ViewActions.longClick())
@@ -107,7 +107,7 @@ class GameMenuTest {
         intent.putExtra("nbPlayer",2)
         intent.putExtra("other","0")
 
-        ActivityScenario.launch<GameSummaryActivity>(intent).use {
+        ActivityScenario.launch<GameVersusViewActivity>(intent).use {
             Intents.init()
             onView(withId(R.id.map)).perform(ViewActions.longClick())
             Intents.intended(IntentMatchers.hasComponent(GameSummaryActivity::class.java.name))
@@ -122,7 +122,7 @@ class GameMenuTest {
         intent.putExtra("nbPlayer",2)
         intent.putExtra("other","0")
 
-        ActivityScenario.launch<GameSummaryActivity>(intent).use {
+        ActivityScenario.launch<GameVersusViewActivity>(intent).use {
             Intents.init()
             onView(withId(R.id.closeButton)).perform(click())
             Intents.intended(IntentMatchers.hasComponent(GameListActivity::class.java.name))
@@ -130,7 +130,7 @@ class GameMenuTest {
         }
     }
 
-    @Test
+  /*  @Test
     fun testChatButton() {
 
         val app = ApplicationProvider.getApplicationContext() as MyApplication
@@ -148,9 +148,9 @@ class GameMenuTest {
             onView(withId(R.id.chatButton)).perform(click())
             onView(withId(R.id.chatEditText)).perform(typeText("hh")).perform(closeSoftKeyboard())
             onView(withId(R.id.sendChatMessage)).perform(click())
-            //      Intents.release()
+
         }
-    }
+    }*/
 
     private fun swipeUp(): ViewAction? {
         return GeneralSwipeAction(

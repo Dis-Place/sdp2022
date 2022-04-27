@@ -86,7 +86,7 @@ class GameVersusViewActivity : AppCompatActivity() {
         centerButton(mapView) // to initialise the gps position
         //centerButton(mapView) // to set the center of the screen
 
-        chatPath = "/GameInstance/Game" + intent.getStringExtra("gid")!!  + "/Chat"
+  //     chatPath = "/GameInstance/Game" + intent.getStringExtra("gid")!!  + "/Chat"
 
 
         val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")
@@ -187,8 +187,8 @@ class GameVersusViewActivity : AppCompatActivity() {
             "status : neutral, nombre d'essais restant : " + (4 - game.getNbEssai())
         }
 
-        db.getDbReference(chatPath).addValueEventListener(chatListener())
-        closeChatButton( findViewById<Group>(R.id.ChatActiveGroup) )
+        val chatGroup = findViewById<ConstraintLayout>(R.id.chatLayout)
+        chatGroup.visibility = View.GONE
 
     }
 
@@ -202,8 +202,7 @@ class GameVersusViewActivity : AppCompatActivity() {
         game.handleEvent(GameEvent.OnSurrend(intent.getStringExtra("uid")!!))
         gpsPositionUpdater.listenersManager.clearAllCalls()
 
-        //CHAT
-        db.getDbReference(chatPath).removeEventListener(chatListener())
+
 
         val intent = Intent(this, GameListActivity::class.java)
         startActivity(intent)
@@ -289,12 +288,15 @@ class GameVersusViewActivity : AppCompatActivity() {
     fun showChatButton(view : View){
         val chatGroup = findViewById<ConstraintLayout>(R.id.chatLayout)
         chatGroup.visibility = View.VISIBLE
-        db.getDbReference(chatPath).addListenerForSingleValueEvent(chatListener())
+    //    db.getDbReference(chatPath).addListenerForSingleValueEvent(chatListener())
+        db.getDbReference(chatPath).addValueEventListener(chatListener())
     }
 
     fun closeChatButton(view : View){
         val chatGroup = findViewById<ConstraintLayout>(R.id.chatLayout)
         chatGroup.visibility = View.GONE
+        //CHAT
+        db.getDbReference(chatPath).removeEventListener(chatListener())
     }
 
 
