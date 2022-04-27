@@ -3,17 +3,17 @@ package com.github.displace.sdp2022.gameVersus
 import com.github.displace.sdp2022.RealTimeDatabase
 import com.github.displace.sdp2022.gameComponents.Coordinates
 import com.github.displace.sdp2022.gameComponents.Point
+import com.github.displace.sdp2022.gameVersus.GameVersusViewModel.Companion.CONTINUE
+import com.github.displace.sdp2022.gameVersus.GameVersusViewModel.Companion.LOSE
+import com.github.displace.sdp2022.gameVersus.GameVersusViewModel.Companion.WIN
 import com.github.displace.sdp2022.model.GameVersus
 import com.github.displace.sdp2022.util.math.Constants
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.DatabaseError
 
-class ClientServerLink {
-    private val db = RealTimeDatabase().noCacheInstantiate(
-        "https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",
-        false
-    ) as RealTimeDatabase
+class ClientServerLink(private val db : RealTimeDatabase) {
+
     private val goal = Point(3.0, 5.0)
     private var gid = ""
     private var other = ""
@@ -23,7 +23,7 @@ class ClientServerLink {
     private lateinit var posYListener : ValueEventListener
 
     fun SendDataToOther(goal: Coordinates) {
-        db.update("GameInstance/Game" + gid + "/id:" + playerId, "finish", 0)
+        db.update("GameInstance/Game" + gid + "/id:" + playerId, "finish", CONTINUE)
         db.update("GameInstance/Game" + gid + "/id:" + playerId, "x", goal.pos.first)
         db.update("GameInstance/Game" + gid + "/id:" + playerId, "y", goal.pos.second)
     }
@@ -36,9 +36,8 @@ class ClientServerLink {
         posXListener = object : ValueEventListener {
 
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                val x = dataSnapshot.getValue()
-                if(x is Double) {
-                    setX(x)
+                if (dataSnapshot.value!=null && dataSnapshot.value is Double) {
+                    setX(dataSnapshot.value as Double)
                 }
             }
 
@@ -48,9 +47,8 @@ class ClientServerLink {
         posYListener = object : ValueEventListener {
 
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                val y = dataSnapshot.getValue()
-                if(y is Double) {
-                    setY(y)
+                if (dataSnapshot.value!=null && dataSnapshot.value is Double) {
+                    setY(dataSnapshot.value as Double)
                 }
             }
 
@@ -81,14 +79,14 @@ class ClientServerLink {
         )
     }
 
-    fun verify(test: Coordinates): Int {
+    fun verify(test: Coordinates): Long {
         if (game.verify(test)) {
-            endGame(1)
-            return 0
+            endGame(WIN)
+            return WIN
         } else {
             if (game.nbTry >= game.nbTryMax) {
-                endGame(-1)
-                return 2
+                endGame(LOSE)
+                return LOSE
             } else {
                 game = GameVersus(
                     game.goal,
@@ -97,13 +95,13 @@ class ClientServerLink {
                     game.threshold,
                     game.nbPlayer
                 )
-                return 1
+                return CONTINUE
             }
         }
 
     }
 
-    fun endGame(winOrLose: Int) {
+    fun endGame(winOrLose: Long) {
         db.removeList("GameInstance/Game" + gid + "/id:" + other, "x", posXListener)
         db.removeList("GameInstance/Game" + gid + "/id:" + other, "y", posYListener)
         db.update("GameInstance/Game" + gid + "/id:" + playerId,"finish",winOrLose)

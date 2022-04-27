@@ -1,15 +1,15 @@
 package com.github.displace.sdp2022
 
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.github.displace.sdp2022.gameComponents.GameEvent
 import com.github.displace.sdp2022.gameComponents.Point
+import com.github.displace.sdp2022.gameVersus.ClientServerLink
 import com.github.displace.sdp2022.gameVersus.GameVersusViewModel
+import com.github.displace.sdp2022.map.GPSLocationMarker
 import com.github.displace.sdp2022.map.MapViewManager
 import com.github.displace.sdp2022.map.PinpointsManager
 import com.github.displace.sdp2022.map.PinpointsDBHandler
@@ -18,12 +18,12 @@ import com.github.displace.sdp2022.util.PreferencesUtil
 import com.github.displace.sdp2022.util.gps.GPSPositionManager
 import com.github.displace.sdp2022.util.gps.GPSPositionUpdater
 import com.github.displace.sdp2022.util.gps.GeoPointListener
+import com.github.displace.sdp2022.util.math.CoordinatesUtil
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
-import java.util.*
 import kotlin.collections.ArrayList
 
 
@@ -37,139 +37,130 @@ class GameVersusViewActivity : AppCompatActivity() {
 
     val statsList: ArrayList<String> = arrayListOf()
 
-    var goal = Point(46.52048,6.56782)
-    val game = GameVersusViewModel()
+    private lateinit var db: RealTimeDatabase
+
+    private lateinit var game: GameVersusViewModel
     private val extras: Bundle = Bundle()
 
     private lateinit var mapView: MapView
     private lateinit var mapViewManager: MapViewManager
     private lateinit var gpsPositionUpdater: GPSPositionUpdater
     private lateinit var gpsPositionManager: GPSPositionManager
-    private lateinit var markerListener: GeoPointListener
-    private lateinit var other : Map<String,Any>
+    private lateinit var other: Map<String, Any>
     private lateinit var pinpointsDBHandler: PinpointsDBHandler
     private lateinit var pinpointsManager: PinpointsManager
-    private lateinit var opponentPinpoints: PinpointsManager.PinpointsRef
-    private val calendar = Calendar.getInstance()
+    private lateinit var otherPlayerPinpoints: PinpointsManager.PinpointsRef
 
-    private val db = RealTimeDatabase().noCacheInstantiate(
-        "https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",
-        false
-    ) as RealTimeDatabase
+    private val guessListener = GeoPointListener { geoPoint ->
+        run {
+            pinpointsManager.putMarker(geoPoint)
+            val res = game.handleEvent(
+                GameEvent.OnPointSelected(
+                    intent.getStringExtra("uid")!!,
+                    Point(geoPoint.latitude, geoPoint.longitude)
+                )
+            )
+            if (res == GameVersusViewModel.WIN) {
+                gpsPositionManager.listenersManager.clearAllCalls()
+                findViewById<TextView>(R.id.TryText).apply { text = "win" }
+                extras.putBoolean(EXTRA_RESULT, true)
+                extras.putInt(EXTRA_SCORE_P1, 1)
+                extras.putInt(EXTRA_SCORE_P2, 0)
+                statsList.clear()
+                statsList.add(DateTimeUtil.currentTime())
+                showGameSummaryActivity()
+            } else if (res == GameVersusViewModel.CONTINUE) {
+                findViewById<TextView>(R.id.TryText).apply {
+                    text = "wrong guess, remaining tries : ${4 - game.getNbEssai()}"
+                }
+                pinpointsDBHandler.updateDBPinpoints(
+                    intent.getStringExtra("uid")!!,
+                    pinpointsManager.playerPinPointsRef
+                )
+            } else if (res == GameVersusViewModel.LOSE) {
+                gpsPositionManager.listenersManager.clearAllCalls()
+                findViewById<TextView>(R.id.TryText).apply {
+                    text =
+                        "status : end of game"
+                }
+                extras.putBoolean(EXTRA_RESULT, false)
+                extras.putInt(EXTRA_SCORE_P1, 0)
+                extras.putInt(EXTRA_SCORE_P2, 1)
+                statsList.clear()
+                statsList.add(DateTimeUtil.currentTime())
+                showGameSummaryActivity()
+            }
+        }
+    }
 
-    @RequiresApi(Build.VERSION_CODES.N)
+    private val endListener = object : ValueEventListener {
+
+        override fun onDataChange(dataSnapshot: DataSnapshot) {
+            val x = dataSnapshot.value
+            if (x == GameVersusViewModel.LOSE || x == GameVersusViewModel.WIN) {
+                db.delete("GameInstance", "Game" + intent.getStringExtra("gid")!!)
+                gpsPositionManager.listenersManager.clearAllCalls()
+                statsList.clear()
+                statsList.add(DateTimeUtil.currentTime())
+                if (x == GameVersusViewModel.LOSE) {
+                    findViewById<TextView>(R.id.TryText).apply {
+                        text =
+                            "status : end of game"
+                    }
+                    extras.putBoolean(EXTRA_RESULT, false)
+                    extras.putInt(EXTRA_SCORE_P1, 0)
+                    extras.putInt(EXTRA_SCORE_P2, 1)
+                    showGameSummaryActivity()
+                } else {
+                    findViewById<TextView>(R.id.TryText).apply { text = "win" }
+                    extras.putBoolean(EXTRA_RESULT, true)
+                    extras.putInt(EXTRA_SCORE_P1, 1)
+                    extras.putInt(EXTRA_SCORE_P2, 0)
+                    showGameSummaryActivity()
+                }
+            }
+        }
+
+        override fun onCancelled(databaseError: DatabaseError) {}
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         PreferencesUtil.initOsmdroidPref(this)
         setContentView(R.layout.activity_game_versus)
 
-        mapView = findViewById<MapView>(R.id.map)
+        db = RealTimeDatabase().noCacheInstantiate(
+            "https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",
+            false
+        ) as RealTimeDatabase
+        game = GameVersusViewModel(ClientServerLink(db))
+
+        mapView = findViewById(R.id.map)
         mapViewManager = MapViewManager(mapView)
-        markerListener = GeoPointListener.markerPlacer(mapView)
+        pinpointsDBHandler = PinpointsDBHandler(db, "Game" + intent.getStringExtra("gid")!!, this)
+        pinpointsDBHandler.initializePinpoints(intent.getStringExtra("uid")!!)
         gpsPositionManager = GPSPositionManager(this)
-        gpsPositionUpdater = GPSPositionUpdater(this,gpsPositionManager)
+        gpsPositionUpdater = GPSPositionUpdater(this, gpsPositionManager)
         pinpointsManager = PinpointsManager(mapView)
-        opponentPinpoints = pinpointsManager.PinpointsRef()
+        otherPlayerPinpoints = pinpointsManager.PinpointsRef()
         gpsPositionManager.listenersManager.addCall(GeoPointListener { geoPoint ->
-            game.handleEvent(GameEvent.OnUpdate(intent.getStringExtra("uid")!!,
-                Point(geoPoint.latitude,geoPoint.longitude)))})
-
-        centerButton(mapView) // to initialise the gps position
-        //centerButton(mapView) // to set the center of the screen
-
-        val endListener = object : ValueEventListener {
-
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                val x = dataSnapshot.getValue()
-                if (x == 1L || x == -1L) {
-                    db.delete("GameInstance", "Game" + intent.getStringExtra("gid")!!)
-                    gpsPositionManager.listenersManager.clearAllCalls()
-                    statsList.clear()
-                    statsList.add(DateTimeUtil.currentTime())
-                    if (x == 1L) {
-                        findViewById<TextView>(R.id.TryText).apply {
-                            text =
-                                "status : end of game"
-                        }
-                        extras.putBoolean(EXTRA_RESULT, false)
-                        extras.putInt(EXTRA_SCORE_P1, 0)
-                        extras.putInt(EXTRA_SCORE_P2, 1)
-                        showGameSummaryActivity()
-                    } else {
-                        findViewById<TextView>(R.id.TryText).apply { text = "win" }
-                        extras.putBoolean(EXTRA_RESULT, true)
-                        extras.putInt(EXTRA_SCORE_P1, 1)
-                        extras.putInt(EXTRA_SCORE_P2, 0)
-                        showGameSummaryActivity()
-                    }
-                }
-            }
-
-            override fun onCancelled(databaseError: DatabaseError) {}
-        }
-        
-        pinpointsDBHandler = PinpointsDBHandler(db,"Game" + intent.getStringExtra("gid")!!, this)
-        pinpointsDBHandler.initializePinpoints(intent.getStringExtra("uid")!!)
-        pinpointsDBHandler.initializePinpoints(intent.getStringExtra("uid")!!)
-
-        mapViewManager.addCallOnLongClick(GeoPointListener { geoPoint -> run {
-                pinpointsManager.putMarker(geoPoint)
-                val res = game.handleEvent(
-                    GameEvent.OnPointSelected(
-                        intent.getStringExtra("uid")!!,
-                        Point(geoPoint.latitude ,geoPoint.longitude )
-                    )
+            game.handleEvent(
+                GameEvent.OnUpdate(
+                    intent.getStringExtra("uid")!!,
+                    CoordinatesUtil.coordinates(geoPoint)
                 )
-                if(res == 0){
-                    gpsPositionManager.listenersManager.clearAllCalls()
-                    findViewById<TextView>(R.id.TryText).apply { text = "win" }
-                    extras.putBoolean(EXTRA_RESULT, true)
-                    extras.putInt(EXTRA_SCORE_P1, 1)
-                    extras.putInt(EXTRA_SCORE_P2, 0)
-                    statsList.clear()
-                    statsList.add(DateTimeUtil.currentTime())
-                    showGameSummaryActivity()
-                }else {
-                    if (res == 1) {
-                        findViewById<TextView>(R.id.TryText).apply {
-                            text =
-                                "status : fail, nombre d'essais restant : " + (4 - game.getNbEssai()) + " True : x=" + game.getGoal().pos.first + " y=" + game.getGoal().pos.second
-                        }
-                        pinpointsDBHandler.updateDBPinpoints(intent.getStringExtra("uid")!!,pinpointsManager.playerPinPointsRef)
-                    } else {
-                        if (res == 2) {
-                            gpsPositionManager.listenersManager.clearAllCalls()
-                            findViewById<TextView>(R.id.TryText).apply {
-                                text =
-                                    "status : end of game"
-                            }
-                            extras.putBoolean(EXTRA_RESULT, false)
-                            extras.putInt(EXTRA_SCORE_P1, 0)
-                            extras.putInt(EXTRA_SCORE_P2, 1)
-                            statsList.clear()
-                            statsList.add(DateTimeUtil.currentTime())
-                            showGameSummaryActivity()
-                        }
-                    }
-                }
-            }})
+            )
+        })
+        GPSLocationMarker(mapView, gpsPositionManager).add()
 
-        db.referenceGet("GameInstance" , "Game" + intent.getStringExtra("gid")!!).addOnSuccessListener { gi ->
-            other = ((gi as DataSnapshot).value as MutableMap<String,Any>).filter { id -> id.key != "id:" + intent.getStringExtra("uid")!! }
-            other.toList().map { t ->
+        mapViewManager.addCallOnLongClick(guessListener)
 
-             }
+        db.referenceGet("GameInstance", "Game${intent.getStringExtra("gid")!!}")
+            .addOnSuccessListener { gi -> initGame(gi) }
 
-            val t = other.toList()[0]
-
-            val other = t.first.replace("id:","")
-            db.addList("GameInstance/Game" + intent.getStringExtra("gid")!! + "/id:" + other,"finish",endListener)
-            pinpointsDBHandler.enableAutoupdateLocalPinpoints(other,opponentPinpoints)
-            game.handleEvent(GameEvent.OnStart(goal,intent.getStringExtra("uid")!!, intent.getStringExtra("gid")!!, other))
-        }
-
-        findViewById<TextView>(R.id.TryText).apply { text =
-            "status : neutral, nombre d'essais restant : " + (4 - game.getNbEssai())
+        findViewById<TextView>(R.id.TryText).apply {
+            text =
+                "remaining tries : ${4 - game.getNbEssai()}"
         }
     }
 
@@ -203,6 +194,38 @@ class GameVersusViewActivity : AppCompatActivity() {
         extras.putString(EXTRA_MODE, "Versus")
         intent.putExtras(extras)
         startActivity(intent)
+    }
+
+    private fun initGame(gi: DataSnapshot) {
+        other = (gi.value as MutableMap<String, Any>).filter { id ->
+            id.key != "id:${
+                intent.getStringExtra("uid")!!
+            }"
+        }
+
+        val otherPlayerId =
+            other.toList()[0].first.removePrefix("id:") // currently supporting only 2 players
+        db.addList(
+            "GameInstance/Game${intent.getStringExtra("gid")!!}/id:${otherPlayerId}",
+            "finish",
+            endListener
+        )
+        pinpointsDBHandler.enableAutoupdateLocalPinpoints(
+            otherPlayerId,
+            otherPlayerPinpoints
+        )
+        game.handleEvent(
+            GameEvent.OnStart(
+                DEFAULT_GOAL,
+                intent.getStringExtra("uid")!!,
+                intent.getStringExtra("gid")!!,
+                otherPlayerId
+            )
+        )
+    }
+
+    companion object {
+        private val DEFAULT_GOAL = CoordinatesUtil.coordinates(MapViewManager.DEFAULT_CENTER)
     }
 
 }

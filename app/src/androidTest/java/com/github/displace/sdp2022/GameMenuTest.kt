@@ -55,7 +55,7 @@ class GameMenuTest {
 
         ActivityScenario.launch<GameSummaryActivity>(intent).use {
             onView(withId(R.id.TryText))
-                .check(matches(withText("status : neutral, nombre d'essais restant : 4")))
+                .check(matches(withText("remaining tries : 4")))
         }
     }
 
@@ -102,8 +102,9 @@ class GameMenuTest {
         ActivityScenario.launch<GameSummaryActivity>(intent).use {
             onView(withId(R.id.map)).perform(swipeUp())
             onView(withId(R.id.map)).perform(ViewActions.longClick())
+            Thread.sleep(5000)
             onView(withId(R.id.TryText))
-                .check(matches(withText("status : fail, nombre d'essais restant : 3 True : x=46.52048 y=6.56782")))
+                .check(matches(withText("wrong guess, remaining tries : 3")))
         }
 
     }
@@ -117,9 +118,8 @@ class GameMenuTest {
 
         ActivityScenario.launch<GameSummaryActivity>(intent).use {
             onView(withId(R.id.map)).perform(ViewActions.longClick())
-
+            Intents.intended(IntentMatchers.hasComponent(GameSummaryActivity::class.java.name))
         }
-        Intents.intended(IntentMatchers.hasComponent(GameSummaryActivity::class.java.name))
 
     }
 
