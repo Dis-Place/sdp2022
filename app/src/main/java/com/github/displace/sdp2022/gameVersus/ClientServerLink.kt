@@ -14,18 +14,32 @@ import com.google.firebase.database.DatabaseError
 
 class ClientServerLink(private val db : RealTimeDatabase) {
 
-    private val goal = Point(3.0, 5.0)
+    val listenerManager: GameVersusListenerManager = GameVersusListenerManager()
+
+    private val initGoal = Point(3.0, 5.0)
     private var gid = ""
     private var other = ""
     private var playerId = ""
-    var game = GameVersus(goal, 0, 3, Constants.THRESHOLD.toDouble(), 2)
-    private lateinit var posXListener : ValueEventListener
-    private lateinit var posYListener : ValueEventListener
+    var game = GameVersus(initGoal, 0, 3, Constants.THRESHOLD.toDouble(), 2)
+
+    private val posListener = object : ValueEventListener {
+
+        override fun onDataChange(dataSnapshot: DataSnapshot) {
+            if (dataSnapshot.value!=null) {
+                val coordsList = (dataSnapshot.value as List<Double>)
+                if(coordsList.size >= 2) {
+                    val coords = Point(coordsList[0],coordsList[1])
+                    set(coords)
+                }
+            }
+        }
+
+        override fun onCancelled(databaseError: DatabaseError) {}
+    }
 
     fun SendDataToOther(goal: Coordinates) {
-        db.update("GameInstance/Game" + gid + "/id:" + playerId, "finish", CONTINUE)
-        db.update("GameInstance/Game" + gid + "/id:" + playerId, "x", goal.pos.first)
-        db.update("GameInstance/Game" + gid + "/id:" + playerId, "y", goal.pos.second)
+        db.update("GameInstance/Game$gid/id:$playerId", "finish", CONTINUE)
+        db.update("GameInstance/Game$gid/id:$playerId", "pos", listOf(goal.pos.first,goal.pos.second))
     }
 
     fun GetData(playerId: String, gid: String, other: String) {
@@ -33,50 +47,18 @@ class ClientServerLink(private val db : RealTimeDatabase) {
         this.gid = gid
         this.other = other
 
-        posXListener = object : ValueEventListener {
-
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                if (dataSnapshot.value!=null && dataSnapshot.value is Double) {
-                    setX(dataSnapshot.value as Double)
-                }
-            }
-
-            override fun onCancelled(databaseError: DatabaseError) {}
-        }
-
-        posYListener = object : ValueEventListener {
-
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                if (dataSnapshot.value!=null && dataSnapshot.value is Double) {
-                    setY(dataSnapshot.value as Double)
-                }
-            }
-
-            override fun onCancelled(databaseError: DatabaseError) {}
-        }
-
-        db.addList("GameInstance/Game" + gid + "/id:" + other, "x", posXListener)
-        db.addList("GameInstance/Game" + gid + "/id:" + other, "y", posYListener)
+        db.addList("GameInstance/Game$gid/id:$other", "pos", posListener)
     }
 
-    private fun setX(x: Double) {
+    private fun set(goal: Coordinates) {
         game = GameVersus(
-            Point(x, game.goal.pos.second),
+            goal,
             game.nbTry,
             game.nbTryMax,
             game.threshold,
             game.nbPlayer
         )
-    }
-
-    private fun setY(y: Double) {
-        game = GameVersus(
-            Point(game.goal.pos.first, y),
-            game.nbTry,
-            game.nbTryMax,
-            game.threshold,
-            game.nbPlayer
-        )
+        listenerManager.invokeAll(game)
     }
 
     fun verify(test: Coordinates): Long {
@@ -102,8 +84,7 @@ class ClientServerLink(private val db : RealTimeDatabase) {
     }
 
     fun endGame(winOrLose: Long) {
-        db.removeList("GameInstance/Game" + gid + "/id:" + other, "x", posXListener)
-        db.removeList("GameInstance/Game" + gid + "/id:" + other, "y", posYListener)
-        db.update("GameInstance/Game" + gid + "/id:" + playerId,"finish",winOrLose)
+        db.removeList("GameInstance/Game$gid/id:$other", "pose", posListener)
+        db.update("GameInstance/Game$gid/id:$playerId","finish",winOrLose)
     }
 }

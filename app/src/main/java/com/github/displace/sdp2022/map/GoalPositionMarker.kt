@@ -26,8 +26,10 @@ class GoalPositionMarker(private val mapView: MapView, private val pos: GeoPoint
      * place the marker on the mapView
      */
     fun add() {
-        mapView.overlayManager.add(marker)
-        mapView.invalidate()
+        if(!mapView.overlays.contains(marker)) {
+            mapView.overlayManager.add(marker)
+            mapView.invalidate()
+        }
     }
 
     /**
@@ -36,15 +38,13 @@ class GoalPositionMarker(private val mapView: MapView, private val pos: GeoPoint
      */
     fun set(position: GeoPoint) {
         marker.position = position
-        mapView.invalidate()
     }
 
     /**
      * remove marker from mapView
      */
     fun remove() {
-        if(mapView.overlayManager.remove(marker)){
-            mapView.invalidate()
-        }
+        mapView.overlayManager.remove(marker)
+        mapView.invalidate()
     }
 }

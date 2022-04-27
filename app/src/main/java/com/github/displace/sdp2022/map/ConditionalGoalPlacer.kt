@@ -3,6 +3,7 @@ package com.github.displace.sdp2022.map
 import com.github.displace.sdp2022.gameComponents.Coordinates
 import com.github.displace.sdp2022.model.GameVersus
 import com.github.displace.sdp2022.util.math.CoordinatesUtil
+import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
 
 /**
@@ -11,31 +12,28 @@ import org.osmdroid.views.MapView
  * @param gameInstance current GameVersus Instance
  * @author LeoLgdr
  */
-class ConditionalGoalPlacer(mapView: MapView, private val gameInstance: GameVersus) {
-    private var isPlaced = false
+class ConditionalGoalPlacer(mapView: MapView, private var gameInstance: GameVersus, private var playerPos: GeoPoint) {
     private val goalPositionMarker = GoalPositionMarker(mapView, CoordinatesUtil.geoPoint(gameInstance.goal))
 
     /**
      * places/remove marker depending on wether or not the player position is in GameArea
      * @param playerPos new player position
      */
-    fun update(playerPos: Coordinates) {
-        if(gameInstance.isInGameArea(playerPos) && !isPlaced){
+    fun update(playerPos: GeoPoint) {
+        if(!gameInstance.isInGameArea(CoordinatesUtil.coordinates(playerPos))){
             goalPositionMarker.add()
-            isPlaced = true
-        } else if(isPlaced) {
-            goalPositionMarker.remove()
-            isPlaced = false
+        } else {
+           goalPositionMarker.remove()
         }
     }
 
     /**
      * places/removes goal marker depending on wether or not the player position is in GameArea
      * @param gameInstance new GameVersus instance
-     * @param playerPos new player position
      */
-    fun update(gameInstance: GameVersus, playerPos: Coordinates) {
-        goalPositionMarker.set(CoordinatesUtil.geoPoint(playerPos))
+    fun update(gameInstance: GameVersus) {
+        this.gameInstance = gameInstance
+        goalPositionMarker.set(CoordinatesUtil.geoPoint(gameInstance.goal))
         update(playerPos)
     }
 }

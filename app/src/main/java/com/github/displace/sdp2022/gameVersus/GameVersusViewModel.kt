@@ -2,6 +2,7 @@ package com.github.displace.sdp2022.gameVersus
 
 import com.github.displace.sdp2022.gameComponents.Coordinates
 import com.github.displace.sdp2022.gameComponents.GameEvent
+import com.github.displace.sdp2022.model.GameVersus
 
 
 class GameVersusViewModel(private val clientServerLink: ClientServerLink) {
@@ -51,6 +52,10 @@ class GameVersusViewModel(private val clientServerLink: ClientServerLink) {
 
     fun getNbEssai() : Int {
         return clientServerLink.game.nbTry
+    }
+
+    fun getGameInstance() : GameVersus {
+        return clientServerLink.game
     }
 
     companion object {

@@ -9,10 +9,7 @@ import com.github.displace.sdp2022.gameComponents.GameEvent
 import com.github.displace.sdp2022.gameComponents.Point
 import com.github.displace.sdp2022.gameVersus.ClientServerLink
 import com.github.displace.sdp2022.gameVersus.GameVersusViewModel
-import com.github.displace.sdp2022.map.GPSLocationMarker
-import com.github.displace.sdp2022.map.MapViewManager
-import com.github.displace.sdp2022.map.PinpointsManager
-import com.github.displace.sdp2022.map.PinpointsDBHandler
+import com.github.displace.sdp2022.map.*
 import com.github.displace.sdp2022.util.DateTimeUtil
 import com.github.displace.sdp2022.util.PreferencesUtil
 import com.github.displace.sdp2022.util.gps.GPSPositionManager
@@ -50,7 +47,15 @@ class GameVersusViewActivity : AppCompatActivity() {
     private lateinit var pinpointsDBHandler: PinpointsDBHandler
     private lateinit var pinpointsManager: PinpointsManager
     private lateinit var otherPlayerPinpoints: PinpointsManager.PinpointsRef
+    private lateinit var conditionalGoalPlacer: ConditionalGoalPlacer
+    private lateinit var clientServerLink : ClientServerLink
 
+    private val initGoalPlacer = object : GeoPointListener {
+        override fun invoke(geoPoint: GeoPoint) {
+            conditionalGoalPlacer = ConditionalGoalPlacer(mapView,game.getGameInstance(),geoPoint)
+            gpsPositionManager.listenersManager.removeCall(this)
+        }
+    }
     private val guessListener = GeoPointListener { geoPoint ->
         run {
             pinpointsManager.putMarker(geoPoint)
@@ -62,6 +67,7 @@ class GameVersusViewActivity : AppCompatActivity() {
             )
             if (res == GameVersusViewModel.WIN) {
                 gpsPositionManager.listenersManager.clearAllCalls()
+                clientServerLink.listenerManager.clearAllCalls()
                 findViewById<TextView>(R.id.TryText).apply { text = "win" }
                 extras.putBoolean(EXTRA_RESULT, true)
                 extras.putInt(EXTRA_SCORE_P1, 1)
@@ -79,6 +85,7 @@ class GameVersusViewActivity : AppCompatActivity() {
                 )
             } else if (res == GameVersusViewModel.LOSE) {
                 gpsPositionManager.listenersManager.clearAllCalls()
+                clientServerLink.listenerManager.clearAllCalls()
                 findViewById<TextView>(R.id.TryText).apply {
                     text =
                         "status : end of game"
@@ -100,6 +107,7 @@ class GameVersusViewActivity : AppCompatActivity() {
             if (x == GameVersusViewModel.LOSE || x == GameVersusViewModel.WIN) {
                 db.delete("GameInstance", "Game" + intent.getStringExtra("gid")!!)
                 gpsPositionManager.listenersManager.clearAllCalls()
+                clientServerLink.listenerManager.clearAllCalls()
                 statsList.clear()
                 statsList.add(DateTimeUtil.currentTime())
                 if (x == GameVersusViewModel.WIN) {
@@ -133,13 +141,15 @@ class GameVersusViewActivity : AppCompatActivity() {
             "https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",
             false
         ) as RealTimeDatabase
-        game = GameVersusViewModel(ClientServerLink(db))
+        clientServerLink = ClientServerLink(db)
+        game = GameVersusViewModel(clientServerLink)
 
         mapView = findViewById(R.id.map)
         mapViewManager = MapViewManager(mapView)
         pinpointsDBHandler = PinpointsDBHandler(db, "Game" + intent.getStringExtra("gid")!!, this)
         pinpointsDBHandler.initializePinpoints(intent.getStringExtra("uid")!!)
         gpsPositionManager = GPSPositionManager(this)
+        gpsPositionManager.listenersManager.addCall(initGoalPlacer)
         gpsPositionUpdater = GPSPositionUpdater(this, gpsPositionManager)
         pinpointsManager = PinpointsManager(mapView)
         otherPlayerPinpoints = pinpointsManager.PinpointsRef()
@@ -151,6 +161,7 @@ class GameVersusViewActivity : AppCompatActivity() {
                 )
             )
         })
+        gpsPositionManager.updateLocation()
         GPSLocationMarker(mapView, gpsPositionManager).add()
 
         mapViewManager.addCallOnLongClick(guessListener)
@@ -162,6 +173,20 @@ class GameVersusViewActivity : AppCompatActivity() {
             text =
                 "remaining tries : ${4 - game.getNbEssai()}"
         }
+
+        gpsPositionManager.listenersManager.addCall(GeoPointListener { gp ->
+            if(this::conditionalGoalPlacer.isInitialized) {
+                conditionalGoalPlacer.update(gp)
+            }
+
+        })
+
+        clientServerLink.listenerManager.addCall { gameInstance ->
+            if(this::conditionalGoalPlacer.isInitialized) {
+                gpsPositionManager.updateLocation()
+                conditionalGoalPlacer.update(gameInstance)
+            }
+        }
     }
 
 
@@ -170,6 +195,7 @@ class GameVersusViewActivity : AppCompatActivity() {
     fun closeButton(view: View) {
         game.handleEvent(GameEvent.OnSurrend(intent.getStringExtra("uid")!!))
         gpsPositionManager.listenersManager.clearAllCalls()
+        clientServerLink.listenerManager.clearAllCalls()
         val intent = Intent(this, GameListActivity::class.java)
         startActivity(intent)
     }
