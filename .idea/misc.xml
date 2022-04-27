@@ -17,7 +17,7 @@
         <entry key="..\:/EPFL/B3 S2/SDP/sdp2022/app/src/main/res/layout/activity_send_message.xml" value="0.22" />
         <entry key="..\:/EPFL/B3 S2/SDP/sdp2022/app/src/main/res/layout/activity_settings.xml" value="0.358695652173913" />
         <entry key="..\:/EPFL/B3 S2/SDP/sdp2022/app/src/main/res/layout/activity_upload_image.xml" value="0.11347517730496454" />
-        <entry key="..\:/EPFL/B3 S2/SDP/sdp2022/app/src/mainapp/src/main/res/layout/activity_temp_login.xml/res/layout/msg.xml" value="0.22" />
+        <entry key="..\:/EPFL/B3 S2/SDP/sdp2022/app/src/main/res/layout/msg.xml" value="0.22" />
         <entry key="..\:/Users/Franck/Desktop/EPFL/BA6/SDP/Displace_hopeful/sdp2022/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.271" />
         <entry key="..\:/Users/Franck/Desktop/EPFL/BA6/SDP/Displace_hopeful/sdp2022/app/src/main/res/drawable/ic_launcher_background.xml" value="0.163" />
         <entry key="..\:/Users/Franck/Desktop/EPFL/BA6/SDP/Displace_hopeful/sdp2022/app/src/main/res/layout/activity_account_settings.xml" value="0.3374094202898551" />
@@ -44,31 +44,9 @@
         <entry key="..\:/Users/bapti/sdp2022/app/src/main/res/layout/fragment_settings.xml" value="0.153125" />
         <entry key="..\:/Users/bapti/sdp2022/app/src/main/res/layout/friend.xml" value="0.153125" />
         <entry key="..\:/Users/bapti/sdp2022/app/src/main/res/xml/preferences.xml" value="0.2988679352838745" />
-        <entry key="app/src/main/res/layout/ach.xml" value="0.17325227963525835" />
-        <entry key="app/src/main/res/layout/activity_account_settings.xml" value="0.17325227963525835" />
-        <entry key="app/src/main/res/layout/activity_add_friend.xml" value="0.18072916666666666" />
-        <entry key="app/src/main/res/layout/activity_demo_map.xml" value="0.17325227963525835" />
-        <entry key="app/src/main/res/layout/activity_friend_profile.xml" value="0.25" />
-        <entry key="app/src/main/res/layout/activity_game_list.xml" value="0.17325227963525835" />
-        <entry key="app/src/main/res/layout/activity_game_summary.xml" value="0.17325227963525835" />
-        <entry key="app/src/main/res/layout/activity_login_menu.xml" value="0.17325227963525835" />
-        <entry key="app/src/main/res/layout/activity_main_menu.xml" value="0.25" />
-        <entry key="app/src/main/res/layout/activity_match_making.xml" value="0.17325227963525835" />
-        <entry key="app/src/main/res/layout/activity_news.xml" value="0.17325227963525835" />
-        <entry key="app/src/main/res/layout/activity_play.xml" value="0.17325227963525835" />
-        <entry key="app/src/main/res/layout/activity_profile.xml" value="0.22" />
-        <entry key="app/src/main/res/layout/activity_send_message.xml" value="0.17325227963525835" />
-        <entry key="app/src/main/res/layout/activity_upload_image.xml" value="0.17325227963525835" />
-        <entry key="app/src/main/res/layout/friend.xml" value="0.17325227963525835" />
-        <entry key="app/src/main/res/layout/hist.xml" value="0.17325227963525835" />
-        <entry key="app/src/main/res/layout/msg.xml" value="0.17325227963525835" />
-        <entry key="app/src/main/res/layout/news.xml" value="0.17325227963525835" />
-        <entry key="app/src/main/res/layout/password_update_dialog.xml" value="0.17325227963525835" />
-        <entry key="app/src/main/res/layout/stat.xml" value="0.17325227963525835" />
-        <entry key="app/src/main/res/layout/username_update_dialog.xml" value="0.17325227963525835" />
-        <entry key="app/src/main/res/xml/preferences.xml" value="0.17325227963525835" />
         <entry key="app/src/main/res/layout/activity_game_versus.xml" value="0.19610507246376813" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/activity_profile.xml" value="0.11865942028985507" />
         <entry key="app/src/main/res/layout/activity_temp_login.xml" value="0.17135416666666667" />
       </map>
     </option>
