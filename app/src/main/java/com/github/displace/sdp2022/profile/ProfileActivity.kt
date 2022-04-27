@@ -176,13 +176,9 @@ class ProfileActivity : AppCompatActivity() {
 
     private fun messageList(ls : ArrayList<HashMap<String,Any>>?){
         val messageRecyclerView = findViewById<RecyclerView>(R.id.recyclerMsg)
-        val list = mutableListOf<Message>()
+        var list = mutableListOf<Message>()
         if(ls != null){
-            for( map in ls ){
-                val sender = map["sender"] as HashMap<String,Any>
-                val m = Message(map["message"] as String,map["date"] as String, PartialUser(sender["username"] as String,sender["uid"] as String) )
-                list.add(m)
-            }
+            list = MessageReceiver().getListOfMessages(ls)
         }
         val messageAdapter = MsgViewAdapter(
             applicationContext,
