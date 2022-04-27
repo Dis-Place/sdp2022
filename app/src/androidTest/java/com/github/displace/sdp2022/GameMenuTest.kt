@@ -91,7 +91,7 @@ class GameMenuTest {
             Intents.release()
         }
     }*/
-
+/*
     @Test
     fun testFailButton() {
         intent.putExtra("gid","-4862463398588582910")
@@ -108,7 +108,7 @@ class GameMenuTest {
             Intents.release()
         }
 
-    }
+    }*/
 
     @Test
     fun testWinButton() {
