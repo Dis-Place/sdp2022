@@ -3,10 +3,15 @@ package com.github.displace.sdp2022
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.github.displace.sdp2022.gameComponents.GameEvent
 import com.github.displace.sdp2022.gameComponents.Point
+import com.github.displace.sdp2022.gameVersus.Chat
 import com.github.displace.sdp2022.gameVersus.ClientServerLink
 import com.github.displace.sdp2022.gameVersus.GameVersusViewModel
 import com.github.displace.sdp2022.map.*
@@ -16,9 +21,7 @@ import com.github.displace.sdp2022.util.gps.GPSPositionManager
 import com.github.displace.sdp2022.util.gps.GPSPositionUpdater
 import com.github.displace.sdp2022.util.gps.GeoPointListener
 import com.github.displace.sdp2022.util.math.CoordinatesUtil
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.*
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
 import kotlin.collections.ArrayList
@@ -49,6 +52,10 @@ class GameVersusViewActivity : AppCompatActivity() {
     private lateinit var otherPlayerPinpoints: PinpointsManager.PinpointsRef
     private lateinit var conditionalGoalPlacer: ConditionalGoalPlacer
     private lateinit var clientServerLink : ClientServerLink
+
+    //CHAT
+    private lateinit var chat : Chat
+
 
     private val initGoalPlacer = object : GeoPointListener {
         override fun invoke(geoPoint: GeoPoint) {
@@ -187,6 +194,9 @@ class GameVersusViewActivity : AppCompatActivity() {
                 conditionalGoalPlacer.update(gameInstance)
             }
         }
+
+        val chatPath = "/GameInstance/Game" + intent.getStringExtra("gid")!!  + "/Chat"
+        chat = Chat(chatPath,db,findViewById<View?>(android.R.id.content).rootView,applicationContext)
     }
 
 
@@ -216,6 +226,10 @@ class GameVersusViewActivity : AppCompatActivity() {
 
     private fun showGameSummaryActivity() {
         val intent = Intent(this, GameSummaryActivity::class.java)
+        val otherPlayerId =
+            other.toList()[0].first.removePrefix("id:")
+        extras.putString( "OPPONENT_ID" ,otherPlayerId )
+
         extras.putStringArrayList(EXTRA_STATS, statsList)
         extras.putString(EXTRA_MODE, "Versus")
         intent.putExtras(extras)
@@ -253,5 +267,28 @@ class GameVersusViewActivity : AppCompatActivity() {
     companion object {
         private val DEFAULT_GOAL = CoordinatesUtil.coordinates(MapViewManager.DEFAULT_CENTER)
     }
+
+    /**
+     * CHAT SECTION OF THE ACTIVITY
+     */
+
+    fun addToChat(view : View){
+        chat.addToChat()
+    }
+
+    fun showChatButton(view : View){
+        chat.showChat()
+    }
+
+    fun closeChatButton(view : View){
+        chat.hideChat()
+    }
+
+    override fun onPause() {
+        //CHAT
+        chat.removeListener()
+        super.onPause()
+    }
+
 
 }
