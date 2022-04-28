@@ -293,18 +293,14 @@ class CompleteUser(
     private fun initializePartialUser() {
         googleName = "defaultName"
         if (firebaseUser != null) {
-            if (firebaseUser.displayName == null) {        // maybe add the profile picture later
-                partialUser = PartialUser("defaultName", firebaseUser.uid)
+            if (firebaseUser.displayName == null) {
+                setupDefaultOrGuestPartialUser()
             } else {
                 partialUser = PartialUser(firebaseUser.displayName!!, firebaseUser.uid)
                 googleName = firebaseUser.displayName!!
             }
         } else {
-            partialUser = if (guestBoolean) {
-                PartialUser("Guest$guestNumber", "guest_$guestNumber")
-            } else {
-                PartialUser("defaultName", "dummy_id")
-            }
+            setupDefaultOrGuestPartialUser()
         }
         if(firebaseUser != null) {
             //offlineUserFetcher.setOfflinePartialUser(partialUser)
@@ -339,6 +335,14 @@ class CompleteUser(
 
     override fun hashCode(): Int {
         return partialUser.hashCode()
+    }
+
+    private fun setupDefaultOrGuestPartialUser() {
+        partialUser = if (guestBoolean) {
+            PartialUser("Guest$guestNumber", "guest_$guestNumber")
+        } else {
+            PartialUser("defaultName", "dummy_id")
+        }
     }
 
 }
