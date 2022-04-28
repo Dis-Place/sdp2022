@@ -168,7 +168,7 @@ class ProfileActivity : AppCompatActivity() {
         val messageRecyclerView = findViewById<RecyclerView>(R.id.recyclerMsg)
         var list = mutableListOf<Message>()
         if(ls != null){
-            list = MessageReceiver().getListOfMessages(ls)
+            list = (applicationContext as MyApplication).getMessageHandler().getListOfMessages(ls)
         }
         val messageAdapter = MsgViewAdapter(
             applicationContext,

@@ -13,7 +13,6 @@ import com.github.displace.sdp2022.MainMenuActivity
 import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.R
 import com.github.displace.sdp2022.RealTimeDatabase
-import com.github.displace.sdp2022.profile.MessageReceiver
 import com.github.displace.sdp2022.users.PartialUser
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -38,7 +37,7 @@ class MessageHandler(val activePartialUser : PartialUser, app : MyApplication) {
             val ls = snapshot.value as ArrayList<HashMap<String,Any>>?
             var tempList : ArrayList<Message>
             if(ls != null){
-                tempList = MessageReceiver().getListOfMessages(ls)
+                tempList = getListOfMessages(ls)
                 /*   for( map in ls ){
                        val sender = map["sender"] as HashMap<String,Any>
                        val m = Message(map["message"] as String,map["date"] as String, PartialUser(sender["username"] as String,sender["uid"] as String) )
@@ -111,6 +110,16 @@ class MessageHandler(val activePartialUser : PartialUser, app : MyApplication) {
 
     fun removeListener(){
         db.getDbReference("CompleteUsers/" + activePartialUser.uid + "/MessageHistory").removeEventListener(messageListener())
+    }
+
+    fun getListOfMessages(maps: ArrayList<HashMap<String,Any>>) : ArrayList<Message> {
+        val arr : ArrayList<Message> = arrayListOf()
+        for( map in maps ){
+            val sender = map["sender"] as HashMap<String,Any>
+            val m = Message(map["message"] as String,map["date"] as String, PartialUser(sender["username"] as String,sender["uid"] as String) )
+            arr.add(m)
+        }
+        return arr
     }
 
 

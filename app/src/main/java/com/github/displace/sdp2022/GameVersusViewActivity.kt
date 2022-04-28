@@ -11,13 +11,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.github.displace.sdp2022.gameComponents.GameEvent
 import com.github.displace.sdp2022.gameComponents.Point
+import com.github.displace.sdp2022.gameVersus.Chat
 import com.github.displace.sdp2022.gameVersus.ClientServerLink
 import com.github.displace.sdp2022.gameVersus.GameVersusViewModel
 import com.github.displace.sdp2022.map.*
-import com.github.displace.sdp2022.profile.MessageReceiver
-import com.github.displace.sdp2022.profile.messages.Message
-import com.github.displace.sdp2022.profile.messages.MsgViewAdapter
-import com.github.displace.sdp2022.users.PartialUser
 import com.github.displace.sdp2022.util.DateTimeUtil
 import com.github.displace.sdp2022.util.PreferencesUtil
 import com.github.displace.sdp2022.util.gps.GPSPositionManager
@@ -57,7 +54,7 @@ class GameVersusViewActivity : AppCompatActivity() {
     private lateinit var clientServerLink : ClientServerLink
 
     //CHAT
-    private lateinit var chatPath : String
+    private lateinit var chat : Chat
 
 
     private val initGoalPlacer = object : GeoPointListener {
@@ -198,9 +195,8 @@ class GameVersusViewActivity : AppCompatActivity() {
             }
         }
 
-        chatPath = "/GameInstance/Game" + intent.getStringExtra("gid")!!  + "/Chat"
-        db.getDbReference(chatPath).addValueEventListener(chatListener())
-
+        val chatPath = "/GameInstance/Game" + intent.getStringExtra("gid")!!  + "/Chat"
+        chat = Chat(chatPath,db,findViewById<View?>(android.R.id.content).rootView,applicationContext)
     }
 
 
@@ -229,9 +225,6 @@ class GameVersusViewActivity : AppCompatActivity() {
     }
 
     private fun showGameSummaryActivity() {
-        //CHAT
-        db.getDbReference(chatPath).removeEventListener(chatListener())
-
         val intent = Intent(this, GameSummaryActivity::class.java)
         val otherPlayerId =
             other.toList()[0].first.removePrefix("id:")
@@ -279,81 +272,22 @@ class GameVersusViewActivity : AppCompatActivity() {
      * CHAT SECTION OF THE ACTIVITY
      */
 
-    private fun chatListener() = object : ValueEventListener {
-        override fun onDataChange(snapshot: DataSnapshot) {
-
-            val messageRecyclerView = findViewById<RecyclerView>(R.id.recyclerView)
-            var list = mutableListOf<Message>()
-
-            val ls = snapshot.value as ArrayList<HashMap<String,Any>>?
-            if(ls != null){
-                list = MessageReceiver().getListOfMessages(ls)
-            }
-
-            val messageAdapter = MsgViewAdapter(
-                applicationContext,
-                list,
-                1
-            )
-            messageRecyclerView.adapter = messageAdapter
-            messageRecyclerView.layoutManager = LinearLayoutManager(applicationContext)
-
-        }
-
-        override fun onCancelled(error: DatabaseError) {
-            TODO("Not yet implemented")
-        }
-    }
-
-
     fun addToChat(view : View){
-        val msg : String = findViewById<EditText>(R.id.chatEditText).text.toString()
-        val partialUser : PartialUser = (applicationContext as MyApplication).getActiveUser()?.getPartialUser()!!
-        val date : String = (applicationContext as MyApplication).getCurrentTime()
-        if(msg.isEmpty()){
-            return
-        }
-        db.getDbReference(chatPath)
-            .runTransaction(object : Transaction.Handler {
-                override fun doTransaction(currentData: MutableData): Transaction.Result {
-                    var ls = currentData.value as ArrayList<HashMap<String,Any>>?
-                    val map = HashMap<String,Any>()
-                    map["message"] = msg
-                    map["date"] = date
-                    map["sender"] = partialUser
-                    val msgLs = arrayListOf(map)
-                    if(ls != null) {
-                        ls.addAll(msgLs)
-                        if(ls.size >= 6){
-                            ls = ls.takeLast(5) as ArrayList<HashMap<String, Any>>
-                        }
-                        currentData.value = ls
-                    }else {
-                        currentData.value = msgLs
-                    }
-                    return Transaction.success(currentData)
-                }
-
-                override fun onComplete(
-                    error: DatabaseError?,
-                    committed: Boolean,
-                    currentData: DataSnapshot?
-                ) {
-                    //  TODO("Not yet implemented")
-                }
-
-            })
+        chat.addToChat()
     }
 
     fun showChatButton(view : View){
-        val chatGroup = findViewById<ConstraintLayout>(R.id.chatLayout)
-        chatGroup.visibility = View.VISIBLE
-        db.getDbReference(chatPath).addListenerForSingleValueEvent(chatListener())
+        chat.showChat()
     }
 
     fun closeChatButton(view : View){
-        val chatGroup = findViewById<ConstraintLayout>(R.id.chatLayout)
-        chatGroup.visibility = View.GONE
+        chat.hideChat()
+    }
+
+    override fun onPause() {
+        //CHAT
+        chat.removeListener()
+        super.onPause()
     }
 
 

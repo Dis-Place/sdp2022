@@ -33,6 +33,12 @@ class GameMenuTest {
 
     @Before
     fun setup() {
+        val app = ApplicationProvider.getApplicationContext() as MyApplication
+        app.setActiveUser(CompleteUser(app,null, false))
+        Thread.sleep(3000)
+        app.setMessageHandler(MessageHandler(app.getActiveUser()!!.getPartialUser(),app))
+        Thread.sleep(1000)
+
         Intents.init()
         intent = Intent(ApplicationProvider.getApplicationContext(),GameVersusViewActivity::class.java)
     }
@@ -152,11 +158,7 @@ class GameMenuTest {
     @Test
     fun testChatButton() {
 
-        val app = ApplicationProvider.getApplicationContext() as MyApplication
-        app.setActiveUser(CompleteUser(app,null, false))
-        Thread.sleep(3000)
-        app.setMessageHandler(MessageHandler(app.getActiveUser()!!.getPartialUser(),app))
-        Thread.sleep(1000)
+
 
         intent.putExtra("gid","-4862463398588582910")
         intent.putExtra("uid","hCkhhJ0dkINs0BIpx8eqhLWzXw43")

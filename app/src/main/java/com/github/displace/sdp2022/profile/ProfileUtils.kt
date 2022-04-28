@@ -35,7 +35,7 @@ class MessageUpdater(val custom : Boolean,val applicationContext : Context, val 
     }
 
 }
-
+/*
 class MessageReceiver{
 
     fun getListOfMessages(maps: ArrayList<HashMap<String,Any>>) : ArrayList<Message> {
@@ -48,7 +48,7 @@ class MessageReceiver{
         return arr
     }
 
-}
+}*/
 
 
 
