@@ -50,6 +50,17 @@
             android:orientation="horizontal">
 
                 <ToggleButton
+                    android:id="@+id/toggleGPSButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:checked="true"
+                    android:onClick="toggleMock"
+                    android:text="ToggleGPS"
+                    android:textOff="GPS"
+                    android:textOn="GPS" />
+
+                <ToggleButton
                     android:id="@+id/DBButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -65,7 +76,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:onClick="updateRemoteMockPinPoints"
-                    android:text="update" />
+                    android:text="up" />
 
                 <ToggleButton
                     android:id="@+id/toggleMockMarkersButton"
