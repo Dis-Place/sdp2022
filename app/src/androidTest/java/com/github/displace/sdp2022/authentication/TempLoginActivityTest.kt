@@ -50,7 +50,7 @@ class TempLoginActivityTest {
     @Test
     fun offLineLogginGoesToMainMenuActivityTest() {
         Intents.init()
-        Espresso.onView(ViewMatchers.withId(R.id.goToAppOfflineButton)).perform(click())
+        Espresso.onView(ViewMatchers.withId(R.id.guestSignInButton)).perform(click())
 
         Intents.intended(IntentMatchers.hasComponent(MainMenuActivity::class.java.name))
         Intents.release()
