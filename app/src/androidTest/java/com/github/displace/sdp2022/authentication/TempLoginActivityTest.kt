@@ -28,11 +28,11 @@ class TempLoginActivityTest {
             .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
     }
 
-    @Test
+    /*@Test
     fun checkboxIsDisplayedTest() {
         Espresso.onView(ViewMatchers.withId(R.id.loginRememberCheckBox))
             .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
-    }
+    }*/
 
     @Test
     fun logoutButtonIsDisplayedTest() {

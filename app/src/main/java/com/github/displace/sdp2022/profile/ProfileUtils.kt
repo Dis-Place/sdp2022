@@ -2,6 +2,7 @@ package com.github.displace.sdp2022.profile
 
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import androidx.core.content.ContextCompat.startActivity
 import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.profile.messages.Message
@@ -33,4 +34,97 @@ class MessageUpdater(val custom : Boolean,val applicationContext : Context, val 
     ) {
     }
 
+}
+/*
+class MessageReceiver{
+
+    fun getListOfMessages(maps: ArrayList<HashMap<String,Any>>) : ArrayList<Message> {
+        val arr : ArrayList<Message> = arrayListOf()
+        for( map in maps ){
+            val sender = map["sender"] as HashMap<String,Any>
+            val m = Message(map["message"] as String,map["date"] as String, PartialUser(sender["username"] as String,sender["uid"] as String) )
+            arr.add(m)
+        }
+        return arr
+    }
+
+}*/
+
+
+
+class FriendRequest {
+    companion object {
+
+        private const val TAG = "FriendRequest"
+        private lateinit var rootRef: DatabaseReference
+
+        // target is the user name
+        fun sendFriendRequest(
+            target: String,
+            rootRef: DatabaseReference,
+            currentUser: PartialUser
+        ) {
+
+            this.rootRef = rootRef
+
+            Log.d(TAG, "CHECK IF USER $target EXISTS")
+            val usersRef: DatabaseReference = rootRef.child("CompleteUsers")
+
+            val eventListener: ValueEventListener = object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    var partialUsers = getPartialUsers(dataSnapshot)
+                    if (checkUserExists(partialUsers, target)) {
+                        val source = currentUser
+                        val target = getTargetUser(dataSnapshot, partialUsers, target)
+                        sendInvite(source, target)
+                    }
+                }
+
+                override fun onCancelled(databaseError: DatabaseError) {}
+            }
+            usersRef.addListenerForSingleValueEvent(eventListener)
+
+
+        }
+
+        fun sendInvite(source: PartialUser, target: PartialUser) {
+            val inviteDbRef = rootRef.child("Invites")
+            val invite = Invite(source, target)
+            inviteDbRef.push().setValue(invite)
+        }
+
+        fun checkUserExists(users: List<PartialUser>, target: String): Boolean {
+            Log.d(TAG, "Searching if $target")
+            for (user in users) {
+                if (user.username == target) {
+                    return true
+                }
+            }
+            return false
+        }
+
+        fun getPartialUsers(dataSnapshot: DataSnapshot): MutableList<PartialUser> {
+            var partialUsers = mutableListOf<PartialUser>()
+            for (ds in dataSnapshot.children) {
+                val uid =
+                    ds.child("CompleteUser").child("partialUser").child("uid").value.toString()
+                val username =
+                    ds.child("CompleteUser").child("partialUser").child("username").value.toString()
+
+                val partialUser = PartialUser(username, uid)
+//                    Log.d(TAG, partialUser.toString())
+                partialUsers.add(partialUser)
+            }
+            return partialUsers
+        }
+
+        fun getTargetUser(dataSnapshot: DataSnapshot, users : List<PartialUser>, target : String) : PartialUser {
+            for (user in users) {
+                if( user.username == target ){
+                    return user
+                }
+            }
+            return PartialUser("empty", "empty") // never gets executed as we check that the user exists before
+        }
+    }
 }

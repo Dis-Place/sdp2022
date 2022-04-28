@@ -35,13 +35,14 @@ class MessageHandler(val activePartialUser : PartialUser, app : MyApplication) {
     private fun messageListener() = object : ValueEventListener {
         override fun onDataChange(snapshot: DataSnapshot) {
             val ls = snapshot.value as ArrayList<HashMap<String,Any>>?
-            val tempList : ArrayList<Message> = arrayListOf()
+            var tempList : ArrayList<Message>
             if(ls != null){
-                for( map in ls ){
-                    val sender = map["sender"] as HashMap<String,Any>
-                    val m = Message(map["message"] as String,map["date"] as String, PartialUser(sender["username"] as String,sender["uid"] as String) )
-                    tempList.add(m)
-                }
+                tempList = getListOfMessages(ls)
+                /*   for( map in ls ){
+                       val sender = map["sender"] as HashMap<String,Any>
+                       val m = Message(map["message"] as String,map["date"] as String, PartialUser(sender["username"] as String,sender["uid"] as String) )
+                       tempList.add(m)
+                   }*/
                 if(msgLs.isEmpty()){
                     //setup of the list for the first time : no notification must be sent
                     msgLs = tempList
@@ -109,6 +110,16 @@ class MessageHandler(val activePartialUser : PartialUser, app : MyApplication) {
 
     fun removeListener(){
         db.getDbReference("CompleteUsers/" + activePartialUser.uid + "/MessageHistory").removeEventListener(messageListener())
+    }
+
+    fun getListOfMessages(maps: ArrayList<HashMap<String,Any>>) : ArrayList<Message> {
+        val arr : ArrayList<Message> = arrayListOf()
+        for( map in maps ){
+            val sender = map["sender"] as HashMap<String,Any>
+            val m = Message(map["message"] as String,map["date"] as String, PartialUser(sender["username"] as String,sender["uid"] as String) )
+            arr.add(m)
+        }
+        return arr
     }
 
 

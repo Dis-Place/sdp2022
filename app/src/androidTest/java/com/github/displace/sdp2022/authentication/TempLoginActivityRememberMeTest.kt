@@ -14,9 +14,9 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
-@RunWith(AndroidJUnit4::class)
+//@RunWith(AndroidJUnit4::class)
 class TempLoginActivityRememberMeTest {
-    private var checkBoxState: Boolean = false
+   /* private var checkBoxState: Boolean = false
     private val context = InstrumentationRegistry.getInstrumentation().context
 
     @Before
@@ -46,5 +46,5 @@ class TempLoginActivityRememberMeTest {
     fun checkboxIsDisplayedTest() {
         Espresso.onView(ViewMatchers.withId(R.id.loginRememberCheckBox))
             .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
-    }
+    }*/
 }
