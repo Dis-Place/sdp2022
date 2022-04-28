@@ -1,5 +1,6 @@
 package com.github.displace.sdp2022.authentication
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -13,6 +14,7 @@ import com.github.displace.sdp2022.MainMenuActivity
 import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.R
 import com.github.displace.sdp2022.users.CompleteUser
+import com.github.displace.sdp2022.users.OfflineUserFetcher
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -33,29 +35,19 @@ class TempLoginActivity : AppCompatActivity() {
 
     private lateinit var auth: FirebaseAuth
     private lateinit var signInClient: GoogleSignInClient
+    private val LOGIN_REFERENCE = "login-checkbox"
+    private val REMEMBER_REFERENCE = "login-remember"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_temp_login)
         auth = Firebase.auth
 
-        val sharedPreferences = getSharedPreferences("login-checkbox", MODE_PRIVATE)
-        if (sharedPreferences.getBoolean("login-checkbox", false)) {
-            val app = applicationContext as MyApplication
-            val user = CompleteUser(this,null, offlineMode = true)
-            app.setActiveUser(user)
+        val sharedPreferences = getSharedPreferences(LOGIN_REFERENCE, MODE_PRIVATE)
 
-            Toast.makeText(this, "You are already logged in", Toast.LENGTH_SHORT).show()
-        } else {
-            Toast.makeText(this, "Please login", Toast.LENGTH_LONG).show()
-        }
 
         val signInButton = findViewById<Button>(R.id.btnGoogleSignIn)
         signInButton.setOnClickListener {
-            if (sharedPreferences.getBoolean("login-remember", false)){
-                val intent = Intent(this, MainMenuActivity::class.java)
-                startActivity(intent)
-            }
             val options = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.webclient_id)).requestEmail().build()
             signInClient = GoogleSignIn.getClient(this, options)
@@ -78,35 +70,19 @@ class TempLoginActivity : AppCompatActivity() {
             updateUI(false)
         }
 
-        val remember = findViewById<CheckBox>(R.id.loginRememberCheckBox)
-        remember.setOnClickListener {
-            if (remember.isChecked) {
-                val editor = sharedPreferences.edit()
-                editor.putBoolean("login-remember", true)
-                editor.apply()
-                Toast.makeText(this, "Remember Me is checked", Toast.LENGTH_SHORT).show()
+
+        val offlineLogin = findViewById<Button>(R.id.goToAppOfflineButton)
+        offlineLogin.setOnClickListener {
+            if (sharedPreferences.getBoolean("login-checkbox", false)) {
+                val app = applicationContext as MyApplication
+                val user = CompleteUser(this, null, offlineMode = true)
+                app.setActiveUser(user)
+                val intent = Intent(this, MainMenuActivity::class.java)
+                startActivity(intent)
             } else {
-                val editor = sharedPreferences.edit()
-                editor.putBoolean("login-remember", false)
-                editor.apply()
-                Toast.makeText(this, "Remember Me is unchecked", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Cannot use offline mode, no user were cached before", Toast.LENGTH_LONG).show()
             }
         }
-
-        //val offlineSignIn = findViewById<Button>(R.id.btnOfflineSignIn)
-        //offlineSignIn.setOnClickListener {
-        //    //Check if internet is available
-        //    if (Connectivity.isConnected(applicationContext)) {
-        //        Toast.makeText(
-        //            this,
-        //            "You are connected to the internet, so you cannot use the offline mode",
-        //            Toast.LENGTH_LONG
-        //        ).show()
-        //    } else {
-        //
-        //        Toast.makeText(this, "AAAAAAAAAAAAAAAAAAAAAAA", Toast.LENGTH_LONG).show()
-        //    }
-        //}
     }
 
     private fun googleAuthForFirebase(account: GoogleSignInAccount) {
@@ -134,10 +110,16 @@ class TempLoginActivity : AppCompatActivity() {
                         ).show()
                         val user = CompleteUser(this@TempLoginActivity, current)
                         app.setActiveUser(user)
+                        val remember = findViewById<CheckBox>(R.id.loginRememberCheckBox)
+                        if (remember.isChecked) {
+                            val offlineUserFetcher = OfflineUserFetcher(this@TempLoginActivity)
+                            offlineUserFetcher.setCompleteUser(user)
+                            val sharedPreferences =
+                                getSharedPreferences("login-checkbox", Context.MODE_PRIVATE)
+                            sharedPreferences.edit().putBoolean("login-remember", true).apply()
+                        }
                     }
-
                 }
-
 
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
@@ -156,7 +138,6 @@ class TempLoginActivity : AppCompatActivity() {
                 val account = GoogleSignIn.getSignedInAccountFromIntent(data).result
 
                 account?.let {
-
                     googleAuthForFirebase(it)
                 }
             } catch (e: Exception) {
@@ -187,7 +168,7 @@ class TempLoginActivity : AppCompatActivity() {
     @Suppress("UNUSED_PARAMETER")
     fun startOffline(view: View) {
         val app = applicationContext as MyApplication
-        val user = CompleteUser(this,null, guestBoolean = true)
+        val user = CompleteUser(this, null, guestBoolean = true, readOnly = true)
         app.setActiveUser(user)
         goToMainMenuActivity(view)
     }
