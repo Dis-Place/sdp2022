@@ -49,7 +49,7 @@ class TempLoginActivity : AppCompatActivity() {
 
             Toast.makeText(this, "You are already logged in", Toast.LENGTH_SHORT).show()
         } else {
-            //Toast.makeText(this, "Please login", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "Please login", Toast.LENGTH_LONG).show()
         }
 
         val signInButton = findViewById<Button>(R.id.btnGoogleSignIn)
