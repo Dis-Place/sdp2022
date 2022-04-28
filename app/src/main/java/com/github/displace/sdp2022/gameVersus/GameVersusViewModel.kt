@@ -41,6 +41,7 @@ class GameVersusViewModel {
         return 0
     }
 
+    //update our position on the database
     fun UpdatePos(pos : Coordinates, id: String): Int {
         reseau.SendDataToOther(pos)
 

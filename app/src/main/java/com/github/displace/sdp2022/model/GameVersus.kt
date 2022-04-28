@@ -12,6 +12,7 @@ class GameVersus(
     val nbPlayer : Int
 ) : Game(goal,nbPlayer,threshold) {
 
+    //verify if the test coordinates is on the goal or not
     override fun verify(test: Coordinates): Boolean {
         return goal.pos.first + threshold > test.pos.first &&
                 goal.pos.first - threshold < test.pos.first &&

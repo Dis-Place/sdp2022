@@ -61,6 +61,7 @@ class GameVersusViewActivity : AppCompatActivity() {
         PreferencesUtil.initOsmdroidPref(this)
         setContentView(R.layout.activity_game_versus)
 
+        //initialisation of the viewer and manager.
         mapView = findViewById<MapView>(R.id.map)
         mapViewManager = MapViewManager(mapView)
         markerListener = GeoPointListener.markerPlacer(mapView)
@@ -68,6 +69,8 @@ class GameVersusViewActivity : AppCompatActivity() {
         gpsPositionUpdater = GPSPositionUpdater(this,gpsPositionManager)
         marker = MarkerManager(mapView)
         markerOther = MarkerManager(mapView)
+
+        //add a listener that update the position of the player regulary
         gpsPositionUpdater.listenersManager.addCall(GeoPointListener { geoPoint ->
             game.handleEvent(GameEvent.OnUpdate(intent.getStringExtra("uid")!!,
                 Point(geoPoint.latitude,geoPoint.longitude)))})
@@ -77,17 +80,23 @@ class GameVersusViewActivity : AppCompatActivity() {
 
         val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")
 
+        //listener that check if the game is finish either because the other lost, quit or win.
         val endListener = object : ValueEventListener {
 
+            //only happen when the finish value of the other player change
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val x = dataSnapshot.getValue()
+                //two possibility : 1 the other player won, -1: the other player lost or quit.
                 if (x == 1L || x == -1L) {
+                    //same part for both, we destroy the game instance, clear the listener and add the date to the summary.
                     db.delete("GameInstance", "Game" + intent.getStringExtra("gid")!!)
                     gpsPositionUpdater.listenersManager.clearAllCalls()
                     statsList.clear()
                     val current = LocalDateTime.now()
                     val formatted = current.format(formatter)
                     statsList.add(formatted)
+
+                    //show the right summary in function of if we lose or win.
                     if (x == 1L) {
                         findViewById<TextView>(R.id.TryText).apply {
                             text =
@@ -109,10 +118,12 @@ class GameVersusViewActivity : AppCompatActivity() {
 
             override fun onCancelled(databaseError: DatabaseError) {}
         }
-        
+
+        //start the handler of the pinpoint
         pinpointHandler = PinpointsDBCommunicationHandler(db,"Game" + intent.getStringExtra("gid")!!)
         pinpointHandler.start(intent.getStringExtra("uid")!!)
 
+        //add a listener that check if the point we tried is on the other player or not.
         mapViewManager.addCallOnLongClick(GeoPointListener { geoPoint -> run {
                 marker.putMarker(geoPoint)
                 val res = game.handleEvent(
@@ -121,6 +132,8 @@ class GameVersusViewActivity : AppCompatActivity() {
                         Point(geoPoint.latitude ,geoPoint.longitude )
                     )
                 )
+
+                // 3 possibility : 0 => we found the other player and won, 1 => we missed the other player, 2 => we tried 4 time without success and lost.
                 if(res == 0){
                     gpsPositionUpdater.listenersManager.clearAllCalls()
                     findViewById<TextView>(R.id.TryText).apply { text = "win" }
@@ -159,6 +172,7 @@ class GameVersusViewActivity : AppCompatActivity() {
                 }
             }})
 
+        //add all the needed listener on the database.
         db.referenceGet("GameInstance" , "Game" + intent.getStringExtra("gid")!!).addOnSuccessListener { gi ->
             other = ((gi as DataSnapshot).value as MutableMap<String,Any>).filter { id -> id.key != "id:" + intent.getStringExtra("uid")!! }
             other.forEach { t, u ->
@@ -169,6 +183,7 @@ class GameVersusViewActivity : AppCompatActivity() {
              }
         }
 
+        //initialise the on screen text
         findViewById<TextView>(R.id.TryText).apply { text =
             "status : neutral, nombre d'essais restant : " + (4 - game.getNbEssai())
         }
@@ -183,12 +198,14 @@ class GameVersusViewActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
+    //center the screen on the player position
     fun centerButton(view: View) {
         val gpsPos = gpsPositionManager.getPosition()
         if (gpsPos != null)
             mapViewManager.center(gpsPos)
     }
 
+    //show the summary of the game by launching another activity.
     private fun showGameSummaryActivity() {
         val intent = Intent(this, GameSummaryActivity::class.java)
         extras.putStringArrayList(EXTRA_STATS, statsList)

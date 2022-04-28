@@ -21,12 +21,15 @@ class ClientServerLink {
     private lateinit var posXListener : ValueEventListener
     private lateinit var posYListener : ValueEventListener
 
+    //send all the important data to the database, the fact that the game is not finished and the actual position of the player.
+    //Mostly used at the start of the game
     fun SendDataToOther(goal: Coordinates) {
         db.update("GameInstance/Game" + gid + "/id:" + playerId, "finish", 0)
         db.update("GameInstance/Game" + gid + "/id:" + playerId, "x", goal.pos.first)
         db.update("GameInstance/Game" + gid + "/id:" + playerId, "y", goal.pos.second)
     }
 
+    //get the position of the other player.
     fun GetData(playerId: String, gid: String, other: String) {
         this.playerId = playerId
         this.gid = gid
@@ -60,6 +63,7 @@ class ClientServerLink {
         db.addList("GameInstance/Game" + gid + "/id:" + other, "y", posYListener)
     }
 
+    //set a new x coordinate to the game goal
     private fun setX(x: Double) {
         game = GameVersus(
             Point(x, game.goal.pos.second),
@@ -70,6 +74,7 @@ class ClientServerLink {
         )
     }
 
+    //set a new y coordinate to the game goal
     private fun setY(y: Double) {
         game = GameVersus(
             Point(game.goal.pos.first, y),
@@ -80,6 +85,9 @@ class ClientServerLink {
         )
     }
 
+    //verify if the coordinate pointed by the player is the position of the other player.
+    // 3 possibility : 0 => yes it's the position of the other player, 1 => no it's not the position of the other player
+    // and 2 => we tried the max number of time possible and failed to find the position of the other player.
     fun verify(test: Coordinates): Int {
         if (game.verify(test)) {
             endGame(1)
@@ -102,6 +110,7 @@ class ClientServerLink {
 
     }
 
+    //remove all the listener
     fun endGame(winOrLose: Int) {
         db.removeList("GameInstance/Game" + gid + "/id:" + other, "x", posXListener)
         db.removeList("GameInstance/Game" + gid + "/id:" + other, "y", posYListener)
