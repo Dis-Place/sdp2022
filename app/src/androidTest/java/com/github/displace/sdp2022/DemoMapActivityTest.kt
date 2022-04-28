@@ -131,5 +131,13 @@ class DemoMapActivityTest {
             .perform(click())
     }
 
+    @Test
+    fun clickTwiceOnGPSToggleDoesNotCrashApp() {
+        testRule.scenario
+        onView(withId(R.id.toggleGPSButton))
+            .perform(click())
+            .perform(click())
+    }
+
 
 }
