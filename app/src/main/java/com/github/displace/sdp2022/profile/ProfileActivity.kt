@@ -1,14 +1,6 @@
 package com.github.displace.sdp2022.profile
 
-import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
-import android.content.Context
 import android.content.Intent
-import android.graphics.BitmapFactory
-import android.graphics.Color
-import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.ScrollView
@@ -18,7 +10,6 @@ import androidx.appcompat.app.AppCompatActivity
 
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.github.displace.sdp2022.MainMenuActivity
 import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.R
 import com.github.displace.sdp2022.RealTimeDatabase
@@ -26,7 +17,6 @@ import com.github.displace.sdp2022.profile.achievements.AchViewAdapter
 import com.github.displace.sdp2022.profile.friends.FriendViewAdapter
 import com.github.displace.sdp2022.profile.history.HistoryViewAdapter
 import com.github.displace.sdp2022.profile.messages.Message
-import com.github.displace.sdp2022.profile.messages.MessageHandler
 import com.github.displace.sdp2022.profile.messages.MsgViewAdapter
 import com.github.displace.sdp2022.profile.settings.AccountSettingsActivity
 import com.github.displace.sdp2022.profile.statistics.StatViewAdapter
@@ -176,13 +166,9 @@ class ProfileActivity : AppCompatActivity() {
 
     private fun messageList(ls : ArrayList<HashMap<String,Any>>?){
         val messageRecyclerView = findViewById<RecyclerView>(R.id.recyclerMsg)
-        val list = mutableListOf<Message>()
+        var list = mutableListOf<Message>()
         if(ls != null){
-            for( map in ls ){
-                val sender = map["sender"] as HashMap<String,Any>
-                val m = Message(map["message"] as String,map["date"] as String, PartialUser(sender["username"] as String,sender["uid"] as String) )
-                list.add(m)
-            }
+            list = (applicationContext as MyApplication).getMessageHandler().getListOfMessages(ls)
         }
         val messageAdapter = MsgViewAdapter(
             applicationContext,

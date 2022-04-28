@@ -15,6 +15,7 @@ import com.google.android.gms.tasks.CancellationTokenSource
 import com.github.displace.sdp2022.util.math.CoordinatesUtil
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import org.osmdroid.util.GeoPoint
 
 
 /**
@@ -25,6 +26,8 @@ import com.google.android.gms.location.LocationServices
 class GPSPositionManager(private val activity: Activity) {
     private var fusedLocationProviderClient: FusedLocationProviderClient
     val listenersManager = GeoPointListenersManager()
+    private var isMocked = false
+    private lateinit var mockLocation : GeoPoint
 
     /**
      * true iff the user enabled the required permissions for GPS
@@ -68,21 +71,50 @@ class GPSPositionManager(private val activity: Activity) {
      */
     @SuppressLint("MissingPermission") // test is done in isGPSDisabled() but Lint does not detect it
     fun updateLocation() {
-        if (isGPSDisabled()) {
-            requestGPSPermissions()
-            return
-        }
+        if(isMocked) {
+            listenersManager.invokeAll(mockLocation)
+        } else {
+            if (isGPSDisabled()) {
+                requestGPSPermissions()
+                return
+            }
 
-        if(isLocationEnabled()) {
-            fusedLocationProviderClient.getCurrentLocation(PRIORITY_HIGH_ACCURACY, CancellationTokenSource().token).addOnCompleteListener { task ->
-                val location = task.result
-                if(task.isSuccessful && location != null){
-                    if(!activity.isDestroyed) {
-                        listenersManager.invokeAll(CoordinatesUtil.geoPoint(location))
+            if(isLocationEnabled()) {
+                fusedLocationProviderClient.getCurrentLocation(PRIORITY_HIGH_ACCURACY, CancellationTokenSource().token).addOnCompleteListener { task ->
+                    val location = task.result
+                    if(task.isSuccessful && location != null){
+                        if(!activity.isDestroyed) {
+                            listenersManager.invokeAll(CoordinatesUtil.geoPoint(location))
+                        }
                     }
                 }
             }
         }
+    }
+
+    /**
+     * bypass the device's gps location with a mock location
+     * @param mockLocation
+     */
+    @SuppressLint("MissingPermission")
+    fun mockProvider(mockLocation: GeoPoint) {
+        this.mockLocation = mockLocation
+        isMocked = true
+    }
+
+    /**
+     * unmock the gps (ie, the gps will be using the device's gps position
+     */
+    @SuppressLint("MissingPermission")
+    fun unmockProvider() {
+        isMocked = false
+    }
+
+    /**
+     * to know whether or not the gps location is mocked
+     */
+    fun isMocked(): Boolean {
+        return isMocked
     }
 
     companion object {

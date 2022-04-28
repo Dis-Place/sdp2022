@@ -154,6 +154,15 @@ class DemoMapActivity : AppCompatActivity() {
         useDB = toggleButton.isChecked
     }
 
+    fun toggleMock(view : View) {
+        val toggleButton = view as ToggleButton
+        if(!toggleButton.isChecked) {
+            gpsPositionManager.mockProvider(DEFAULT_CENTER)
+        } else {
+            gpsPositionManager.unmockProvider()
+        }
+    }
+
     companion object {
         val MOCK_MARKERS_POSITIONS = listOf(DEFAULT_CENTER, GeoPoint(6.5,-4.0), GeoPoint(6.7,47.0))
         const val MOCK_GAME_INSTANCE_NAME = "demoMapMock"
