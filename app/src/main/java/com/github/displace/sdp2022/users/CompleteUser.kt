@@ -41,7 +41,7 @@ class CompleteUser(
 
     private val offlineUserFetcher: OfflineUserFetcher = OfflineUserFetcher(context)
 
-    private lateinit var partialUser: PartialUser
+    private var partialUser: PartialUser = PartialUser("this cannot be a user", "still cannot be a user")
 
     private lateinit var googleName: String
 
