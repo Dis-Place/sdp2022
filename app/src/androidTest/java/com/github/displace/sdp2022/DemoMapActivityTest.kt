@@ -51,6 +51,7 @@ class DemoMapActivityTest {
     @Test
     fun centerButtonDoesNotCrashApp() {
         testRule.scenario.use {
+            onView(withId(R.id.toggleGPSButton)).perform(click())
             onView(withId(R.id.centerGPS)).perform(click())
         }
     }
