@@ -15,6 +15,7 @@ import com.github.displace.sdp2022.util.PreferencesUtil
 import com.github.displace.sdp2022.util.gps.GPSPositionManager
 import com.github.displace.sdp2022.util.gps.GPSPositionUpdater
 import com.github.displace.sdp2022.util.gps.GeoPointListener
+import com.github.displace.sdp2022.util.gps.MockGPS
 import com.github.displace.sdp2022.util.math.CoordinatesUtil
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -153,6 +154,7 @@ class GameVersusViewActivity : AppCompatActivity() {
         gpsPositionUpdater = GPSPositionUpdater(this, gpsPositionManager)
         pinpointsManager = PinpointsManager(mapView)
         otherPlayerPinpoints = pinpointsManager.PinpointsRef()
+        MockGPS.mockIfNeeded(intent,gpsPositionManager)
         gpsPositionManager.listenersManager.addCall(GeoPointListener { geoPoint ->
             game.handleEvent(
                 GameEvent.OnUpdate(

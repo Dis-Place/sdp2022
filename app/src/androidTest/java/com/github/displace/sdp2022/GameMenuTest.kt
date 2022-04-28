@@ -16,6 +16,8 @@ import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.GrantPermissionRule
+import com.github.displace.sdp2022.map.MapViewManager
+import com.github.displace.sdp2022.util.gps.MockGPS
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -33,6 +35,7 @@ class GameMenuTest {
     fun setup() {
         Intents.init()
         intent = Intent(ApplicationProvider.getApplicationContext(),GameVersusViewActivity::class.java)
+        MockGPS.specifyMock(intent, MOCK_GPS_POSITION)
     }
 
     @After
@@ -140,6 +143,10 @@ class GameMenuTest {
             Swipe.FAST, GeneralLocation.BOTTOM_CENTER,
             GeneralLocation.TOP_CENTER, Press.FINGER
         )
+    }
+
+    companion object {
+        val MOCK_GPS_POSITION = MapViewManager.DEFAULT_CENTER
     }
 
 }

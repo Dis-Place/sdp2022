@@ -5,17 +5,14 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
-import android.location.Location
 import android.location.LocationManager
 import androidx.core.app.ActivityCompat
-import com.github.displace.sdp2022.map.MapViewManager
 
 import com.google.android.gms.location.LocationRequest.*
 import com.google.android.gms.tasks.CancellationTokenSource
 
 
 import com.github.displace.sdp2022.util.math.CoordinatesUtil
-import com.google.android.gms.common.util.Strings
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import org.osmdroid.util.GeoPoint
@@ -96,17 +93,28 @@ class GPSPositionManager(private val activity: Activity) {
     }
 
     /**
-     * @param geoPoint mock geoPoint for location
+     * bypass the device's gps location with a mock location
+     * @param mockLocation
      */
     @SuppressLint("MissingPermission")
-    fun mockProvider(geoPoint: GeoPoint) {
-        mockLocation = geoPoint
+    fun mockProvider(mockLocation: GeoPoint) {
+        this.mockLocation = mockLocation
         isMocked = true
     }
 
+    /**
+     * unmock the gps (ie, the gps will be using the device's gps position
+     */
     @SuppressLint("MissingPermission")
     fun unmockProvider() {
         isMocked = false
+    }
+
+    /**
+     * to know whether or not the gps location is mocked
+     */
+    fun isMocked(): Boolean {
+        return isMocked
     }
 
     companion object {
