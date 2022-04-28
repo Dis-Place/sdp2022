@@ -82,6 +82,7 @@ class GameMenuTest {
         intent.putExtra("other","0")
 
         ActivityScenario.launch<GameSummaryActivity>(intent).use {
+            onView(withId(R.id.centerButton)).perform(ViewActions.click())
             onView(withId(R.id.map)).perform(swipeUp())
             onView(withId(R.id.map)).perform(ViewActions.longClick())
             onView(withId(R.id.map)).perform(swipeUp())
@@ -167,6 +168,7 @@ class GameMenuTest {
             onView(withId(R.id.chatEditText)).perform(typeText("hh")).perform(closeSoftKeyboard())
             Thread.sleep(1000)
             onView(withId(R.id.sendChatMessage)).perform(click())
+            onView(withId(R.id.button4)).perform(click())
 
         }
     }
