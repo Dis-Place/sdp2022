@@ -1,5 +1,6 @@
 package com.github.displace.sdp2022.map
 
+import android.app.Activity
 import com.github.displace.sdp2022.util.RandomColor
 import com.github.displace.sdp2022.util.math.Constants.THRESHOLD
 import org.osmdroid.util.GeoPoint
@@ -12,7 +13,7 @@ import org.osmdroid.views.MapView
  * @param mapView on which we put the markers
  * @author LeoLgdr
  */
-class MarkerManager(private val mapView: MapView) {
+class PinpointsManager(private val mapView: MapView) {
     private var pinPointsMap = mutableMapOf<PinpointsRef,List<Pinpoint>>()
     val playerPinPointsRef = PinpointsRef()
 
@@ -69,14 +70,14 @@ class MarkerManager(private val mapView: MapView) {
          * @param isRemovedOnClick true iff the player can remove the marker by click
          */
         fun add(position: GeoPoint,isRemovedOnClick: Boolean){
-            val pinPoints = pinPointsMap[this]?.toMutableList() ?: mutableListOf()
+            val pinPoints = pinPointsMap[this@PinpointsRef]?.toMutableList() ?: mutableListOf()
             val newPinpoint = Pinpoint(mapView,position,THRESHOLD,color)
             pinPoints.add(newPinpoint)
             if(isRemovedOnClick){
-                newPinpoint.removeOnClick(this)
+                newPinpoint.removeOnClick(this@PinpointsRef)
             }
             newPinpoint.display()
-            pinPointsMap[this] = pinPoints.toList()
+            pinPointsMap[this@PinpointsRef] = pinPoints.toList()
             mapView.invalidate()
         }
 
@@ -91,16 +92,16 @@ class MarkerManager(private val mapView: MapView) {
          * remove all associated markers from the map
          */
         fun clear(){
-            pinPointsMap[this]?.map { p -> p.remove() }
-            pinPointsMap[this] = listOf()
+            pinPointsMap[this@PinpointsRef]?.map { p -> p.remove() }
+            pinPointsMap[this@PinpointsRef] = listOf()
         }
 
         /**
          * remove the specified marker
          */
         fun remove(pinpoint: Pinpoint){
-            if(pinPointsMap[this]?.contains(pinpoint) == true){
-                pinPointsMap[this] = pinPointsMap[this]!!.filter { p -> p != pinpoint }
+            if(pinPointsMap[this@PinpointsRef]?.contains(pinpoint) == true){
+                pinPointsMap[this@PinpointsRef] = pinPointsMap[this@PinpointsRef]!!.filter { p -> p != pinpoint }
                 pinpoint.remove()
             }
         }

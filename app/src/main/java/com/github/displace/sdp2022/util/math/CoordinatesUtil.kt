@@ -52,7 +52,7 @@ object CoordinatesUtil {
      * @param p2 geographic coordinates
      * @return the distance between p1 and p2 in meters
      */
-    fun distance(p1: Point, p2: Point): Double {
+    fun distance(p1: Coordinates, p2: Coordinates): Double {
         return distance(geoPoint(p1), geoPoint(p2))
     }
 

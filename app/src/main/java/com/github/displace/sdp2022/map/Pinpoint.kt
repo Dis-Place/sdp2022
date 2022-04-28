@@ -4,7 +4,7 @@ import android.graphics.Paint
 import androidx.appcompat.content.res.AppCompatResources
 import com.github.displace.sdp2022.R
 import com.github.displace.sdp2022.gameComponents.Coordinates
-import com.github.displace.sdp2022.util.math.CoordinatesUtil
+import com.github.displace.sdp2022.util.math.CoordinatesUtil.coordinates
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.util.constants.GeoConstants
 import org.osmdroid.views.MapView
@@ -40,7 +40,7 @@ class Pinpoint(private val mapView: MapView, private val pos: GeoPoint, private 
         marker.setOnMarkerClickListener { _, _ -> false }
     }
 
-    fun removeOnClick(ref: MarkerManager.PinpointsRef) {
+    fun removeOnClick(ref: PinpointsManager.PinpointsRef) {
         marker.setOnMarkerClickListener { _, _ ->
             ref.remove(this)
             false
@@ -76,7 +76,7 @@ class Pinpoint(private val mapView: MapView, private val pos: GeoPoint, private 
     }
 
     fun get2DPos() : Coordinates {
-        return CoordinatesUtil.coordinates(pos)
+        return coordinates(pos)
     }
 
     companion object {

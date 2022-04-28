@@ -16,6 +16,7 @@ import kotlin.random.Random
 import kotlin.random.nextUInt
 
 class CompleteUser(
+    private val context: Context?,
     private val firebaseUser: FirebaseUser?,
     val guestBoolean: Boolean = false,
     val offlineMode: Boolean = false,
@@ -39,7 +40,8 @@ class CompleteUser(
         }
     }
 
-    private var context: Context? = null
+    //private val offlineUserFetcher: OfflineUserFetcher = OfflineUserFetcher(context, debug)
+
     private lateinit var partialUser: PartialUser
 
     private lateinit var googleName: String
@@ -63,6 +65,11 @@ class CompleteUser(
             return
         achievements.add(ach)
         db.update(dbReference, "achievements/${achievements.size - 1}", ach)
+        if(firebaseUser != null) {
+            //offlineUserFetcher.setOfflineAchievements(achievements)     // We have to choose if we do this or if we update an achievements
+                                                                        // list in the fetcher and update the files periodically (same for all the others)
+        }
+
     }
 
     override fun updateStats(statName: String, newValue: Long) {
@@ -72,6 +79,9 @@ class CompleteUser(
             if (statName == stats[i].name) {
                 stats[i].value = newValue
                 db.update(dbReference, "stats/$i/value", newValue)
+                if(firebaseUser != null) {
+                    //offlineUserFetcher.setOfflineStats(stats)
+                }
                 return
             }
         }
@@ -83,11 +93,10 @@ class CompleteUser(
         if (!containsPartialUser(friendsList, partialU)) {
             friendsList.add(partialU)
             db.update(dbReference, "friendsList/${friendsList.size - 1}", partialU)
+            if(firebaseUser != null) {
+                //offlineUserFetcher.setOfflineFriendsList(friendsList)
+            }
         }
-    }
-
-    fun setContext(context: Context) {
-        this.context = context
     }
 
     override fun removeFriend(partialU: PartialUser) {
@@ -95,6 +104,9 @@ class CompleteUser(
             return
         if (friendsList.remove(partialU)) {
             db.update(dbReference, "friendsList", friendsList)
+            if(firebaseUser != null) {
+                //offlineUserFetcher.setOfflineFriendsList(friendsList)
+            }
         }
     }
 
@@ -116,6 +128,9 @@ class CompleteUser(
         val history = History(map, date, result)
         gameHistory.add(history)
         db.update(dbReference, "gameHistory/${gameHistory.size - 1}", history)
+        if(firebaseUser != null) {
+            //offlineUserFetcher.setOfflineGameHistory(gameHistory)
+        }
     }
 
     override fun changeUsername(newName: String) {
@@ -123,18 +138,23 @@ class CompleteUser(
             return
         partialUser.username = newName
         db.update(dbReference, "partialUser/username", newName)
+        if(firebaseUser != null) {
+            //offlineUserFetcher.setOfflinePartialUser(partialUser)
+        }
     }
 
     private fun initializeUser() {
-        if (offlineMode) {
-            val offlineUser = OfflineUser(context, debug)
-            achievements = offlineUser.getAchievements()
-            friendsList = offlineUser.getFriendsList()
-            gameHistory = offlineUser.getGameHistory()
-            partialUser = offlineUser.getPartialUser()!!
-            stats = offlineUser.getStats() as MutableList<Statistic>
+        // Initialization if the user is offline, using the cache
+        /*if (offlineMode) {
+            achievements = offlineUserFetcher.getOfflineAchievements()
+            stats = offlineUserFetcher.getOfflineStats()
+            friendsList = offlineUserFetcher.getOfflineFriendsList()
+            gameHistory = offlineUserFetcher.getOfflineGameHistory()
+            partialUser = offlineUserFetcher.getOfflinePartialUser()
             return
-        }
+        }*/
+
+        // Initialization if it's a guest
         if (guestBoolean) {
             initializeAchievements()
             initializeStats()
@@ -148,6 +168,8 @@ class CompleteUser(
             createFirstMessageList()
             return
         }
+
+        // Initialization if the user is online
         db.referenceGet(dbReference, "").addOnSuccessListener { usr ->
             if (usr.value != null) {
                 val completeUser = usr.value as HashMap<String, *>
@@ -214,8 +236,8 @@ class CompleteUser(
             }
         }.addOnFailureListener { e ->
             e.message?.let { Log.e("DBFailure", it) }
-
         }
+
     }
 
     private fun createFirstMessageList() {
@@ -246,6 +268,9 @@ class CompleteUser(
         achievements = mutableListOf(
             Achievement("Create your account !", getCurrentDate())
         )
+        if(firebaseUser != null) {
+            //offlineUserFetcher.setOfflineAchievements(achievements)
+        }
     }
 
     @SuppressLint("SimpleDateFormat")
@@ -259,6 +284,10 @@ class CompleteUser(
             Statistic("stat1", 0),
             Statistic("stat2", 0)
         )      // It's a dummy list for now, will be replaced with a list of all the possible statistics initialized to 0
+
+        if(firebaseUser != null) {
+            //offlineUserFetcher.setOfflineStats(stats)
+        }
     }
 
     private fun initializePartialUser() {
@@ -276,6 +305,9 @@ class CompleteUser(
             } else {
                 PartialUser("defaultName", "dummy_id")
             }
+        }
+        if(firebaseUser != null) {
+            //offlineUserFetcher.setOfflinePartialUser(partialUser)
         }
 
     }
