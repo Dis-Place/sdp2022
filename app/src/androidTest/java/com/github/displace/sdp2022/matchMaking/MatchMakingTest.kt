@@ -7,12 +7,15 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.assertion.ViewAssertions
+import androidx.test.espresso.contrib.RecyclerViewActions
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.displace.sdp2022.*
+import com.github.displace.sdp2022.profile.TestingUtils
 import com.github.displace.sdp2022.profile.messages.MessageHandler
+import com.github.displace.sdp2022.profile.messages.MsgViewHolder
 import com.github.displace.sdp2022.users.CompleteUser
 import com.github.displace.sdp2022.users.PartialUser
 import org.junit.Before
@@ -144,6 +147,14 @@ class MatchMakingTest {
                 )
             Espresso.onView(ViewMatchers.withId(R.id.privateLobbyCreate)).perform(ViewActions.click())
             Thread.sleep(1000)
+
+            Espresso.onView(ViewMatchers.withId(R.id.friendsMMRecycler)).perform(
+                RecyclerViewActions.actionOnItemAtPosition<MsgViewHolder>(
+                    0,
+                    TestingUtils().clickInInnerObject(R.id.inviteButton)
+                )
+            )
+
             db.delete("MM","")
             Espresso.onView(ViewMatchers.withId(R.id.textView14)).check(ViewAssertions.matches(
                 ViewMatchers.isDisplayed()
