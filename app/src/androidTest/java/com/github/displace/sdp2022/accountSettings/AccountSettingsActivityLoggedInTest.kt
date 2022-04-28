@@ -22,6 +22,7 @@ import androidx.test.rule.GrantPermissionRule
 import com.github.displace.sdp2022.profile.settings.AccountSettingsActivity
 import com.github.displace.sdp2022.R
 import com.github.displace.sdp2022.authentication.TempLoginActivity
+import com.github.displace.sdp2022.map.PinpointsDBHandlerTest.Companion.DB_DELAY
 import org.hamcrest.core.StringContains.containsString
 import org.junit.After
 import org.junit.Before
@@ -44,6 +45,8 @@ class AccountSettingsActivityLoggedInTest {
         val scenario: ActivityScenario<AccountSettingsActivity> = ActivityScenario.launch(intent)
         scenario.use {
             onView(withId(R.id.guestSignInButton)).perform(click())
+            Thread.sleep(DB_DELAY)
+            onView(withId(R.id.goToAppOnlineButton)).perform(click())
             onView(withId(R.id.profileButton)).perform(click())
             onView(withId(R.id.profileSettingsButton)).perform(click())
         }
