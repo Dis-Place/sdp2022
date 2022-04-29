@@ -40,7 +40,7 @@ class TempLoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_temp_login)
         auth = Firebase.auth
-        rememberMeButton = findViewById<CheckBox>(R.id.loginRememberCheckBox)
+        rememberMeButton = findViewById(R.id.loginRememberCheckBox)
 
         val sharedPreferences = getSharedPreferences("login-checkbox", MODE_PRIVATE)
         if (sharedPreferences.getBoolean("login-checkbox", false)) {
@@ -53,21 +53,9 @@ class TempLoginActivity : AppCompatActivity() {
             Toast.makeText(this, "Please login", Toast.LENGTH_LONG).show()
         }
 
-
-        //val offlineSignIn = findViewById<Button>(R.id.btnOfflineSignIn)
-        //offlineSignIn.setOnClickListener {
-        //    //Check if internet is available
+        //    //Check if internet is available, can be useful
         //    if (Connectivity.isConnected(applicationContext)) {
-        //        Toast.makeText(
-        //            this,
-        //            "You are connected to the internet, so you cannot use the offline mode",
-        //            Toast.LENGTH_LONG
-        //        ).show()
-        //    } else {
-        //
-        //        Toast.makeText(this, "AAAAAAAAAAAAAAAAAAAAAAA", Toast.LENGTH_LONG).show()
-        //    }
-        //}
+
     }
 
     @Suppress("UNUSED_PARAMETER")
@@ -96,6 +84,15 @@ class TempLoginActivity : AppCompatActivity() {
                 .show()
         }
         updateUI(false)
+    }
+
+    @Suppress("UNUSED_PARAMETER")
+    fun signInAsGuest(view: View) {
+        auth.signInAnonymously().addOnCompleteListener {
+            if(it.isSuccessful) {
+                updateUI(handleNewUser(true))
+            }
+        }
     }
 
     private fun googleAuthForFirebase(account: GoogleSignInAccount) {
@@ -196,15 +193,6 @@ class TempLoginActivity : AppCompatActivity() {
             val user = CompleteUser(app, current, guestBoolean = isGuest)
             app.setActiveUser(user)
             true
-        }
-    }
-
-    @Suppress("UNUSED_PARAMETER")
-    fun signInAsGuest(view: View) {
-        auth.signInAnonymously().addOnCompleteListener {
-            if(it.isSuccessful) {
-                updateUI(handleNewUser(true))
-            }
         }
     }
 

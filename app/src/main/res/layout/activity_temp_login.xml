@@ -38,6 +38,7 @@
         android:id="@+id/guestSignInButton"
         android:layout_width="171dp"
         android:layout_height="85dp"
+        android:onClick="signInAsGuest"
         android:text="Guest Mode "
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"

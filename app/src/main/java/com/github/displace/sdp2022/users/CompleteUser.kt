@@ -291,7 +291,7 @@ class CompleteUser(
         else
             db.update(
                 "CompleteUsers/${partialUser.uid}",
-                "Achievements",
+                "achievements",
                 achievements
             )
     }
