@@ -16,3 +16,5 @@ data class Invite(val source: PartialUser,val target : PartialUser){
         return source.hashCode()
     }
 }
+
+data class InviteWithId(val invite: Invite, val id : String)
