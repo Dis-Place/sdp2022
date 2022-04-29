@@ -1,5 +1,5 @@
 package com.github.displace.sdp2022
-
+/*
 import android.content.Intent
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
@@ -40,4 +40,4 @@ class ChatActivityTest {
 
     }
 
-}
+}*/

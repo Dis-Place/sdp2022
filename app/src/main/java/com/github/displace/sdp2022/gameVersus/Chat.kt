@@ -1,41 +1,37 @@
-package com.github.displace.sdp2022
-/*
-import androidx.appcompat.app.AppCompatActivity
-import android.os.Bundle
+package com.github.displace.sdp2022.gameVersus
+
+import android.content.Context
 import android.view.View
 import android.widget.EditText
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.github.displace.sdp2022.MyApplication
+import com.github.displace.sdp2022.RealTimeDatabase
 import com.github.displace.sdp2022.profile.messages.Message
 import com.github.displace.sdp2022.profile.messages.MsgViewAdapter
 import com.github.displace.sdp2022.users.PartialUser
 import com.google.firebase.database.*
+import com.github.displace.sdp2022.R
 
-class ChatActivity : AppCompatActivity() {
+class Chat(val chatPath : String , val db : RealTimeDatabase , val view : View, val applicationContext : Context) {
 
-    private val db : RealTimeDatabase = RealTimeDatabase().noCacheInstantiate("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",false) as RealTimeDatabase
+    val chatGroup : ConstraintLayout
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_chat)
-
-        db.getDbReference("debug/Chat").addValueEventListener(chatListener())
-
+    init{
+        db.getDbReference(chatPath).addValueEventListener(chatListener())
+        chatGroup = view.findViewById<ConstraintLayout>(R.id.chatLayout)
     }
 
     private fun chatListener() = object : ValueEventListener {
         override fun onDataChange(snapshot: DataSnapshot) {
 
-            val messageRecyclerView = findViewById<RecyclerView>(R.id.recyclerView)
-            val list = mutableListOf<Message>()
+            val messageRecyclerView = view.findViewById<RecyclerView>(R.id.recyclerView)
+            var list = mutableListOf<Message>()
 
             val ls = snapshot.value as ArrayList<HashMap<String,Any>>?
             if(ls != null){
-                for( map in ls ){
-                    val sender = map["sender"] as HashMap<String,Any>
-                    val m = Message(map["message"] as String,map["date"] as String, PartialUser(sender["username"] as String,sender["uid"] as String) )
-                    list.add(m)
-                }
+                list =(applicationContext as MyApplication).getMessageHandler().getListOfMessages(ls)
             }
 
             val messageAdapter = MsgViewAdapter(
@@ -54,14 +50,14 @@ class ChatActivity : AppCompatActivity() {
     }
 
 
-    fun addToChat(view : View){
-        val msg : String = findViewById<EditText>(R.id.chatEditText).text.toString()
+    fun addToChat(){
+        val msg : String = view.findViewById<EditText>(R.id.chatEditText).text.toString()
         val partialUser : PartialUser = (applicationContext as MyApplication).getActiveUser()?.getPartialUser()!!
         val date : String = (applicationContext as MyApplication).getCurrentTime()
-        if(msg.length == 0){
+        if(msg.isEmpty()){
             return
         }
-        db.getDbReference("debug/Chat")
+        db.getDbReference(chatPath)
             .runTransaction(object : Transaction.Handler {
                 override fun doTransaction(currentData: MutableData): Transaction.Result {
                     var ls = currentData.value as ArrayList<HashMap<String,Any>>?
@@ -69,7 +65,7 @@ class ChatActivity : AppCompatActivity() {
                     map["message"] = msg
                     map["date"] = date
                     map["sender"] = partialUser
-                    val msgLs = arrayListOf<HashMap<String,Any>>(map)
+                    val msgLs = arrayListOf(map)
                     if(ls != null) {
                         ls.addAll(msgLs)
                         if(ls.size >= 6){
@@ -87,10 +83,23 @@ class ChatActivity : AppCompatActivity() {
                     committed: Boolean,
                     currentData: DataSnapshot?
                 ) {
-                  //  TODO("Not yet implemented")
+                    //  TODO("Not yet implemented")
                 }
 
             })
     }
 
-}*/
+    fun removeListener(){
+        db.getDbReference(chatPath).removeEventListener(chatListener())
+    }
+
+    fun showChat(){
+        chatGroup.visibility = View.VISIBLE
+    }
+
+    fun hideChat(){
+        chatGroup.visibility = View.GONE
+
+    }
+
+}

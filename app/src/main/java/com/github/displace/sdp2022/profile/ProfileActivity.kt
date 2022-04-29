@@ -171,17 +171,10 @@ class ProfileActivity : AppCompatActivity() {
 
     private fun messageList(ls: ArrayList<HashMap<String, Any>>?) {
         val messageRecyclerView = findViewById<RecyclerView>(R.id.recyclerMsg)
-        val list = mutableListOf<Message>()
-        if (ls != null) {
-            for (map in ls) {
-                val sender = map["sender"] as HashMap<String, Any>
-                val m = Message(
-                    map["message"] as String,
-                    map["date"] as String,
-                    PartialUser(sender["username"] as String, sender["uid"] as String)
-                )
-                list.add(m)
-            }
+
+        var list = mutableListOf<Message>()
+        if(ls != null){
+            list = (applicationContext as MyApplication).getMessageHandler().getListOfMessages(ls)
         }
         val messageAdapter = MsgViewAdapter(
             applicationContext,
@@ -197,8 +190,10 @@ class ProfileActivity : AppCompatActivity() {
         startActivity(Intent(this, AddFriendActivity::class.java))
     }
 
+
     @Suppress("UNUSED_PARAMETER")
     fun goToFriendRequests(view: View) {
         startActivity(Intent(this, FriendRequestsActivity::class.java))
     }
+
 }

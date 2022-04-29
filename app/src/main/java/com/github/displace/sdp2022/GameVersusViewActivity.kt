@@ -3,10 +3,15 @@ package com.github.displace.sdp2022
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.github.displace.sdp2022.gameComponents.GameEvent
 import com.github.displace.sdp2022.gameComponents.Point
+import com.github.displace.sdp2022.gameVersus.Chat
 import com.github.displace.sdp2022.gameVersus.ClientServerLink
 import com.github.displace.sdp2022.gameVersus.GameVersusViewModel
 import com.github.displace.sdp2022.map.*
@@ -15,10 +20,9 @@ import com.github.displace.sdp2022.util.PreferencesUtil
 import com.github.displace.sdp2022.util.gps.GPSPositionManager
 import com.github.displace.sdp2022.util.gps.GPSPositionUpdater
 import com.github.displace.sdp2022.util.gps.GeoPointListener
+import com.github.displace.sdp2022.util.gps.MockGPS
 import com.github.displace.sdp2022.util.math.CoordinatesUtil
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.*
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
 import kotlin.collections.ArrayList
@@ -50,12 +54,20 @@ class GameVersusViewActivity : AppCompatActivity() {
     private lateinit var conditionalGoalPlacer: ConditionalGoalPlacer
     private lateinit var clientServerLink : ClientServerLink
 
+    //CHAT
+    private lateinit var chat : Chat
+
+
+    //listener to initialise the goal
     private val initGoalPlacer = object : GeoPointListener {
         override fun invoke(geoPoint: GeoPoint) {
             conditionalGoalPlacer = ConditionalGoalPlacer(mapView,game.getGameInstance(),geoPoint)
             gpsPositionManager.listenersManager.removeCall(this)
         }
     }
+
+    //listener that verify if the player found or missed the other player.
+    // 3 possibility : win => guess == position of the goal, continue => guess != position and lost => you missed the max number of time and lost
     private val guessListener = GeoPointListener { geoPoint ->
         run {
             pinpointsManager.putMarker(geoPoint)
@@ -100,8 +112,8 @@ class GameVersusViewActivity : AppCompatActivity() {
         }
     }
 
+    //verify if the other has already finish by : winnig, losing or leaving
     private val endListener = object : ValueEventListener {
-
         override fun onDataChange(dataSnapshot: DataSnapshot) {
             val x = dataSnapshot.value
             if (x == GameVersusViewModel.LOSE || x == GameVersusViewModel.WIN) {
@@ -144,6 +156,7 @@ class GameVersusViewActivity : AppCompatActivity() {
         clientServerLink = ClientServerLink(db)
         game = GameVersusViewModel(clientServerLink)
 
+        //initialise all the viewer and manager.
         mapView = findViewById(R.id.map)
         mapViewManager = MapViewManager(mapView)
         pinpointsDBHandler = PinpointsDBHandler(db, "Game" + intent.getStringExtra("gid")!!, this)
@@ -153,6 +166,9 @@ class GameVersusViewActivity : AppCompatActivity() {
         gpsPositionUpdater = GPSPositionUpdater(this, gpsPositionManager)
         pinpointsManager = PinpointsManager(mapView)
         otherPlayerPinpoints = pinpointsManager.PinpointsRef()
+        MockGPS.mockIfNeeded(intent,gpsPositionManager)
+
+        //update the actual position of the player on the database
         gpsPositionManager.listenersManager.addCall(GeoPointListener { geoPoint ->
             game.handleEvent(
                 GameEvent.OnUpdate(
@@ -164,8 +180,8 @@ class GameVersusViewActivity : AppCompatActivity() {
         gpsPositionManager.updateLocation()
         GPSLocationMarker(mapView, gpsPositionManager).add()
 
+        //add the listener on the map and database
         mapViewManager.addCallOnLongClick(guessListener)
-
         db.referenceGet("GameInstance", "Game${intent.getStringExtra("gid")!!}")
             .addOnSuccessListener { gi -> initGame(gi) }
 
@@ -187,6 +203,10 @@ class GameVersusViewActivity : AppCompatActivity() {
                 conditionalGoalPlacer.update(gameInstance)
             }
         }
+
+        //initialise the chat
+        val chatPath = "/GameInstance/Game" + intent.getStringExtra("gid")!!  + "/Chat"
+        chat = Chat(chatPath,db,findViewById<View?>(android.R.id.content).rootView,applicationContext)
     }
 
 
@@ -200,6 +220,7 @@ class GameVersusViewActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
+    //center the screen around the player position
     @Suppress("UNUSED_PARAMETER")
     fun centerButton(view: View) {
 
@@ -214,14 +235,20 @@ class GameVersusViewActivity : AppCompatActivity() {
         gpsPositionManager.updateLocation()
     }
 
+    //show the game sumarry by launching a new activity
     private fun showGameSummaryActivity() {
         val intent = Intent(this, GameSummaryActivity::class.java)
+        val otherPlayerId =
+            other.toList()[0].first.removePrefix("id:")
+        extras.putString( "OPPONENT_ID" ,otherPlayerId )
+
         extras.putStringArrayList(EXTRA_STATS, statsList)
         extras.putString(EXTRA_MODE, "Versus")
         intent.putExtras(extras)
         startActivity(intent)
     }
 
+    //initialise the game
     private fun initGame(gi: DataSnapshot) {
         other = (gi.value as MutableMap<String, Any>).filter { id ->
             id.key != "id:${
@@ -253,5 +280,28 @@ class GameVersusViewActivity : AppCompatActivity() {
     companion object {
         private val DEFAULT_GOAL = CoordinatesUtil.coordinates(MapViewManager.DEFAULT_CENTER)
     }
+
+    /**
+     * CHAT SECTION OF THE ACTIVITY
+     */
+
+    fun addToChat(view : View){
+        chat.addToChat()
+    }
+
+    fun showChatButton(view : View){
+        chat.showChat()
+    }
+
+    fun closeChatButton(view : View){
+        chat.hideChat()
+    }
+
+    override fun onPause() {
+        //CHAT
+        chat.removeListener()
+        super.onPause()
+    }
+
 
 }

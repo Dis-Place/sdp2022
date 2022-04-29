@@ -70,7 +70,7 @@ class ProfileActivityTest {
             Espresso.onView(ViewMatchers.withId(R.id.recyclerMsg)).perform(
                 RecyclerViewActions.actionOnItemAtPosition<MsgViewHolder>(
                     0,
-                    clickInInnerObject(R.id.replyButton)
+                    TestingUtils().clickInInnerObject(R.id.replyButton)
                 )
             )
             Thread.sleep(50)
@@ -145,7 +145,7 @@ class ProfileActivityTest {
             Espresso.onView(ViewMatchers.withId(R.id.recyclerFriend)).perform(
                 RecyclerViewActions.actionOnItemAtPosition<MsgViewHolder>(
                     0,
-                    clickInInnerObject(R.id.messageButton)
+                    TestingUtils().clickInInnerObject(R.id.messageButton)
                 )
             )
             Thread.sleep(50)
@@ -175,8 +175,12 @@ class ProfileActivityTest {
         }
     }
 
+}
 
-    private fun clickInInnerObject(id: Int): ViewAction {
+
+class TestingUtils{
+
+    fun clickInInnerObject(id: Int): ViewAction {
         return object : ViewAction {
             override fun getConstraints(): Matcher<View>? {
                 return null
@@ -192,7 +196,5 @@ class ProfileActivityTest {
             }
         }
     }
-
-
 
 }

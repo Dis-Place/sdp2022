@@ -28,17 +28,19 @@ import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 
 const val REQUEST_CODE_SIGN_IN = 0
+const val GUEST_EXTRA_ID = "GUEST_LOGIN"
 
 class TempLoginActivity : AppCompatActivity() {
 
     private lateinit var auth: FirebaseAuth
     private lateinit var signInClient: GoogleSignInClient
-    private var rememberMe: Boolean = false
+    private lateinit var rememberMeButton: CheckBox
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_temp_login)
         auth = Firebase.auth
+        rememberMeButton = findViewById(R.id.loginRememberCheckBox)
 
         val sharedPreferences = getSharedPreferences("login-checkbox", MODE_PRIVATE)
         if (sharedPreferences.getBoolean("login-checkbox", false)) {
@@ -51,65 +53,46 @@ class TempLoginActivity : AppCompatActivity() {
             Toast.makeText(this, "Please login", Toast.LENGTH_LONG).show()
         }
 
-        val signInButton = findViewById<Button>(R.id.btnGoogleSignIn)
-        signInButton.setOnClickListener {
-            /*if (sharedPreferences.getBoolean("login-remember", false)){
+        //    //Check if internet is available, can be useful
+        //    if (Connectivity.isConnected(applicationContext)) {
+
+    }
+
+    @Suppress("UNUSED_PARAMETER")
+    fun launchSignIn(view: View) {
+        /*if (sharedPreferences.getBoolean("login-remember", false)){
                 val intent = Intent(this, MainMenuActivity::class.java)
                 startActivity(intent)
             }*/
-            val options = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.webclient_id)).requestEmail().build()
-            signInClient = GoogleSignIn.getClient(this, options)
+        val options = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(getString(R.string.webclient_id)).requestEmail().build()
+        signInClient = GoogleSignIn.getClient(this, options)
 
-            startActivityForResult(signInClient.signInIntent, REQUEST_CODE_SIGN_IN)
-        }
-        val logout = findViewById<Button>(R.id.btnGoogleSignOut)
-        logout.setOnClickListener {
+        startActivityForResult(signInClient.signInIntent, REQUEST_CODE_SIGN_IN)
+    }
 
-            if (Firebase.auth.currentUser != null) {
-                AuthUI.getInstance().signOut(this@TempLoginActivity).addOnCompleteListener {
-                    Toast.makeText(this, "Logging Out", Toast.LENGTH_SHORT).show()
-                    (applicationContext as MyApplication).getMessageHandler().removeListener()
-                }
-
-            } else {
-                Toast.makeText(this, "Cannot log out you're not logged in", Toast.LENGTH_LONG)
-                    .show()
+    @Suppress("UNUSED_PARAMETER")
+    fun launchSignOut(view: View) {
+        if (Firebase.auth.currentUser != null) {
+            AuthUI.getInstance().signOut(this@TempLoginActivity).addOnCompleteListener {
+                Toast.makeText(this, "Logging Out", Toast.LENGTH_SHORT).show()
+                (applicationContext as MyApplication).getMessageHandler().removeListener()
             }
-            updateUI(false)
-        }
 
-        val remember = findViewById<CheckBox>(R.id.loginRememberCheckBox)
-        remember.setOnClickListener {
-            if (remember.isChecked) {
-                rememberMe = true
-                /*val editor = sharedPreferences.edit()
-                editor.putBoolean("login-remember", true)
-                editor.apply()*/
-                Toast.makeText(this, "Remember Me is checked", Toast.LENGTH_SHORT).show()
-            } else {
-                rememberMe = false
-                /*val editor = sharedPreferences.edit()
-                editor.putBoolean("login-remember", false)
-                editor.apply()*/
-                Toast.makeText(this, "Remember Me is unchecked", Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(this, "Cannot log out you're not logged in", Toast.LENGTH_LONG)
+                .show()
+        }
+        updateUI(false)
+    }
+
+    @Suppress("UNUSED_PARAMETER")
+    fun signInAsGuest(view: View) {
+        auth.signInAnonymously().addOnCompleteListener {
+            if(it.isSuccessful) {
+                updateUI(handleNewUser(true))
             }
         }
-
-        //val offlineSignIn = findViewById<Button>(R.id.btnOfflineSignIn)
-        //offlineSignIn.setOnClickListener {
-        //    //Check if internet is available
-        //    if (Connectivity.isConnected(applicationContext)) {
-        //        Toast.makeText(
-        //            this,
-        //            "You are connected to the internet, so you cannot use the offline mode",
-        //            Toast.LENGTH_LONG
-        //        ).show()
-        //    } else {
-        //
-        //        Toast.makeText(this, "AAAAAAAAAAAAAAAAAAAAAAA", Toast.LENGTH_LONG).show()
-        //    }
-        //}
     }
 
     private fun googleAuthForFirebase(account: GoogleSignInAccount) {
@@ -118,27 +101,7 @@ class TempLoginActivity : AppCompatActivity() {
             try {
                 auth.signInWithCredential(credentials).await()
                 withContext(Dispatchers.Main) {
-
-                    val app = applicationContext as MyApplication
-                    val current = auth.currentUser
-
-                    val name: String? = current?.displayName
-                    if (name.isNullOrEmpty()) {
-                        Toast.makeText(
-                            this@TempLoginActivity,
-                            "Failed to authenticate",
-                            Toast.LENGTH_LONG
-                        ).show()
-                    } else {
-                        Toast.makeText(
-                            this@TempLoginActivity,
-                            "Successfully logged in $name ",
-                            Toast.LENGTH_LONG
-                        ).show()
-                        val user = CompleteUser(app, current)
-                        app.setActiveUser(user)
-                    }
-
+                    handleNewUser()
                 }
 
 
@@ -165,6 +128,7 @@ class TempLoginActivity : AppCompatActivity() {
             } catch (e: Exception) {
                 Log.e("test", e.message!!)
             }
+
         }
 
         updateUI(true)
@@ -173,7 +137,7 @@ class TempLoginActivity : AppCompatActivity() {
     private fun updateUI(loggingIn: Boolean) {
         val signInButton = findViewById<Button>(R.id.btnGoogleSignIn)
         val onlineButton = findViewById<Button>(R.id.goToAppOnlineButton)
-        val offlineButton = findViewById<Button>(R.id.goToAppOfflineButton)
+        val offlineButton = findViewById<Button>(R.id.guestSignInButton)
 
         if (loggingIn) {
             signInButton.visibility = View.GONE
@@ -188,13 +152,19 @@ class TempLoginActivity : AppCompatActivity() {
     }
 
     @Suppress("UNUSED_PARAMETER")
-    fun startOffline(view: View) {
-        val app = applicationContext as MyApplication
-        val user = CompleteUser(this,null, guestBoolean = true)
-        app.setActiveUser(user)
-        goToMainMenuActivity(view)
+    fun rememberMeInput(view: View) {
+        if (rememberMeButton.isChecked) {
+            /*val editor = sharedPreferences.edit()
+            editor.putBoolean("login-remember", true)
+            editor.apply()*/
+            Toast.makeText(this, "Remember Me is checked", Toast.LENGTH_SHORT).show()
+        } else {
+            /*val editor = sharedPreferences.edit()
+            editor.putBoolean("login-remember", false)
+            editor.apply()*/
+            Toast.makeText(this, "Remember Me is unchecked", Toast.LENGTH_SHORT).show()
+        }
     }
-
 
     @Suppress("UNUSED_PARAMETER")
     fun enterMenu(view: View) {
@@ -204,6 +174,34 @@ class TempLoginActivity : AppCompatActivity() {
     @Suppress("UNUSED_PARAMETER")
     private fun goToMainMenuActivity(view: View) {
         startActivity(Intent(this@TempLoginActivity, MainMenuActivity::class.java))
+    }
+
+    private fun handleNewUser(isGuest: Boolean = false): Boolean {
+        val app = applicationContext as MyApplication
+        val current = auth.currentUser
+
+        val name: String? = if (isGuest) "guest" else current?.displayName
+        return if (name.isNullOrEmpty()) {
+            showFailedSignInMessage()
+            false
+        } else {
+            Toast.makeText(
+                this@TempLoginActivity,
+                "Successfully logged in $name ",
+                Toast.LENGTH_LONG
+            ).show()
+            val user = CompleteUser(app, current, guestBoolean = isGuest)
+            app.setActiveUser(user)
+            true
+        }
+    }
+
+    private fun showFailedSignInMessage() {
+        Toast.makeText(
+            this@TempLoginActivity,
+            "Failed to authenticate",
+            Toast.LENGTH_LONG
+        ).show()
     }
 
 }

@@ -28,9 +28,6 @@
             android:name=".profile.AddFriendActivity"
             android:exported="false" />
         <activity
-            android:name=".ChatActivity"
-            android:exported="false" />
-        <activity
             android:name=".SettingsActivity"
             android:exported="false"
             android:parentActivityName=".MainMenuActivity" />
@@ -130,6 +127,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
     </application>
+
 
 </manifest>

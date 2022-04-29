@@ -26,6 +26,8 @@ import com.github.displace.sdp2022.profile.settings.AccountSettingsActivity
 import com.github.displace.sdp2022.R
 import com.github.displace.sdp2022.authentication.TempLoginActivity
 import com.google.firebase.auth.FirebaseAuth
+import org.hamcrest.CoreMatchers
+import com.github.displace.sdp2022.map.PinpointsDBHandlerTest.Companion.DB_DELAY
 import org.hamcrest.core.StringContains.containsString
 import org.junit.After
 import org.junit.Before
@@ -34,7 +36,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class AccountSettingsActivityLoggedInTest {
+class AccountSettingsActivityPermsTest {
     /*@get:Rule
     val testRule = ActivityScenarioRule(AccountSettingsActivity::class.java)*/
 
@@ -47,7 +49,9 @@ class AccountSettingsActivityLoggedInTest {
             Intent(ApplicationProvider.getApplicationContext(), TempLoginActivity::class.java)
         val scenario: ActivityScenario<AccountSettingsActivity> = ActivityScenario.launch(intent)
         scenario.use {
-            onView(withId(R.id.goToAppOfflineButton)).perform(click())
+            onView(withId(R.id.guestSignInButton)).perform(click())
+            Thread.sleep(DB_DELAY)
+            onView(withId(R.id.goToAppOnlineButton)).perform(click())
             onView(withId(R.id.profileButton)).perform(click())
             onView(withId(R.id.profileSettingsButton)).perform(click())
         }
@@ -167,6 +171,14 @@ class AccountSettingsActivityLoggedInTest {
             onView(ViewMatchers.withText("Gallery")).perform(click())
             Intents.intended(expectedIntent)
             // check that image is correctly updated
+            onView(withId(R.id.profilePic)).check(
+                ViewAssertions.matches(
+                    ViewMatchers.withTagKey(
+                        R.id.profilePic,
+                        CoreMatchers.`is`("modifiedTag")
+                    )
+                )
+            )
         } finally {
             Intents.release()
         }
@@ -197,6 +209,15 @@ class AccountSettingsActivityLoggedInTest {
             onView(ViewMatchers.withText("Camera")).perform(click())
             Intents.intended(expectedIntent)
             // check that image is correctly updated
+
+            onView(withId(R.id.profilePic)).check(
+                ViewAssertions.matches(
+                    ViewMatchers.withTagKey(
+                        R.id.profilePic,
+                        CoreMatchers.`is`("modifiedTag")
+                    )
+                )
+            )
         } finally {
             Intents.release()
         }

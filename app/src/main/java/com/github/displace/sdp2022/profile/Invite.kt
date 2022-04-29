@@ -18,3 +18,4 @@ data class Invite(val source: PartialUser,val target : PartialUser){
 }
 
 data class InviteWithId(val invite: Invite, val id : String)
+
