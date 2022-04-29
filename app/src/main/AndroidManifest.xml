@@ -48,13 +48,7 @@
             android:parentActivityName=".profile.ProfileActivity" />
         <activity
             android:name=".profile.settings.AccountSettingsActivity"
-            android:exported="false">
-
-            <!-- The meta-data tag is required if you support API level 15 and lower -->
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
-        </activity>
+            android:exported="false" />
         <activity
             android:name=".profile.ProfileActivity"
             android:exported="false" />
