@@ -28,6 +28,7 @@ import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 
 const val REQUEST_CODE_SIGN_IN = 0
+const val GUEST_EXTRA_ID = "GUEST_LOGIN"
 
 class TempLoginActivity : AppCompatActivity() {
 
@@ -103,27 +104,7 @@ class TempLoginActivity : AppCompatActivity() {
             try {
                 auth.signInWithCredential(credentials).await()
                 withContext(Dispatchers.Main) {
-
-                    val app = applicationContext as MyApplication
-                    val current = auth.currentUser
-
-                    val name: String? = current?.displayName
-                    if (name.isNullOrEmpty()) {
-                        Toast.makeText(
-                            this@TempLoginActivity,
-                            "Failed to authenticate",
-                            Toast.LENGTH_LONG
-                        ).show()
-                    } else {
-                        Toast.makeText(
-                            this@TempLoginActivity,
-                            "Successfully logged in $name ",
-                            Toast.LENGTH_LONG
-                        ).show()
-                        val user = CompleteUser(app, current)
-                        app.setActiveUser(user)
-                    }
-
+                    handleNewUser()
                 }
 
 
@@ -150,6 +131,7 @@ class TempLoginActivity : AppCompatActivity() {
             } catch (e: Exception) {
                 Log.e("test", e.message!!)
             }
+
         }
 
         updateUI(true)
@@ -158,7 +140,7 @@ class TempLoginActivity : AppCompatActivity() {
     private fun updateUI(loggingIn: Boolean) {
         val signInButton = findViewById<Button>(R.id.btnGoogleSignIn)
         val onlineButton = findViewById<Button>(R.id.goToAppOnlineButton)
-        val offlineButton = findViewById<Button>(R.id.goToAppOfflineButton)
+        val offlineButton = findViewById<Button>(R.id.guestSignInButton)
 
         if (loggingIn) {
             signInButton.visibility = View.GONE
@@ -188,15 +170,6 @@ class TempLoginActivity : AppCompatActivity() {
     }
 
     @Suppress("UNUSED_PARAMETER")
-    fun startOffline(view: View) {
-        val app = applicationContext as MyApplication
-        val user = CompleteUser(this,null, guestBoolean = true)
-        app.setActiveUser(user)
-        goToMainMenuActivity(view)
-    }
-
-
-    @Suppress("UNUSED_PARAMETER")
     fun enterMenu(view: View) {
         goToMainMenuActivity(view)
     }
@@ -204,6 +177,43 @@ class TempLoginActivity : AppCompatActivity() {
     @Suppress("UNUSED_PARAMETER")
     private fun goToMainMenuActivity(view: View) {
         startActivity(Intent(this@TempLoginActivity, MainMenuActivity::class.java))
+    }
+
+    private fun handleNewUser(isGuest: Boolean = false): Boolean {
+        val app = applicationContext as MyApplication
+        val current = auth.currentUser
+
+        val name: String? = if (isGuest) "guest" else current?.displayName
+        return if (name.isNullOrEmpty()) {
+            showFailedSignInMessage()
+            false
+        } else {
+            Toast.makeText(
+                this@TempLoginActivity,
+                "Successfully logged in $name ",
+                Toast.LENGTH_LONG
+            ).show()
+            val user = CompleteUser(app, current, guestBoolean = isGuest)
+            app.setActiveUser(user)
+            true
+        }
+    }
+
+    @Suppress("UNUSED_PARAMETER")
+    fun signInAsGuest(view: View) {
+        auth.signInAnonymously().addOnCompleteListener {
+            if(it.isSuccessful) {
+                updateUI(handleNewUser(true))
+            }
+        }
+    }
+
+    private fun showFailedSignInMessage() {
+        Toast.makeText(
+            this@TempLoginActivity,
+            "Failed to authenticate",
+            Toast.LENGTH_LONG
+        ).show()
     }
 
 }

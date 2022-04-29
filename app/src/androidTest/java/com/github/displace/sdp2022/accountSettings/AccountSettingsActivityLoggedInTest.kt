@@ -27,6 +27,7 @@ import com.github.displace.sdp2022.R
 import com.github.displace.sdp2022.authentication.TempLoginActivity
 import com.google.firebase.auth.FirebaseAuth
 import org.hamcrest.CoreMatchers
+import com.github.displace.sdp2022.map.PinpointsDBHandlerTest.Companion.DB_DELAY
 import org.hamcrest.core.StringContains.containsString
 import org.junit.After
 import org.junit.Before
@@ -48,7 +49,9 @@ class AccountSettingsActivityLoggedInTest {
             Intent(ApplicationProvider.getApplicationContext(), TempLoginActivity::class.java)
         val scenario: ActivityScenario<AccountSettingsActivity> = ActivityScenario.launch(intent)
         scenario.use {
-            onView(withId(R.id.goToAppOfflineButton)).perform(click())
+            onView(withId(R.id.guestSignInButton)).perform(click())
+            Thread.sleep(DB_DELAY)
+            onView(withId(R.id.goToAppOnlineButton)).perform(click())
             onView(withId(R.id.profileButton)).perform(click())
             onView(withId(R.id.profileSettingsButton)).perform(click())
         }

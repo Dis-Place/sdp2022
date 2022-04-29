@@ -8,6 +8,7 @@ import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.displace.sdp2022.MainActivity
 import com.github.displace.sdp2022.R
+import com.github.displace.sdp2022.map.PinpointsDBHandlerTest.Companion.DB_DELAY
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -20,7 +21,9 @@ class NewsActivityTest {
 
     @Test
     fun startToNewsTest() {
-        Espresso.onView(ViewMatchers.withId(R.id.goToAppOfflineButton)).perform(ViewActions.click())
+        Espresso.onView(ViewMatchers.withId(R.id.guestSignInButton)).perform(ViewActions.click())
+        Thread.sleep(DB_DELAY)
+        Espresso.onView(ViewMatchers.withId(R.id.goToAppOnlineButton)).perform(ViewActions.click())
         Espresso.onView(ViewMatchers.withId(R.id.newsButton)).perform(ViewActions.click())
         Espresso.onView(ViewMatchers.withId(R.id.textView)).check(
             ViewAssertions.matches(

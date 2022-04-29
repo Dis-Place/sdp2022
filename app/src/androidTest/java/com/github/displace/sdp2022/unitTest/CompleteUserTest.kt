@@ -42,15 +42,8 @@ class CompleteUserTest {
     }
 
     @Test
-    fun completeUserGuestModeWorks() {
-        val completeUser = CompleteUser(ApplicationProvider.getApplicationContext() as MyApplication, null, guestBoolean = true)
-        Thread.sleep(3_000)
-        checkThatUserIsReadOnly(completeUser)
-    }
-
-    @Test
     fun completeUserOfflineModeWorks() {
-        val completeUser = CompleteUser(ApplicationProvider.getApplicationContext() as MyApplication, null, offlineMode = true, debug = true)
+        val completeUser = CompleteUser(ApplicationProvider.getApplicationContext() as MyApplication, null, offlineMode = true, readOnly = true)
         Thread.sleep(3_000)
         checkThatUserIsReadOnly(completeUser)
     }

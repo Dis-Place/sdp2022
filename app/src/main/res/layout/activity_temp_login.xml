@@ -35,10 +35,9 @@
         app:layout_constraintVertical_bias="0.258" />
 
     <Button
-        android:id="@+id/goToAppOfflineButton"
+        android:id="@+id/guestSignInButton"
         android:layout_width="171dp"
         android:layout_height="85dp"
-        android:onClick="startOffline"
         android:text="Guest Mode "
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -68,7 +67,7 @@
         android:onClick="rememberMeInput"
         android:text="Remember me"
         android:visibility="invisible"
-        app:layout_constraintBottom_toTopOf="@+id/goToAppOfflineButton"
+        app:layout_constraintBottom_toTopOf="@+id/guestSignInButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
