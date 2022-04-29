@@ -40,6 +40,7 @@ class GameVersusViewModel(private val clientServerLink: ClientServerLink) {
         return LOSE
     }
 
+    //update the actual position of the player
     fun UpdatePos(pos : Coordinates, id: String): Long {
         clientServerLink.SendDataToOther(pos)
 
