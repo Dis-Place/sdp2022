@@ -277,7 +277,7 @@ class AccountSettingsActivity : AppCompatActivity() {
     }*/
 
     @Suppress("UNUSED_PARAMETER")
-    private fun changeUsername(view: View) {
+    fun changeUsername(view: View) {
         val newView = LayoutInflater.from(this).inflate(R.layout.username_update_dialog, null)
         val newName = newView.findViewById<EditText>(R.id.updateUsername)
         val newNameButton = newView.findViewById<Button>(R.id.updateUsernameButton)

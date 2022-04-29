@@ -36,7 +36,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class AccountSettingsActivityLoggedInTest {
+class AccountSettingsActivityPermsTest {
     /*@get:Rule
     val testRule = ActivityScenarioRule(AccountSettingsActivity::class.java)*/
 
