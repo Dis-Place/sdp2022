@@ -6,11 +6,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
-import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
+import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.R
-import com.github.displace.sdp2022.profile.Invite
+import com.github.displace.sdp2022.profile.DeleteInvite
 import com.github.displace.sdp2022.profile.InviteWithId
+import com.github.displace.sdp2022.profile.messages.MessageHandler
+import com.google.firebase.database.FirebaseDatabase
 
 private const val TAG : String = "FriendRequestViewAdapter"
 
@@ -30,12 +32,22 @@ class FriendRequestViewAdapter(private var dataSet: MutableList<InviteWithId>) :
         init{
             rejectButton.setOnClickListener{
                 Log.d(TAG, " REJECTING FRIEND OFFER" )
-                deleteRequest( adapterPosition)
+                val inviteId = deleteRequest( adapterPosition)
+                DeleteInvite.deleteInvite(inviteId.id)
 
-                            }
+
+            }
             acceptButton.setOnClickListener{
                 Log.d(TAG, " ACCEPTING FRIEND OFFER" )
-                deleteRequest( adapterPosition)
+                val inviteId = deleteRequest( adapterPosition)
+
+                
+
+                val app = acceptButton.context.applicationContext as MyApplication
+                val user = app.getActiveUser()!!
+                user.addFriend(inviteId.invite.source)
+
+                DeleteInvite.deleteInvite(inviteId.id)
             }
         }
     }
@@ -62,9 +74,11 @@ class FriendRequestViewAdapter(private var dataSet: MutableList<InviteWithId>) :
     // Return the size of your dataset (invoked by the layout manager)
     override fun getItemCount() = dataSet.size
 
-    fun deleteRequest(index: Int){
+    fun deleteRequest(index: Int) : InviteWithId {
+        val inviteWithIdToDelete = dataSet[index]
         dataSet.removeAt(index)
         notifyDataSetChanged()
+        return inviteWithIdToDelete
     }
 
 }

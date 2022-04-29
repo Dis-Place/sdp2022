@@ -191,9 +191,27 @@ class RecieveFriendRequests {
             }
             return invites
         }
-
-
     }
 }
+
+
+class DeleteInvite {
+    companion object {
+
+        private const val TAG = "DeleteInvite"
+        private var rootRef : DatabaseReference
+
+        init {
+            rootRef = FirebaseDatabase.
+            getInstance("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app").reference
+        }
+
+        fun deleteInvite(inviteId : String) {
+            val inviteReference = rootRef.child("Invites").child(inviteId);
+            inviteReference.removeValue();
+        }
+    }
+}
+
 
 
