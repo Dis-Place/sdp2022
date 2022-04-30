@@ -89,6 +89,8 @@ class QrCodeTemp : AppCompatActivity() {
         val bmp = generateQrCodeBitmap(app.getActiveUser()!!.getPartialUser())
         if(bmp != null){
             createImagePopup(bmp)
+        }else{
+            TODO("There was an error while creating the bitmap, no idea what we can do here")
         }
 
     }
