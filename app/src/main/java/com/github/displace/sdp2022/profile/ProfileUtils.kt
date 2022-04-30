@@ -4,6 +4,8 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import android.content.Intent
+import android.widget.TextView
+import android.widget.Toast
 import androidx.core.content.ContextCompat.startActivity
 
 import com.github.displace.sdp2022.MyApplication
@@ -65,6 +67,7 @@ class FriendRequest {
 
         // target is the user name
         fun sendFriendRequest(
+            context : Context,
             target: String,
             rootRef: DatabaseReference,
             currentUser: PartialUser
@@ -72,7 +75,7 @@ class FriendRequest {
 
             this.rootRef = rootRef
 
-            Log.d(TAG, "CHECK IF USER $target EXISTS")
+            Log.d(TAG, "CHECK if $target exists")
             val usersRef: DatabaseReference = rootRef.child("CompleteUsers")
 
             val eventListener: ValueEventListener = object : ValueEventListener {
@@ -82,6 +85,10 @@ class FriendRequest {
                         val source = currentUser
                         val target = getTargetUser(dataSnapshot, partialUsers, target)
                         sendInvite(source, target)
+                    }
+                    else{
+                        Log.d(TAG, "$target DOES NOTEXISTS")
+                        Toast.makeText(context,"User $target does not exist", Toast.LENGTH_LONG).show()
                     }
                 }
 
@@ -211,6 +218,50 @@ class DeleteInvite {
             inviteReference.removeValue();
         }
     }
+}
+
+class AcceptInvite(rootRef: DatabaseReference) {
+    companion object {
+
+        private const val TAG = "DeleteInvite"
+        private var rootRef : DatabaseReference
+
+        init {
+            rootRef = FirebaseDatabase.
+            getInstance("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app").reference
+        }
+
+        fun deleteInvite(inviteId : String) {
+            val inviteReference = rootRef.child("Invites").child(inviteId);
+            inviteReference.removeValue();
+        }
+    }
+}
+
+class RequestAcceptor(val source : PartialUser) : Transaction.Handler {
+
+    override fun doTransaction(currentData: MutableData): Transaction.Result {
+        val ls = currentData.value as ArrayList<MutableMap<String,Any>>?
+
+        if(ls == null){
+            return Transaction.success(currentData)
+        }else{
+            val partialUserMap = HashMap<String,Any>()
+            partialUserMap["uid"] = source.uid
+            partialUserMap["username"] = source.username
+            ls.add(partialUserMap)
+        }
+        currentData.value = ls
+        return Transaction.success(currentData)
+    }
+
+    override fun onComplete(
+        error: DatabaseError?,
+        committed: Boolean,
+        currentData: DataSnapshot?
+    ) {
+    }
+
 }
 
 

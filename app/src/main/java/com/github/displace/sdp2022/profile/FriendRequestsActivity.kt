@@ -36,8 +36,6 @@ class FriendRequestsActivity : AppCompatActivity() {
 
         RecieveFriendRequests.recieveRequests(rootRef, currentUser)
             .observe(this,  Observer{
-                //here, do whatever you want on `userName`
-
                 val adapter = FriendRequestViewAdapter(it)
 
                 // Setting the Adapter with the recyclerview

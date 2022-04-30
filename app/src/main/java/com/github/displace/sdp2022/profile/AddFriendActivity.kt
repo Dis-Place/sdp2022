@@ -43,11 +43,11 @@ class AddFriendActivity : AppCompatActivity() {
         closeKeyBoard()
         val editText = findViewById<View>(R.id.friendRequestEditText) as EditText
         val friendId = editText.text.toString()
-        Toast.makeText(this , friendId, Toast.LENGTH_LONG).show()
+//        Toast.makeText(this , friendId, Toast.LENGTH_LONG).show()
 
         val target = editText.text.toString()
 
-        FriendRequest.sendFriendRequest(target, rootRef, currentUser)
+        FriendRequest.sendFriendRequest(this, target, rootRef, currentUser)
 
 //        Log.d(TAG,"CHECK IF USER $target EXISTS")
 //        val usersRef: DatabaseReference = rootRef.child("CompleteUsers")
