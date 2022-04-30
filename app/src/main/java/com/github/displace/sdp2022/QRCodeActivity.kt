@@ -43,6 +43,7 @@ class QRCodeActivity : AppCompatActivity() {
     }
 
     // "Accept invite when receiving QR Code invite"
+    // Ajouter un acceptAutomatically dans les friends invites
     // A incorporer dans les friend invites quand tu les recois
     fun personalQRCodeScanned() {
         showToastMessage("You just added $username as a friend !")
