@@ -18,6 +18,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
 import com.github.displace.sdp2022.news.NewsActivity
 import com.github.displace.sdp2022.profile.ProfileActivity
+import com.github.displace.sdp2022.profile.qrcode.QrCodeTemp
 import com.github.displace.sdp2022.users.CompleteUser
 import org.junit.Before
 import org.junit.Test
@@ -125,7 +126,7 @@ class MainMenuActivityTest {
             Espresso.onView(withId(R.id.qrCodeDemo)).perform(click())
         }
 
-        intended(hasComponent(UploadImageActivity::class.java.name))
+        intended(hasComponent(QrCodeTemp::class.java.name))
         Intents.release()
     }
 

@@ -26,8 +26,9 @@ import com.journeyapps.barcodescanner.BarcodeEncoder
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
-
-//the QR code does not need to receive any information for its creation
+/**
+the QR code does not need to receive any information for its creation
+*/
 class QrCodeTemp : AppCompatActivity() {
 
 
