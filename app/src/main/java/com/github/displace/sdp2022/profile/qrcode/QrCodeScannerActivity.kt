@@ -20,6 +20,9 @@ class QrCodeScannerActivity : AppCompatActivity() {
     private lateinit var codeScanner : CodeScanner
     private lateinit var scannerView : CodeScannerView
 
+    /**
+     * Sets up the scanner, will be modularized after testing
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_qr_code_scanner)
@@ -28,6 +31,9 @@ class QrCodeScannerActivity : AppCompatActivity() {
 
         codeScanner = CodeScanner(this, scannerView)
 
+        /**
+         * setups parameters
+         */
         // Parameters (default values)
         codeScanner.camera = CodeScanner.CAMERA_BACK // or CAMERA_FRONT or specific camera id
         codeScanner.formats = CodeScanner.ALL_FORMATS // list of type BarcodeFormat,
@@ -37,6 +43,9 @@ class QrCodeScannerActivity : AppCompatActivity() {
         codeScanner.isAutoFocusEnabled = true // Whether to enable auto focus or not
         codeScanner.isFlashEnabled = false // Whether to enable flash or not
 
+        /**
+         * setup callbacks
+         */
         codeScanner.decodeCallback = DecodeCallback {
             runOnUiThread {
                 val scanned = it.text
@@ -54,7 +63,6 @@ class QrCodeScannerActivity : AppCompatActivity() {
                     Toast.LENGTH_LONG).show()
             }
         }
-
         scannerView.setOnClickListener {
             codeScanner.startPreview()
         }
@@ -65,16 +73,26 @@ class QrCodeScannerActivity : AppCompatActivity() {
 
     /**
      * Show the prompt to confirm the scan of someone else's code
+     * Will need to :
+     *  - let the user confirm that the scan is correct
+     *  - create the friend invitation
+     *  - return to the previous activity (which is QrCodeTemp for now : use a simple intent)
      */
     fun showScanPrompt(partialUser : PartialUser){
 
     }
 
+    /**
+     * startPreview reactivates the camera
+     */
     override fun onResume() {
         super.onResume()
         codeScanner.startPreview()
     }
 
+    /**
+     * releaseResources makes sure the camera does not stay activated
+     */
     override fun onPause() {
         codeScanner.releaseResources()
         super.onPause()

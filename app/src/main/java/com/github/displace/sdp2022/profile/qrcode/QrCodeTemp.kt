@@ -34,16 +34,15 @@ class QrCodeTemp : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_qr_code_temp)
-
     }
 
 
     /**
-     * Generate a QR code and put its information in the corresponding field
+     * Generate a bitmap to be used by a QR code and put its information in the corresponding field
      * If we want to use this function somewhere else : place it in some Utils
-     * @argument field : an imageView
+     * @argument partialUser : the partial user for which to create the bitmap
      */
-    private fun generateQrCode(partialUser : PartialUser) : Bitmap? {
+    private fun generateQrCodeBitmap(partialUser : PartialUser) : Bitmap? {
         val width = 800
         val height = 800
         val qrCodeContent : String = Json.encodeToString(partialUser)
@@ -83,11 +82,11 @@ class QrCodeTemp : AppCompatActivity() {
     }
 
     /**
-     * Show the QR code corresponding to the partial user - will be tasked of generating the QR code for now
+     * Show the QR code corresponding to the partial user after generating the bitmap
      */
     fun showQrCode(view : View){
         val app = applicationContext as MyApplication
-        val bmp = generateQrCode(app.getActiveUser()!!.getPartialUser())
+        val bmp = generateQrCodeBitmap(app.getActiveUser()!!.getPartialUser())
         if(bmp != null){
             createImagePopup(bmp)
         }
@@ -96,7 +95,7 @@ class QrCodeTemp : AppCompatActivity() {
 
 
     /**
-     * Show the scanner and use it : needs more research
+     * Transition to the scanning activity
      */
     fun useScanner(view : View){
         val intent = Intent(this, QrCodeScannerActivity::class.java)
