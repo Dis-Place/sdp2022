@@ -5,18 +5,15 @@ import com.google.firebase.database.*
 
 /**
  * firebase real time database adapter to interface GoodDB
- * note : do not use constructor directly
  *
- * @author LeoLgdr
- * @see GoodDB
- *
- * @constructor
- * do not use direclty, use factory method
+ * NOTE : use factory to instantiate
  *
  * @param referenceUrl
  * @param isDebug
  *
+ * @see DatabaseFactory
  * @see GoodDB
+ * @author LeoLgdr
  */
 class FirebaseDatabaseAdapter(referenceUrl: String, isDebug: Boolean) : GoodDB {
 
@@ -26,6 +23,10 @@ class FirebaseDatabaseAdapter(referenceUrl: String, isDebug: Boolean) : GoodDB {
      * to keep track of the ValueEventListeners references to be able to remove them
      */
     private val listenersMap = mutableMapOf<Listener<*>, ValueEventListener>()
+
+    /**
+     * to specify debug mode (prefix to all references)
+     */
     private val prefix = if (isDebug) "debug/" else ""
 
     private fun get(reference: String): DatabaseReference {
