@@ -41,7 +41,7 @@ class FriendRequestViewAdapter(private var dataSet: MutableList<InviteWithId>) :
                 Log.d(TAG, " ACCEPTING FRIEND OFFER" )
                 val inviteId = deleteRequest( adapterPosition)
 
-                
+
 
                 val app = acceptButton.context.applicationContext as MyApplication
                 val user = app.getActiveUser()!!
