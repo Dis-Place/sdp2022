@@ -1,64 +1,59 @@
 package com.github.displace.sdp2022.database
 
 /**
- * to specify a transaction to the database
- * Use Builder to get a new instance
+ * specifies a transaction
+ *
+ * use the provided builder to instantiate
+ *
+ * @param T data type
+ * @param preCheck check ran on the data before updating it
+ * @param computeUpdatedData update data based on the old data found
+ * @param onCompleteCallback called after transaction completion
+ *
  * @author LeoLgdr
+ * @see Builder
+ * @see GoodDB
  */
 class TransactionSpecification<T> private constructor(
-    val onTransactionCompleteCallback: (Boolean) -> Unit,
-    val abortOnNull: Boolean,
-    val transactionTransform: (T) -> T,
-    val preCheck: (T) -> Boolean,
-    val onNull: () -> T?
+    val preCheck: (T?) -> Boolean,
+    val computeUpdatedData: (T?) -> T,
+    val onCompleteCallback: (Boolean) -> Unit
 ) {
 
     /**
-     * Builder for TransactionSpecification
-     * only the desired specifications should be set
-     * by default, callbacks & transform do nothing
+     * Builder for TransactionSpecification.
+     * After construction, only the desired specifications should be set
+     *
+     * @param T data type
+     * @param computeUpdatedData update data based on the old data found
+     *
      * @author LeoLgdr
+     * @see TransactionSpecification
+     * @see GoodDB
      */
-    class Builder<T> {
+    class Builder<T>(private val computeUpdatedData : (T?) -> T) {
 
         /**
          * called after Transaction completion
+         *
+         * by default, does nothing
          */
-        var onTransactionCompleteCallback : (Boolean) -> Unit = {}
+        var onCompleteCallback: (Boolean) -> Unit = {}
+
 
         /**
-         * whether or not to abort transaction if the value found in the database is null
-         * set to false by default
+         * check ran on the data before updating it
+         *
+         * returns true by default
          */
-        var abortOnNull = false
-
-        /**
-         * data transformation during transaction
-         */
-        var transactionTransform : (T) -> T = { it }
-
-        /**
-         * check on data before transform
-         */
-        var preCheck : (T) -> Boolean = { _ -> true }
-
-        /**
-         * called whenever the value in the database is null
-         * and abortOnNull is false
-         * by default returns null
-         */
-        var onNull : () -> T? = { null }
+        var preCheck: (T?) -> Boolean = { _ -> true }
 
         /**
          * @return corresponding TransactionSpecification
          */
         fun build(): TransactionSpecification<T> {
             return TransactionSpecification(
-                onTransactionCompleteCallback,
-                abortOnNull,
-                transactionTransform,
-                preCheck,
-                onNull
+                preCheck, computeUpdatedData, onCompleteCallback
             )
         }
     }

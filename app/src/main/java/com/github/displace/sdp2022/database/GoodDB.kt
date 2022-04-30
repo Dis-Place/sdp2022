@@ -3,57 +3,64 @@ package com.github.displace.sdp2022.database
 import com.github.displace.sdp2022.util.listeners.Listener
 
 /**
- * DB interface which abstracts over FireDB foor more convenient structure and mocking
+ * Database interface which abstracts over FireDB for convenient structure and mocking
+ *
+ * @author LeoLgdr
  */
 interface GoodDB {
-    /**
-     * update child with value
-     * @param reference
-     * @param key
-     * @param value
-     * @return value
-     */
-    fun <T> update(reference: String, key: String, value: T): T
 
     /**
-     * delete child
-     * @param reference
-     * @param key
+     * update data
+     *
+     * @param T data type
+     * @param reference data path
+     * @param newValue
+     * @return updated value
      */
-    fun delete(reference: String, key: String)
+    fun <T> update(reference: String, newValue: T): T
 
     /**
-     * retrieve data and call callback (async)
+     * delete data
+     *
+     * @param reference data path
+     */
+    fun delete(reference: String)
+
+    /**
+     * retrieves data and then calls the specified callback
+     *
+     * @param T
+     * @param reference
      * @param callback
-     * @param defaultValue used if value in database is null
-     * @param reference
-     * @param key if not null, retrieves child value, otherwise retrieves reference value
      */
-    fun <T> getThenCall(callback: OnDataRetrievedCallBack<T>, defaultValue: T, reference: String, key: String? = null)
+    fun <T> getThenCall(reference: String, callback: (T?) -> Unit)
 
     /**
-     * retrieve data and do transaction (async)
-     * @param transactionSpecification
-     * @param reference
-     * @param key if not null, retrieves child value, otherwise retrieves reference value
+     * run a transaction, according to specification
+     *
+     * @param T data type
+     * @param reference data path
+     * @param specification
+     *
+     * @see TransactionSpecification
      */
-    fun <T> getThenDoTransaction(transactionSpecification: TransactionSpecification<T>, reference: String, key: String? = null)
+    fun <T> runTransaction(reference: String, specification: TransactionSpecification<T>)
 
     /**
-     * adds a listener, call when the data is updated
+     * add a listener to some data
+     *
+     * @param T type of data
+     * @param reference data path
+     * @param listener called after each time the data changed
+     */
+    fun <T> addListener(reference: String, listener: Listener<T?>)
+
+    /**
+     * removes a listener of some data
+     *
+     * @param T
+     * @param reference data path
      * @param listener
-     * @param defaultValue used if value in database is null
-     * @param reference
-     * @param key if not null, retrieves child value, otherwise retrieves reference value
      */
-    fun <T> addListener(listener: Listener<T>, defaultValue: T, reference: String, key: String? = null)
-
-    /**
-     * removes a listener on the data
-     * @param listener
-     * @param defaultValue used if value in database is null
-     * @param reference
-     * @param key if not null, corresponds to child value, otherwise corresponds to reference value
-     */
-    fun <T> removeListener(listener: Listener<T>, defaultValue: T, reference: String, key: String? = null)
+    fun <T> removeListener(reference: String, listener: Listener<T?>)
 }
