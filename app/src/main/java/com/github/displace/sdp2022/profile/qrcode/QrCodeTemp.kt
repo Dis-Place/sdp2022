@@ -43,11 +43,14 @@ class QrCodeTemp : AppCompatActivity() {
      * @argument partialUser : the partial user for which to create the bitmap
      */
     private fun generateQrCodeBitmap(partialUser : PartialUser) : Bitmap? {
+        /**
+         * These should be constants
+         */
         val width = 800
         val height = 800
-        val qrCodeContent : String = Json.encodeToString(partialUser)
 
         try{
+            val qrCodeContent : String = Json.encodeToString(partialUser)
             val barcodeEncoder = BarcodeEncoder()
             val bitmap = barcodeEncoder.encodeBitmap(qrCodeContent, BarcodeFormat.QR_CODE, width, height)
             return bitmap

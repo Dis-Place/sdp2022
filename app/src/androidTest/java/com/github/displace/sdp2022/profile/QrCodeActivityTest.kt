@@ -1,6 +1,7 @@
 package com.github.displace.sdp2022.profile
 
 import android.content.Intent
+import android.widget.ImageView
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso
@@ -48,11 +49,13 @@ class QrCodeActivityTest {
 
     @Test
     fun testShowButton() {
+
         ActivityScenario.launch<GameSummaryActivity>(intent).use {
 
             Espresso.onView(ViewMatchers.withId(R.id.button3)).perform(ViewActions.click())
             Espresso.onView(ViewMatchers.withId(R.id.fullimage))
                 .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
+
 
         }
 
