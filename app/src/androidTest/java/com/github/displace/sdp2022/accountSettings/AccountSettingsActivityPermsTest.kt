@@ -61,6 +61,7 @@ class AccountSettingsActivityPermsTest {
     fun logout() {
         pressBack()
         pressBack()
+        (ApplicationProvider.getApplicationContext() as MyApplication).getActiveUser()?.removeUserFromDatabase()
     }
 
     /*@Test
