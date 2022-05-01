@@ -1,4 +1,4 @@
-package com.github.displace.sdp2022.profile
+package com.github.displace.sdp2022.profile.friendInvites
 
 import com.github.displace.sdp2022.users.PartialUser
 

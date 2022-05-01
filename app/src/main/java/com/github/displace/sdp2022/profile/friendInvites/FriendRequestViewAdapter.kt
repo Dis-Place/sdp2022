@@ -1,6 +1,5 @@
-package com.github.displace.sdp2022.profile.friendRequest
+package com.github.displace.sdp2022.profile.friendInvites
 
-import android.content.Context
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -12,15 +11,13 @@ import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.R
 import com.github.displace.sdp2022.RealTimeDatabase
 import com.github.displace.sdp2022.profile.*
-import com.github.displace.sdp2022.profile.messages.Message
-import com.github.displace.sdp2022.profile.messages.MessageHandler
-import com.github.displace.sdp2022.users.PartialUser
-import com.google.firebase.database.*
 
-private const val TAG : String = "FriendRequestViewAdapter"
+
 
 class FriendRequestViewAdapter(private var dataSet: MutableList<InviteWithId>) :
     RecyclerView.Adapter<FriendRequestViewAdapter.ViewHolder>() {
+
+    val TAG : String = "FriendRequestViewAdapter"
 
     /**
      * Provide a reference to the type of views that you are using

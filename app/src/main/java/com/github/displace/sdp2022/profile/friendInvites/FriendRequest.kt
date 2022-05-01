@@ -1,9 +1,7 @@
-package com.github.displace.sdp2022.profile.friendRequest
+package com.github.displace.sdp2022.profile.friendInvites
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.View
-import android.widget.Toast
 import com.github.displace.sdp2022.R
 
 class FriendRequest : AppCompatActivity() {

@@ -3,12 +3,11 @@ package com.github.displace.sdp2022.profile
 import android.content.Context
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
-import android.content.Intent
-import android.widget.TextView
 import android.widget.Toast
-import androidx.core.content.ContextCompat.startActivity
 
 import com.github.displace.sdp2022.MyApplication
+import com.github.displace.sdp2022.profile.friendInvites.Invite
+import com.github.displace.sdp2022.profile.friendInvites.InviteWithId
 import com.github.displace.sdp2022.profile.messages.Message
 import com.github.displace.sdp2022.users.PartialUser
 import com.google.firebase.database.*
@@ -170,7 +169,7 @@ class RecieveFriendRequests {
 
         }
 
-        fun getUserInvites( invites : MutableList<InviteWithId>, userUid : String) : MutableList<InviteWithId> {
+        fun getUserInvites(invites : MutableList<InviteWithId>, userUid : String) : MutableList<InviteWithId> {
             var userInvites = mutableListOf<InviteWithId>()
             for (invite in invites) {
                 if( invite.invite.target.uid == userUid ){
@@ -220,23 +219,6 @@ class DeleteInvite {
     }
 }
 
-class AcceptInvite(rootRef: DatabaseReference) {
-    companion object {
-
-        private const val TAG = "DeleteInvite"
-        private var rootRef : DatabaseReference
-
-        init {
-            rootRef = FirebaseDatabase.
-            getInstance("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app").reference
-        }
-
-        fun deleteInvite(inviteId : String) {
-            val inviteReference = rootRef.child("Invites").child(inviteId);
-            inviteReference.removeValue();
-        }
-    }
-}
 
 class RequestAcceptor(val source : PartialUser) : Transaction.Handler {
 

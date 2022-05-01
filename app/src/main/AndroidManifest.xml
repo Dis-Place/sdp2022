@@ -19,13 +19,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Bootcamp">
         <activity
-            android:name=".profile.FriendRequestsActivity"
+            android:name=".profile.friendInvites.FriendRequestsActivity"
             android:exported="false" />
         <activity
-            android:name=".profile.friendRequest.FriendRequest"
+            android:name=".profile.friendInvites.FriendRequest"
             android:exported="false" />
         <activity
-            android:name=".profile.AddFriendActivity"
+            android:name=".profile.friendInvites.AddFriendActivity"
             android:exported="false" />
         <activity
             android:name=".SettingsActivity"

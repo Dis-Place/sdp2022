@@ -1,4 +1,4 @@
-package com.github.displace.sdp2022.profile
+package com.github.displace.sdp2022.profile.friendInvites
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.R
-import com.github.displace.sdp2022.profile.friendRequest.FriendRequestViewAdapter
+import com.github.displace.sdp2022.profile.RecieveFriendRequests
 import com.github.displace.sdp2022.users.PartialUser
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase

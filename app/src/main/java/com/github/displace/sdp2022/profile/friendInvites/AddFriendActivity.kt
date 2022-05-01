@@ -1,4 +1,4 @@
-package com.github.displace.sdp2022.profile
+package com.github.displace.sdp2022.profile.friendInvites
 
 import android.content.Context
 import android.os.Bundle
@@ -6,14 +6,12 @@ import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.R
-import com.github.displace.sdp2022.users.CompleteUser
+import com.github.displace.sdp2022.profile.FriendRequest
 import com.github.displace.sdp2022.users.PartialUser
 import com.google.firebase.database.*
-import com.google.firebase.ktx.Firebase
 
 
 private const val TAG = "AddFriendActivity"
