@@ -10,6 +10,13 @@ import android.content.Intent
  */
 object DatabaseFactory {
 
+    /**
+     * use this instance to fill the mock database in tests
+     * don't forget to clear it after tests
+     * @see clearMockDB
+     */
+    val MOCK_DB : GoodDB = MockDB()
+
     const val MOCK_DB_EXTRA_ID = "MOCK_DB"
     const val DEBUG_EXTRA_ID = "DEBUG"
 
@@ -19,7 +26,7 @@ object DatabaseFactory {
 
     private fun get(url: String, intent: Intent): GoodDB {
         if(intent.hasExtra(MOCK_DB_EXTRA_ID)) {
-            return MockDB()
+            return MOCK_DB
         }
         return FirebaseDatabaseAdapter(url, intent.hasExtra(DEBUG_EXTRA_ID))
     }
@@ -38,5 +45,12 @@ object DatabaseFactory {
      */
     fun getImageDB(intent: Intent): GoodDB {
         return get(IMAGE_DB_url, intent)
+    }
+
+    /**
+     * clear the mock database contents
+     */
+    fun clearMockDB() {
+        (MOCK_DB as MockDB).clear()
     }
 }
