@@ -215,7 +215,12 @@ class MockDB : GoodDB {
             }
 
             override fun child(reference: String): ObservableNode? {
-                return children[reference]
+                val parsedRef = ReferenceParser.parse(reference)
+                return when {
+                    parsedRef.isEmpty() -> this
+                    parsedRef.size > 1 -> children[parsedRef[0]]?.child(parsedRef[1])
+                    else -> children[parsedRef[0]]
+                }
             }
 
             override fun get(): Any {

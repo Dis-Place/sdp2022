@@ -16,6 +16,9 @@ object ReferenceParser {
      * @return prefix and suffix (if present)
      */
     fun parse(reference: String): List<String> {
+        if(reference.isEmpty()) {
+            return listOf()
+        }
         val prefix = reference.takeWhile { it != ('/') }
         val stripped = reference.removePrefix("$prefix/")
 
