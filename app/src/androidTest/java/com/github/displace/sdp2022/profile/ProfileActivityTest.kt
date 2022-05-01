@@ -173,6 +173,38 @@ class ProfileActivityTest {
         }
     }
 
+    @Test
+    fun testingAddFriendButton() {
+        Intents.init()
+        val intent =
+            Intent(ApplicationProvider.getApplicationContext(), ProfileActivity::class.java)
+        val scenario = ActivityScenario.launch<ProfileActivity>(intent)
+
+        scenario.use {
+            Espresso.onView(ViewMatchers.withId(R.id.friendsButton)).perform(click())
+            Espresso.onView(ViewMatchers.withId(R.id.addFriendButton)).perform(click())
+        }
+
+        Intents.intended(IntentMatchers.hasComponent(AddFriendActivity::class.java.name))
+        Intents.release()
+    }
+
+    @Test
+    fun testingFriendRequestButton() {
+        Intents.init()
+        val intent =
+            Intent(ApplicationProvider.getApplicationContext(), ProfileActivity::class.java)
+        val scenario = ActivityScenario.launch<ProfileActivity>(intent)
+
+        scenario.use {
+            Espresso.onView(ViewMatchers.withId(R.id.inboxButton)).perform(click())
+            Espresso.onView(ViewMatchers.withId(R.id.friendRequestsButton)).perform(click())
+        }
+
+        Intents.intended(IntentMatchers.hasComponent(FriendRequestsActivity::class.java.name))
+        Intents.release()
+    }
+
 }
 
 
@@ -194,39 +226,4 @@ class TestingUtils{
             }
         }
     }
-
-//    @Test
-//    fun testingAddFriendButton() {
-//        Intents.init()
-//        val intent =
-//            Intent(ApplicationProvider.getApplicationContext(), ProfileActivity::class.java)
-//        val scenario = ActivityScenario.launch<ProfileActivity>(intent)
-//
-//        scenario.use {
-//            Espresso.onView(ViewMatchers.withId(R.id.friendsButton)).perform(click())
-//            Espresso.onView(ViewMatchers.withId(R.id.addFriendButton)).perform(click())
-//        }
-//
-//        Intents.intended(IntentMatchers.hasComponent(AddFriendActivity::class.java.name))
-//        Intents.release()
-//    }
-//
-//    @Test
-//    fun testingFriendRequestButton() {
-//        Intents.init()
-//        val intent =
-//            Intent(ApplicationProvider.getApplicationContext(), ProfileActivity::class.java)
-//        val scenario = ActivityScenario.launch<ProfileActivity>(intent)
-//
-//        scenario.use {
-//            Espresso.onView(ViewMatchers.withId(R.id.inboxButton)).perform(click())
-//            Espresso.onView(ViewMatchers.withId(R.id.friendRequestsButton)).perform(click())
-//        }
-//
-//        Intents.intended(IntentMatchers.hasComponent(FriendRequestsActivity::class.java.name))
-//        Intents.release()
-//    }
-
-
-
 }
