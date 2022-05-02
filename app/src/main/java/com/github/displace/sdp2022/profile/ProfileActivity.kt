@@ -1,15 +1,21 @@
 package com.github.displace.sdp2022.profile
 
+import android.content.ContentResolver
+import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
+import android.widget.ImageView
 import android.widget.ScrollView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.graphics.drawable.toDrawable
 
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.test.core.app.ApplicationProvider
 import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.R
 import com.github.displace.sdp2022.RealTimeDatabase
@@ -44,6 +50,13 @@ class ProfileActivity : AppCompatActivity() {
         findViewById<TextView>(R.id.profileUsername).text =
             activeUser?.getPartialUser()?.username ?: "defaultNotLoggedIn"
 
+        /* Show status */
+        val onlineLight = findViewById<ImageView>(R.id.onlineStatus)
+        val offlineLight = findViewById<ImageView>(R.id.offlineStatus)
+        if(activeUser == null || activeUser.offlineMode) {
+            onlineLight.visibility = View.INVISIBLE
+            offlineLight.visibility = View.VISIBLE
+        }
 
         /* Achievements */
         val achRecyclerView = findViewById<RecyclerView>(R.id.recyclerAch)
@@ -91,13 +104,18 @@ class ProfileActivity : AppCompatActivity() {
         if(activeUser != null){
             activePartialUser = activeUser.getPartialUser()
         }
-        db.referenceGet( "CompleteUsers/" + activePartialUser.uid, "MessageHistory" ).addOnSuccessListener { msg ->
-            val ls = msg.value as ArrayList<HashMap<String,Any>>?
-            messageList(ls)
+
+        if(activeUser != null && activeUser.offlineMode) {
+            updateMessageListView(activeUser.getMessageHistory())
+        } else {
+
+            db.referenceGet("CompleteUsers/" + activePartialUser.uid, "MessageHistory")
+                .addOnSuccessListener { msg ->
+                    val ls = msg.value as ArrayList<HashMap<String, Any>>?
+                    updateMessageListView(fromDBToMsgList(ls))
+                }
+            db.getDbReference("CompleteUsers/" + activePartialUser.uid + "/MessageHistory").addValueEventListener(messageListener())
         }
-
-        db.getDbReference("CompleteUsers/" + activePartialUser.uid + "/MessageHistory").addValueEventListener(messageListener())
-
 
         /*Set the default at the start*/
         activityStart()
@@ -144,10 +162,18 @@ class ProfileActivity : AppCompatActivity() {
         val activeUser = app.getActiveUser()
 
         if(activeUser != null) {
-            val intent = Intent(this, AccountSettingsActivity::class.java)
-            startActivity(intent)
+            if(activeUser.offlineMode) {
+                Toast.makeText(this, "You're offline ! Please connect to the internet", Toast.LENGTH_LONG).show()
+            } else if(activeUser.guestBoolean) {
+
+                Toast.makeText(this, "You're in guest mode !", Toast.LENGTH_LONG).show()
+            } else {
+
+                val intent = Intent(this, AccountSettingsActivity::class.java)
+                startActivity(intent)
+            }
         } else {
-            Toast.makeText(this, "You're in guest mode !", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "huh", Toast.LENGTH_LONG).show()
         }
 
     }
@@ -156,7 +182,7 @@ class ProfileActivity : AppCompatActivity() {
 
         override fun onDataChange(snapshot: DataSnapshot) {
             val ls = snapshot.value as ArrayList<HashMap<String,Any>>?
-            messageList(ls)
+            updateMessageListView(fromDBToMsgList(ls))
         }
 
         override fun onCancelled(error: DatabaseError) {
@@ -164,12 +190,18 @@ class ProfileActivity : AppCompatActivity() {
 
     }
 
-    private fun messageList(ls : ArrayList<HashMap<String,Any>>?){
-        val messageRecyclerView = findViewById<RecyclerView>(R.id.recyclerMsg)
-        var list = mutableListOf<Message>()
+    private fun fromDBToMsgList(ls : ArrayList<HashMap<String,Any>>?): ArrayList<Message> {
+        var list = arrayListOf<Message>()
         if(ls != null){
             list = (applicationContext as MyApplication).getMessageHandler().getListOfMessages(ls)
+            (applicationContext as MyApplication).getActiveUser()?.cacheMessages(list)
         }
+        return list
+    }
+
+    private fun updateMessageListView(list: ArrayList<Message>){
+        val messageRecyclerView = findViewById<RecyclerView>(R.id.recyclerMsg)
+
         val messageAdapter = MsgViewAdapter(
             applicationContext,
             list,

@@ -58,6 +58,13 @@ class TempLoginActivity : AppCompatActivity() {
 
     }
 
+    fun offlineModeTest(view: View) {
+        val app = applicationContext as MyApplication
+        val user = CompleteUser(this,null, offlineMode = true)
+        app.setActiveUser(user)
+        goToMainMenuActivity(view)
+    }
+
     @Suppress("UNUSED_PARAMETER")
     fun launchSignIn(view: View) {
         /*if (sharedPreferences.getBoolean("login-remember", false)){

@@ -19,9 +19,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Bootcamp">
         <activity
-            android:name=".QRCodeActivity"
-            android:exported="false" />
-        <activity
             android:name=".SettingsActivity"
             android:exported="false"
             android:parentActivityName=".MainMenuActivity" />
