@@ -2,6 +2,7 @@ package com.github.displace.sdp2022.gameVersus
 
 import com.github.displace.sdp2022.gameComponents.Coordinates
 import com.github.displace.sdp2022.gameComponents.GameEvent
+import com.github.displace.sdp2022.gameComponents.Point
 import com.github.displace.sdp2022.model.GameVersus
 
 
@@ -9,6 +10,7 @@ class GameVersusViewModel(private val clientServerLink: ClientServerLink) {
 
     //Test class until we got a real server side
     private var gid = ""
+    private lateinit var actualPos : Coordinates
 
     //handle the 3 different possibility
     fun handleEvent(event: GameEvent): Long {
@@ -42,6 +44,7 @@ class GameVersusViewModel(private val clientServerLink: ClientServerLink) {
 
     //update the actual position of the player
     fun UpdatePos(pos : Coordinates, id: String): Long {
+        actualPos = pos
         clientServerLink.SendDataToOther(pos)
 
         return CONTINUE
@@ -53,6 +56,10 @@ class GameVersusViewModel(private val clientServerLink: ClientServerLink) {
 
     fun getNbEssai() : Int {
         return clientServerLink.game.nbTry
+    }
+
+    fun getPos() : Coordinates {
+        return actualPos
     }
 
     fun getGameInstance() : GameVersus {

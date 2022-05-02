@@ -18,7 +18,7 @@ class ClientServerLink(private val db : RealTimeDatabase) {
 
     private val initGoal = Point(3.0, 5.0)
     private var gid = ""
-    private var other = ""
+    private var others = listOf("")
     private var playerId = ""
     var game = GameVersus(initGoal, 0, 3, Constants.THRESHOLD.toDouble(), 2)
 
@@ -49,7 +49,7 @@ class ClientServerLink(private val db : RealTimeDatabase) {
     fun GetData(playerId: String, gid: String, other: String) {
         this.playerId = playerId
         this.gid = gid
-        this.other = other
+        this.others = this.others.plus(other)
 
         db.addList("GameInstance/Game$gid/id:$other", "pos", posListener)
     }
@@ -92,7 +92,9 @@ class ClientServerLink(private val db : RealTimeDatabase) {
 
     //remove all the listener
     fun endGame(winOrLose: Long) {
-        db.removeList("GameInstance/Game$gid/id:$other", "pose", posListener)
+        others.forEach{
+            other -> db.removeList("GameInstance/Game$gid/id:$other", "pose", posListener)
+        }
         db.update("GameInstance/Game$gid/id:$playerId","finish",winOrLose)
     }
 }

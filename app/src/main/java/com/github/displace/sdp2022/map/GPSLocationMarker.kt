@@ -1,11 +1,16 @@
 package com.github.displace.sdp2022.map
 
+import android.graphics.Paint
 import androidx.appcompat.content.res.AppCompatResources
 import com.github.displace.sdp2022.R
 import com.github.displace.sdp2022.util.gps.GPSPositionManager
 import com.github.displace.sdp2022.util.gps.GeoPointListener
+import com.github.displace.sdp2022.util.math.Constants
+import com.github.displace.sdp2022.util.math.CoordinatesUtil
+import org.osmdroid.util.constants.GeoConstants
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
+import org.osmdroid.views.overlay.ScaleDiskOverlay
 
 /**
  * marks the user's gps position
@@ -20,6 +25,11 @@ class GPSLocationMarker(private val mapView: MapView, private val gpsPositionMan
     private val updateMarker = GeoPointListener { geoPoint ->
         if(!marker.isDisplayed) {
             mapView.overlayManager.add(marker)
+            val areaDisk = ScaleDiskOverlay(mapView.context, geoPoint, Constants.CLICKABLE_AREA_RADIUS, GeoConstants.UnitOfMeasure.meter)
+            val diskPaint = Paint()
+            diskPaint.alpha = DISK_ALPHA
+            areaDisk.setCirclePaint1(diskPaint)
+            mapView.overlayManager.add(areaDisk)
         }
         marker.position = geoPoint
         mapView.invalidate()
@@ -37,6 +47,10 @@ class GPSLocationMarker(private val mapView: MapView, private val gpsPositionMan
      */
     fun add() {
         gpsPositionManager.listenersManager.addCall(updateMarker)
+    }
+
+    companion object {
+        private const val DISK_ALPHA = 20 // opacity between 0 (invisible) and 255 (opaque)
     }
 
 }
