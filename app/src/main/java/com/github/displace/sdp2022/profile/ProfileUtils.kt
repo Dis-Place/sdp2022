@@ -1,9 +1,7 @@
 package com.github.displace.sdp2022.profile
 
 import android.content.Context
-import android.content.Intent
 import android.util.Log
-import androidx.core.content.ContextCompat.startActivity
 import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.profile.messages.Message
 import com.github.displace.sdp2022.users.PartialUser

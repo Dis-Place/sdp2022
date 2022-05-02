@@ -59,8 +59,14 @@ class MainMenuActivity : AppCompatActivity() {
     //send the user to the Play screen : start a match
     @Suppress("UNUSED_PARAMETER")
     fun playButton(view: View) {
-        val intent = Intent(this, GameListActivity::class.java)
-        startActivity(intent)
+        val app = applicationContext as MyApplication
+        val user = app.getActiveUser()
+        if(user == null || user.offlineMode) {
+            Toast.makeText(this, "You're offline ! It's still an online game...", Toast.LENGTH_LONG).show()
+        } else {
+            val intent = Intent(this, GameListActivity::class.java)
+            startActivity(intent)
+        }
 
     }
 

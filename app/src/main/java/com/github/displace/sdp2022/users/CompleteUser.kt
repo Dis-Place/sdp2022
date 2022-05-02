@@ -21,7 +21,7 @@ class CompleteUser(
     private val firebaseUser: FirebaseUser?,
     val guestBoolean: Boolean = false,
     val offlineMode: Boolean = false,
-) : User {
+) {
 
     private val db: RealTimeDatabase = RealTimeDatabase().instantiate(
         "https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",
@@ -78,7 +78,7 @@ class CompleteUser(
     }
 
 
-    override fun addAchievement(ach: Achievement) {
+    fun addAchievement(ach: Achievement) {
         if (offlineMode)
             return
 
@@ -89,7 +89,7 @@ class CompleteUser(
         }
     }
 
-    override fun updateStats(statName: String, newValue: Long) {
+    fun updateStats(statName: String, newValue: Long) {
         if (offlineMode)
             return
         for (i in 0..stats.size) {
@@ -105,7 +105,7 @@ class CompleteUser(
         }
     }
 
-    override fun addFriend(partialU: PartialUser) {
+    fun addFriend(partialU: PartialUser) {
         if (offlineMode)
             return
 
@@ -120,7 +120,7 @@ class CompleteUser(
         }
     }
 
-    override fun removeFriend(partialU: PartialUser) {
+    fun removeFriend(partialU: PartialUser) {
         if (offlineMode)
             return
 
@@ -144,7 +144,7 @@ class CompleteUser(
         return false
     }
 
-    override fun addGameInHistory(map: String, date: String, result: String) {
+    fun addGameInHistory(map: String, date: String, result: String) {
         if (offlineMode)
             return
 
@@ -156,7 +156,7 @@ class CompleteUser(
         db.update(dbReference, "gameHistory/${gameHistory.size - 1}", history)
     }
 
-    override fun changeUsername(newName: String) {
+    fun changeUsername(newName: String) {
         if (offlineMode)
             return
 
@@ -174,16 +174,6 @@ class CompleteUser(
     }
 
     private fun initializeUser() {
-        // Initialization if the user is offline, using the cache
-        if (offlineMode) {
-            achievements = offlineUserFetcher.getOfflineAchievements()
-            stats = offlineUserFetcher.getOfflineStats()
-            friendsList = offlineUserFetcher.getOfflineFriendsList()
-            gameHistory = offlineUserFetcher.getOfflineGameHistory()
-            partialUser = offlineUserFetcher.getOfflinePartialUser()
-            return
-        }
-
         // Initialization if it's a guest
         if (guestBoolean) {
             initializePartialUser()
@@ -199,6 +189,18 @@ class CompleteUser(
             createFirstMessageList()
             return
         }
+
+
+        // Initialization if the user is offline, using the cache
+        if (offlineMode) {
+            achievements = offlineUserFetcher.getOfflineAchievements()
+            stats = offlineUserFetcher.getOfflineStats()
+            friendsList = offlineUserFetcher.getOfflineFriendsList()
+            gameHistory = offlineUserFetcher.getOfflineGameHistory()
+            partialUser = offlineUserFetcher.getOfflinePartialUser()
+            return
+        }
+
 
         // Initialization if the user is online
         db.referenceGet(dbReference, "").addOnSuccessListener { usr ->
@@ -288,7 +290,7 @@ class CompleteUser(
         )
     }
 
-    override fun removeUserFromDatabase() {
+    fun removeUserFromDatabase() {
         db.delete("CompleteUsers", partialUser.uid)
     }
 
@@ -298,7 +300,7 @@ class CompleteUser(
             Achievement("Create your account !", getCurrentDate())
         )
 
-        if(!guestBoolean) {
+        if(!guestBoolean && firebaseUser != null) {
             offlineUserFetcher.setOfflineAchievements(achievements)
         }
 
@@ -321,7 +323,7 @@ class CompleteUser(
             Statistic("stat2", 0)
         )      // It's a dummy list for now, will be replaced with a list of all the possible statistics initialized to 0
 
-        if(!guestBoolean) {
+        if(!guestBoolean && firebaseUser != null) {
             offlineUserFetcher.setOfflineStats(stats)
         }
 
@@ -345,7 +347,7 @@ class CompleteUser(
             setupDefaultOrGuestPartialUser()
         }
 
-        if(!guestBoolean) {
+        if(!guestBoolean && firebaseUser != null) {
             offlineUserFetcher.setOfflinePartialUser(partialUser)
         }
 
@@ -357,23 +359,23 @@ class CompleteUser(
 
     }
 
-    override fun getPartialUser(): PartialUser {
+    fun getPartialUser(): PartialUser {
         return partialUser
     }
 
-    override fun getAchievements(): MutableList<Achievement> {
+    fun getAchievements(): MutableList<Achievement> {
         return achievements
     }
 
-    override fun getStats(): List<Statistic> {
+    fun getStats(): List<Statistic> {
         return stats
     }
 
-    override fun getFriendsList(): MutableList<PartialUser> {
+    fun getFriendsList(): MutableList<PartialUser> {
         return friendsList
     }
 
-    override fun getGameHistory(): MutableList<History> {
+    fun getGameHistory(): MutableList<History> {
         return gameHistory
     }
 

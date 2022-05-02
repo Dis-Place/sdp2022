@@ -98,7 +98,10 @@ class AccountSettingsActivity : AppCompatActivity() {
             // Gets profile pic from database
             imgDBReference.getFile(localFile).addOnSuccessListener {
                 // keep a copy of the profile pic in the case connection lost, and more efficient
-                activeUser.setProfilePic(BitmapFactory.decodeFile(localFile.absolutePath))
+                val pic = BitmapFactory.decodeFile(localFile.absolutePath)
+                if(pic != null) {
+                    activeUser.setProfilePic(pic)
+                }
                 profilePic.setImageBitmap(activeUser.getProfilePic())
             }.addOnFailureListener{
                 showToastText("Failed to load profile pic")
