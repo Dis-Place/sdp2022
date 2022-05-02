@@ -63,7 +63,7 @@ class MockDB : GoodDB {
         }
 
         fun delete(reference: String) {
-            root.deleteChild(reference)
+            root.updateDeleteChild(reference)
         }
 
         fun <T> addListener(reference: String, listener: Listener<T?>) {
@@ -149,7 +149,21 @@ class MockDB : GoodDB {
              */
             abstract fun set(reference: String, newValue: Any)
 
+            /**
+             * NOTE: for the sake of my sanity please
+             * don't call directly, use updateDeleteChild
+             *
+             * @param reference
+             * @see updateDeleteChild
+             */
             abstract fun deleteChild(reference: String)
+
+            fun updateDeleteChild(reference: String) {
+                isObservable = false
+                deleteChild(reference)
+                isObservable = true
+                notifyChange()
+            }
 
             fun <T> addListener(listener: Listener<T?>) {
                 val anyListener = Listener<Any?>{ listener.invoke(it as T?) }
@@ -262,8 +276,12 @@ class MockDB : GoodDB {
             }
 
             override fun deleteChild(reference: String) {
-                children.remove(reference)
-                notifyChange()
+                val parsedRef = ReferenceParser.parse(reference)
+                if(parsedRef.size > 1) {
+                    children[parsedRef[0]]?.updateDeleteChild(parsedRef[1])
+                } else {
+                    children.remove(reference)
+                }
             }
         }
 
@@ -299,9 +317,17 @@ class MockDB : GoodDB {
             override fun set(reference: String, newValue: Any): Nothing = throw UnsupportedOperationException("list node")
 
             override fun deleteChild(reference: String) {
-                val index = reference.toInt()
-                if(index < children.size){
-                    children.removeAt(index)
+                val parsedRef = ReferenceParser.parse(reference)
+                if(parsedRef.size > 1) {
+                    val index = parsedRef[0].toInt()
+                    if(index < children.size) {
+                        children[index].updateDeleteChild(parsedRef[1])
+                    }
+                } else if(parsedRef.size == 1) {
+                    val index = parsedRef[0].toInt()
+                    if(index < children.size){
+                        children.removeAt(index)
+                    }
                 }
             }
         }
