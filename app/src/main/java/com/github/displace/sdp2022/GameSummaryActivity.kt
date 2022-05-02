@@ -82,7 +82,7 @@ class GameSummaryActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    fun friendInviteToOpponent() {
+    fun friendInviteToOpponent(View : View) {
         val app = applicationContext as MyApplication
         val otherId = (intent.getSerializableExtra("others") as List<List<String>>)[0][1]
         val db = RealTimeDatabase().noCacheInstantiate(

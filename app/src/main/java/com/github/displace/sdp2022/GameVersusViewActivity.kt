@@ -60,6 +60,7 @@ class GameVersusViewActivity : AppCompatActivity() {
     private lateinit var otherPlayerPinpoints: PinpointsManager.PinpointsRef
     private lateinit var conditionalGoalPlacer: ConditionalGoalPlacer
     private lateinit var clientServerLink : ClientServerLink
+    private var clickableArea = Constants.CLICKABLE_AREA_RADIUS
 
     private var nbPlayer = 1L
 
@@ -79,7 +80,7 @@ class GameVersusViewActivity : AppCompatActivity() {
     // 3 possibility : win => guess == position of the goal, continue => guess != position and lost => you missed the max number of time and lost
     private val guessListener = GeoPointListener { geoPoint ->
         run {
-            if (CoordinatesUtil.distance(game.getPos(), CoordinatesUtil.coordinates(geoPoint)) <= Constants.CLICKABLE_AREA_RADIUS)
+            if (CoordinatesUtil.distance(game.getPos(), CoordinatesUtil.coordinates(geoPoint)) <= clickableArea)
             {
                 pinpointsManager.putMarker(geoPoint)
                 val res = game.handleEvent(
@@ -164,6 +165,7 @@ class GameVersusViewActivity : AppCompatActivity() {
         PreferencesUtil.initOsmdroidPref(this)
         setContentView(R.layout.activity_game_versus)
 
+        clickableArea = intent.getIntExtra("dist",Constants.CLICKABLE_AREA_RADIUS)
         db = RealTimeDatabase().noCacheInstantiate(
             "https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",
             false
@@ -278,9 +280,11 @@ class GameVersusViewActivity : AppCompatActivity() {
             )
 
             db.referenceGet("CompleteUsers/${otherPlayerId}/CompleteUser/partialUser", "username").addOnSuccessListener { snapshot ->
-                val name = snapshot.value as String
-                val list = listOf(listOf(name,otherPlayerId))
-                others = others.plus(list)
+                try {
+                    val name = snapshot.value as String
+                    val list = listOf(listOf(name, otherPlayerId))
+                    others = others.plus(list)
+                }catch(e: Exception){}
             }
 
             pinpointsDBHandler.enableAutoupdateLocalPinpoints(

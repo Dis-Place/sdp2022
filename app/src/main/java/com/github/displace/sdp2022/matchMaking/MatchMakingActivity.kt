@@ -19,6 +19,7 @@ import com.github.displace.sdp2022.RealTimeDatabase
 import com.github.displace.sdp2022.profile.friends.FriendViewAdapter
 import com.github.displace.sdp2022.profile.messages.MessageHandler
 import com.github.displace.sdp2022.users.PartialUser
+import com.github.displace.sdp2022.util.math.Constants
 import com.google.firebase.database.*
 import kotlin.random.Random
 
@@ -378,6 +379,7 @@ class MatchMakingActivity : AppCompatActivity() {
         intent.putExtra("gid",this.currentLobbyId)
         intent.putExtra("uid",activeUser.uid)
         intent.putExtra("nbPlayer",nbPlayer)
+        intent.putExtra("dist", Constants.CLICKABLE_AREA_RADIUS)
 
         startActivity(intent)
     }

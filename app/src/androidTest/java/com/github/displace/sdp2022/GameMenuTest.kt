@@ -59,10 +59,9 @@ class GameMenuTest {
 
     @Test
     fun testPlayButton() {
-        intent.putExtra("gid","-4862463398588582910")
+        intent.putExtra("gid","GameVersusTest")
         intent.putExtra("uid","hCkhhJ0dkINs0BIpx8eqhLWzXw43")
         intent.putExtra("nbPlayer",2)
-        intent.putExtra("other","0")
 
         ActivityScenario.launch<GameSummaryActivity>(intent).use {
             onView(withId(R.id.TryText))
@@ -72,10 +71,9 @@ class GameMenuTest {
 
     @Test
     fun testMap() {
-        intent.putExtra("gid","-4862463398588582910")
+        intent.putExtra("gid","GameVersusTest")
         intent.putExtra("uid","hCkhhJ0dkINs0BIpx8eqhLWzXw43")
         intent.putExtra("nbPlayer",2)
-        intent.putExtra("other","0")
 
         ActivityScenario.launch<GameVersusViewActivity>(intent).use {
             onView(withId(R.id.map)).check(matches(ViewMatchers.isDisplayed()))
@@ -85,10 +83,10 @@ class GameMenuTest {
 
     @Test
     fun testEndButton() {
-        intent.putExtra("gid","-4862463398588582910")
+        intent.putExtra("gid","GameVersusTest")
         intent.putExtra("uid","hCkhhJ0dkINs0BIpx8eqhLWzXw43")
         intent.putExtra("nbPlayer",2)
-        intent.putExtra("other","0")
+        intent.putExtra("dist",100000)
 
         ActivityScenario.launch<GameSummaryActivity>(intent).use {
             onView(withId(R.id.centerButton)).perform(ViewActions.click())
@@ -108,10 +106,10 @@ class GameMenuTest {
 
     @Test
     fun testFailButton() {
-        intent.putExtra("gid","-4862463398588582910")
+        intent.putExtra("gid","GameVersusTest")
         intent.putExtra("uid","hCkhhJ0dkINs0BIpx8eqhLWzXw43")
         intent.putExtra("nbPlayer",2)
-        intent.putExtra("other","0")
+        intent.putExtra("dist",100000)
 
         ActivityScenario.launch<GameSummaryActivity>(intent).use {
             onView(withId(R.id.map)).perform(swipeUp())
@@ -125,10 +123,9 @@ class GameMenuTest {
 
     @Test
     fun testWinButton() {
-        intent.putExtra("gid","-4862463398588582910")
+        intent.putExtra("gid","GameVersusTest")
         intent.putExtra("uid","hCkhhJ0dkINs0BIpx8eqhLWzXw43")
         intent.putExtra("nbPlayer",2)
-        intent.putExtra("other","0")
 
         ActivityScenario.launch<GameSummaryActivity>(intent).use {
             onView(withId(R.id.map)).perform(ViewActions.longClick())
@@ -139,10 +136,9 @@ class GameMenuTest {
 
     @Test
     fun testQuitButton() {
-        intent.putExtra("gid","-4862463398588582910")
+        intent.putExtra("gid","GameVersusTest")
         intent.putExtra("uid","hCkhhJ0dkINs0BIpx8eqhLWzXw43")
         intent.putExtra("nbPlayer",2)
-        intent.putExtra("other","0")
 
         ActivityScenario.launch<GameSummaryActivity>(intent).use {
             onView(withId(R.id.closeButton)).perform(click())
@@ -165,10 +161,9 @@ class GameMenuTest {
 
 
 
-        intent.putExtra("gid","-4862463398588582910")
+        intent.putExtra("gid","GameVersusTest")
         intent.putExtra("uid","hCkhhJ0dkINs0BIpx8eqhLWzXw43")
         intent.putExtra("nbPlayer",2)
-        intent.putExtra("other","0")
         ActivityScenario.launch<GameSummaryActivity>(intent).use {
 
             onView(withId(R.id.chatButton)).perform(click())
