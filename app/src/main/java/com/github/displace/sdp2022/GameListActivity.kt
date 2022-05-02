@@ -41,4 +41,12 @@ class GameListActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
+    //send the user to the Play screen : start a match
+    @Suppress("UNUSED_PARAMETER")
+    fun playPVLButton(view: View) {
+        val intent = Intent(this, MatchMakingActivity::class.java)
+        intent.putExtra("nbPlayer",99L)
+        startActivity(intent)
+    }
+
 }

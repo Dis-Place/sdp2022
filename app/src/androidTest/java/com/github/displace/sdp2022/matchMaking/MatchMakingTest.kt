@@ -132,6 +132,7 @@ class MatchMakingTest {
         val intent =
             Intent(ApplicationProvider.getApplicationContext(), MatchMakingActivity::class.java).apply {
                 putExtra("DEBUG", true)
+                putExtra("nbPlayer",99L)
             }
         val scenario = ActivityScenario.launch<MatchMakingActivity>(intent)
 
@@ -143,6 +144,10 @@ class MatchMakingTest {
 
             Espresso.onView(ViewMatchers.withId(R.id.lobbyIdInsert))
                 .perform(ViewActions.replaceText("test")).perform(
+                    ViewActions.closeSoftKeyboard()
+                )
+            Espresso.onView(ViewMatchers.withId(R.id.lobbyNbPlayerInsert))
+                .perform(ViewActions.replaceText("4")).perform(
                     ViewActions.closeSoftKeyboard()
                 )
             Espresso.onView(ViewMatchers.withId(R.id.privateLobbyCreate)).perform(ViewActions.click())
@@ -169,6 +174,7 @@ class MatchMakingTest {
     fun testPrivateLobbySearch(){
         val intent = Intent(ApplicationProvider.getApplicationContext(), MatchMakingActivity::class.java).apply {
             putExtra("DEBUG", true)
+            putExtra("nbPlayer",99L)
         }
         val scenario = ActivityScenario.launch<MatchMakingActivity>(intent)
 
