@@ -132,7 +132,6 @@ class MatchMakingTest {
         val intent =
             Intent(ApplicationProvider.getApplicationContext(), MatchMakingActivity::class.java).apply {
                 putExtra("DEBUG", true)
-                putExtra("nbPlayer",99L)
             }
         val scenario = ActivityScenario.launch<MatchMakingActivity>(intent)
 
@@ -174,7 +173,6 @@ class MatchMakingTest {
     fun testPrivateLobbySearch(){
         val intent = Intent(ApplicationProvider.getApplicationContext(), MatchMakingActivity::class.java).apply {
             putExtra("DEBUG", true)
-            putExtra("nbPlayer",99L)
         }
         val scenario = ActivityScenario.launch<MatchMakingActivity>(intent)
 

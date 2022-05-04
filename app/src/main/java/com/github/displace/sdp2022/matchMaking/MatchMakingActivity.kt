@@ -44,7 +44,7 @@ class MatchMakingActivity : AppCompatActivity() {
     private lateinit var db: RealTimeDatabase
     private var currentLobbyId = ""
 
-    private val gamemode = "Versus"
+    private var gamemode = "Versus2P"
     private val map = "Map2"
 
     //This has to be chaged to the real active user
@@ -56,7 +56,6 @@ class MatchMakingActivity : AppCompatActivity() {
     private lateinit var app : MyApplication
     private var nbPlayer = 2L
     private var nbSearch = 1
-    private var priv = false
 
 
 
@@ -71,7 +70,7 @@ class MatchMakingActivity : AppCompatActivity() {
      */
     private val lobbyListener = object : ValueEventListener {
         override fun onDataChange(snapshot: DataSnapshot) {
-            if (isGroupVisible(R.id.setupPrivateGroup)) {    //nothing should be done if the player is not in a lobby
+            if (isGroupVisible(R.id.setupGroup)) {    //nothing should be done if the player is not in a lobby
                 return
             }
             val lobby = snapshot.value as MutableMap<String, Any>? ?: return
@@ -136,8 +135,12 @@ class MatchMakingActivity : AppCompatActivity() {
         setContentView(R.layout.activity_match_making)
 
         nbPlayer = intent.getLongExtra("nbPlayer",2L)
+        try {
+            gamemode = intent.getStringExtra("gameMode")!!
+        }catch(e: Exception){
+            gamemode = "Versus2P"
+        }
         debug = intent.getBooleanExtra("DEBUG", false)
-        priv = (nbPlayer==99L)
         db = RealTimeDatabase().noCacheInstantiate(
             "https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",
             debug
@@ -202,7 +205,7 @@ class MatchMakingActivity : AppCompatActivity() {
                     toCreateId = ""
                     toSearchId = ""
                     val ls = currentData.value as ArrayList<String>? ?: return Transaction.abort()
-                    if (ls.size == nbSearch) {
+                    if (ls.size == 1) {
                         //only the head exists : add a new ID to the list and create a new lobby with that ID
                         val nextId = if (!debug) {
                             Random.nextLong().toString()
@@ -253,8 +256,7 @@ class MatchMakingActivity : AppCompatActivity() {
                 override fun doTransaction(currentData: MutableData): Transaction.Result {
                     val lobby =
                         currentData.value as MutableMap<String, Any>? ?: return Transaction.abort()
-                    if(priv) {nbPlayer = lobby["lobbyMax"] as Long}
-                    if (lobby["lobbyCount"] as Long == lobby["lobbyMax"] as Long || lobby["lobbyLaunch"] as Boolean || lobby["lobbyMax"] != nbPlayer) {   //the lobby is not available : will be deleted from the list soon
+                    if (lobby["lobbyCount"] as Long == lobby["lobbyMax"] as Long || lobby["lobbyLaunch"] as Boolean) {   //the lobby is not available : will be deleted from the list soon
                         return Transaction.abort()
                     }
                     lobby["lobbyCount"] = lobby["lobbyCount"] as Long + 1
@@ -280,7 +282,6 @@ class MatchMakingActivity : AppCompatActivity() {
                         uiToSearch()
                     } else {
                         publicSearch()  //if the join failed, search a lobby again, this one will probably not exist anymore
-                        nbSearch += 1
                     }
                 }
 
@@ -308,14 +309,6 @@ class MatchMakingActivity : AppCompatActivity() {
     fun createPrivateLobby(view: View) {
         lobbyType = "private"
         val id = findViewById<EditText>(R.id.lobbyIdInsert).text
-        val nbPlayerText = findViewById<EditText>(R.id.lobbyNbPlayerInsert).text
-
-        if (nbPlayerText.isEmpty()) {   //the ID can not be empty
-            changeVisibility<TextView>(R.id.errorNbPlayerNonEmpty, View.VISIBLE)
-            return
-        }else{
-            changeVisibility<TextView>(R.id.errorNbPlayerNonEmpty, View.INVISIBLE)
-        }
 
         if (id.isEmpty()) {   //the ID can not be empty
             changeVisibility<TextView>(R.id.errorIdNonEmpty, View.VISIBLE)
@@ -323,8 +316,6 @@ class MatchMakingActivity : AppCompatActivity() {
         }else{
             changeVisibility<TextView>(R.id.errorIdNonEmpty, View.INVISIBLE)
         }
-
-        nbPlayer = nbPlayerText.toString().toLong()
 
         val lobby = Lobby(currentLobbyId, nbPlayer, activeUser)
         db.referenceGet("MM/$gamemode/$map/$lobbyType", "freeList").addOnSuccessListener { free ->
@@ -409,7 +400,7 @@ class MatchMakingActivity : AppCompatActivity() {
      * - the player is alone in the lobby , meaning the lobby has to be deleted
      */
     private fun leaveMM(toGame: Boolean) {
-        if (isGroupVisible(R.id.setupPrivateGroup)) {    //nothing should be done if the player is not in a lobby
+        if (isGroupVisible(R.id.setupGroup)) {    //nothing should be done if the player is not in a lobby
             return
         }
         db.getDbReference("MM/$gamemode/$map/$lobbyType")
@@ -516,26 +507,19 @@ class MatchMakingActivity : AppCompatActivity() {
      * UI transition between multiple groups of UI elements : done to keep the same activity
      */
     private fun uiToSetup() {
-        changeVisibility<Group>(R.id.setupPrivateGroup, View.VISIBLE)
-        changeVisibility<Group>(R.id.setupPublicGroup,View.VISIBLE)
+        changeVisibility<Group>(R.id.setupGroup, View.VISIBLE)
         changeVisibility<Group>(R.id.waitGroup, View.INVISIBLE)
         if (lobbyType == "private") {
             changeVisibility<Group>(R.id.privateGroup, View.INVISIBLE)
         }
         changeVisibility<Group>(R.id.errorGroup, View.INVISIBLE)
 
-        if(priv){
-            changeVisibility<Group>(R.id.setupPublicGroup,View.INVISIBLE)
-        }else{
-            changeVisibility<Group>(R.id.setupPrivateGroup,View.INVISIBLE)
-        }
-
         val app = applicationContext as MyApplication
         app.getMessageHandler().addListener()
     }
 
     private fun uiToSearch() {
-        changeVisibility<Group>(R.id.setupPrivateGroup, View.INVISIBLE)
+        changeVisibility<Group>(R.id.setupGroup, View.INVISIBLE)
         changeVisibility<Group>(R.id.waitGroup, View.VISIBLE)
         if (lobbyType == "private") {
             changeVisibility<Group>(R.id.privateGroup, View.VISIBLE)

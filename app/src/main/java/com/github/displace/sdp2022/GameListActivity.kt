@@ -22,6 +22,7 @@ class GameListActivity : AppCompatActivity() {
     fun playVs2Button(view: View) {
         val intent = Intent(this, MatchMakingActivity::class.java)
         intent.putExtra("nbPlayer",2L)
+        intent.putExtra("gameMode","Versus2P")
         startActivity(intent)
     }
 
@@ -30,6 +31,7 @@ class GameListActivity : AppCompatActivity() {
     fun playVs3Button(view: View) {
         val intent = Intent(this, MatchMakingActivity::class.java)
         intent.putExtra("nbPlayer",3L)
+        intent.putExtra("gameMode","Versus3P")
         startActivity(intent)
     }
 
@@ -38,14 +40,7 @@ class GameListActivity : AppCompatActivity() {
     fun playVs5Button(view: View) {
         val intent = Intent(this, MatchMakingActivity::class.java)
         intent.putExtra("nbPlayer",5L)
-        startActivity(intent)
-    }
-
-    //send the user to the Play screen : start a match
-    @Suppress("UNUSED_PARAMETER")
-    fun playPVLButton(view: View) {
-        val intent = Intent(this, MatchMakingActivity::class.java)
-        intent.putExtra("nbPlayer",99L)
+        intent.putExtra("gameMode","Versus5P")
         startActivity(intent)
     }
 

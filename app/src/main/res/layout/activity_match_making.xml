@@ -119,21 +119,6 @@
         app:layout_constraintTop_toBottomOf="@+id/RandomLobbySearch"
         app:layout_constraintVertical_bias="0.52" />
 
-    <EditText
-        android:id="@+id/lobbyNbPlayerInsert"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="NbPlayer :"
-        android:inputType="number"
-        android:minHeight="48dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.723" />
-
     <TextView
         android:id="@+id/privateLobbyText"
         android:layout_width="wrap_content"
@@ -219,19 +204,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.768" />
 
-    <TextView
-        android:id="@+id/errorNbPlayerNonEmpty"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Lobby NbPlayer must be non empty"
-        android:textColor="#FF0000"
-        app:layout_constraintBottom_toTopOf="@+id/lobbyIdInsert"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.68" />
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/friendsMMRecycler"
         android:layout_width="wrap_content"
@@ -247,16 +219,16 @@
     </androidx.recyclerview.widget.RecyclerView>
 
     <androidx.constraintlayout.widget.Group
-        android:id="@+id/setupPublicGroup"
+        android:id="@+id/setupGroup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:constraint_referenced_ids="RandomLobbySearch" />
+        app:constraint_referenced_ids="RandomLobbySearch,lobbyIdInsert,privateLobbyCreate,privateLobbyJoin" />
 
     <androidx.constraintlayout.widget.Group
         android:id="@+id/errorGroup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:constraint_referenced_ids="errorIdNotFound,errorIdExists,errorIdNonEmpty,errorNbPlayerNonEmpty" />
+        app:constraint_referenced_ids="errorIdNotFound,errorIdExists,errorIdNonEmpty" />
 
     <androidx.constraintlayout.widget.Group
         android:id="@+id/privateGroup"
@@ -271,11 +243,5 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:constraint_referenced_ids="textView6,playersRecycler,MMCancelButton" />
-
-    <androidx.constraintlayout.widget.Group
-        android:id="@+id/setupPrivateGroup"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:constraint_referenced_ids="privateLobbyCreate,privateLobbyJoin,lobbyIdInsert,privateLobbyText,lobbyNbPlayerInsert" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
