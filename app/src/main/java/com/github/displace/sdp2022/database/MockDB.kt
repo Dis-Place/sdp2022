@@ -2,9 +2,6 @@ package com.github.displace.sdp2022.database
 
 import com.github.displace.sdp2022.util.collections.ObservableMultiLevelMap
 import com.github.displace.sdp2022.util.listeners.Listener
-import com.github.displace.sdp2022.util.listeners.ListenerManager
-import com.google.gson.Gson
-import java.lang.UnsupportedOperationException
 
 /**
  * mock Database
