@@ -14,15 +14,13 @@ import androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
-import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
 import com.github.displace.sdp2022.news.NewsActivity
 import com.github.displace.sdp2022.profile.ProfileActivity
-import com.github.displace.sdp2022.profile.messages.MessageHandler
+import com.github.displace.sdp2022.profile.qrcode.QrCodeTemp
 import com.github.displace.sdp2022.users.CompleteUser
 import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -125,10 +123,10 @@ class MainMenuActivityTest {
         val scenario = ActivityScenario.launch<MainMenuActivity>(intent)
 
         scenario.use {
-            Espresso.onView(withId(R.id.dataBaseDemoButton)).perform(click())
+            Espresso.onView(withId(R.id.qrCodeDemo)).perform(click())
         }
 
-        intended(hasComponent(UploadImageActivity::class.java.name))
+        intended(hasComponent(QrCodeTemp::class.java.name))
         Intents.release()
     }
 
