@@ -1,9 +1,11 @@
 package com.github.displace.sdp2022.profile.qrcode
 
+import android.content.DialogInterface
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import com.budiyev.android.codescanner.AutoFocusMode
 import com.budiyev.android.codescanner.CodeScanner
 import com.budiyev.android.codescanner.CodeScannerView
@@ -79,6 +81,18 @@ class QrCodeScannerActivity : AppCompatActivity() {
      *  - return to the previous activity (which is QrCodeTemp for now : use a simple intent)
      */
     fun showScanPrompt(partialUser : PartialUser){
+        val alertDialogBuilder = AlertDialog.Builder(this)
+
+        alertDialogBuilder.setMessage("Send invite to ${partialUser.username} ?")
+        alertDialogBuilder.setNegativeButton("Cancel") { dialog, _ ->
+            dialog.cancel()
+        }
+
+        alertDialogBuilder.setPositiveButton("Ok") { dialog,_ ->
+            //send invite
+            //quit
+        }
+        alertDialogBuilder.create()
 
     }
 
