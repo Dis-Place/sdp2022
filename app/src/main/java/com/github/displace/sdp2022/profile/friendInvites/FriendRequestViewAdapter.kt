@@ -49,7 +49,7 @@ class FriendRequestViewAdapter(private var dataSet: MutableList<InviteWithId>) :
 
                 val db : RealTimeDatabase = RealTimeDatabase().noCacheInstantiate("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",false) as RealTimeDatabase
                 db.getDbReference("CompleteUsers/${invite.invite.source.uid}/CompleteUser/friendsList").runTransaction(
-                    RequestAcceptor(invite.invite.source)
+                    RequestAcceptor(invite.invite.target)
                 )
 
                 DeleteInvite.deleteInvite(invite.id)

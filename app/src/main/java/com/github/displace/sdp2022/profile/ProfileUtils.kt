@@ -81,7 +81,7 @@ class FriendRequest {
                     var partialUsers = getPartialUsers(dataSnapshot)
                     if (checkUserExists(partialUsers, target)) {
                         val source = currentUser
-                        val target = getTargetUser(dataSnapshot, partialUsers, target)
+                        val target = getTargetUser( partialUsers, target)
                         sendInvite(source, target)
                     }
                     else{
@@ -126,7 +126,7 @@ class FriendRequest {
             return partialUsers
         }
 
-        fun getTargetUser(dataSnapshot: DataSnapshot, users : List<PartialUser>, target : String) : PartialUser {
+        fun getTargetUser( users : List<PartialUser>, target : String) : PartialUser {
             for (user in users) {
                 if( user.username == target ){
                     return user

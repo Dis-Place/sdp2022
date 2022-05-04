@@ -7,6 +7,7 @@ import android.widget.ScrollView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
 
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -15,7 +16,9 @@ import com.github.displace.sdp2022.R
 import com.github.displace.sdp2022.RealTimeDatabase
 import com.github.displace.sdp2022.profile.achievements.AchViewAdapter
 import com.github.displace.sdp2022.profile.friendInvites.AddFriendActivity
+import com.github.displace.sdp2022.profile.friendInvites.FriendRequestViewAdapter
 import com.github.displace.sdp2022.profile.friendInvites.FriendRequestsActivity
+import com.github.displace.sdp2022.profile.friendInvites.InviteWithId
 import com.github.displace.sdp2022.profile.friends.FriendViewAdapter
 import com.github.displace.sdp2022.profile.history.HistoryViewAdapter
 import com.github.displace.sdp2022.profile.messages.Message
@@ -25,6 +28,7 @@ import com.github.displace.sdp2022.profile.statistics.StatViewAdapter
 import com.github.displace.sdp2022.users.PartialUser
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 
 
@@ -108,6 +112,25 @@ class ProfileActivity : AppCompatActivity() {
 
         /*Set the default at the start*/
         activityStart()
+
+
+        val rootRef = FirebaseDatabase.
+        getInstance("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app").reference
+        val currentUser = activePartialUser // activeUser?.getPartialUser() ?: PartialUser("dummy", "dummy")
+
+        val recyclerview = findViewById<RecyclerView>(R.id.friendRequestRecyclerView)
+
+        recyclerview.layoutManager = LinearLayoutManager(this)
+        recyclerview.adapter = FriendRequestViewAdapter( mutableListOf<InviteWithId>())
+
+        RecieveFriendRequests.recieveRequests(rootRef, currentUser)
+            .observe(this,  Observer{
+                val adapter = FriendRequestViewAdapter(it)
+
+                // Setting the Adapter with the recyclerview
+                recyclerview.adapter = adapter
+
+            })
 
 
     }
