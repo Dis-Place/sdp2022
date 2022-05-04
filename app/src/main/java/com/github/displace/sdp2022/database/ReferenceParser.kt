@@ -16,13 +16,15 @@ object ReferenceParser {
      * @return prefix and suffix (if present)
      */
     fun parse(reference: String): List<String> {
-        if(reference.isEmpty()) {
+        val ref = reference.removeSuffix("/")
+
+        if(ref.isEmpty()) {
             return listOf()
         }
-        val prefix = reference.takeWhile { it != ('/') }
-        val stripped = reference.removePrefix("$prefix/")
+        val prefix = ref.takeWhile { it != ('/') }
+        val stripped = ref.removePrefix("$prefix/")
 
-        return if(prefix == stripped || stripped.isEmpty()){
+        return if(prefix == stripped){
             listOf(prefix)
         } else {
             listOf(prefix,stripped)

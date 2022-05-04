@@ -9,9 +9,7 @@ import android.net.Uri
 import android.provider.MediaStore
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
-import androidx.test.espresso.Espresso
 import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions
 import androidx.test.espresso.intent.Intents
@@ -25,9 +23,8 @@ import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.profile.settings.AccountSettingsActivity
 import com.github.displace.sdp2022.R
 import com.github.displace.sdp2022.authentication.TempLoginActivity
-import com.google.firebase.auth.FirebaseAuth
 import org.hamcrest.CoreMatchers
-import com.github.displace.sdp2022.map.PinpointsDBHandlerTest.Companion.DB_DELAY
+import com.github.displace.sdp2022.map.GoodPinpointsDBHandlerTest.Companion.DB_DELAY
 import org.hamcrest.core.StringContains.containsString
 import org.junit.After
 import org.junit.Before

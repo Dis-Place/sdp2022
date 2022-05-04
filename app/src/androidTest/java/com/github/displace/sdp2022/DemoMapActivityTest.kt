@@ -1,36 +1,49 @@
 package com.github.displace.sdp2022
 
+import android.content.Intent
+import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.longClick
 import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.GrantPermissionRule
+import com.github.displace.sdp2022.database.DatabaseFactory
+import com.github.displace.sdp2022.database.MockDB
+import com.github.displace.sdp2022.database.MockDatabaseUtils
+import com.github.displace.sdp2022.map.MapViewManager
+import com.github.displace.sdp2022.util.gps.MockGPS
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.junit.Before
 
 @RunWith(AndroidJUnit4::class)
 class DemoMapActivityTest {
 
 
     @get:Rule
-    val testRule = ActivityScenarioRule(DemoMapActivity::class.java)
+    val testRule = run {
+        val intent =
+            Intent(ApplicationProvider.getApplicationContext(), DemoMapActivity::class.java)
 
-    @get:Rule
-    val permissionRule = GrantPermissionRule.grant(
-        android.Manifest.permission.ACCESS_COARSE_LOCATION,
-        android.Manifest.permission.ACCESS_FINE_LOCATION
-    )
+        // THIS IS YOU CLEAR THE MOCK DB
+        DatabaseFactory.clearMockDB()
 
+        // THIS IS HOW YOU MOCK THE DB IN TESTS
+        MockDatabaseUtils.mockIntent(intent)
 
-    /***
-     * checks if the mapview is displayed
-     */
+        // THIS IS HOW YOU MOCK THE GPS
+        MockGPS.specifyMock(intent,MapViewManager.DEFAULT_CENTER)
+
+        ActivityScenarioRule<DemoMapActivity>(intent)
+    }
+
     @Test
     fun mapIsDisplayedProperly() {
         testRule.scenario.use {
