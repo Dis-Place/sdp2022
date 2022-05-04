@@ -7,6 +7,7 @@ import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.rule.GrantPermissionRule
 import com.github.displace.sdp2022.DemoMapActivity
 import com.github.displace.sdp2022.DemoMapActivity.Companion.MOCK_MARKERS_POSITIONS
 import com.github.displace.sdp2022.R
@@ -38,6 +39,12 @@ class GoodPinpointsDBHandlerTest {
 
         ActivityScenarioRule<DemoMapActivity>(intent)
     }
+
+    @get:Rule
+    val permissionRule: GrantPermissionRule = GrantPermissionRule.grant(
+        android.Manifest.permission.ACCESS_COARSE_LOCATION,
+        android.Manifest.permission.ACCESS_FINE_LOCATION
+    )
 
     @Before
     fun clear() {

@@ -44,6 +44,12 @@ class DemoMapActivityTest {
         ActivityScenarioRule<DemoMapActivity>(intent)
     }
 
+    @get:Rule
+    val permissionRule: GrantPermissionRule = GrantPermissionRule.grant(
+        android.Manifest.permission.ACCESS_COARSE_LOCATION,
+        android.Manifest.permission.ACCESS_FINE_LOCATION
+    )
+
     @Test
     fun mapIsDisplayedProperly() {
         testRule.scenario.use {
