@@ -109,7 +109,7 @@ class QrCodeScannerActivity : AppCompatActivity() {
             }
 
             //...sending the request
-            FriendRequest.sendFriendRequest(partialUser.uid, FirebaseDatabase.getInstance("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/").reference,
+            FriendRequest.sendFriendRequest(partialUser.username, FirebaseDatabase.getInstance("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/").reference,
                 activePartialUser
             )
 
