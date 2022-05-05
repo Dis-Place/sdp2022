@@ -107,6 +107,7 @@ class AccountSettingsActivity : AppCompatActivity() {
                 val pic = BitmapFactory.decodeFile(localFile.absolutePath)
                 if(pic != null) {
                     activeUser.setProfilePic(pic)
+                    Thread.sleep(3000)
                     progressDialog.dismiss()
                 }
                 profilePic.setImageBitmap(activeUser.getProfilePic())
