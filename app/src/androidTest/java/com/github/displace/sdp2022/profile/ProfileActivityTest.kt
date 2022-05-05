@@ -19,6 +19,7 @@ import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.R
 import com.github.displace.sdp2022.profile.friends.Friend
 import com.github.displace.sdp2022.profile.friends.FriendViewHolder
+import com.github.displace.sdp2022.profile.messages.MessageHandler
 import com.github.displace.sdp2022.profile.messages.MsgViewHolder
 import com.github.displace.sdp2022.users.CompleteUser
 import org.hamcrest.Matcher
@@ -33,7 +34,7 @@ class ProfileActivityTest {
     @Before
     fun before(){
         val app = ApplicationProvider.getApplicationContext() as MyApplication
-        completeUser = CompleteUser(app,null, false)
+        completeUser = CompleteUser(app,null)
         app.setActiveUser(completeUser)
         Thread.sleep(100)
     }
@@ -124,6 +125,45 @@ class ProfileActivityTest {
             Espresso.onView(ViewMatchers.withId(R.id.profileSettingsButton)).perform(click())
             Thread.sleep(30)
             Espresso.onView(ViewMatchers.withId(R.id.editProfile))
+                .check(ViewAssertions.matches(isDisplayed()))
+        }
+    }
+
+    @Test
+    fun settingsDontOpenWhenOffline() {
+        val app = ApplicationProvider.getApplicationContext() as MyApplication
+        completeUser = CompleteUser(app,null, offlineMode = true)
+        app.setActiveUser(completeUser)
+        Thread.sleep(100)
+
+        val intent =
+            Intent(ApplicationProvider.getApplicationContext(), ProfileActivity::class.java)
+        val scenario = ActivityScenario.launch<ProfileActivity>(intent)
+
+        scenario.use {
+            Espresso.onView(ViewMatchers.withId(R.id.profileSettingsButton)).perform(click())
+            Thread.sleep(30)
+            Espresso.onView(ViewMatchers.withId(R.id.profileUsername))
+                .check(ViewAssertions.matches(isDisplayed()))
+        }
+    }
+
+    @Test
+    fun settingsDontOpenWhenGuest() {
+        val app = ApplicationProvider.getApplicationContext() as MyApplication
+        completeUser = CompleteUser(app,null, guestBoolean = true)
+        app.setActiveUser(completeUser)
+        Thread.sleep(100)
+        app.setMessageHandler(MessageHandler(completeUser.getPartialUser(),app))
+
+        val intent =
+            Intent(ApplicationProvider.getApplicationContext(), ProfileActivity::class.java)
+        val scenario = ActivityScenario.launch<ProfileActivity>(intent)
+
+        scenario.use {
+            Espresso.onView(ViewMatchers.withId(R.id.profileSettingsButton)).perform(click())
+            Thread.sleep(30)
+            Espresso.onView(ViewMatchers.withId(R.id.profileUsername))
                 .check(ViewAssertions.matches(isDisplayed()))
         }
     }

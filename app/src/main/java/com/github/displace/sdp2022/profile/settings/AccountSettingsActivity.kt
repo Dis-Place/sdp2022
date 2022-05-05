@@ -71,6 +71,7 @@ class AccountSettingsActivity : AppCompatActivity() {
     private lateinit var activeUser: CompleteUser
 
     private lateinit var imgDBReference: StorageReference
+    private var profilePicBitmap: Bitmap? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -90,23 +91,30 @@ class AccountSettingsActivity : AppCompatActivity() {
         // Reference to the profile pic in Firebase Storage
         imgDBReference = storageReference.child("images/profilePictures/${activeUser.getPartialUser().uid}")
 
-        // Temp file for the profile pic
-        val localFile = File.createTempFile("profilePic", "jpg")
+        if(activeUser.getProfilePic() == null) {
+            // Temp file for the profile pic
+            val localFile = File.createTempFile("profilePic", "jpg")
 
-        // Gets profile pic from database
-        val view = LayoutInflater.from(this).inflate(R.layout.progress_dialog, null)
+            // Gets profile pic from database
+            val view = LayoutInflater.from(this).inflate(R.layout.progress_dialog, null)
 
-        val dialogBuilder = AlertDialog.Builder(this)
-        dialogBuilder.setView(view)
-        val progressDialog = dialogBuilder.create()
-        progressDialog.show()
-        imgDBReference.getFile(localFile).addOnSuccessListener {
-            val bitmap = BitmapFactory.decodeFile(localFile.absolutePath)
-            profilePic.setImageBitmap(bitmap)
-            Thread.sleep(3000)
-            progressDialog.dismiss()
-        }.addOnFailureListener{
-            showToastText("Failed to load profile pic")
+            val dialogBuilder = AlertDialog.Builder(this)
+            dialogBuilder.setView(view)
+            val progressDialog = dialogBuilder.create()
+            progressDialog.show()
+            imgDBReference.getFile(localFile).addOnSuccessListener {
+                // keep a copy of the profile pic in the case connection lost, and more efficient
+                val pic = BitmapFactory.decodeFile(localFile.absolutePath)
+                if(pic != null) {
+                    activeUser.setProfilePic(pic)
+                    progressDialog.dismiss()
+                }
+                profilePic.setImageBitmap(activeUser.getProfilePic())
+            }.addOnFailureListener{
+                showToastText("Failed to load profile pic")
+            }
+        } else {
+            profilePic.setImageBitmap(activeUser.getProfilePic())
         }
 
         username.text = activeUser.getPartialUser().username

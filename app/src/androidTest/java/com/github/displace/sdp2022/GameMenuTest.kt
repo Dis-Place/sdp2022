@@ -36,7 +36,7 @@ class GameMenuTest {
     @Before
     fun setup() {
         val app = ApplicationProvider.getApplicationContext() as MyApplication
-        app.setActiveUser(CompleteUser(app,null, false))
+        app.setActiveUser(CompleteUser(app,null))
         Thread.sleep(3000)
         app.setMessageHandler(MessageHandler(app.getActiveUser()!!.getPartialUser(),app))
         Thread.sleep(1000)
