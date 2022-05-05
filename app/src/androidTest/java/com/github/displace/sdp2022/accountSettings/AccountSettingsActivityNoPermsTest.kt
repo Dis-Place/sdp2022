@@ -34,7 +34,7 @@ class AccountSettingsActivityNoPermsTest {
     @Before
     fun before(){
         val app = ApplicationProvider.getApplicationContext() as MyApplication
-        completeUser = CompleteUser(app,null, false)
+        completeUser = CompleteUser(app,null)
         app.setActiveUser(completeUser)
         Thread.sleep(1000)
     }

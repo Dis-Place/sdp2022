@@ -20,6 +20,7 @@ import com.github.displace.sdp2022.news.NewsActivity
 import com.github.displace.sdp2022.profile.ProfileActivity
 import com.github.displace.sdp2022.profile.qrcode.QrCodeTemp
 import com.github.displace.sdp2022.users.CompleteUser
+import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -30,9 +31,14 @@ class MainMenuActivityTest {
     @Before
     fun before(){
         val app = ApplicationProvider.getApplicationContext() as MyApplication
-        app.setActiveUser(CompleteUser(app,null, false))
+        app.setActiveUser(CompleteUser(app,null))
 
         Thread.sleep(3000)
+    }
+
+    @After
+    fun after() {
+        (ApplicationProvider.getApplicationContext() as MyApplication).getActiveUser()?.removeUserFromDatabase()
     }
 
     /*
@@ -112,6 +118,24 @@ class MainMenuActivityTest {
         }
 
         intended(hasComponent(GameListActivity::class.java.name))
+        Intents.release()
+    }
+
+    @Test
+    fun playButtonDontWorkWhenOffline() {
+        val app = ApplicationProvider.getApplicationContext() as MyApplication
+        app.setActiveUser(CompleteUser(app,null, offlineMode = true))
+        Intents.init()
+        val intent =
+            Intent(ApplicationProvider.getApplicationContext(), MainMenuActivity::class.java)
+        val scenario = ActivityScenario.launch<MainMenuActivity>(intent)
+
+        scenario.use {
+            Espresso.onView(withId(R.id.playButton)).perform(click())
+            Espresso.onView(withId(R.id.titleText))
+                .check(matches(ViewMatchers.isDisplayed()))
+        }
+
         Intents.release()
     }
 
