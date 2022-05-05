@@ -175,7 +175,7 @@ class ProfileActivityTest {
 
     @Test
     fun testingAddFriendButton() {
-        Intents.init()
+//        Intents.init()
         val intent =
             Intent(ApplicationProvider.getApplicationContext(), ProfileActivity::class.java)
         val scenario = ActivityScenario.launch<ProfileActivity>(intent)
@@ -186,7 +186,7 @@ class ProfileActivityTest {
         }
 
         Intents.intended(IntentMatchers.hasComponent(AddFriendActivity::class.java.name))
-        Intents.release()
+//        Intents.release()
     }
 
 
