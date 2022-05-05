@@ -25,7 +25,6 @@ import com.github.displace.sdp2022.R
 import com.github.displace.sdp2022.authentication.TempLoginActivity
 import org.hamcrest.CoreMatchers
 import com.github.displace.sdp2022.map.GoodPinpointsDBHandlerTest.Companion.DB_DELAY
-import com.github.displace.sdp2022.map.PinpointsDBHandlerTest.Companion.DB_DELAY
 import com.github.displace.sdp2022.profile.ProfileActivity
 import com.github.displace.sdp2022.users.CompleteUser
 import org.hamcrest.core.StringContains.containsString
