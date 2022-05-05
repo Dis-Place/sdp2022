@@ -17,8 +17,8 @@ import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.R
 import com.github.displace.sdp2022.RealTimeDatabase
 import com.github.displace.sdp2022.profile.friends.FriendViewAdapter
+import com.github.displace.sdp2022.profile.messages.MessageHandler
 import com.github.displace.sdp2022.users.PartialUser
-import com.github.displace.sdp2022.util.math.Constants
 import com.google.firebase.database.*
 import kotlin.random.Random
 
@@ -44,7 +44,7 @@ class MatchMakingActivity : AppCompatActivity() {
     private lateinit var db: RealTimeDatabase
     private var currentLobbyId = ""
 
-    private var gamemode = "Versus2P"
+    private var gamemode = "Versus"
     private val map = "Map2"
 
     //This has to be chaged to the real active user
@@ -55,7 +55,6 @@ class MatchMakingActivity : AppCompatActivity() {
     private var lobbyMap : MutableMap<String,Any> = HashMap<String,Any>()
     private lateinit var app : MyApplication
     private var nbPlayer = 2L
-    private var nbSearch = 1
 
 
 
@@ -137,8 +136,8 @@ class MatchMakingActivity : AppCompatActivity() {
         nbPlayer = intent.getLongExtra("nbPlayer",2L)
         try {
             gamemode = intent.getStringExtra("gameMode")!!
-        }catch(e: Exception){
-            gamemode = "Versus2P"
+        }catch (e: Exception){
+            gamemode = "Versus"
         }
         debug = intent.getBooleanExtra("DEBUG", false)
         db = RealTimeDatabase().noCacheInstantiate(
@@ -298,6 +297,11 @@ class MatchMakingActivity : AppCompatActivity() {
         db.update("MM/$gamemode/$map/$lobbyType/freeLobbies", id, lobby)
         setupLobbyListener()
         uiToSearch()
+
+
+
+
+
     }
 
     /**
@@ -309,12 +313,9 @@ class MatchMakingActivity : AppCompatActivity() {
     fun createPrivateLobby(view: View) {
         lobbyType = "private"
         val id = findViewById<EditText>(R.id.lobbyIdInsert).text
-
         if (id.isEmpty()) {   //the ID can not be empty
             changeVisibility<TextView>(R.id.errorIdNonEmpty, View.VISIBLE)
             return
-        }else{
-            changeVisibility<TextView>(R.id.errorIdNonEmpty, View.INVISIBLE)
         }
 
         val lobby = Lobby(currentLobbyId, nbPlayer, activeUser)
@@ -387,7 +388,7 @@ class MatchMakingActivity : AppCompatActivity() {
         intent.putExtra("gid",this.currentLobbyId)
         intent.putExtra("uid",activeUser.uid)
         intent.putExtra("nbPlayer",nbPlayer)
-        intent.putExtra("dist", Constants.CLICKABLE_AREA_RADIUS)
+        intent.putExtra("gameMode",gamemode)
 
         startActivity(intent)
     }

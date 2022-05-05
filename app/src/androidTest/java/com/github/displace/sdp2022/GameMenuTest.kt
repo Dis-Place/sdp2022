@@ -62,6 +62,7 @@ class GameMenuTest {
         intent.putExtra("gid","GameVersusTest")
         intent.putExtra("uid","hCkhhJ0dkINs0BIpx8eqhLWzXw43")
         intent.putExtra("nbPlayer",2)
+        intent.putExtra("gameMode","Versus")
 
         ActivityScenario.launch<GameSummaryActivity>(intent).use {
             onView(withId(R.id.TryText))
@@ -74,6 +75,7 @@ class GameMenuTest {
         intent.putExtra("gid","GameVersusTest")
         intent.putExtra("uid","hCkhhJ0dkINs0BIpx8eqhLWzXw43")
         intent.putExtra("nbPlayer",2)
+        intent.putExtra("gameMode","Versus")
 
         ActivityScenario.launch<GameVersusViewActivity>(intent).use {
             onView(withId(R.id.map)).check(matches(ViewMatchers.isDisplayed()))
@@ -87,6 +89,7 @@ class GameMenuTest {
         intent.putExtra("uid","hCkhhJ0dkINs0BIpx8eqhLWzXw43")
         intent.putExtra("nbPlayer",2)
         intent.putExtra("dist",100000)
+        intent.putExtra("gameMode","Versus")
 
         ActivityScenario.launch<GameSummaryActivity>(intent).use {
             onView(withId(R.id.centerButton)).perform(ViewActions.click())
@@ -110,6 +113,7 @@ class GameMenuTest {
         intent.putExtra("uid","hCkhhJ0dkINs0BIpx8eqhLWzXw43")
         intent.putExtra("nbPlayer",2)
         intent.putExtra("dist",100000)
+        intent.putExtra("gameMode","Versus")
 
         ActivityScenario.launch<GameSummaryActivity>(intent).use {
             onView(withId(R.id.map)).perform(swipeUp())
@@ -126,6 +130,7 @@ class GameMenuTest {
         intent.putExtra("gid","GameVersusTest")
         intent.putExtra("uid","hCkhhJ0dkINs0BIpx8eqhLWzXw43")
         intent.putExtra("nbPlayer",2)
+        intent.putExtra("gameMode","Versus")
 
         ActivityScenario.launch<GameSummaryActivity>(intent).use {
             onView(withId(R.id.map)).perform(ViewActions.longClick())
@@ -139,6 +144,7 @@ class GameMenuTest {
         intent.putExtra("gid","GameVersusTest")
         intent.putExtra("uid","hCkhhJ0dkINs0BIpx8eqhLWzXw43")
         intent.putExtra("nbPlayer",2)
+        intent.putExtra("gameMode","Versus")
 
         ActivityScenario.launch<GameSummaryActivity>(intent).use {
             onView(withId(R.id.closeButton)).perform(click())
@@ -164,6 +170,7 @@ class GameMenuTest {
         intent.putExtra("gid","GameVersusTest")
         intent.putExtra("uid","hCkhhJ0dkINs0BIpx8eqhLWzXw43")
         intent.putExtra("nbPlayer",2)
+        intent.putExtra("gameMode","Versus")
         ActivityScenario.launch<GameSummaryActivity>(intent).use {
 
             onView(withId(R.id.chatButton)).perform(click())

@@ -8,6 +8,7 @@ object Constants {
     const val TWENTY_MEGA_BYTE: Long = 20 * 1024 * 1024
     const val THRESHOLD = 100
     const val GAME_AREA_RADIUS = 120
-    const val CLICKABLE_AREA_RADIUS = 100
+    const val CLICKABLE_AREA_RADIUS = 250
+    const val MOVE_TOLERANCE = 10
 
 }

@@ -22,7 +22,7 @@ class GameListActivity : AppCompatActivity() {
     fun playVs2Button(view: View) {
         val intent = Intent(this, MatchMakingActivity::class.java)
         intent.putExtra("nbPlayer",2L)
-        intent.putExtra("gameMode","Versus2P")
+        intent.putExtra("gameMode","Versus")
         startActivity(intent)
     }
 

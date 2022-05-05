@@ -2,20 +2,23 @@ package com.github.displace.sdp2022.gameVersus
 
 import com.github.displace.sdp2022.gameComponents.Coordinates
 import com.github.displace.sdp2022.gameComponents.GameEvent
+import com.github.displace.sdp2022.gameComponents.Player
 import com.github.displace.sdp2022.gameComponents.Point
 import com.github.displace.sdp2022.model.GameVersus
+import kotlin.random.Random
 
 
 class GameVersusViewModel(private val clientServerLink: ClientServerLink) {
 
     //Test class until we got a real server side
     private var gid = ""
+    private var order = 0.0
     private lateinit var actualPos : Coordinates
 
     //handle the 3 different possibility
     fun handleEvent(event: GameEvent): Long {
         when (event) {
-            is GameEvent.OnStart -> return SetGoal(event.Goal, event.PlayerId, event.gid, event.other)
+            is GameEvent.OnStart -> return SetGoal(event.Goal, event.PlayerId, event.gid, event.other, event.nbPlayer)
             is GameEvent.OnPointSelected -> return TryLocation(event.PlayerId, event.test)
             is GameEvent.OnSurrend -> return OnSurrend(event.PlayerId)
             is GameEvent.OnUpdate -> return UpdatePos(event.goal,event.PlayerId)
@@ -23,9 +26,9 @@ class GameVersusViewModel(private val clientServerLink: ClientServerLink) {
     }
 
     //Set the goal at the start of the game (each player set the goal of the other)
-    fun SetGoal(goal: Coordinates, playerId: String, gid: String, other: String): Long {
+    fun SetGoal(goal: Coordinates, playerId: String, gid: String, other: String, nbPlayer : Long): Long {
         this.gid = gid
-        clientServerLink.GetData(playerId, gid, other)
+        clientServerLink.GetData(playerId, gid, other, nbPlayer)
         clientServerLink.SendDataToOther(goal)
         return CONTINUE
     }
@@ -50,10 +53,6 @@ class GameVersusViewModel(private val clientServerLink: ClientServerLink) {
         return CONTINUE
     }
 
-    fun getGoal() : Coordinates {
-        return clientServerLink.game.goal
-    }
-
     fun getNbEssai() : Int {
         return clientServerLink.game.nbTry
     }
@@ -68,8 +67,8 @@ class GameVersusViewModel(private val clientServerLink: ClientServerLink) {
 
     companion object {
         const val CONTINUE = 0L
-        const val LOSE = 1L
-        const val WIN = -1L
+        const val LOSE = -1L
+        const val WIN = 1L
     }
 
 }

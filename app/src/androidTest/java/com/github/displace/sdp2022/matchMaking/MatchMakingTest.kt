@@ -30,7 +30,6 @@ class MatchMakingTest {
     fun before(){
         val app = ApplicationProvider.getApplicationContext() as MyApplication
         app.setActiveUser(CompleteUser(app,null, false))
-
         Thread.sleep(3000)
         app.setMessageHandler(MessageHandler(app.getActiveUser()!!.getPartialUser(),app))
         Thread.sleep(1000)
@@ -145,10 +144,7 @@ class MatchMakingTest {
                 .perform(ViewActions.replaceText("test")).perform(
                     ViewActions.closeSoftKeyboard()
                 )
-            Espresso.onView(ViewMatchers.withId(R.id.lobbyNbPlayerInsert))
-                .perform(ViewActions.replaceText("4")).perform(
-                    ViewActions.closeSoftKeyboard()
-                )
+
             Espresso.onView(ViewMatchers.withId(R.id.privateLobbyCreate)).perform(ViewActions.click())
             Thread.sleep(1000)
 
