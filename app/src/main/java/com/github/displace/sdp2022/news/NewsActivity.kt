@@ -1,6 +1,7 @@
 package com.github.displace.sdp2022.news
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -33,6 +34,15 @@ class NewsActivity : AppCompatActivity() {
                     ls.add( News(map["title"] as String , map["description"] as String , map["date"] as String) )
                 }
             }
+            val newsAdapter = NewsViewAdapter(applicationContext, ls)
+            newsRecyclerView.adapter = newsAdapter
+            newsRecyclerView.layoutManager = LinearLayoutManager(applicationContext)
+        }.addOnFailureListener{
+            val ls = arrayListOf<News>(News(
+                "NO NEWS FOUND",
+                "It seems you're offline, News aren't available !",
+                "NOW"
+            ))
             val newsAdapter = NewsViewAdapter(applicationContext, ls)
             newsRecyclerView.adapter = newsAdapter
             newsRecyclerView.layoutManager = LinearLayoutManager(applicationContext)

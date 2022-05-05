@@ -42,6 +42,23 @@ class TempLoginActivity : AppCompatActivity() {
         auth = Firebase.auth
         rememberMeButton = findViewById(R.id.loginRememberCheckBox)
 
+        /*  Flow
+        *   If smthg is remembered, check if internet is available
+        *               either way, firebaseUser null
+        *               if yes -> user with rememberMe true
+        *               if no -> user with offlineMode true and rememberMe true
+        *
+        *               Then go directly to Main Menu, skip the login
+        *   Else
+        *       User tries to Sign In -> normal sign in flow
+        *               if online, user with its firebaseUser
+        *               if offline, ask to go online
+        *       User goes Guest -> anonymous sign in
+        *               if online, user with guestBoolean true
+        *               if offline, user with guestBoolean true and offlineMode true, will be a default "Guest"
+        *
+         */
+
         val sharedPreferences = getSharedPreferences("login-checkbox", MODE_PRIVATE)
         if (sharedPreferences.getBoolean("login-checkbox", false)) {
             val app = applicationContext as MyApplication
@@ -56,6 +73,16 @@ class TempLoginActivity : AppCompatActivity() {
         //    //Check if internet is available, can be useful
         //    if (Connectivity.isConnected(applicationContext)) {
 
+    }
+
+    /*
+    Enters the app offline
+     */
+    fun offlineModeTest(view: View) {
+        val app = applicationContext as MyApplication
+        val user = CompleteUser(this,null, offlineMode = true)
+        app.setActiveUser(user)
+        goToMainMenuActivity(view)
     }
 
     @Suppress("UNUSED_PARAMETER")

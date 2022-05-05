@@ -1,7 +1,6 @@
 package com.github.displace.sdp2022.matchMaking
 
 import android.content.Intent
-import android.os.Message
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso
