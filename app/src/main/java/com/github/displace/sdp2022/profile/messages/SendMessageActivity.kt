@@ -45,7 +45,7 @@ class SendMessageActivity : AppCompatActivity() {
         }
 
         db.getDbReference("CompleteUsers/$receiverId/MessageHistory").runTransaction(
-            MessageUpdater(true, applicationContext,message,activePartialUser)
+            MessageUpdater( applicationContext,message,activePartialUser)
         )
         val intent = Intent(applicationContext, ProfileActivity::class.java)
         startActivity(intent)

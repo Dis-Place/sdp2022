@@ -13,6 +13,7 @@ import com.github.displace.sdp2022.authentication.TempLoginActivity
 import com.github.displace.sdp2022.news.NewsActivity
 import com.github.displace.sdp2022.profile.ProfileActivity
 import com.github.displace.sdp2022.profile.messages.MessageHandler
+import com.github.displace.sdp2022.profile.qrcode.QrCodeTemp
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
@@ -93,8 +94,8 @@ class MainMenuActivity : AppCompatActivity() {
 
     //send the user to the database demonstration
     @Suppress("UNUSED_PARAMETER")
-    fun databaseDemoButton(view: View) {
-        val intent = Intent(this, UploadImageActivity::class.java)
+    fun qrCodeDemo(view: View) {
+        val intent = Intent(this, QrCodeTemp::class.java)
         startActivity(intent)
     }
 

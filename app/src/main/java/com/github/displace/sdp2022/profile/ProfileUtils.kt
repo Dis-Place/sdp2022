@@ -7,7 +7,7 @@ import com.github.displace.sdp2022.profile.messages.Message
 import com.github.displace.sdp2022.users.PartialUser
 import com.google.firebase.database.*
 
-class MessageUpdater(val custom : Boolean,val applicationContext : Context, val message : String, val activePartialUser : PartialUser ) : Transaction.Handler {
+class MessageUpdater(val applicationContext : Context, val message : String, private val activePartialUser : PartialUser ) : Transaction.Handler {
     val app = applicationContext as MyApplication
     override fun doTransaction(currentData: MutableData): Transaction.Result {
         val ls = currentData.value as ArrayList<MutableMap<String,Any>>?
