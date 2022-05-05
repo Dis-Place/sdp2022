@@ -17,7 +17,6 @@ import com.github.displace.sdp2022.RealTimeDatabase
 import com.github.displace.sdp2022.profile.achievements.AchViewAdapter
 import com.github.displace.sdp2022.profile.friendInvites.AddFriendActivity
 import com.github.displace.sdp2022.profile.friendInvites.FriendRequestViewAdapter
-import com.github.displace.sdp2022.profile.friendInvites.FriendRequestsActivity
 import com.github.displace.sdp2022.profile.friendInvites.InviteWithId
 import com.github.displace.sdp2022.profile.friends.FriendViewAdapter
 import com.github.displace.sdp2022.profile.history.HistoryViewAdapter
@@ -215,10 +214,5 @@ class ProfileActivity : AppCompatActivity() {
         startActivity(Intent(this, AddFriendActivity::class.java))
     }
 
-
-    @Suppress("UNUSED_PARAMETER")
-    fun goToFriendRequests(view: View) {
-        startActivity(Intent(this, FriendRequestsActivity::class.java))
-    }
 
 }
