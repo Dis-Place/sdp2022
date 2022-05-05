@@ -48,6 +48,7 @@ class SignInActvityTest {
         onView(withId(R.id.signInActivitySignInButton)).perform(click())
         Thread.sleep(2_000)
         intended(anyIntent())
+        hasComponent(MainMenuActivity::class.java.name)
         release()
 
         OfflineUserFetcher(context).setCompleteUser(tempCompleteUser)
