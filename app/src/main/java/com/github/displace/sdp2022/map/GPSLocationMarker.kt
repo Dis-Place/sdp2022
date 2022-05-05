@@ -24,17 +24,16 @@ class GPSLocationMarker(private val mapView: MapView, private val gpsPositionMan
     private var areaDisk: ScaleDiskOverlay = ScaleDiskOverlay(mapView.context, marker.position, Constants.CLICKABLE_AREA_RADIUS, GeoConstants.UnitOfMeasure.meter)
 
     private val updateMarker = GeoPointListener { geoPoint ->
-        if(!marker.isDisplayed) {
-            mapView.overlayManager.remove(marker)
-            mapView.overlayManager.remove(areaDisk)
+        if(!mapView.overlayManager.contains(marker)) {
             mapView.overlayManager.add(marker)
-            areaDisk = ScaleDiskOverlay(mapView.context, geoPoint, Constants.CLICKABLE_AREA_RADIUS, GeoConstants.UnitOfMeasure.meter)
-            val diskPaint = Paint()
-            diskPaint.alpha = DISK_ALPHA
-            areaDisk.setCirclePaint1(diskPaint)
-            mapView.overlayManager.add(areaDisk)
         }
         marker.position = geoPoint
+        mapView.overlayManager.remove(areaDisk)
+        areaDisk = ScaleDiskOverlay(mapView.context, geoPoint, Constants.CLICKABLE_AREA_RADIUS, GeoConstants.UnitOfMeasure.meter)
+        val diskPaint = Paint()
+        diskPaint.alpha = DISK_ALPHA
+        areaDisk.setCirclePaint1(diskPaint)
+        mapView.overlayManager.add(areaDisk)
         mapView.invalidate()
     }
 
