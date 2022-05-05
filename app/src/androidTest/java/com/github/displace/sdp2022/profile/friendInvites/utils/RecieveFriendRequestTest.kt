@@ -30,7 +30,7 @@ class ReceiveFriendRequestTest {
         val result = ReceiveFriendRequests.receiveRequests(mockDatabaseReference, partialUser)
 
         var data =mutableListOf<InviteWithId>()
-        assertEquals( null , result.value)
+        assertEquals( data , result.value)
     }
 
 
