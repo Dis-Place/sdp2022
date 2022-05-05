@@ -78,6 +78,7 @@ class GameSummaryActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
+
     fun friendInviteToOpponent(View : View) {
         val app = applicationContext as MyApplication
         val otherId = (intent.getSerializableExtra("others") as List<List<String>>)[0][1]

@@ -2,40 +2,69 @@ package com.github.displace.sdp2022
 
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.os.Bundle
+import android.widget.Button
+import android.widget.Toast.*
 import androidx.appcompat.app.AppCompatActivity
-import androidx.preference.PreferenceManager
-import com.github.displace.sdp2022.authentication.TempLoginActivity
-
+import com.github.displace.sdp2022.authentication.SignInActivity
+import com.github.displace.sdp2022.users.CompleteUser
+import com.github.displace.sdp2022.users.OfflineUserFetcher
 
 class MainActivity : AppCompatActivity() {
-
-    //preferences setup : using a dummy name
-    private val myPreferences = "myPrefs"
-    private lateinit var sharedpreferences: SharedPreferences
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        val loginButton = findViewById<Button>(R.id.mainActivityLogInButton)
+        val isRemembered =
+            getSharedPreferences("login", MODE_PRIVATE).getBoolean("remembered", false)
 
-        // load the username in the preferences for later use
-        sharedpreferences = getSharedPreferences(myPreferences, Context.MODE_PRIVATE)
+        //isConnected is true if the user is connected to the internet
 
-        //Load the default settings values
-        PreferenceManager.setDefaultValues(this, R.xml.preferences, false)
+        loginButton.setOnClickListener {
+            //Will chose how we log in, depending on whether we are already remembered and we are connected to the internet
+            val app = applicationContext as MyApplication
 
+            //TODO:Find a way to get the firebase user
+            if (isRemembered) {
+                if (isConnected()) {
+                    //As we are remembered and we are online, we can have a normal logged in profiles
+                    if (app.getActiveUser() == null) {
+                        val user = CompleteUser(this, null, offlineMode = true)
+                        app.setActiveUser(user)
+                    }
+                } else {
+                    val user = OfflineUserFetcher(this).getCompleteUser()
+                    app.setActiveUser(user)
+                }
+                Intent(this, MainMenuActivity::class.java).apply {
+                    startActivity(this)
+                }
+            } else if (isConnected()) {
+                Intent(this, SignInActivity::class.java).apply {
+                    startActivity(this)
+                }
+            } else {
+                makeText(
+                    this,
+                    "You need an internet connection to log in when you are not remembered in !",
+                    LENGTH_SHORT
+                ).show()
+            }
 
-        val intent =
-            Intent(this, TempLoginActivity::class.java).apply { }
-        startActivity(intent)
+        }
     }
 
-    override fun onResume() {
-        super.onResume()
-        startActivity(Intent(this, TempLoginActivity::class.java))
+    /**
+     * Just a utility function to check if the user is connected to the internet or not
+     *
+     * @return
+     */
+    private fun isConnected(): Boolean {
+        val cm = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val capabilities = cm.getNetworkCapabilities(cm.activeNetwork)
+        return capabilities != null && capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
     }
-
-
 }
