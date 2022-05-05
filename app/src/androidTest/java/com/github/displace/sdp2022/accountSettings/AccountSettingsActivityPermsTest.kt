@@ -174,7 +174,6 @@ class AccountSettingsActivityPermsTest {
                 Intent(ApplicationProvider.getApplicationContext(), AccountSettingsActivity::class.java)
             val scenario = ActivityScenario.launch<AccountSettingsActivity>(intent)
             scenario.use {
-                Thread.sleep(1000)
                 val expectedIntent = IntentMatchers.hasAction(Intent.ACTION_PICK)
                 val response = Instrumentation.ActivityResult(Activity.RESULT_OK, resultData)
                 Intents.intending(expectedIntent).respondWith(response)
@@ -218,7 +217,6 @@ class AccountSettingsActivityPermsTest {
                 Intent(ApplicationProvider.getApplicationContext(), AccountSettingsActivity::class.java)
             val scenario = ActivityScenario.launch<AccountSettingsActivity>(intent)
             scenario.use {
-                Thread.sleep(1000)
                 val expectedIntent = IntentMatchers.hasAction(MediaStore.ACTION_IMAGE_CAPTURE)
                 val response = Instrumentation.ActivityResult(Activity.RESULT_OK, resultData)
                 Intents.intending(expectedIntent).respondWith(response)
@@ -247,7 +245,6 @@ class AccountSettingsActivityPermsTest {
             Intent(ApplicationProvider.getApplicationContext(), AccountSettingsActivity::class.java)
         val scenario = ActivityScenario.launch<AccountSettingsActivity>(intent)
         scenario.use {
-            Thread.sleep(10000)
             onView(withId(R.id.usernameUpdate)).perform(click())
             onView(withId(R.id.updateUsername)).perform(
                 replaceText("newName"),
@@ -264,7 +261,6 @@ class AccountSettingsActivityPermsTest {
             Intent(ApplicationProvider.getApplicationContext(), AccountSettingsActivity::class.java)
         val scenario = ActivityScenario.launch<AccountSettingsActivity>(intent)
         scenario.use {
-            Thread.sleep(1000)
             onView(withId(R.id.usernameUpdate)).perform(click())
             onView(withId(R.id.updateUsername)).perform(
                 replaceText(""),

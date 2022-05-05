@@ -53,8 +53,8 @@ class AccountSettingsActivityNoPermsTest {
 
         scenario.use {
             // Only clicks on the correct button but doesn't check if the picture changes or not
-            onView(withId(R.id.profilePicUpdate)).inRoot(not(isDialog())).perform(click())
-            onView(withText("Camera")).inRoot(not(isDialog())).perform(click())
+            onView(withId(R.id.profilePicUpdate)).perform(click())
+            onView(withText("Camera")).perform(click())
             // check Toast make text
             // check ImageView hasn't changed
             val device = UiDevice.getInstance(getInstrumentation())
@@ -73,8 +73,8 @@ class AccountSettingsActivityNoPermsTest {
 
         scenario.use {
             // Only clicks on the correct button but doesn't check if the picture changes or not
-            onView(withId(R.id.profilePicUpdate)).inRoot(not(isDialog())).perform(click())
-            onView(withText("Gallery")).inRoot(not(isDialog())).perform(click())
+            onView(withId(R.id.profilePicUpdate)).perform(click())
+            onView(withText("Gallery")).perform(click())
             // check Toast make text
             // check ImageView hasn't changed
             val device = UiDevice.getInstance(getInstrumentation())
