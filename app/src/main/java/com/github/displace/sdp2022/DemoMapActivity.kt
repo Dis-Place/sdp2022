@@ -5,12 +5,13 @@ import android.view.View
 import android.widget.Toast
 import android.widget.ToggleButton
 import androidx.appcompat.app.AppCompatActivity
+import com.github.displace.sdp2022.database.DatabaseFactory
 import com.github.displace.sdp2022.gameComponents.Player
 import com.github.displace.sdp2022.map.GPSLocationMarker
 import com.github.displace.sdp2022.map.MapViewManager
 import com.github.displace.sdp2022.map.MapViewManager.Companion.DEFAULT_CENTER
 import com.github.displace.sdp2022.map.PinpointsManager
-import com.github.displace.sdp2022.map.PinpointsDBHandler
+import com.github.displace.sdp2022.map.GoodPinpointsDBHandler
 import com.github.displace.sdp2022.util.PreferencesUtil
 import com.github.displace.sdp2022.util.gps.GPSPositionManager
 import com.github.displace.sdp2022.util.gps.GPSPositionUpdater
@@ -31,8 +32,7 @@ class DemoMapActivity : AppCompatActivity() {
     private lateinit var pinpointsManager: PinpointsManager
     lateinit var mockPinpointsRef: PinpointsManager.PinpointsRef
     lateinit var remoteMockPinpointsRef: PinpointsManager.PinpointsRef
-    private lateinit var dbHandler: PinpointsDBHandler
-    private var useDB = false
+    private lateinit var dbHandler: GoodPinpointsDBHandler
 
     /**
      * @param savedInstanceState
@@ -55,8 +55,14 @@ class DemoMapActivity : AppCompatActivity() {
 
         mockPinpointsRef = pinpointsManager.PinpointsRef()
         remoteMockPinpointsRef = pinpointsManager.PinpointsRef()
-        val db = RealTimeDatabase().noCacheInstantiate("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",false)
-        dbHandler = PinpointsDBHandler(db as RealTimeDatabase,MOCK_GAME_INSTANCE_NAME, this)
+
+        // | HOW TO GET A DATABASE INSTANCE
+        // v
+        val db = DatabaseFactory.getDB(intent)
+
+        dbHandler = GoodPinpointsDBHandler(db,MOCK_GAME_INSTANCE_NAME, this)
+        dbHandler.initializePinpoints(MOCK_PLAYER.id)
+        dbHandler.enableAutoupdateLocalPinpoints(MOCK_PLAYER.id,remoteMockPinpointsRef)
     }
 
     override fun onBackPressed() {
@@ -137,21 +143,7 @@ class DemoMapActivity : AppCompatActivity() {
         } else {
             removeMockMarkers()
         }
-        if(useDB){
-            dbHandler.updateDBPinpoints(MOCK_PLAYER.uid,mockPinpointsRef)
-        }
-    }
-
-    @Suppress("UNUSED_PARAMETER")
-    fun updateRemoteMockPinPoints(view: View){
-        if(useDB){
-            dbHandler.enableAutoupdateLocalPinpoints(MOCK_PLAYER.uid,remoteMockPinpointsRef)
-        }
-    }
-
-    fun toggleDB(view : View){
-        val toggleButton = view as ToggleButton
-        useDB = toggleButton.isChecked
+        dbHandler.updateDBPinpoints(MOCK_PLAYER.id,mockPinpointsRef)
     }
 
     fun toggleMock(view : View) {
