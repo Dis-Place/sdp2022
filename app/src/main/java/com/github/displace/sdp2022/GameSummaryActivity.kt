@@ -8,11 +8,7 @@ import android.view.View
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.github.displace.sdp2022.profile.FriendRequest
-import com.github.displace.sdp2022.profile.friends.FriendViewAdapter
-import com.github.displace.sdp2022.users.PartialUser
 import com.google.firebase.database.FirebaseDatabase
 
 class GameSummaryActivity : AppCompatActivity() {

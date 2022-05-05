@@ -17,7 +17,6 @@ import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.R
 import com.github.displace.sdp2022.RealTimeDatabase
 import com.github.displace.sdp2022.profile.friends.FriendViewAdapter
-import com.github.displace.sdp2022.profile.messages.MessageHandler
 import com.github.displace.sdp2022.users.PartialUser
 import com.google.firebase.database.*
 import kotlin.random.Random
