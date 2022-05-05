@@ -94,9 +94,17 @@ class AccountSettingsActivity : AppCompatActivity() {
         val localFile = File.createTempFile("profilePic", "jpg")
 
         // Gets profile pic from database
+        val view = LayoutInflater.from(this).inflate(R.layout.progress_dialog, null)
+
+        val dialogBuilder = AlertDialog.Builder(this)
+        dialogBuilder.setView(view)
+        val progressDialog = dialogBuilder.create()
+        progressDialog.show()
         imgDBReference.getFile(localFile).addOnSuccessListener {
             val bitmap = BitmapFactory.decodeFile(localFile.absolutePath)
             profilePic.setImageBitmap(bitmap)
+            Thread.sleep(3000)
+            progressDialog.dismiss()
         }.addOnFailureListener{
             showToastText("Failed to load profile pic")
         }
