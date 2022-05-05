@@ -20,6 +20,7 @@ class GoalPositionMarker(private val mapView: MapView, private val pos: GeoPoint
         marker.icon = AppCompatResources.getDrawable(mapView.context, R.drawable.goal_position_icon)
         marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER)
         marker.setOnMarkerClickListener { _, _ -> false }
+        marker.position = pos
     }
 
     /**

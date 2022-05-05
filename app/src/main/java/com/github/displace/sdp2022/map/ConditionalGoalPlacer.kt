@@ -12,18 +12,22 @@ import org.osmdroid.views.MapView
  * @param gameInstance current GameVersus Instance
  * @author LeoLgdr
  */
-class ConditionalGoalPlacer(mapView: MapView, private var gameInstance: GameVersus, private var playerPos: GeoPoint) {
-    private val goalPositionMarker = GoalPositionMarker(mapView, CoordinatesUtil.geoPoint(gameInstance.goal))
+class ConditionalGoalPlacer(private val mapView: MapView, private var gameInstance: GameVersus, private var playerPos: GeoPoint) {
+    private var goalPositionMarkers = listOf<GoalPositionMarker>()
 
     /**
      * places/remove marker depending on wether or not the player position is in GameArea
      * @param playerPos new player position
      */
     fun update(playerPos: GeoPoint) {
-        if(!gameInstance.isInGameArea(CoordinatesUtil.coordinates(playerPos))){
-            goalPositionMarker.add()
-        } else {
-           goalPositionMarker.remove()
+        var i = 0
+        goalPositionMarkers.forEach { goalPositionMarker ->
+            if (!gameInstance.isInGameArea(CoordinatesUtil.coordinates(playerPos),i)) {
+                goalPositionMarker.add()
+            } else {
+                goalPositionMarker.remove()
+            }
+            i += 1
         }
     }
 
@@ -33,7 +37,13 @@ class ConditionalGoalPlacer(mapView: MapView, private var gameInstance: GameVers
      */
     fun update(gameInstance: GameVersus) {
         this.gameInstance = gameInstance
-        goalPositionMarker.set(CoordinatesUtil.geoPoint(gameInstance.goal))
+        goalPositionMarkers.forEach { goal ->
+            goal.remove()
+        }
+        goalPositionMarkers = listOf()
+        gameInstance.goals.forEach { goal ->
+            goalPositionMarkers = goalPositionMarkers.plus(GoalPositionMarker(mapView,CoordinatesUtil.geoPoint(goal)))
+        }
         update(playerPos)
     }
 }
