@@ -6,9 +6,8 @@ object Constants {
     const val MAX_LATITUDE = 90.0
     const val MIN_LATITUDE = -90.0
     const val TWENTY_MEGA_BYTE: Long = 20 * 1024 * 1024
-    const val THRESHOLD = 100
-    const val GAME_AREA_RADIUS = 120
-    const val CLICKABLE_AREA_RADIUS = 250
-    const val MOVE_TOLERANCE = 10
+    const val THRESHOLD = 70
+    const val GAME_AREA_RADIUS = 160
+    const val CLICKABLE_AREA_RADIUS = 120
 
 }
