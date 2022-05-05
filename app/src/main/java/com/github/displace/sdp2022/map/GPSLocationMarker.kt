@@ -21,11 +21,14 @@ import org.osmdroid.views.overlay.ScaleDiskOverlay
 class GPSLocationMarker(private val mapView: MapView, private val gpsPositionManager: GPSPositionManager) {
 
     private var marker: Marker = Marker(mapView)
+    private var areaDisk: ScaleDiskOverlay = ScaleDiskOverlay(mapView.context, marker.position, Constants.CLICKABLE_AREA_RADIUS, GeoConstants.UnitOfMeasure.meter)
 
     private val updateMarker = GeoPointListener { geoPoint ->
         if(!marker.isDisplayed) {
+            mapView.overlayManager.remove(marker)
+            mapView.overlayManager.remove(areaDisk)
             mapView.overlayManager.add(marker)
-            val areaDisk = ScaleDiskOverlay(mapView.context, geoPoint, Constants.CLICKABLE_AREA_RADIUS, GeoConstants.UnitOfMeasure.meter)
+            areaDisk = ScaleDiskOverlay(mapView.context, geoPoint, Constants.CLICKABLE_AREA_RADIUS, GeoConstants.UnitOfMeasure.meter)
             val diskPaint = Paint()
             diskPaint.alpha = DISK_ALPHA
             areaDisk.setCirclePaint1(diskPaint)
@@ -50,7 +53,7 @@ class GPSLocationMarker(private val mapView: MapView, private val gpsPositionMan
     }
 
     companion object {
-        private const val DISK_ALPHA = 20 // opacity between 0 (invisible) and 255 (opaque)
+        private const val DISK_ALPHA = 40 // opacity between 0 (invisible) and 255 (opaque)
     }
 
 }

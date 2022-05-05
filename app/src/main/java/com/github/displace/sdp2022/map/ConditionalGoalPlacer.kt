@@ -21,10 +21,8 @@ class ConditionalGoalPlacer(private val mapView: MapView, private var gameInstan
      */
     fun update(playerPos: GeoPoint) {
         var i = 0
-        print("\n no inside nok nok \n")
         goalPositionMarkers.forEach { goalPositionMarker ->
             if (!gameInstance.isInGameArea(CoordinatesUtil.coordinates(playerPos),i)) {
-                print("X\n D ca morche pas heeh \n")
                 goalPositionMarker.add()
             } else {
                 goalPositionMarker.remove()
@@ -44,7 +42,6 @@ class ConditionalGoalPlacer(private val mapView: MapView, private var gameInstan
         }
         goalPositionMarkers = listOf()
         gameInstance.goals.forEach { goal ->
-            print("\n ${goal.pos} \n")
             goalPositionMarkers = goalPositionMarkers.plus(GoalPositionMarker(mapView,CoordinatesUtil.geoPoint(goal)))
         }
         update(playerPos)

@@ -22,7 +22,6 @@ class ClientServerLink(private val db : RealTimeDatabase, private val order: Dou
     private var others = listOf("")
     private var playerId = ""
     var game = GameVersus(initGoal, 0, 3, Constants.THRESHOLD.toDouble(), 2)
-    private var otherToInt = mapOf<String,Int>()
     private var pos = 0L
     private var nbPlayer = 2L
     private var orderToOrder = mapOf<Double,Int>()
@@ -63,14 +62,14 @@ class ClientServerLink(private val db : RealTimeDatabase, private val order: Dou
     private fun set(newGoal: Coordinates, newOrder: Double) {
         var goals = listOf<Coordinates>()
 
-        if(pos < 2L){
+        if(pos < (nbPlayer - 1)){
             if(orderToOrder.keys.contains(newOrder)){
                 return
             }
             orderToOrder = orderToOrder.plus(Pair(newOrder,pos.toInt()))
         }
 
-        if(game.goals.size != (nbPlayer-1).toInt()) {
+        if(pos < (nbPlayer-1).toInt()) {
             for (i in pos downTo 0) {
                 val currentPos = (pos - i)
                 if (currentPos == pos) {
@@ -107,8 +106,6 @@ class ClientServerLink(private val db : RealTimeDatabase, private val order: Dou
     fun verify(test: Coordinates): Long {
         val testResult = game.verify(test)
 
-        print( "\n $testResult \n")
-        if(testResult >=0) print( "\n ${orderToOrder.filter { (x, y) -> y == testResult }.keys.first()} \n")
         if (testResult >= 0) {
             val res = orderToOrder.filter { (x, y) -> y == testResult }.keys.first()
             db.update("GameInstance/Game$gid/id:$playerId", "finish", res)
