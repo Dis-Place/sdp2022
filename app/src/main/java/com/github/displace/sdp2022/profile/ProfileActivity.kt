@@ -122,7 +122,7 @@ class ProfileActivity : AppCompatActivity() {
         recyclerview.layoutManager = LinearLayoutManager(this)
         recyclerview.adapter = FriendRequestViewAdapter( mutableListOf<InviteWithId>())
 
-        RecieveFriendRequests.recieveRequests(rootRef, currentUser)
+        ReceiveFriendRequests.receiveRequests(rootRef, currentUser)
             .observe(this,  Observer{
                 val adapter = FriendRequestViewAdapter(it)
 

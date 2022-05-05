@@ -14,17 +14,17 @@ import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
-import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.github.displace.sdp2022.*
+import com.github.displace.sdp2022.MyApplication
+import com.github.displace.sdp2022.R
 import com.github.displace.sdp2022.profile.friendInvites.AddFriendActivity
-import com.github.displace.sdp2022.profile.friendInvites.FriendRequestsActivity
-import com.github.displace.sdp2022.profile.friends.Friend
 import com.github.displace.sdp2022.profile.friends.FriendViewHolder
 import com.github.displace.sdp2022.profile.messages.MsgViewHolder
 import com.github.displace.sdp2022.users.CompleteUser
 import org.hamcrest.Matcher
-import org.junit.*
+import org.junit.After
+import org.junit.Before
+import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
@@ -188,7 +188,7 @@ class ProfileActivityTest {
         Intents.intended(IntentMatchers.hasComponent(AddFriendActivity::class.java.name))
         Intents.release()
     }
-    
+
 
 }
 

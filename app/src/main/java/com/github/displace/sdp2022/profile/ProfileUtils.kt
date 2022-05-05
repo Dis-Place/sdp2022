@@ -140,15 +140,15 @@ class FriendRequest {
 
 
 
-class RecieveFriendRequests {
+class ReceiveFriendRequests {
     companion object {
 
         private var invitesLiveData = MutableLiveData<MutableList<InviteWithId>>()
-        private const val TAG = "RecieveFriendRequests"
+        private const val TAG = "ReceiveFriendRequests"
         private lateinit var rootRef : DatabaseReference
         // target is the user name
 
-        fun recieveRequests(rootRef: DatabaseReference, currentUser : PartialUser) : MutableLiveData<MutableList<InviteWithId>> {
+        fun receiveRequests(rootRef: DatabaseReference, currentUser : PartialUser) : MutableLiveData<MutableList<InviteWithId>> {
             var currentUserInvites = mutableListOf<InviteWithId>()
             this.rootRef = rootRef
 
