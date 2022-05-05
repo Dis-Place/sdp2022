@@ -15,26 +15,35 @@ import junit.framework.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
 
+class mockDataSnapshot : DataSnapshot {
+
+
+}
 @RunWith(AndroidJUnit4::class)
 class RecieveFriendRequestTest {
 
     @Test
-    fun getUserInvitesTest(){
+    fun getUserInvitesTest() {
         val userUid = "asdf"
         val invites = mutableListOf<InviteWithId>(
-            InviteWithId(Invite(PartialUser("a","test"), (PartialUser("b","asdf"))), "5"),
-            InviteWithId(Invite(PartialUser("c","test"), (PartialUser("d","fdsdf"))), "4"))
+            InviteWithId(Invite(PartialUser("a", "test"), (PartialUser("b", "asdf"))), "5"),
+            InviteWithId(Invite(PartialUser("c", "test"), (PartialUser("d", "fdsdf"))), "4")
+        )
         val expected = mutableListOf<InviteWithId>(
-            InviteWithId(Invite(PartialUser("a","test"), (PartialUser("b","asdf"))), "5"))
+            InviteWithId(Invite(PartialUser("a", "test"), (PartialUser("b", "asdf"))), "5")
+        )
         assertEquals(expected, getUserInvites(invites, userUid))
     }
 
 //    fun recieveRequests(rootRef: DatabaseReference, currentUser : PartialUser) : MutableLiveData<MutableList<InviteWithId>> {
 
-//    fun getInvites(dataSnapshot: DataSnapshot) : MutableList<InviteWithId>{
+    @Test
+    fun getInvitesTest(){
 
+//    fun getInvites(dataSnapshot: DataSnapshot): MutableList<InviteWithId> {
+
+    }
 }
-
 //class RecieveFriendRequests {
 //    companion object {
 //
