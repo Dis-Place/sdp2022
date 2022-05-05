@@ -86,7 +86,8 @@ class GameSummaryActivity : AppCompatActivity() {
             false
         ) as RealTimeDatabase
         db.referenceGet("CompleteUsers/$otherId/CompleteUser/partialUser","username").addOnSuccessListener { snapshot ->
-            FriendRequest.sendFriendRequest(otherId, FirebaseDatabase.getInstance("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/").reference,
+            val name = snapshot.value as String? ?: ""
+            FriendRequest.sendFriendRequest(name,FirebaseDatabase.getInstance("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/").reference,
                 app.getActiveUser()!!.getPartialUser()
             )
         }
