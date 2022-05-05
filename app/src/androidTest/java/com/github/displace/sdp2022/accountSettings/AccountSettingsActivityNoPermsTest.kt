@@ -9,6 +9,7 @@ import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.matcher.RootMatchers.isDialog
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -52,14 +53,14 @@ class AccountSettingsActivityNoPermsTest {
 
         scenario.use {
             // Only clicks on the correct button but doesn't check if the picture changes or not
-            onView(withId(R.id.profilePicUpdate)).perform(click())
-            onView(withText("Camera")).perform(click())
+            onView(withId(R.id.profilePicUpdate)).inRoot(not(isDialog())).perform(click())
+            onView(withText("Camera")).inRoot(not(isDialog())).perform(click())
             // check Toast make text
             // check ImageView hasn't changed
             val device = UiDevice.getInstance(getInstrumentation())
             device.findObject(UiSelector().clickable(true).checkable(false).index(1)).click()
             device.findObject(UiSelector().clickable(true).checkable(false).index(1)).click()
-            onView(withId(R.id.profilePic)).check(matches(withTagKey(R.id.profilePic, `is`("defaultPicTag"))))
+            onView(withId(R.id.profilePic)).inRoot(not(isDialog())).check(matches(withTagKey(R.id.profilePic, `is`("defaultPicTag"))))
 
         }
     }
@@ -72,13 +73,13 @@ class AccountSettingsActivityNoPermsTest {
 
         scenario.use {
             // Only clicks on the correct button but doesn't check if the picture changes or not
-            onView(withId(R.id.profilePicUpdate)).perform(click())
-            onView(withText("Gallery")).perform(click())
+            onView(withId(R.id.profilePicUpdate)).inRoot(not(isDialog())).perform(click())
+            onView(withText("Gallery")).inRoot(not(isDialog())).perform(click())
             // check Toast make text
             // check ImageView hasn't changed
             val device = UiDevice.getInstance(getInstrumentation())
             device.findObject(UiSelector().clickable(true).checkable(false).index(1)).click()
-            onView(withId(R.id.profilePic)).check(matches(withTagKey(R.id.profilePic, `is`("defaultPicTag"))))
+            onView(withId(R.id.profilePic)).inRoot(not(isDialog())).check(matches(withTagKey(R.id.profilePic, `is`("defaultPicTag"))))
         }
     }
 }
