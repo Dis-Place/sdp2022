@@ -81,11 +81,41 @@ class SignInActivity : AppCompatActivity() {
     private fun signInAsGuest(view: View) {
         auth.signInAnonymously().addOnCompleteListener {
             if (it.isSuccessful) {
+                handleNewUser(true)
                 val intent = Intent(this, MainMenuActivity::class.java)
                 startActivity(intent)
             }
         }
     }
+
+    private fun handleNewUser(isGuest: Boolean = false): Boolean {
+        val app = applicationContext as MyApplication
+        val current = auth.currentUser
+
+        val name: String? = if (isGuest) "guest" else current?.displayName
+        return if (name.isNullOrEmpty()) {
+            showFailedSignInMessage()
+            false
+        } else {
+            Toast.makeText(
+                this@SignInActivity,
+                "Successfully logged in $name ",
+                Toast.LENGTH_LONG
+            ).show()
+            val user = CompleteUser(app, current, guestBoolean = isGuest)
+            app.setActiveUser(user)
+            true
+        }
+    }
+
+    private fun showFailedSignInMessage() {
+        Toast.makeText(
+            this@SignInActivity,
+            "Failed to authenticate",
+            Toast.LENGTH_LONG
+        ).show()
+    }
+
 
     private fun googleAuthForFirebase(account: GoogleSignInAccount) {
         val credentials = GoogleAuthProvider.getCredential(account.idToken, null)
