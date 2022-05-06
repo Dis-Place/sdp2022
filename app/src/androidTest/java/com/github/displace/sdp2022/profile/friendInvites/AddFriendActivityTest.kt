@@ -6,7 +6,6 @@ import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.displace.sdp2022.R
-import com.github.displace.sdp2022.authentication.TempLoginActivity
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -23,7 +22,7 @@ class AddFriendActivityTest {
     }
 
     @Test
-    fun editTextIsDisplayed(){
+    fun editTextIsDisplayed() {
         Espresso.onView(ViewMatchers.withId(R.id.friendRequestEditText))
             .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
     }
