@@ -20,7 +20,6 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class SignInActvityTest {
 
-    private lateinit var tempCompleteUser: CompleteUser
     private val context = InstrumentationRegistry.getInstrumentation().context
 
     @get:Rule
@@ -50,7 +49,7 @@ class SignInActvityTest {
         //TODO: check that we have 2 intents
         assert(true)
 
-        OfflineUserFetcher(context).setCompleteUser(tempCompleteUser)
+        OfflineUserFetcher(context).setCompleteUser(tempCompleteteUser)
     }
 
 
