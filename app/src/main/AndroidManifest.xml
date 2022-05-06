@@ -53,10 +53,6 @@
             android:exported="false"
             android:parentActivityName=".MainActivity" />
         <activity
-            android:name=".authentication.SignOutActivity"
-            android:exported="false"
-            android:parentActivityName=".MainMenuActivity" />
-        <activity
             android:name=".matchMaking.MatchMakingActivity"
             android:exported="false" />
         <activity
