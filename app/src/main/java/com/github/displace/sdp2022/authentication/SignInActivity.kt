@@ -73,6 +73,9 @@ class SignInActivity : AppCompatActivity() {
                 Log.e("debug", e.message!!)
             }
         }
+
+        Thread.sleep(3_000)
+
         val intent = Intent(this@SignInActivity, MainMenuActivity::class.java)
         startActivity(intent)
     }
