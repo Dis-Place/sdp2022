@@ -183,11 +183,6 @@ class ProfileActivity : AppCompatActivity() {
         val app = applicationContext as MyApplication
         val activeUser = app.getActiveUser()
 
-<<<<<<< HEAD
-        if (activeUser != null) {
-            val intent = Intent(this, AccountSettingsActivity::class.java)
-            startActivity(intent)
-=======
         if(activeUser != null) {
             if(activeUser.offlineMode) {
                 Toast.makeText(this, "You're offline ! Please connect to the internet", Toast.LENGTH_LONG).show()
@@ -199,7 +194,6 @@ class ProfileActivity : AppCompatActivity() {
                 val intent = Intent(this, AccountSettingsActivity::class.java)
                 startActivity(intent)
             }
->>>>>>> db48dd6d80943b314f8d905d52d928e0f6a8e4d7
         } else {
             Toast.makeText(this, "huh", Toast.LENGTH_LONG).show()
         }
@@ -209,13 +203,8 @@ class ProfileActivity : AppCompatActivity() {
     private fun messageListener() = object : ValueEventListener {
 
         override fun onDataChange(snapshot: DataSnapshot) {
-<<<<<<< HEAD
-            val ls = snapshot.value as ArrayList<HashMap<String, Any>>?
-            messageList(ls)
-=======
             val ls = snapshot.value as ArrayList<HashMap<String,Any>>?
             updateMessageListView(fromDBToMsgList(ls))
->>>>>>> db48dd6d80943b314f8d905d52d928e0f6a8e4d7
         }
 
         override fun onCancelled(error: DatabaseError) {
@@ -223,15 +212,8 @@ class ProfileActivity : AppCompatActivity() {
 
     }
 
-<<<<<<< HEAD
-    private fun messageList(ls: ArrayList<HashMap<String, Any>>?) {
-        val messageRecyclerView = findViewById<RecyclerView>(R.id.recyclerMsg)
-
-        var list = mutableListOf<Message>()
-=======
     private fun fromDBToMsgList(ls : ArrayList<HashMap<String,Any>>?): ArrayList<Message> {
         var list = arrayListOf<Message>()
->>>>>>> db48dd6d80943b314f8d905d52d928e0f6a8e4d7
         if(ls != null){
             list = (applicationContext as MyApplication).getMessageHandler().getListOfMessages(ls)
             (applicationContext as MyApplication).getActiveUser()?.cacheMessages(list)
@@ -250,6 +232,7 @@ class ProfileActivity : AppCompatActivity() {
         messageRecyclerView.adapter = messageAdapter
         messageRecyclerView.layoutManager = LinearLayoutManager(applicationContext)
     }
+
 
     @Suppress("UNUSED_PARAMETER")
     fun addFriendButton(view: View) {
