@@ -1,6 +1,7 @@
 package com.github.displace.sdp2022.users
 
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.content.Context
 import android.graphics.Bitmap
 import android.util.Log
@@ -21,6 +22,7 @@ class CompleteUser(
     private val firebaseUser: FirebaseUser?,
     val guestBoolean: Boolean = false,
     val offlineMode: Boolean = false,
+    val progress_dialog: AlertDialog? = null
 ) {
 
     private val db: RealTimeDatabase = RealTimeDatabase().instantiate(
@@ -187,6 +189,7 @@ class CompleteUser(
                 History("dummy_map", getCurrentDate(), "VICTORY")
             )
             createFirstMessageList()
+            progress_dialog?.dismiss()
             return
         }
 
@@ -198,6 +201,7 @@ class CompleteUser(
             friendsList = offlineUserFetcher.getOfflineFriendsList()
             gameHistory = offlineUserFetcher.getOfflineGameHistory()
             partialUser = offlineUserFetcher.getOfflinePartialUser()
+            progress_dialog?.dismiss()
             return
         }
 
@@ -255,6 +259,7 @@ class CompleteUser(
                     PartialUser(partialUserMap["username"]!!, partialUserMap["uid"]!!)
 
                 offlineUserFetcher.setCompleteUser(this)
+                progress_dialog?.dismiss()
             } else {    // if user not existing in database, initialize it and adding it to database
 
                 initializeAchievements()
@@ -268,9 +273,11 @@ class CompleteUser(
                 initializePartialUser()
                 addUserToDatabase()
                 createFirstMessageList()
+                progress_dialog?.dismiss()
             }
         }.addOnFailureListener { e ->
             e.message?.let { Log.e("DBFailure", it) }
+            progress_dialog?.dismiss()
         }
 
     }

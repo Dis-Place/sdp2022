@@ -1,8 +1,10 @@
 package com.github.displace.sdp2022.authentication
 
+import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.Button
 import android.widget.CheckBox
@@ -35,12 +37,21 @@ class TempLoginActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
     private lateinit var signInClient: GoogleSignInClient
     private lateinit var rememberMeButton: CheckBox
+    //
+    private lateinit var progressDialog: AlertDialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_temp_login)
         auth = Firebase.auth
         rememberMeButton = findViewById(R.id.loginRememberCheckBox)
+
+        //
+        val view = LayoutInflater.from(this).inflate(R.layout.progress_dialog, null)
+
+        val dialogBuilder = AlertDialog.Builder(this)
+        dialogBuilder.setView(view)
+        progressDialog = dialogBuilder.create()
 
         /*  Flow
         *   If smthg is remembered, check if internet is available
@@ -62,7 +73,7 @@ class TempLoginActivity : AppCompatActivity() {
         val sharedPreferences = getSharedPreferences("login-checkbox", MODE_PRIVATE)
         if (sharedPreferences.getBoolean("login-checkbox", false)) {
             val app = applicationContext as MyApplication
-            val user = CompleteUser(this,null, offlineMode = true)
+            val user = CompleteUser(this,null, offlineMode = true, progress_dialog = progressDialog)
             app.setActiveUser(user)
 
             Toast.makeText(this, "You are already logged in", Toast.LENGTH_SHORT).show()
@@ -80,7 +91,7 @@ class TempLoginActivity : AppCompatActivity() {
      */
     fun offlineModeTest(view: View) {
         val app = applicationContext as MyApplication
-        val user = CompleteUser(this,null, offlineMode = true)
+        val user = CompleteUser(this,null, offlineMode = true, progress_dialog = progressDialog)
         app.setActiveUser(user)
         goToMainMenuActivity(view)
     }
@@ -91,6 +102,7 @@ class TempLoginActivity : AppCompatActivity() {
                 val intent = Intent(this, MainMenuActivity::class.java)
                 startActivity(intent)
             }*/
+        progressDialog.show()
         val options = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(getString(R.string.webclient_id)).requestEmail().build()
         signInClient = GoogleSignIn.getClient(this, options)
@@ -118,6 +130,7 @@ class TempLoginActivity : AppCompatActivity() {
         auth.signInAnonymously().addOnCompleteListener {
             if(it.isSuccessful) {
                 updateUI(handleNewUser(true))
+                progressDialog.dismiss()
             }
         }
     }
@@ -217,7 +230,7 @@ class TempLoginActivity : AppCompatActivity() {
                 "Successfully logged in $name ",
                 Toast.LENGTH_LONG
             ).show()
-            val user = CompleteUser(app, current, guestBoolean = isGuest)
+            val user = CompleteUser(app, current, guestBoolean = isGuest, progress_dialog = progressDialog)
             app.setActiveUser(user)
             true
         }
