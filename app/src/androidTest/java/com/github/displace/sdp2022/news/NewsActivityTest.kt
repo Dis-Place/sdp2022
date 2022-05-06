@@ -3,6 +3,7 @@ package com.github.displace.sdp2022.news
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions
+import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
@@ -31,10 +32,9 @@ class NewsActivityTest {
 
     @Test
     fun startToNewsTest() {
-        onView(withId(R.id.signInActivityGuestModeButton)).perform(ViewActions.click())
-        onView(withId(R.id.guestSignInButton)).perform(ViewActions.click())
+        onView(withId(R.id.signInActivityGuestModeButton)).perform(click())
         Thread.sleep(DB_DELAY)
-        onView(withId(R.id.newsButton)).perform(ViewActions.click())
+        onView(withId(R.id.newsButton)).perform(click())
         onView(withId(R.id.textView)).check(
             ViewAssertions.matches(
                 withText("NEWS")
