@@ -32,7 +32,7 @@ class SignInActvityTest {
 
         init()
         onView(withId(R.id.signInActivityGuestModeButton)).perform(click())
-        Thread.sleep(2_000)
+        Thread.sleep(3_000)
         hasComponent(MainMenuActivity::class.java.name)
         release()
 

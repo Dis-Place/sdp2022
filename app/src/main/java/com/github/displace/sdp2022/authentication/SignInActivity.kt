@@ -63,6 +63,10 @@ class SignInActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+
+        val app = applicationContext as MyApplication
+        app.setActiveUser(null)
+
         if (requestCode == REQUEST_CODE_SIGN_IN) {
             try {
                 val account = GoogleSignIn.getSignedInAccountFromIntent(data).result
@@ -76,15 +80,26 @@ class SignInActivity : AppCompatActivity() {
 
         Thread.sleep(3_000)
 
+        while (app.getActiveUser() == null)
+            Thread.sleep(1_000)
+
         val intent = Intent(this@SignInActivity, MainMenuActivity::class.java)
         startActivity(intent)
     }
 
     @Suppress("UNUSED_PARAMETER")
     fun signInAsGuest(view: View) {
+
+        val app = applicationContext as MyApplication
+        app.setActiveUser(null)
+
         auth.signInAnonymously().addOnCompleteListener {
             if (it.isSuccessful) {
                 handleNewUser(true)
+
+                while (app.getActiveUser() == null)
+                    Thread.sleep(1_000)
+
                 val intent = Intent(this, MainMenuActivity::class.java)
                 startActivity(intent)
             }
