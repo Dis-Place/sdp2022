@@ -78,7 +78,7 @@ class SignInActivity : AppCompatActivity() {
     }
 
     @Suppress("UNUSED_PARAMETER")
-    private fun signInAsGuest(view: View) {
+    fun signInAsGuest(view: View) {
         auth.signInAnonymously().addOnCompleteListener {
             if (it.isSuccessful) {
                 handleNewUser(true)
