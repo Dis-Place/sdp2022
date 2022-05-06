@@ -26,43 +26,43 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class FriendRequestTest {
-
-    lateinit var intent: Intent
-
-    @Before
-    fun setup() {
-        Intents.init()
-        intent = Intent(ApplicationProvider.getApplicationContext(), FriendRequest::class.java)
-    }
-
-    @After
-    fun releaseIntents() {
-        Intents.release()
-    }
-
-
-    @Test
-    fun acceptButtonIsDisplayedTest() {
-        ActivityScenario.launch<GameSummaryActivity>(intent).use {
-            Espresso.onView(ViewMatchers.withId(R.id.acceptRequestButton))
-                .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
-        }
-    }
-    @Test
-    fun rejectButtonIsDisplayedTest() {
-        ActivityScenario.launch<GameSummaryActivity>(intent).use {
-            Espresso.onView(ViewMatchers.withId(R.id.rejectRequestButton))
-                .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
-        }
-    }
-
-    @Test
-    fun textViewIsDisplayedTest() {
-        ActivityScenario.launch<GameSummaryActivity>(intent).use {
-            Espresso.onView(ViewMatchers.withId(R.id.requestSourceText))
-                .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
-        }
-    }
+//TODO: NOT SURE IF SHOULD KEEP THIS
+//    lateinit var intent: Intent
+//
+//    @Before
+//    fun setup() {
+//        Intents.init()
+//        intent = Intent(ApplicationProvider.getApplicationContext(), FriendRequest::class.java)
+//    }
+//
+//    @After
+//    fun releaseIntents() {
+//        Intents.release()
+//    }
+//
+//
+//    @Test
+//    fun acceptButtonIsDisplayedTest() {
+//        ActivityScenario.launch<GameSummaryActivity>(intent).use {
+//            Espresso.onView(ViewMatchers.withId(R.id.acceptRequestButton))
+//                .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
+//        }
+//    }
+//    @Test
+//    fun rejectButtonIsDisplayedTest() {
+//        ActivityScenario.launch<GameSummaryActivity>(intent).use {
+//            Espresso.onView(ViewMatchers.withId(R.id.rejectRequestButton))
+//                .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
+//        }
+//    }
+//
+//    @Test
+//    fun textViewIsDisplayedTest() {
+//        ActivityScenario.launch<GameSummaryActivity>(intent).use {
+//            Espresso.onView(ViewMatchers.withId(R.id.requestSourceText))
+//                .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
+//        }
+//    }
 
 
 
