@@ -189,7 +189,6 @@ class CompleteUser(
                 History("dummy_map", getCurrentDate(), "VICTORY")
             )
             createFirstMessageList()
-            Thread.sleep(2000)
             progress_dialog?.dismiss()
             return
         }
@@ -202,7 +201,6 @@ class CompleteUser(
             friendsList = offlineUserFetcher.getOfflineFriendsList()
             gameHistory = offlineUserFetcher.getOfflineGameHistory()
             partialUser = offlineUserFetcher.getOfflinePartialUser()
-            Thread.sleep(2000)
             progress_dialog?.dismiss()
             return
         }
@@ -261,7 +259,6 @@ class CompleteUser(
                     PartialUser(partialUserMap["username"]!!, partialUserMap["uid"]!!)
 
                 offlineUserFetcher.setCompleteUser(this)
-                Thread.sleep(2000)
                 progress_dialog?.dismiss()
             } else {    // if user not existing in database, initialize it and adding it to database
 
@@ -276,12 +273,10 @@ class CompleteUser(
                 initializePartialUser()
                 addUserToDatabase()
                 createFirstMessageList()
-                Thread.sleep(2000)
                 progress_dialog?.dismiss()
             }
         }.addOnFailureListener { e ->
             e.message?.let { Log.e("DBFailure", it) }
-            Thread.sleep(2000)
             progress_dialog?.dismiss()
         }
 
