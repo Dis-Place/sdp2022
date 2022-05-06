@@ -35,7 +35,7 @@
         app:srcCompat="@android:drawable/ic_menu_manage" />
 
     <ImageView
-        android:id="@+id/imageView2"
+        android:id="@+id/onlineStatus"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout"
@@ -44,6 +44,18 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/profileUsername"
         app:srcCompat="@android:drawable/presence_online" />
+
+    <ImageView
+        android:id="@+id/offlineStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+        app:layout_constraintEnd_toStartOf="@+id/textView4"
+        app:layout_constraintHorizontal_bias="0.94"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/profileUsername"
+        app:srcCompat="@android:drawable/presence_offline" />
 
     <TextView
         android:id="@+id/textView4"
