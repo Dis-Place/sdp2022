@@ -43,7 +43,7 @@ class MatchMakingActivity : AppCompatActivity() {
     private lateinit var db: RealTimeDatabase
     private var currentLobbyId = ""
 
-    private val gamemode = "Versus"
+    private var gamemode = "Versus"
     private val map = "Map2"
 
     //This has to be chaged to the real active user
@@ -53,6 +53,7 @@ class MatchMakingActivity : AppCompatActivity() {
     //keeps a map of the lobby : just how the DB stores it
     private var lobbyMap : MutableMap<String,Any> = HashMap<String,Any>()
     private lateinit var app : MyApplication
+    private var nbPlayer = 2L
 
 
 
@@ -131,6 +132,12 @@ class MatchMakingActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_match_making)
 
+        nbPlayer = intent.getLongExtra("nbPlayer",2L)
+        try {
+            gamemode = intent.getStringExtra("gameMode")!!
+        }catch (e: Exception){
+            gamemode = "Versus"
+        }
         debug = intent.getBooleanExtra("DEBUG", false)
         db = RealTimeDatabase().noCacheInstantiate(
             "https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",
@@ -284,7 +291,7 @@ class MatchMakingActivity : AppCompatActivity() {
      * Inserts the lobby data into the DB and setups the listeners and UI for search
      */
     private fun createPublicLobby(id: String) {
-        val lobby = Lobby(id, 2, activeUser)
+        val lobby = Lobby(id, nbPlayer, activeUser)
         currentLobbyId = id
         db.update("MM/$gamemode/$map/$lobbyType/freeLobbies", id, lobby)
         setupLobbyListener()
@@ -310,7 +317,7 @@ class MatchMakingActivity : AppCompatActivity() {
             return
         }
 
-        val lobby = Lobby(currentLobbyId, 2, activeUser)
+        val lobby = Lobby(currentLobbyId, nbPlayer, activeUser)
         db.referenceGet("MM/$gamemode/$map/$lobbyType", "freeList").addOnSuccessListener { free ->
             val ls = free.value as MutableList<String>
             if (ls.contains(id.toString())) {
@@ -376,12 +383,11 @@ class MatchMakingActivity : AppCompatActivity() {
         val intent = Intent(applicationContext, GameVersusViewActivity::class.java)
 
         db.update("GameInstance/Game" + this.currentLobbyId + "/id:" + activeUser.uid, "finish", 0)
-        db.update("GameInstance/Game" + this.currentLobbyId + "/id:" + activeUser.uid, "x", 0.0)
-        db.update("GameInstance/Game" + this.currentLobbyId + "/id:" + activeUser.uid, "y", 0.0)
 
         intent.putExtra("gid",this.currentLobbyId)
         intent.putExtra("uid",activeUser.uid)
-        intent.putExtra("nbPlayer",2) // change 2 by nbPlayer when implemented
+        intent.putExtra("nbPlayer",nbPlayer)
+        intent.putExtra("gameMode",gamemode)
 
         startActivity(intent)
     }

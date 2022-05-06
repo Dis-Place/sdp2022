@@ -10,7 +10,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.displace.sdp2022.MainActivity
 import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.R
-import com.github.displace.sdp2022.map.PinpointsDBHandlerTest.Companion.DB_DELAY
+import com.github.displace.sdp2022.map.GoodPinpointsDBHandlerTest.Companion.DB_DELAY
 import org.junit.After
 import org.junit.Rule
 import org.junit.Test

@@ -1,10 +1,12 @@
 package com.github.displace.sdp2022
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.EditText
 import android.widget.TextView
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -15,6 +17,8 @@ import com.github.displace.sdp2022.gameVersus.Chat
 import com.github.displace.sdp2022.gameVersus.ClientServerLink
 import com.github.displace.sdp2022.gameVersus.GameVersusViewModel
 import com.github.displace.sdp2022.map.*
+import com.github.displace.sdp2022.profile.FriendRequest
+import com.github.displace.sdp2022.users.PartialUser
 import com.github.displace.sdp2022.util.DateTimeUtil
 import com.github.displace.sdp2022.util.PreferencesUtil
 import com.github.displace.sdp2022.util.gps.GPSPositionManager
@@ -26,13 +30,14 @@ import com.google.firebase.database.*
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
 import kotlin.collections.ArrayList
+import com.github.displace.sdp2022.util.math.Constants
+import java.io.Serializable
+import kotlin.random.Random
 
 
 const val EXTRA_STATS = "com.github.displace.sdp2022.GAMESTAT"
 const val EXTRA_RESULT = "com.github.displace.sdp2022.GAMERESULT"
 const val EXTRA_MODE = "com.github.displace.sdp2022.GAMEMODE"
-const val EXTRA_SCORE_P1 = "com.github.displace.sdp2022.SCOREP1"
-const val EXTRA_SCORE_P2 = "com.github.displace.sdp2022.SCOREP2"
 
 class GameVersusViewActivity : AppCompatActivity() {
 
@@ -48,11 +53,20 @@ class GameVersusViewActivity : AppCompatActivity() {
     private lateinit var gpsPositionUpdater: GPSPositionUpdater
     private lateinit var gpsPositionManager: GPSPositionManager
     private lateinit var other: Map<String, Any>
+    private var others = listOf<List<String>>()
     private lateinit var pinpointsDBHandler: PinpointsDBHandler
     private lateinit var pinpointsManager: PinpointsManager
-    private lateinit var otherPlayerPinpoints: PinpointsManager.PinpointsRef
+    private var otherPlayersPinpoints = listOf<PinpointsManager.PinpointsRef>()
     private lateinit var conditionalGoalPlacer: ConditionalGoalPlacer
     private lateinit var clientServerLink : ClientServerLink
+    private var clickableArea = Constants.CLICKABLE_AREA_RADIUS
+
+    private var nbPlayer = 1L
+    private lateinit var gameMode : String
+    private var order = 0.0
+
+    private var gid = ""
+    private var uid = ""
 
     //CHAT
     private lateinit var chat : Chat
@@ -70,44 +84,47 @@ class GameVersusViewActivity : AppCompatActivity() {
     // 3 possibility : win => guess == position of the goal, continue => guess != position and lost => you missed the max number of time and lost
     private val guessListener = GeoPointListener { geoPoint ->
         run {
-            pinpointsManager.putMarker(geoPoint)
-            val res = game.handleEvent(
-                GameEvent.OnPointSelected(
-                    intent.getStringExtra("uid")!!,
-                    Point(geoPoint.latitude, geoPoint.longitude)
+            if (CoordinatesUtil.distance(game.getPos(), CoordinatesUtil.coordinates(geoPoint)) <= clickableArea)
+            {
+                pinpointsManager.putMarker(geoPoint)
+                val res = game.handleEvent(
+                    GameEvent.OnPointSelected(
+                        intent.getStringExtra("uid")!!,
+                        Point(geoPoint.latitude, geoPoint.longitude)
+                    )
                 )
-            )
-            if (res == GameVersusViewModel.WIN) {
-                gpsPositionManager.listenersManager.clearAllCalls()
-                clientServerLink.listenerManager.clearAllCalls()
-                findViewById<TextView>(R.id.TryText).apply { text = "win" }
-                extras.putBoolean(EXTRA_RESULT, true)
-                extras.putInt(EXTRA_SCORE_P1, 1)
-                extras.putInt(EXTRA_SCORE_P2, 0)
-                statsList.clear()
-                statsList.add(DateTimeUtil.currentTime())
-                showGameSummaryActivity()
-            } else if (res == GameVersusViewModel.CONTINUE) {
-                findViewById<TextView>(R.id.TryText).apply {
-                    text = "wrong guess, remaining tries : ${4 - game.getNbEssai()}"
+                if (res == GameVersusViewModel.WIN && nbPlayer == 2L) {
+                    gpsPositionManager.listenersManager.clearAllCalls()
+                    clientServerLink.listenerManager.clearAllCalls()
+                    findViewById<TextView>(R.id.TryText).apply { text = "win" }
+                    extras.putBoolean(EXTRA_RESULT, true)
+                    statsList.clear()
+                    statsList.add(DateTimeUtil.currentTime())
+                    showGameSummaryActivity()
+                } else if(res == GameVersusViewModel.WIN){
+                    findViewById<TextView>(R.id.TryText).apply {
+                        text = "correct guess, remaining tries : ${4 - game.getNbEssai()}"
+                    }
+                } else if (res == GameVersusViewModel.CONTINUE) {
+                    findViewById<TextView>(R.id.TryText).apply {
+                        text = "wrong guess, remaining tries : ${4 - game.getNbEssai()}"
+                    }
+                    pinpointsDBHandler.updateDBPinpoints(
+                        intent.getStringExtra("uid")!!,
+                        pinpointsManager.playerPinPointsRef
+                    )
+                } else if (res == GameVersusViewModel.LOSE) {
+                    gpsPositionManager.listenersManager.clearAllCalls()
+                    clientServerLink.listenerManager.clearAllCalls()
+                    findViewById<TextView>(R.id.TryText).apply {
+                        text =
+                            "status : end of game"
+                    }
+                    extras.putBoolean(EXTRA_RESULT, false)
+                    statsList.clear()
+                    statsList.add(DateTimeUtil.currentTime())
+                    showGameSummaryActivity()
                 }
-                pinpointsDBHandler.updateDBPinpoints(
-                    intent.getStringExtra("uid")!!,
-                    pinpointsManager.playerPinPointsRef
-                )
-            } else if (res == GameVersusViewModel.LOSE) {
-                gpsPositionManager.listenersManager.clearAllCalls()
-                clientServerLink.listenerManager.clearAllCalls()
-                findViewById<TextView>(R.id.TryText).apply {
-                    text =
-                        "status : end of game"
-                }
-                extras.putBoolean(EXTRA_RESULT, false)
-                extras.putInt(EXTRA_SCORE_P1, 0)
-                extras.putInt(EXTRA_SCORE_P2, 1)
-                statsList.clear()
-                statsList.add(DateTimeUtil.currentTime())
-                showGameSummaryActivity()
             }
         }
     }
@@ -116,26 +133,28 @@ class GameVersusViewActivity : AppCompatActivity() {
     private val endListener = object : ValueEventListener {
         override fun onDataChange(dataSnapshot: DataSnapshot) {
             val x = dataSnapshot.value
-            if (x == GameVersusViewModel.LOSE || x == GameVersusViewModel.WIN) {
-                db.delete("GameInstance", "Game" + intent.getStringExtra("gid")!!)
+
+            if(x == GameVersusViewModel.LOSE){
+                nbPlayer -= 1
+            }
+            if ((x == GameVersusViewModel.LOSE && nbPlayer < 2) || x == order) {
                 gpsPositionManager.listenersManager.clearAllCalls()
                 clientServerLink.listenerManager.clearAllCalls()
                 statsList.clear()
                 statsList.add(DateTimeUtil.currentTime())
-                if (x == GameVersusViewModel.WIN) {
+                if (x == order) {
+                    db.update("GameInstance/Game$gid/id:$uid", "pos", listOf(0.0,0.0, order))
+                    db.update("GameInstance/Game$gid/id:$uid","finish",GameVersusViewModel.LOSE)
                     findViewById<TextView>(R.id.TryText).apply {
                         text =
                             "status : end of game"
                     }
                     extras.putBoolean(EXTRA_RESULT, false)
-                    extras.putInt(EXTRA_SCORE_P1, 0)
-                    extras.putInt(EXTRA_SCORE_P2, 1)
                     showGameSummaryActivity()
                 } else {
+                    db.delete("GameInstance", "Game" + intent.getStringExtra("gid")!!)
                     findViewById<TextView>(R.id.TryText).apply { text = "win" }
                     extras.putBoolean(EXTRA_RESULT, true)
-                    extras.putInt(EXTRA_SCORE_P1, 1)
-                    extras.putInt(EXTRA_SCORE_P2, 0)
                     showGameSummaryActivity()
                 }
             }
@@ -149,12 +168,18 @@ class GameVersusViewActivity : AppCompatActivity() {
         PreferencesUtil.initOsmdroidPref(this)
         setContentView(R.layout.activity_game_versus)
 
+        uid = intent.getStringExtra("uid")!!
+        gid = intent.getStringExtra("gid")!!
+        gameMode = intent.getStringExtra("gameMode")!!
+        clickableArea = intent.getIntExtra("dist",Constants.CLICKABLE_AREA_RADIUS)
         db = RealTimeDatabase().noCacheInstantiate(
             "https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",
             false
         ) as RealTimeDatabase
-        clientServerLink = ClientServerLink(db)
+        order = Random.nextDouble(0.0,1000000000000000000000000.0)
+        clientServerLink = ClientServerLink(db, order)
         game = GameVersusViewModel(clientServerLink)
+        nbPlayer = intent.getLongExtra("nbPlayer",1)
 
         //initialise all the viewer and manager.
         mapView = findViewById(R.id.map)
@@ -165,7 +190,9 @@ class GameVersusViewActivity : AppCompatActivity() {
         gpsPositionManager.listenersManager.addCall(initGoalPlacer)
         gpsPositionUpdater = GPSPositionUpdater(this, gpsPositionManager)
         pinpointsManager = PinpointsManager(mapView)
-        otherPlayerPinpoints = pinpointsManager.PinpointsRef()
+        for(i in nbPlayer downTo 1){
+            otherPlayersPinpoints = otherPlayersPinpoints.plus(pinpointsManager.PinpointsRef())
+        }
         MockGPS.mockIfNeeded(intent,gpsPositionManager)
 
         //update the actual position of the player on the database
@@ -238,13 +265,10 @@ class GameVersusViewActivity : AppCompatActivity() {
     //show the game sumarry by launching a new activity
     private fun showGameSummaryActivity() {
         val intent = Intent(this, GameSummaryActivity::class.java)
-        val otherPlayerId =
-            other.toList()[0].first.removePrefix("id:")
-        extras.putString( "OPPONENT_ID" ,otherPlayerId )
-
         extras.putStringArrayList(EXTRA_STATS, statsList)
-        extras.putString(EXTRA_MODE, "Versus")
+        extras.putString(EXTRA_MODE, gameMode)
         intent.putExtras(extras)
+        intent.putExtra("others",others as Serializable)
         startActivity(intent)
     }
 
@@ -253,28 +277,45 @@ class GameVersusViewActivity : AppCompatActivity() {
         other = (gi.value as MutableMap<String, Any>).filter { id ->
             id.key != "id:${
                 intent.getStringExtra("uid")!!
-            }"
+            }" && id.key != "Chat"
         }
 
-        val otherPlayerId =
-            other.toList()[0].first.removePrefix("id:") // currently supporting only 2 players
-        db.addList(
-            "GameInstance/Game${intent.getStringExtra("gid")!!}/id:${otherPlayerId}",
-            "finish",
-            endListener
-        )
-        pinpointsDBHandler.enableAutoupdateLocalPinpoints(
-            otherPlayerId,
-            otherPlayerPinpoints
-        )
-        game.handleEvent(
-            GameEvent.OnStart(
-                DEFAULT_GOAL,
-                intent.getStringExtra("uid")!!,
-                intent.getStringExtra("gid")!!,
-                otherPlayerId
+        var i = 0
+        other.toList().forEach { x ->
+            val otherPlayerId = x.first.removePrefix("id:")
+            print(" \n $otherPlayerId \n")
+            db.addList(
+                "GameInstance/Game${intent.getStringExtra("gid")!!}/id:${otherPlayerId}",
+                "finish",
+                endListener
             )
-        )
+
+            db.referenceGet("CompleteUsers/${otherPlayerId}/CompleteUser/partialUser", "username").addOnSuccessListener { snapshot ->
+                try {
+                    val name = snapshot.value as String
+                    val list = listOf(listOf(name, otherPlayerId))
+                    others = others.plus(list)
+                }catch(e: Exception){}
+            }
+
+            try{
+            pinpointsDBHandler.enableAutoupdateLocalPinpoints(
+                otherPlayerId,
+                otherPlayersPinpoints[i]
+            )
+            }catch(e: Exception){ throw error(otherPlayerId)}
+
+            game.handleEvent(
+                GameEvent.OnStart(
+                    DEFAULT_GOAL,
+                    uid,
+                    gid,
+                    otherPlayerId,
+                    nbPlayer
+                )
+            )
+            i += 1
+        }
     }
 
     companion object {

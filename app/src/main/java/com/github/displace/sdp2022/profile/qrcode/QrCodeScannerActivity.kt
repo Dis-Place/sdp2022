@@ -1,17 +1,26 @@
 package com.github.displace.sdp2022.profile.qrcode
 
+import android.content.DialogInterface
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
+import androidx.test.core.app.ApplicationProvider
 import com.budiyev.android.codescanner.AutoFocusMode
 import com.budiyev.android.codescanner.CodeScanner
 import com.budiyev.android.codescanner.CodeScannerView
 import com.budiyev.android.codescanner.DecodeCallback
 import com.budiyev.android.codescanner.ErrorCallback
 import com.budiyev.android.codescanner.ScanMode
+import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.R
+import com.github.displace.sdp2022.RealTimeDatabase
+import com.github.displace.sdp2022.profile.FriendRequest
+import com.github.displace.sdp2022.profile.MessageUpdater
 import com.github.displace.sdp2022.users.PartialUser
+import com.google.firebase.database.FirebaseDatabase
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.decodeFromString
 
@@ -79,6 +88,38 @@ class QrCodeScannerActivity : AppCompatActivity() {
      *  - return to the previous activity (which is QrCodeTemp for now : use a simple intent)
      */
     fun showScanPrompt(partialUser : PartialUser){
+        val alertDialogBuilder = AlertDialog.Builder(this)
+
+        // setting the alert that will ask the user to confirm to send the request..
+        alertDialogBuilder.setMessage("Send invite to ${partialUser.username} ?")
+
+        //..on cancel :
+        alertDialogBuilder.setNegativeButton("Cancel") { dialog, _ ->
+            dialog.cancel()
+        }
+
+        //..on confirmation : ...
+        alertDialogBuilder.setPositiveButton("Ok") { _,_ ->
+
+            //...retrieving the active user's info
+            val activeUser = (this.applicationContext as MyApplication).getActiveUser()
+            var activePartialUser = PartialUser("defaultName","dummy_id")
+            if(activeUser != null){
+                activePartialUser = activeUser.getPartialUser()
+            }
+
+            //...sending the request
+            FriendRequest.sendFriendRequest(partialUser.username, FirebaseDatabase.getInstance("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/").reference,
+                activePartialUser
+            )
+
+            //...return to previous activity (for now, QrCodeTemp)
+            startActivity(Intent(this.applicationContext, QrCodeTemp::class.java))
+        }
+
+
+        // showing the alert
+        alertDialogBuilder.show()
 
     }
 

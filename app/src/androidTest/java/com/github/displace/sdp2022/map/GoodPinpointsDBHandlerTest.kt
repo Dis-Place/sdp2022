@@ -1,5 +1,7 @@
 package com.github.displace.sdp2022.map
 
+import android.content.Intent
+import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.matcher.ViewMatchers
@@ -9,31 +11,50 @@ import androidx.test.rule.GrantPermissionRule
 import com.github.displace.sdp2022.DemoMapActivity
 import com.github.displace.sdp2022.DemoMapActivity.Companion.MOCK_MARKERS_POSITIONS
 import com.github.displace.sdp2022.R
+import com.github.displace.sdp2022.database.DatabaseFactory
+import com.github.displace.sdp2022.database.MockDatabaseUtils
 import com.github.displace.sdp2022.map.PinpointsManagerTest.Companion.assertCorrectPositions
+import com.github.displace.sdp2022.util.gps.MockGPS
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class PinpointsDBHandlerTest {
-    @get:Rule
-    val testRule = ActivityScenarioRule(DemoMapActivity::class.java)
+class GoodPinpointsDBHandlerTest {
 
     @get:Rule
-    val permissionRule = GrantPermissionRule.grant(
+    val testRule = run {
+        val intent =
+            Intent(ApplicationProvider.getApplicationContext(), DemoMapActivity::class.java)
+
+        // THIS IS YOU CLEAR THE MOCK DB
+        DatabaseFactory.clearMockDB()
+
+        // THIS IS HOW YOU MOCK THE DB IN TESTS
+        MockDatabaseUtils.mockIntent(intent)
+
+        // THIS IS HOW YOU MOCK THE GPS
+        MockGPS.specifyMock(intent,MapViewManager.DEFAULT_CENTER)
+
+        ActivityScenarioRule<DemoMapActivity>(intent)
+    }
+
+    @get:Rule
+    val permissionRule: GrantPermissionRule = GrantPermissionRule.grant(
         android.Manifest.permission.ACCESS_COARSE_LOCATION,
         android.Manifest.permission.ACCESS_FINE_LOCATION
     )
 
+    @Before
+    fun clear() {
+        DatabaseFactory.clearMockDB()
+    }
+
     @Test
     fun communicationIsSuccessfulOnNonEmptyPinpoints(){
         val scenario = testRule.scenario
-        onView(ViewMatchers.withId(R.id.DBButton)).perform(click())
-        Thread.sleep(DB_DELAY)
         onView(ViewMatchers.withId(R.id.toggleMockMarkersButton)).perform(click())
-        Thread.sleep(DB_DELAY)
-        onView(ViewMatchers.withId(R.id.updateButton)).perform(click())
-        Thread.sleep(DB_DELAY)
         scenario.onActivity { a ->
             assertCorrectPositions(MOCK_MARKERS_POSITIONS, a.mockPinpointsRef.get())
             assertCorrectPositions(MOCK_MARKERS_POSITIONS, a.remoteMockPinpointsRef.get())
@@ -43,16 +64,8 @@ class PinpointsDBHandlerTest {
     @Test
     fun communicationIsSuccessfulOnEmptyPinpoints(){
         val scenario = testRule.scenario
-        onView(ViewMatchers.withId(R.id.DBButton)).perform(click())
-        Thread.sleep(DB_DELAY)
         onView(ViewMatchers.withId(R.id.toggleMockMarkersButton)).perform(click())
-        Thread.sleep(DB_DELAY)
-        onView(ViewMatchers.withId(R.id.updateButton)).perform(click())
-        Thread.sleep(DB_DELAY)
         onView(ViewMatchers.withId(R.id.toggleMockMarkersButton)).perform(click())
-        Thread.sleep(DB_DELAY)
-        onView(ViewMatchers.withId(R.id.updateButton)).perform(click())
-        Thread.sleep(DB_DELAY)
         scenario.onActivity { a ->
             assertCorrectPositions(listOf(), a.mockPinpointsRef.get())
             assertCorrectPositions(listOf(), a.remoteMockPinpointsRef.get())
