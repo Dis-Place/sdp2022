@@ -9,6 +9,7 @@ import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.github.displace.sdp2022.profile.FriendRequest
+import com.github.displace.sdp2022.profile.history.History
 import com.google.firebase.database.FirebaseDatabase
 
 class GameSummaryActivity : AppCompatActivity() {
@@ -78,6 +79,11 @@ class GameSummaryActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
+
+    private fun gameHistoryUpdate() {
+        val hist = History("gamemode","date","result")
+
+    }
 
     fun friendInviteToOpponent(View : View) {
         val app = applicationContext as MyApplication

@@ -157,7 +157,7 @@ class MatchMakingActivity : AppCompatActivity() {
         db = RealTimeDatabase().noCacheInstantiate(
             "https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",
             debug
-        ) as com.github.displace.sdp2022.RealTimeDatabase
+        ) as RealTimeDatabase
         if (debug) {
             gpsPositionManager.mockProvider(GeoPoint(0.00001,0.00001))
 
@@ -223,13 +223,13 @@ class MatchMakingActivity : AppCompatActivity() {
                 override fun doTransaction(currentData: MutableData): Transaction.Result {
                     toCreateId = ""
                     toSearchId = ""
-                    val ls = currentData.value as ArrayList<String>? ?: return Transaction.abort()
+                    val ls = currentData.value as ArrayList<String>? ?: return Transaction.success(currentData)
 
                     val idx : Int = ls.indexOf(lastId)+1
                     if(idx == 0){
                         return Transaction.abort()
                     }
-                    if (idx == 1 || idx == ls.size) {
+                    if (idx == ls.size) {
                         //only the head exists : add a new ID to the list and create a new lobby with that ID
                         //we reached the end of the list, create a new lobby
                         val nextId = if (!debug) {
@@ -286,7 +286,7 @@ class MatchMakingActivity : AppCompatActivity() {
                     .runTransaction(object : Transaction.Handler {
                         override fun doTransaction(currentData: MutableData): Transaction.Result {
                             val lobby =
-                                currentData.value as MutableMap<String, Any>? ?: return Transaction.abort()
+                                currentData.value as MutableMap<String, Any>? ?: return Transaction.success(currentData)
                             val positionMap = lobby["lobbyPosition"] as HashMap<String,Any>
 
                             if (lobby["lobbyCount"] as Long == lobby["lobbyMax"] as Long || lobby["lobbyLaunch"] as Boolean ||
