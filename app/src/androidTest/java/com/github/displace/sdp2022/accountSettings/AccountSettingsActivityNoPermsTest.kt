@@ -9,6 +9,7 @@ import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.matcher.RootMatchers.isDialog
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -34,7 +35,7 @@ class AccountSettingsActivityNoPermsTest {
     @Before
     fun before(){
         val app = ApplicationProvider.getApplicationContext() as MyApplication
-        completeUser = CompleteUser(app,null, false)
+        completeUser = CompleteUser(app,null)
         app.setActiveUser(completeUser)
         Thread.sleep(1000)
     }
@@ -59,7 +60,7 @@ class AccountSettingsActivityNoPermsTest {
             val device = UiDevice.getInstance(getInstrumentation())
             device.findObject(UiSelector().clickable(true).checkable(false).index(1)).click()
             device.findObject(UiSelector().clickable(true).checkable(false).index(1)).click()
-            onView(withId(R.id.profilePic)).check(matches(withTagKey(R.id.profilePic, `is`("defaultPicTag"))))
+            onView(withId(R.id.profilePic)).inRoot(not(isDialog())).check(matches(withTagKey(R.id.profilePic, `is`("defaultPicTag"))))
 
         }
     }
@@ -78,7 +79,7 @@ class AccountSettingsActivityNoPermsTest {
             // check ImageView hasn't changed
             val device = UiDevice.getInstance(getInstrumentation())
             device.findObject(UiSelector().clickable(true).checkable(false).index(1)).click()
-            onView(withId(R.id.profilePic)).check(matches(withTagKey(R.id.profilePic, `is`("defaultPicTag"))))
+            onView(withId(R.id.profilePic)).inRoot(not(isDialog())).check(matches(withTagKey(R.id.profilePic, `is`("defaultPicTag"))))
         }
     }
 }

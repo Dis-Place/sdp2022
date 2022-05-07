@@ -13,4 +13,6 @@ data class PartialUser(var username: String, val uid: String) { // profile pictu
     override fun hashCode(): Int {
         return uid.hashCode()
     }
+
+
 }

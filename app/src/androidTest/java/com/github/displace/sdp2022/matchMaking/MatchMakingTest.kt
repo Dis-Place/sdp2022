@@ -1,7 +1,6 @@
 package com.github.displace.sdp2022.matchMaking
 
 import android.content.Intent
-import android.os.Message
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso
@@ -13,14 +12,17 @@ import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.displace.sdp2022.*
+import com.github.displace.sdp2022.GameMenuTest.Companion.MOCK_GPS_POSITION
 import com.github.displace.sdp2022.profile.TestingUtils
 import com.github.displace.sdp2022.profile.messages.MessageHandler
 import com.github.displace.sdp2022.profile.messages.MsgViewHolder
 import com.github.displace.sdp2022.users.CompleteUser
 import com.github.displace.sdp2022.users.PartialUser
+import com.github.displace.sdp2022.util.gps.MockGPS
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.osmdroid.util.GeoPoint
 
 @RunWith(AndroidJUnit4::class)
 class MatchMakingTest {
@@ -30,7 +32,6 @@ class MatchMakingTest {
     fun before(){
         val app = ApplicationProvider.getApplicationContext() as MyApplication
         app.setActiveUser(CompleteUser(app,null, false))
-
         Thread.sleep(3000)
         app.setMessageHandler(MessageHandler(app.getActiveUser()!!.getPartialUser(),app))
         Thread.sleep(1000)
@@ -48,6 +49,7 @@ class MatchMakingTest {
         Thread.sleep(1000)
 
         scenario.use {
+
             Espresso.onView(ViewMatchers.withId(R.id.RandomLobbySearch)).perform(ViewActions.click())
             Thread.sleep(1000)
 
@@ -75,10 +77,10 @@ class MatchMakingTest {
 
 
         scenario.use {
-
+            MockGPS.specifyMock(intent, MOCK_GPS_POSITION)
 
             db.update("MM/Versus/Map2/public","freeList",listOf("head","test"))
-            db.update("MM/Versus/Map2/public/freeLobbies","test",Lobby("test", 3, PartialUser("FREE", "FREE")))
+            db.update("MM/Versus/Map2/public/freeLobbies","test",Lobby("test", 3, PartialUser("FREE", "FREE"), GeoPoint(0.00001,0.00001)))
 
             Thread.sleep(1000)
 
@@ -111,6 +113,8 @@ class MatchMakingTest {
 
         Thread.sleep(1000)
         scenario.use {
+            MockGPS.specifyMock(intent, MOCK_GPS_POSITION)
+
             Espresso.onView(ViewMatchers.withId(R.id.RandomLobbySearch)).perform(ViewActions.click())
             Thread.sleep(1000) //wait for the info to arrive
 
@@ -140,11 +144,13 @@ class MatchMakingTest {
         Thread.sleep(1000)
 
         scenario.use {
+            MockGPS.specifyMock(intent, MOCK_GPS_POSITION)
 
             Espresso.onView(ViewMatchers.withId(R.id.lobbyIdInsert))
                 .perform(ViewActions.replaceText("test")).perform(
                     ViewActions.closeSoftKeyboard()
                 )
+
             Espresso.onView(ViewMatchers.withId(R.id.privateLobbyCreate)).perform(ViewActions.click())
             Thread.sleep(1000)
 
@@ -176,9 +182,10 @@ class MatchMakingTest {
         Thread.sleep(1000)
 
         scenario.use {
+            MockGPS.specifyMock(intent, MOCK_GPS_POSITION)
 
             db.update("MM/Versus/Map2/private","freeList",listOf("head","test"))
-            db.update("MM/Versus/Map2/private/freeLobbies","test",Lobby("test", 3, PartialUser("FREE", "FREE")))
+            db.update("MM/Versus/Map2/private/freeLobbies","test",Lobby("test", 3, PartialUser("FREE", "FREE"),GeoPoint(0.00001,0.00001)))
 
             Thread.sleep(1000)
 
@@ -208,6 +215,8 @@ class MatchMakingTest {
 
 
         scenario.use {
+            MockGPS.specifyMock(intent, MOCK_GPS_POSITION)
+
             Espresso.onView(ViewMatchers.withId(R.id.playVersusButton)).perform(ViewActions.click())
         }
     }

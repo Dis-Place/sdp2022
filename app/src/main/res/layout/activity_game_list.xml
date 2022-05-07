@@ -11,13 +11,40 @@
         android:layout_width="256dp"
         android:layout_height="127dp"
         android:layout_weight="2"
-        android:onClick="playButton"
-        android:text="GameVersus"
+        android:onClick="playVs2Button"
+        android:text="2 Players"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.349" />
+        app:layout_constraintVertical_bias="0.195" />
+
+    <Button
+        android:id="@+id/playVersusButton2"
+        android:layout_width="256dp"
+        android:layout_height="127dp"
+        android:layout_weight="2"
+        android:onClick="playVs3Button"
+        android:text="3 Players"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.496"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/playVersusButton4"
+        android:layout_width="256dp"
+        android:layout_height="127dp"
+        android:layout_weight="2"
+        android:onClick="playVs5Button"
+        android:text="5 Players"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.496"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.807" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

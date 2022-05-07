@@ -10,8 +10,6 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
-
-
     <application
         android:name=".MyApplication"
         android:allowBackup="true"
@@ -21,12 +19,40 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Bootcamp">
         <activity
+            android:name=".profile.qrcode.QrCodeScannerActivity"
+            android:exported="false"
+            android:parentActivityName=".profile.qrcode.QrCodeTemp">
+
+            <!-- The meta-data tag is required if you support API level 15 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
+
+        <activity
+            android:name=".profile.qrcode.QrCodeTemp"
+            android:exported="false"
+            android:parentActivityName=".profile.ProfileActivity">
+
+            <!-- The meta-data tag is required if you support API level 15 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
+        <activity
+        android:name=".profile.friendInvites.FriendRequest"
+        android:exported="false" />
+        <activity
+            android:name=".profile.friendInvites.AddFriendActivity"
+            android:exported="false" />
+        <activity
             android:name=".SettingsActivity"
             android:exported="false"
             android:parentActivityName=".MainMenuActivity" />
         <activity
-            android:name=".authentication.TempLoginActivity"
-            android:exported="false" />
+            android:name=".authentication.SignInActivity"
+            android:exported="false"
+            android:parentActivityName=".MainActivity" />
         <activity
             android:name=".matchMaking.MatchMakingActivity"
             android:exported="false" />
@@ -48,7 +74,13 @@
             android:parentActivityName=".profile.ProfileActivity" />
         <activity
             android:name=".profile.settings.AccountSettingsActivity"
-            android:exported="false" />
+            android:exported="false">
+
+            <!-- The meta-data tag is required if you support API level 15 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
         <activity
             android:name=".profile.ProfileActivity"
             android:exported="false" />
@@ -114,6 +146,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-    </application>
 
+    </application>
 </manifest>

@@ -16,8 +16,8 @@ import com.github.displace.sdp2022.GameVersusViewActivity
 import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.R
 import com.github.displace.sdp2022.RealTimeDatabase
+import com.github.displace.sdp2022.profile.friends.Friend
 import com.github.displace.sdp2022.profile.friends.FriendViewAdapter
-import com.github.displace.sdp2022.profile.messages.MessageHandler
 import com.github.displace.sdp2022.users.PartialUser
 import com.github.displace.sdp2022.util.gps.GPSPositionManager
 import com.github.displace.sdp2022.util.gps.GPSPositionUpdater
@@ -50,7 +50,7 @@ class MatchMakingActivity : AppCompatActivity() {
     private lateinit var db: RealTimeDatabase
     private var currentLobbyId = ""
 
-    private val gamemode = "Versus"
+    private var gamemode = "Versus"
     private val map = "Map2"
 
     //This has to be chaged to the real active user
@@ -60,6 +60,7 @@ class MatchMakingActivity : AppCompatActivity() {
     //keeps a map of the lobby : just how the DB stores it
     private var lobbyMap : MutableMap<String,Any> = HashMap<String,Any>()
     private lateinit var app : MyApplication
+    private var nbPlayer = 2L
 
     private lateinit var gpsPositionManager : GPSPositionManager
     private lateinit var gpsPositionUpdater : GPSPositionUpdater
@@ -139,10 +140,18 @@ class MatchMakingActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_match_making)
 
+
         gpsPositionManager = GPSPositionManager(this)
-        gpsPositionManager.mockProvider(GeoPoint(0.00001,0.00001))
         gpsPositionUpdater = GPSPositionUpdater(this,gpsPositionManager)
         gpsPositionUpdater.stopUpdates()
+
+
+        nbPlayer = intent.getLongExtra("nbPlayer",2L)
+        try {
+            gamemode = intent.getStringExtra("gameMode")!!
+        }catch (e: Exception){
+            gamemode = "Versus"
+        }
 
         debug = intent.getBooleanExtra("DEBUG", false)
         db = RealTimeDatabase().noCacheInstantiate(
@@ -150,6 +159,8 @@ class MatchMakingActivity : AppCompatActivity() {
             debug
         ) as com.github.displace.sdp2022.RealTimeDatabase
         if (debug) {
+            gpsPositionManager.mockProvider(GeoPoint(0.00001,0.00001))
+
             db.insert("MM/$gamemode/$map/private", "freeList", listOf("head"))
             db.insert(
                 "MM/$gamemode/$map/private/freeLobbies",
@@ -182,7 +193,7 @@ class MatchMakingActivity : AppCompatActivity() {
         }
         /* Friends in private lobby */
         val friendRecyclerView = findViewById<RecyclerView>(R.id.friendsMMRecycler)
-        val friends = activeUser?.getFriendsList() ?: mutableListOf()
+        val friends = activeUser?.getFriendsList() ?: mutableListOf<PartialUser>()
 
         val friendAdapter = FriendViewAdapter(
             applicationContext,
@@ -213,8 +224,14 @@ class MatchMakingActivity : AppCompatActivity() {
                     toCreateId = ""
                     toSearchId = ""
                     val ls = currentData.value as ArrayList<String>? ?: return Transaction.abort()
-                    if (ls.size == 1) {
+
+                    val idx : Int = ls.indexOf(lastId)+1
+                    if(idx == 0){
+                        return Transaction.abort()
+                    }
+                    if (idx == 1 || idx == ls.size) {
                         //only the head exists : add a new ID to the list and create a new lobby with that ID
+                        //we reached the end of the list, create a new lobby
                         val nextId = if (!debug) {
                             Random.nextLong().toString()
                         } else {
@@ -226,10 +243,6 @@ class MatchMakingActivity : AppCompatActivity() {
                         currentData.value = ls
                     } else {
                         //more than only the head exists : check the first one out
-                        val idx : Int = ls.indexOf(lastId)+1
-                        if(idx == 0 || ls.size == idx){
-                            return Transaction.abort()
-                        }
                         toSearchId = ls[idx]
                     }
                     return Transaction.success(currentData)
@@ -341,12 +354,11 @@ class MatchMakingActivity : AppCompatActivity() {
      */
     private fun createPublicLobby(id: String) {
 
-
         val publicCreation = object : GeoPointListener{
             override fun invoke(geoPoint: GeoPoint) {
                 gpsPositionManager.listenersManager.removeCall(this)
 
-                val lobby = Lobby(id, 2, activeUser,geoPoint)
+                val lobby = Lobby(id, nbPlayer, activeUser,geoPoint)
                 currentLobbyId = id
                 db.update("MM/$gamemode/$map/$lobbyType/freeLobbies", id, lobby)
                 setupLobbyListener()
@@ -386,12 +398,10 @@ class MatchMakingActivity : AppCompatActivity() {
             return
         }
 
-
-
         val privateCreation = object : GeoPointListener{
             override fun invoke(geoPoint: GeoPoint) {
                 gpsPositionManager.listenersManager.removeCall(this)
-                val lobby = Lobby(currentLobbyId, 2, activeUser, geoPoint)
+                val lobby = Lobby(currentLobbyId, nbPlayer, activeUser, geoPoint)
                 db.referenceGet("MM/$gamemode/$map/$lobbyType", "freeList").addOnSuccessListener { free ->
                     val ls = free.value as MutableList<String>
                     if (ls.contains(id.toString())) {
@@ -489,12 +499,11 @@ class MatchMakingActivity : AppCompatActivity() {
         val intent = Intent(applicationContext, GameVersusViewActivity::class.java)
 
         db.update("GameInstance/Game" + this.currentLobbyId + "/id:" + activeUser.uid, "finish", 0)
-        db.update("GameInstance/Game" + this.currentLobbyId + "/id:" + activeUser.uid, "x", 0.0)
-        db.update("GameInstance/Game" + this.currentLobbyId + "/id:" + activeUser.uid, "y", 0.0)
 
         intent.putExtra("gid",this.currentLobbyId)
         intent.putExtra("uid",activeUser.uid)
-        intent.putExtra("nbPlayer",2) // change 2 by nbPlayer when implemented
+        intent.putExtra("nbPlayer",nbPlayer)
+        intent.putExtra("gameMode",gamemode)
 
         startActivity(intent)
     }
@@ -559,11 +568,11 @@ class MatchMakingActivity : AppCompatActivity() {
                 committed: Boolean,
                 currentData: DataSnapshot?
             ) {
+               gpsPositionUpdater.stopUpdates()
+               gpsPositionManager.listenersManager.clearAllCalls()
                if(toGame){
                    gameScreenTransition()
                }else{
-                   gpsPositionUpdater.stopUpdates()
-                   gpsPositionManager.listenersManager.clearAllCalls()
                    uiToSetup()
                }
             }

@@ -13,14 +13,14 @@ import androidx.test.espresso.intent.Intents.intended
 import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.github.displace.sdp2022.profile.FriendRequest
-import com.github.displace.sdp2022.profile.Invite
+import com.github.displace.sdp2022.profile.friendInvites.Invite
 import com.github.displace.sdp2022.profile.messages.MessageHandler
 import com.github.displace.sdp2022.users.CompleteUser
 import com.github.displace.sdp2022.users.PartialUser
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import java.io.Serializable
 import java.util.ArrayList
 
 
@@ -34,17 +34,6 @@ class GameSummaryActivityTest {
     fun createIntentAndBundle() {
         bundle = Bundle()
         intent = Intent(getApplicationContext(),GameSummaryActivity::class.java)
-    }
-
-    @Test
-    fun scoreDisplaysCorrectly() {
-        bundle.putInt(EXTRA_SCORE_P1, 1)
-        bundle.putInt(EXTRA_SCORE_P2, 2)
-        intent.putExtras(bundle)
-        ActivityScenario.launch<GameSummaryActivity>(intent).use {
-            onView(withId(R.id.scoreP1)).check(matches(withText("1")))
-            onView(withId(R.id.scoreP2)).check(matches(withText("2")))
-        }
     }
 
     @Test
@@ -93,7 +82,7 @@ class GameSummaryActivityTest {
 
         val mode = "example_mode"
         val id = "dummy_id"
-        bundle.putString("OPPONENT_ID", id)
+        bundle.putSerializable("others", listOf(listOf("",id)) as Serializable)
         bundle.putString(EXTRA_MODE, mode)
         intent.putExtras(bundle)
         ActivityScenario.launch<GameSummaryActivity>(intent).use {

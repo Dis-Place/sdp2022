@@ -5,18 +5,21 @@ import android.content.Context
 import android.util.Log
 import com.github.displace.sdp2022.profile.achievements.Achievement
 import com.github.displace.sdp2022.profile.history.History
+import com.github.displace.sdp2022.profile.messages.Message
 import com.github.displace.sdp2022.profile.statistics.Statistic
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.ArrayList
 
 private const val PARTIAL_USER_PATH = "partial"
 private const val ACHIEVEMENT_PATH = "achievements"
 private const val STATS_PATH = "stats"
 private const val FRIEND_LIST_PATH = "friends"
 private const val GAME_HISTORY_PATH = "game_history"
+private const val MESSAGE_HISTORY_PATH = "message_history"
 
 class OfflineUserFetcher(private val context: Context?) {
 
@@ -76,6 +79,12 @@ class OfflineUserFetcher(private val context: Context?) {
         )
     }
 
+    fun getOfflineMessageHistory(): ArrayList<Message> {
+        var offlineMessageHistory: ArrayList<Message>? =
+            readPreferences(MESSAGE_HISTORY_PATH) as ArrayList<Message>?
+        return offlineMessageHistory ?: arrayListOf()
+    }
+
     fun setOfflinePartialUser(partialUser: PartialUser?) {
         writeReference(PARTIAL_USER_PATH, partialUser)
     }
@@ -84,7 +93,7 @@ class OfflineUserFetcher(private val context: Context?) {
         writeReference(ACHIEVEMENT_PATH, achievements ?: mutableListOf())
     }
 
-    fun setOfflineStats(stats: MutableList<Statistic>?) {
+    fun setOfflineStats(stats: List<Statistic>?) {
         writeReference(STATS_PATH, stats ?: mutableListOf())
     }
 
@@ -96,12 +105,16 @@ class OfflineUserFetcher(private val context: Context?) {
         writeReference(GAME_HISTORY_PATH, gameHistory ?: mutableListOf())
     }
 
+    fun setOfflineMessageHistory(messageHistory: ArrayList<Message>?) {
+        writeReference(MESSAGE_HISTORY_PATH, messageHistory ?: arrayListOf())
+    }
+
     fun setCompleteUser(completeUser: CompleteUser) {
-        writeReference(ACHIEVEMENT_PATH, completeUser.getAchievements())
-        writeReference(STATS_PATH, completeUser.getStats())
-        writeReference(FRIEND_LIST_PATH, completeUser.getFriendsList())
-        writeReference(GAME_HISTORY_PATH, completeUser.getGameHistory())
-        writeReference(PARTIAL_USER_PATH, completeUser.getPartialUser())
+        setOfflineAchievements(completeUser.getAchievements())
+        setOfflineStats(completeUser.getStats())
+        setOfflineFriendsList(completeUser.getFriendsList())
+        setOfflineGameHistory(completeUser.getGameHistory())
+        setOfflinePartialUser(completeUser.getPartialUser())
     }
 
     fun getCompleteUser(): CompleteUser {

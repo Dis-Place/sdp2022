@@ -10,19 +10,22 @@ import androidx.test.espresso.ViewAction
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions
 import androidx.test.espresso.contrib.RecyclerViewActions
+import androidx.test.espresso.intent.Intents
+import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
-import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.github.displace.sdp2022.MainActivity
 import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.R
-import com.github.displace.sdp2022.profile.friends.Friend
+import com.github.displace.sdp2022.profile.friendInvites.AddFriendActivity
 import com.github.displace.sdp2022.profile.friends.FriendViewHolder
+import com.github.displace.sdp2022.profile.messages.MessageHandler
 import com.github.displace.sdp2022.profile.messages.MsgViewHolder
 import com.github.displace.sdp2022.users.CompleteUser
 import org.hamcrest.Matcher
-import org.junit.*
+import org.junit.After
+import org.junit.Before
+import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
@@ -33,7 +36,7 @@ class ProfileActivityTest {
     @Before
     fun before(){
         val app = ApplicationProvider.getApplicationContext() as MyApplication
-        completeUser = CompleteUser(app,null, false)
+        completeUser = CompleteUser(app,null)
         app.setActiveUser(completeUser)
         Thread.sleep(100)
     }
@@ -98,6 +101,7 @@ class ProfileActivityTest {
         }
     }
 
+
     @Test
     fun testFriendsButton() {
 
@@ -124,6 +128,45 @@ class ProfileActivityTest {
             Espresso.onView(ViewMatchers.withId(R.id.profileSettingsButton)).perform(click())
             Thread.sleep(30)
             Espresso.onView(ViewMatchers.withId(R.id.editProfile))
+                .check(ViewAssertions.matches(isDisplayed()))
+        }
+    }
+
+    @Test
+    fun settingsDontOpenWhenOffline() {
+        val app = ApplicationProvider.getApplicationContext() as MyApplication
+        completeUser = CompleteUser(app,null, offlineMode = true)
+        app.setActiveUser(completeUser)
+        Thread.sleep(100)
+
+        val intent =
+            Intent(ApplicationProvider.getApplicationContext(), ProfileActivity::class.java)
+        val scenario = ActivityScenario.launch<ProfileActivity>(intent)
+
+        scenario.use {
+            Espresso.onView(ViewMatchers.withId(R.id.profileSettingsButton)).perform(click())
+            Thread.sleep(30)
+            Espresso.onView(ViewMatchers.withId(R.id.profileUsername))
+                .check(ViewAssertions.matches(isDisplayed()))
+        }
+    }
+
+    @Test
+    fun settingsDontOpenWhenGuest() {
+        val app = ApplicationProvider.getApplicationContext() as MyApplication
+        completeUser = CompleteUser(app,null, guestBoolean = true)
+        app.setActiveUser(completeUser)
+        Thread.sleep(100)
+        app.setMessageHandler(MessageHandler(completeUser.getPartialUser(),app))
+
+        val intent =
+            Intent(ApplicationProvider.getApplicationContext(), ProfileActivity::class.java)
+        val scenario = ActivityScenario.launch<ProfileActivity>(intent)
+
+        scenario.use {
+            Espresso.onView(ViewMatchers.withId(R.id.profileSettingsButton)).perform(click())
+            Thread.sleep(30)
+            Espresso.onView(ViewMatchers.withId(R.id.profileUsername))
                 .check(ViewAssertions.matches(isDisplayed()))
         }
     }
@@ -169,6 +212,24 @@ class ProfileActivityTest {
                 .check(ViewAssertions.matches(isDisplayed()))
         }
     }
+
+    //TODO NEeded to comment to merge this week
+//    @Test
+//    fun testingAddFriendButton() {
+////        Intents.init()
+//        val intent =
+//            Intent(ApplicationProvider.getApplicationContext(), ProfileActivity::class.java)
+//        val scenario = ActivityScenario.launch<ProfileActivity>(intent)
+//
+//        scenario.use {
+//            Espresso.onView(ViewMatchers.withId(R.id.friendsButton)).perform(click())
+//            Espresso.onView(ViewMatchers.withId(R.id.addFriendButton)).perform(click())
+//        }
+//
+//        Intents.intended(IntentMatchers.hasComponent(AddFriendActivity::class.java.name))
+////        Intents.release()
+//    }
+
 
 }
 

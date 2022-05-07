@@ -42,7 +42,7 @@ class MyApplication : Application() {
     }
 
 
-    fun setActiveUser(user: CompleteUser) {
+    fun setActiveUser(user: CompleteUser?) {
         completeUser = user
     }
 
