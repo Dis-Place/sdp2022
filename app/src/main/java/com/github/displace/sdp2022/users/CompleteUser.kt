@@ -188,6 +188,7 @@ class CompleteUser(
             gameHistory = mutableListOf(
                 History("dummy_map", getCurrentDate(), "VICTORY")
             )
+            gameHistory = mutableListOf()
             createFirstMessageList()
             progress_dialog?.dismiss()
             return
@@ -270,6 +271,7 @@ class CompleteUser(
                 gameHistory = mutableListOf(
                     History("dummy_map", getCurrentDate(), "VICTORY")
                 )
+                gameHistory = mutableListOf()
                 initializePartialUser()
                 addUserToDatabase()
                 createFirstMessageList()

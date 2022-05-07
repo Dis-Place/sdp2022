@@ -16,18 +16,22 @@ class GameSummaryActivity : AppCompatActivity() {
 
     lateinit var layout: LinearLayout
     private val db : RealTimeDatabase = RealTimeDatabase().instantiate("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",false) as RealTimeDatabase
-
+    lateinit var app : MyApplication
+    var mode : String = ""
+    var victory : Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_game_summary)
+
+        app = applicationContext as MyApplication
 
         layout = findViewById<LinearLayout>(R.id.layoutGameStats)
         val extras = intent.extras
 
         if (extras != null) {
             val roundStats = extras.getStringArrayList(EXTRA_STATS)
-            val victory = extras.getBoolean(EXTRA_RESULT)
+            victory = extras.getBoolean(EXTRA_RESULT)!!
 
             if (roundStats != null) {
                 for (s in roundStats) {
@@ -37,7 +41,7 @@ class GameSummaryActivity : AppCompatActivity() {
             updateVictoryText(victory)
 
             val gameModeText = findViewById<TextView>(R.id.textViewGameMode)
-            val mode = extras.getString(EXTRA_MODE)
+            mode = extras.getString(EXTRA_MODE)!!
             if (mode != null) {
                 gameModeText.text = mode
             }
@@ -60,33 +64,36 @@ class GameSummaryActivity : AppCompatActivity() {
 
     fun updateVictoryText(vict: Boolean) {
         val victoryText = findViewById<TextView>(R.id.textViewResult)
+        val resString = if (vict) "VICTORY" else "DEFEAT"
+        victoryText.text = resString
+
         if(vict) {
-            victoryText.text = "VICTORY"
             victoryText.setTextColor(Color.rgb(0,255,0))
         } else {
-            victoryText.text = "DEFEAT"
             victoryText.setTextColor(Color.rgb(255,0,0))
         }
+
+        gameHistoryUpdate(resString)
+
     }
 
-    fun backToMainMenu() {
+    private fun backToMainMenu() {
         val intent = Intent(this, MainMenuActivity::class.java)
         startActivity(intent)
     }
 
-    fun backToGameList() {
+    private fun backToGameList() {
         val intent = Intent(this, GameListActivity::class.java)
         startActivity(intent)
     }
 
 
-    private fun gameHistoryUpdate() {
-        val hist = History("gamemode","date","result")
-
+    private fun gameHistoryUpdate(result : String) {
+        app.getActiveUser()!!.addGameInHistory(mode,app.getCurrentDate(),result)
     }
 
     fun friendInviteToOpponent(View : View) {
-        val app = applicationContext as MyApplication
+
         val otherId = (intent.getSerializableExtra("others") as List<List<String>>)[0][1]
         val db = RealTimeDatabase().noCacheInstantiate(
             "https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",
