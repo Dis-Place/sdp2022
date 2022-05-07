@@ -53,7 +53,7 @@ class CompleteUser(
     private lateinit var achievements: MutableList<Achievement>
     private lateinit var stats: MutableList<Statistic>
     private lateinit var friendsList: MutableList<PartialUser>
-    private lateinit var gameHistory: MutableList<History>
+    private var gameHistory: MutableList<History> = mutableListOf()
     private var profilePic: Bitmap? = null
 
     init {
@@ -244,15 +244,16 @@ class CompleteUser(
 
                 // Get game history from the database
                 val gameHistoryHash =
-                    completeUser["gameHistory"] as ArrayList<HashMap<String, String>>
-                gameHistory = gameHistoryHash.map { g ->
-                    History(
-                        g["map"]!!,
-                        g["date"]!!,
-                        g["result"]!!
-                    )
-                } as MutableList<History>
-
+                    completeUser["gameHistory"] as ArrayList<HashMap<String, String>>?
+                if(gameHistoryHash != null) {
+                    gameHistory = gameHistoryHash.map { g ->
+                        History(
+                            g["map"]!!,
+                            g["date"]!!,
+                            g["result"]!!
+                        )
+                    } as MutableList<History>
+                }
                 // Get Partial User from the database
                 val partialUserMap = completeUser["partialUser"] as HashMap<String, String>
                 partialUser =

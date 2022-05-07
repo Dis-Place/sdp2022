@@ -63,7 +63,7 @@ class ProfileActivity : AppCompatActivity() {
             offlineLight.visibility = View.VISIBLE
         }
 
-        /* Achievements */
+        /* Achievements */ //Should add a listener to it
         val achRecyclerView = findViewById<RecyclerView>(R.id.recyclerAch)
         val achs = activeUser?.getAchievements() ?: mutableListOf()
 
@@ -72,7 +72,7 @@ class ProfileActivity : AppCompatActivity() {
         achRecyclerView.adapter = achAdapter
         achRecyclerView.layoutManager = LinearLayoutManager(applicationContext)
 
-        /* Statistics */
+        /* Statistics */ //Should add a listener to it
         val statRecyclerView = findViewById<RecyclerView>(R.id.recyclerStats)
 
         val stats = activeUser?.getStats() ?: mutableListOf()
@@ -82,7 +82,7 @@ class ProfileActivity : AppCompatActivity() {
         statRecyclerView.adapter = statAdapter
         statRecyclerView.layoutManager = LinearLayoutManager(applicationContext)
 
-        /* Games History */
+        /* Games History */ //Should add a listener to it
         val historyRecyclerView = findViewById<RecyclerView>(R.id.recyclerHist)
 
         val hist = activeUser?.getGameHistory() ?: mutableListOf()
@@ -92,7 +92,7 @@ class ProfileActivity : AppCompatActivity() {
         historyRecyclerView.adapter = historyAdapter
         historyRecyclerView.layoutManager = LinearLayoutManager(applicationContext)
 
-        /* Friends */
+        /* Friends */ //Should add a listener to it
         val friendRecyclerView = findViewById<RecyclerView>(R.id.recyclerFriend)
 
         val friends = activeUser?.getFriendsList() ?: mutableListOf()
@@ -235,7 +235,7 @@ class ProfileActivity : AppCompatActivity() {
         messageRecyclerView.layoutManager = LinearLayoutManager(applicationContext)
 
         /**
-         * Check for achievements
+         * Check for achievements on messages
          */
         val app = applicationContext as MyApplication
         val user = app.getActiveUser()!!
