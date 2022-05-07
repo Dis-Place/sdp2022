@@ -34,6 +34,13 @@ class GameSummaryActivityTest {
     fun createIntentAndBundle() {
         bundle = Bundle()
         intent = Intent(getApplicationContext(),GameSummaryActivity::class.java)
+
+        val app = ApplicationProvider.getApplicationContext() as MyApplication
+        app.setActiveUser(CompleteUser(app,null, false))
+        Thread.sleep(3000)
+        app.setMessageHandler(MessageHandler(app.getActiveUser()!!.getPartialUser(),app))
+        Thread.sleep(1000)
+
     }
 
     @Test
@@ -73,12 +80,6 @@ class GameSummaryActivityTest {
         val h = i1.hashCode()
         var p1 = i1.source
         p1 = i1.target
-
-        val app = ApplicationProvider.getApplicationContext() as MyApplication
-        app.setActiveUser(CompleteUser(app,null, false))
-        Thread.sleep(3000)
-        app.setMessageHandler(MessageHandler(app.getActiveUser()!!.getPartialUser(),app))
-        Thread.sleep(1000)
 
         val mode = "example_mode"
         val id = "dummy_id"

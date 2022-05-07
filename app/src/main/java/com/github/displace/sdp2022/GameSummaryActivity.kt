@@ -17,7 +17,7 @@ class GameSummaryActivity : AppCompatActivity() {
     lateinit var layout: LinearLayout
     private val db : RealTimeDatabase = RealTimeDatabase().instantiate("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",false) as RealTimeDatabase
     lateinit var app : MyApplication
-    var mode : String = ""
+    var mode : String? = ""
     var victory : Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,7 +40,7 @@ class GameSummaryActivity : AppCompatActivity() {
             }
 
             val gameModeText = findViewById<TextView>(R.id.textViewGameMode)
-            mode = extras.getString(EXTRA_MODE)!!
+            mode = extras.getString(EXTRA_MODE)
             if (mode != null) {
                 gameModeText.text = mode
             }
@@ -91,7 +91,9 @@ class GameSummaryActivity : AppCompatActivity() {
 
 
     private fun gameHistoryUpdate(result : String) {
-        app.getActiveUser()!!.addGameInHistory(mode,app.getCurrentDate(),result)
+        if( mode != null) {
+            app.getActiveUser()!!.addGameInHistory(mode!!, app.getCurrentDate(), result)
+        }
     }
 
     fun friendInviteToOpponent(View : View) {
