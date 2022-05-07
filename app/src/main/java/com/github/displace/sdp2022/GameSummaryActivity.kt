@@ -38,13 +38,15 @@ class GameSummaryActivity : AppCompatActivity() {
                     addRoundStat(s)
                 }
             }
-            updateVictoryText(victory)
 
             val gameModeText = findViewById<TextView>(R.id.textViewGameMode)
             mode = extras.getString(EXTRA_MODE)!!
             if (mode != null) {
                 gameModeText.text = mode
             }
+
+            updateVictoryText(victory)
+
         }
 
         val mainMenuButton = findViewById<Button>(R.id.mainMenuButton)

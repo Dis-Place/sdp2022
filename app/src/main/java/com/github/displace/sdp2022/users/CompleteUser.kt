@@ -79,7 +79,6 @@ class CompleteUser(
         this.gameHistory = gameHistory
     }
 
-
     fun addAchievement(ach: Achievement) {
         if (offlineMode)
             return

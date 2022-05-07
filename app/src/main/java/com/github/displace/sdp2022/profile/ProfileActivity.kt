@@ -16,6 +16,8 @@ import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.R
 import com.github.displace.sdp2022.RealTimeDatabase
 import com.github.displace.sdp2022.profile.achievements.AchViewAdapter
+import com.github.displace.sdp2022.profile.achievements.Achievement
+import com.github.displace.sdp2022.profile.achievements.AchievementsLibrary
 import com.github.displace.sdp2022.profile.friendInvites.AddFriendActivity
 import com.github.displace.sdp2022.profile.friendInvites.FriendRequestViewAdapter
 import com.github.displace.sdp2022.profile.friendInvites.InviteWithId
@@ -231,6 +233,19 @@ class ProfileActivity : AppCompatActivity() {
         )
         messageRecyclerView.adapter = messageAdapter
         messageRecyclerView.layoutManager = LinearLayoutManager(applicationContext)
+
+        /**
+         * Check for achievements
+         */
+        val app = applicationContext as MyApplication
+        val user = app.getActiveUser()!!
+
+        for ( ach in AchievementsLibrary.messageLib){
+            val res = ach(list.size)
+            if(res.first){
+                user.addAchievement(Achievement(res.second,app.getCurrentDate()))
+            }
+        }
     }
 
 
