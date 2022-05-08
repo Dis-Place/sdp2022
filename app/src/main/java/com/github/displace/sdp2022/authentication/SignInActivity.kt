@@ -85,10 +85,7 @@ class SignInActivity : AppCompatActivity() {
         auth.signInAnonymously().addOnCompleteListener {
             if (it.isSuccessful) {
                 handleNewUser(true)
-
-                while (app.getActiveUser() == null)
-                    Thread.sleep(1_000)
-
+                
                 val intent = Intent(this, MainMenuActivity::class.java)
                 startActivity(intent)
             }
