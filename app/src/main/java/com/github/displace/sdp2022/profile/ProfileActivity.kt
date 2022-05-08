@@ -54,6 +54,11 @@ class ProfileActivity : AppCompatActivity() {
         val activeUser = app.getActiveUser()
         findViewById<TextView>(R.id.profileUsername).text =
             activeUser?.getPartialUser()?.username ?: "defaultNotLoggedIn"
+        var activePartialUser = PartialUser("defaultName","dummy_id")
+        if(activeUser != null){
+            activePartialUser = activeUser.getPartialUser()
+        }
+
 
         /* Show status */
         val onlineLight = findViewById<ImageView>(R.id.onlineStatus)
@@ -68,7 +73,7 @@ class ProfileActivity : AppCompatActivity() {
         val achs = activeUser?.getAchievements() ?: mutableListOf()
 
         val achAdapter =
-            AchViewAdapter(applicationContext, achs)
+            AchViewAdapter(applicationContext, achs.reversed())
         achRecyclerView.adapter = achAdapter
         achRecyclerView.layoutManager = LinearLayoutManager(applicationContext)
 
@@ -88,27 +93,17 @@ class ProfileActivity : AppCompatActivity() {
         val hist = activeUser?.getGameHistory() ?: mutableListOf()
 
         val historyAdapter =
-            HistoryViewAdapter(applicationContext, hist)
+            HistoryViewAdapter(applicationContext, hist.reversed())
         historyRecyclerView.adapter = historyAdapter
         historyRecyclerView.layoutManager = LinearLayoutManager(applicationContext)
 
-        /* Friends */ //Should add a listener to it
-        val friendRecyclerView = findViewById<RecyclerView>(R.id.recyclerFriend)
+        /* Friends */
+        updateFriendListView()
 
-        val friends = activeUser?.getFriendsList() ?: mutableListOf()
-        val friendAdapter = FriendViewAdapter(
-            applicationContext,
-            friends,
-            0
-        )
-        friendRecyclerView.adapter = friendAdapter
-        friendRecyclerView.layoutManager = LinearLayoutManager(applicationContext)
+        db.getDbReference("CompleteUsers/" + activePartialUser.uid + "/friendsList").addValueEventListener(friendListListener())
 
         /* Messages */
-        var activePartialUser = PartialUser("defaultName","dummy_id")
-        if(activeUser != null){
-            activePartialUser = activeUser.getPartialUser()
-        }
+
 
         if(activeUser != null && activeUser.offlineMode) {
             updateMessageListView(activeUser.getMessageHistory())
@@ -240,12 +235,37 @@ class ProfileActivity : AppCompatActivity() {
         val app = applicationContext as MyApplication
         val user = app.getActiveUser()!!
 
-        for ( ach in AchievementsLibrary.messageLib){
-            val res = ach(list.size)
-            if(res.first){
-                user.addAchievement(Achievement(res.second,app.getCurrentDate()))
-            }
+        AchievementsLibrary.achievementCheck(app,user,list.size.toLong(),AchievementsLibrary.messageLib)
+
+    }
+
+    //if the adding friend uses the local list
+    private fun friendListListener() = object : ValueEventListener{
+        override fun onDataChange(snapshot: DataSnapshot) {
+            updateFriendListView()
         }
+
+        override fun onCancelled(error: DatabaseError) {
+        }
+
+    }
+    private fun updateFriendListView(){
+        val friendRecyclerView = findViewById<RecyclerView>(R.id.recyclerFriend)
+        val app = applicationContext as MyApplication
+        val activeUser = app.getActiveUser()
+
+        val friends = activeUser?.getFriendsList() ?: mutableListOf()
+        val friendAdapter = FriendViewAdapter(
+            applicationContext,
+            friends.reversed(),
+            0
+        )
+        friendRecyclerView.adapter = friendAdapter
+        friendRecyclerView.layoutManager = LinearLayoutManager(applicationContext)
+
+        //Check for achievements
+        AchievementsLibrary.achievementCheck(app,activeUser!!,friends.size.toLong(),AchievementsLibrary.friendLib)
+
     }
 
 

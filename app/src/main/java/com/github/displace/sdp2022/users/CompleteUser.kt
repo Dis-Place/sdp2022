@@ -56,6 +56,7 @@ class CompleteUser(
     private var gameHistory: MutableList<History> = mutableListOf()
     private var profilePic: Bitmap? = null
 
+
     init {
         initializeUser()
     }
@@ -83,17 +84,20 @@ class CompleteUser(
         if (offlineMode)
             return
 
-        achievements.add(ach)
-        db.update(dbReference, "achievements/${achievements.size - 1}", ach)
-        if(!guestBoolean) {
-            offlineUserFetcher.setOfflineAchievements(achievements)
+        if(!achievements.contains(ach)){
+            achievements.add(ach)
+            db.update(dbReference, "achievements/${achievements.size - 1}", ach)
+            if(!guestBoolean) {
+                offlineUserFetcher.setOfflineAchievements(achievements)
+            }
         }
+
     }
 
     fun updateStats(statName: String, newValue: Long) {
         if (offlineMode)
             return
-        for (i in 0..stats.size) {
+        for (i in 0 until stats.size) {
             if (statName == stats[i].name) {
                 stats[i].value = newValue
                 db.update(dbReference, "stats/$i/value", newValue)
@@ -328,8 +332,9 @@ class CompleteUser(
 
     private fun initializeStats() {
         stats = mutableListOf(
-            Statistic("stat1", 0),
-            Statistic("stat2", 0)
+            Statistic("Games Played", 0),
+            Statistic("Games Won", 0),
+            Statistic("Distance Moved", 0)
         )      // It's a dummy list for now, will be replaced with a list of all the possible statistics initialized to 0
 
         if(!guestBoolean && firebaseUser != null) {
@@ -378,6 +383,15 @@ class CompleteUser(
 
     fun getStats(): List<Statistic> {
         return stats
+    }
+
+    fun getStat(name : String): Statistic {
+        for(stat in stats){
+            if(stat.name == name){
+                return stat
+            }
+        }
+        return Statistic("ERROR",0)
     }
 
     fun getFriendsList(): MutableList<PartialUser> {

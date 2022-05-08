@@ -16,6 +16,8 @@ import com.github.displace.sdp2022.GameVersusViewActivity
 import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.R
 import com.github.displace.sdp2022.RealTimeDatabase
+import com.github.displace.sdp2022.profile.achievements.Achievement
+import com.github.displace.sdp2022.profile.achievements.AchievementsLibrary
 import com.github.displace.sdp2022.profile.friends.Friend
 import com.github.displace.sdp2022.profile.friends.FriendViewAdapter
 import com.github.displace.sdp2022.users.PartialUser
@@ -427,6 +429,8 @@ class MatchMakingActivity : AppCompatActivity() {
                         } )
 
 
+
+
                     }
                 }
 
@@ -636,6 +640,7 @@ class MatchMakingActivity : AppCompatActivity() {
 
         val app = applicationContext as MyApplication
         app.getMessageHandler().addListener()
+
     }
 
     private fun uiToSearch() {
@@ -649,6 +654,16 @@ class MatchMakingActivity : AppCompatActivity() {
 
         val app = applicationContext as MyApplication
         app.getMessageHandler().removeListener()
+
+        //check for match making achievements
+        for( cond in AchievementsLibrary.mmtLib){
+            val res = cond(lobbyType == "private")
+            if(res.first){
+                val ach = Achievement(res.second,app.getCurrentDate())
+                app.getActiveUser()!!.addAchievement(ach)
+            }
+        }
+
     }
 
     /**

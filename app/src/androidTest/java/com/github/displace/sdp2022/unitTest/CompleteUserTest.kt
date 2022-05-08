@@ -91,8 +91,8 @@ class CompleteUserTest {
         Thread.sleep(3000)
         val dummyStats = completeUser.getStats()
         assertTrue(
-            dummyStats[0].name == "stat1" &&
-                    dummyStats[1].name == "stat2" &&
+            dummyStats[0].name == "Games Played" &&
+                    dummyStats[1].name == "Games Won" &&
                     0L == dummyStats[0].value &&
                     0L == dummyStats[1].value
         )
@@ -103,7 +103,7 @@ class CompleteUserTest {
     fun statisticsUpdates() {
         val completeUser = CompleteUser(ApplicationProvider.getApplicationContext() as MyApplication, null, false)
         Thread.sleep(3000)
-        completeUser.updateStats("stat1", 10)
+        completeUser.updateStats("Games Played", 10)
         assertTrue(completeUser.getStats()[0].value == 10L)
         completeUser.removeUserFromDatabase()
     }

@@ -9,7 +9,10 @@ import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.github.displace.sdp2022.profile.FriendRequest
+import com.github.displace.sdp2022.profile.achievements.Achievement
+import com.github.displace.sdp2022.profile.achievements.AchievementsLibrary
 import com.github.displace.sdp2022.profile.history.History
+import com.github.displace.sdp2022.users.CompleteUser
 import com.google.firebase.database.FirebaseDatabase
 
 class GameSummaryActivity : AppCompatActivity() {
@@ -89,12 +92,40 @@ class GameSummaryActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-
+    /**
+     * Adds this result to the users game history
+     */
     private fun gameHistoryUpdate(result : String) {
         if( mode != null) {
             app.getActiveUser()!!.addGameInHistory(mode!!, app.getCurrentDate(), result)
         }
+        statsUpdate(result)
     }
+
+    /**
+     * Updates the statistics of the user : games played and games won : used to check for achievements
+     */
+    private fun statsUpdate(result : String){
+        val user = app.getActiveUser()!!
+        val played = user.getStat("Games Played")
+        val won = user.getStat("Games Won")
+        val distance = user.getStat("Distance Moved")
+        val distThisGame : Long = 0 //TODO : CHANGE TO THE REAL VALUE
+        user.updateStats("Distance Moved" , distance.value+distThisGame)
+
+
+        user.updateStats("Games Played" , played.value+1)
+        //Check for achievements
+        AchievementsLibrary.achievementCheck(app,user,played.value+1,AchievementsLibrary.gamesLib)
+        if(result == "VICTORY") {
+            user.updateStats("Games Won", won.value + 1)
+            AchievementsLibrary.achievementCheck(app,user,won.value+1,AchievementsLibrary.victoryLib)
+            AchievementsLibrary.achievementCheck(app,user,distThisGame,AchievementsLibrary.gameDistLib)
+
+        }
+
+    }
+
 
     fun friendInviteToOpponent(View : View) {
 
