@@ -20,4 +20,13 @@
         android:key="musicKey"
         android:summary="[May come later] You will soon be able to enable/disable music "
         android:title="Enable Music" />
+    <ListPreference
+        android:contentDescription="theme button"
+        android:defaultValue="purple"
+        android:entries="@array/theme_entries"
+        android:entryValues="@array/theme_entry_values"
+        android:key="themeKey"
+        android:summary="Choose your theme"
+        android:title="Select theme" />
+
 </PreferenceScreen>

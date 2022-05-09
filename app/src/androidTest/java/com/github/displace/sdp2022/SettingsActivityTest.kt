@@ -1,9 +1,8 @@
 package com.github.displace.sdp2022
 
-import android.content.Intent
 import androidx.lifecycle.Lifecycle
+import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
@@ -13,8 +12,9 @@ import androidx.test.espresso.matcher.RootMatchers.withDecorView
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.github.displace.sdp2022.R.style.Theme_DisPlace1
+import com.github.displace.sdp2022.R.style.Theme_DisPlace2
 import org.hamcrest.Matchers.*
-import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -25,12 +25,6 @@ class SettingsActivityTest {
     @get:Rule
     val testRule = ActivityScenarioRule(SettingsActivity::class.java)
 
-    @Before
-    fun setUp() {
-        val intent =
-            Intent(ApplicationProvider.getApplicationContext(), SettingsActivity::class.java)
-        ActivityScenario.launch<SettingsActivity>(intent)
-    }
 
     @Test
     fun pressingDarkModeButtonDisplayToastMessage() {
@@ -47,7 +41,7 @@ class SettingsActivityTest {
         genericSettingsCheck("Music", "Music")
     }
 
-    fun genericSettingsCheck(fullName: String, name: String) {
+    private fun genericSettingsCheck(fullName: String, name: String) {
         //Select the dark mode switch and then press it
         onView(withId(androidx.preference.R.id.recycler_view))
             .perform(
@@ -77,4 +71,23 @@ class SettingsActivityTest {
             assert(true)
         }
     }
+
+
+    @Test
+    fun themeSelectionWorksProperly() {
+        val app = ApplicationProvider.getApplicationContext() as MyApplication
+        val preference = PreferenceManager.getDefaultSharedPreferences(app)
+        val savedPreference: String = preference.getString("themeKey", "")!!
+        val themes = arrayOf("purple", "green")
+        val themeNameToThemeMap = mapOf("purple" to Theme_DisPlace1, "green" to Theme_DisPlace2)
+        for (theme in themes) {
+            preference.edit().putString("themeKey", theme).apply()
+            Thread.sleep(500)
+            assert(app.theme.equals(themeNameToThemeMap[theme]))
+        }
+
+        preference.edit().putString("themeKey", savedPreference).apply()
+    }
+
+
 }
