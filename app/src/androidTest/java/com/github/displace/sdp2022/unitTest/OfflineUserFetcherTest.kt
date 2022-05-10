@@ -114,8 +114,9 @@ class OfflineUserFetcherTest {
         assert(
             offlineUserFetcher.getOfflineAchievements() == mutableListOf(
                 Achievement(
-                    "Create your account !",
-                    date = SimpleDateFormat("dd-MM-yyyy").format(Date())
+                    "Welcome home!",
+                    "Create your account",
+                    SimpleDateFormat("dd-MM-yyyy").format(Date())
                 )
             )
         )
