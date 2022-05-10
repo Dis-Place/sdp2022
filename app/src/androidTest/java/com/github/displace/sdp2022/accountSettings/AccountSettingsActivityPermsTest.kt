@@ -16,17 +16,13 @@ import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.withId
-import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.GrantPermissionRule
 import com.github.displace.sdp2022.MyApplication
-import com.github.displace.sdp2022.profile.settings.AccountSettingsActivity
 import com.github.displace.sdp2022.R
-import com.github.displace.sdp2022.authentication.TempLoginActivity
-import org.hamcrest.CoreMatchers
-import com.github.displace.sdp2022.map.GoodPinpointsDBHandlerTest.Companion.DB_DELAY
-import com.github.displace.sdp2022.profile.ProfileActivity
+import com.github.displace.sdp2022.profile.settings.AccountSettingsActivity
 import com.github.displace.sdp2022.users.CompleteUser
+import org.hamcrest.CoreMatchers
 import org.hamcrest.core.StringContains.containsString
 import org.junit.After
 import org.junit.Before
@@ -63,7 +59,8 @@ class AccountSettingsActivityPermsTest {
     fun logout() {
         //pressBack()
         //pressBack()
-        (ApplicationProvider.getApplicationContext() as MyApplication).getActiveUser()?.removeUserFromDatabase()
+        (ApplicationProvider.getApplicationContext() as MyApplication).getActiveUser()
+            ?.removeUserFromDatabase()
     }
 
     /*@Test
@@ -168,7 +165,10 @@ class AccountSettingsActivityPermsTest {
         Intents.init()
         try {
             val intent =
-                Intent(ApplicationProvider.getApplicationContext(), AccountSettingsActivity::class.java)
+                Intent(
+                    ApplicationProvider.getApplicationContext(),
+                    AccountSettingsActivity::class.java
+                )
             val scenario = ActivityScenario.launch<AccountSettingsActivity>(intent)
             scenario.use {
                 val expectedIntent = IntentMatchers.hasAction(Intent.ACTION_PICK)
@@ -211,7 +211,10 @@ class AccountSettingsActivityPermsTest {
         Intents.init()
         try {
             val intent =
-                Intent(ApplicationProvider.getApplicationContext(), AccountSettingsActivity::class.java)
+                Intent(
+                    ApplicationProvider.getApplicationContext(),
+                    AccountSettingsActivity::class.java
+                )
             val scenario = ActivityScenario.launch<AccountSettingsActivity>(intent)
             scenario.use {
                 val expectedIntent = IntentMatchers.hasAction(MediaStore.ACTION_IMAGE_CAPTURE)

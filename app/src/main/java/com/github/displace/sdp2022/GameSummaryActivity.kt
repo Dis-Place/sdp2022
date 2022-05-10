@@ -90,6 +90,7 @@ class GameSummaryActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
+
     fun friendInviteToOpponent(View : View) {
         val app = applicationContext as MyApplication
         val otherId = (intent.getSerializableExtra("others") as List<List<String>>)[0][1]
@@ -99,7 +100,7 @@ class GameSummaryActivity : AppCompatActivity() {
         ) as RealTimeDatabase
         db.referenceGet("CompleteUsers/$otherId/CompleteUser/partialUser","username").addOnSuccessListener { snapshot ->
             val name = snapshot.value as String? ?: ""
-            FriendRequest.sendFriendRequest(name,FirebaseDatabase.getInstance("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/").reference,
+            FriendRequest.sendFriendRequest(this,otherId,FirebaseDatabase.getInstance("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/").reference,
                 app.getActiveUser()!!.getPartialUser()
             )
         }
