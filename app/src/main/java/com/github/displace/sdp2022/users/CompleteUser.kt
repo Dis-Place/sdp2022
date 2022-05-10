@@ -5,6 +5,7 @@ import android.app.AlertDialog
 import android.content.Context
 import android.graphics.Bitmap
 import android.util.Log
+import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.RealTimeDatabase
 import com.github.displace.sdp2022.profile.achievements.Achievement
 import com.github.displace.sdp2022.profile.history.History
@@ -43,6 +44,8 @@ class CompleteUser(
             "CompleteUsers/dummy_id/CompleteUser"
         }
     }
+
+    private val app : MyApplication = context as MyApplication
 
     private val offlineUserFetcher: OfflineUserFetcher = OfflineUserFetcher(context)
 
@@ -85,6 +88,12 @@ class CompleteUser(
             return
 
         if(!achievements.contains(ach)){
+
+            /**
+             * This part should also send a notification
+             */
+            app.getMessageHandler().messageNotification(ach.description,ach.name)
+
             achievements.add(ach)
             db.update(dbReference, "achievements/${achievements.size - 1}", ach)
             if(!guestBoolean) {
@@ -215,16 +224,6 @@ class CompleteUser(
             if (usr.value != null) {
                 val completeUser = usr.value as HashMap<String, *>
 
-                // Get achievements from the database
-                val achievementsDB =
-                    completeUser["achievements"] as ArrayList<HashMap<String, String>>
-
-                achievements = achievementsDB.map { ach ->
-                    Achievement(
-                        ach["name"]!!,
-                        ach["date"]!!
-                    )
-                } as MutableList<Achievement>
 
                 // Get statistics from the database
                 val statsDB = completeUser["stats"] as ArrayList<HashMap<String, String>>
@@ -234,6 +233,19 @@ class CompleteUser(
                         s["value"] as Long
                     )
                 } as MutableList<Statistic>
+
+
+                // Get achievements from the database
+                val achievementsDB =
+                    completeUser["achievements"] as ArrayList<HashMap<String, String>>
+
+                achievements = achievementsDB.map { ach ->
+                    Achievement(
+                        ach["name"]!!,
+                        ach["description"]!!,
+                        ach["date"]!!
+                    )
+                } as MutableList<Achievement>
 
                 // Get friends list from the database
                 val friendsListHash =
@@ -272,9 +284,9 @@ class CompleteUser(
                 friendsList = mutableListOf(
                     PartialUser("THE SYSTEM", "dummy_friend_id")
                 )
-                gameHistory = mutableListOf(
+           /*     gameHistory = mutableListOf(
                     History("dummy_map", getCurrentDate(), "VICTORY")
-                )
+                )*/
                 gameHistory = mutableListOf()
                 initializePartialUser()
                 addUserToDatabase()
@@ -310,7 +322,7 @@ class CompleteUser(
     @SuppressLint("SimpleDateFormat")
     private fun initializeAchievements() {
         achievements = mutableListOf(
-            Achievement("Create your account !", getCurrentDate())
+            Achievement("Welcome home!","Create your account", getCurrentDate())
         )
 
         if(!guestBoolean && firebaseUser != null) {

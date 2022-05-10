@@ -9,10 +9,7 @@ import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.github.displace.sdp2022.profile.FriendRequest
-import com.github.displace.sdp2022.profile.achievements.Achievement
 import com.github.displace.sdp2022.profile.achievements.AchievementsLibrary
-import com.github.displace.sdp2022.profile.history.History
-import com.github.displace.sdp2022.users.CompleteUser
 import com.google.firebase.database.FirebaseDatabase
 
 class GameSummaryActivity : AppCompatActivity() {

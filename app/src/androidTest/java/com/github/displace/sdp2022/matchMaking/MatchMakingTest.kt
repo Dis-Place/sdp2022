@@ -19,6 +19,7 @@ import com.github.displace.sdp2022.profile.messages.MsgViewHolder
 import com.github.displace.sdp2022.users.CompleteUser
 import com.github.displace.sdp2022.users.PartialUser
 import com.github.displace.sdp2022.util.gps.MockGPS
+import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -35,6 +36,12 @@ class MatchMakingTest {
         Thread.sleep(3000)
         app.setMessageHandler(MessageHandler(app.getActiveUser()!!.getPartialUser(),app))
         Thread.sleep(1000)
+    }
+
+    @After
+    fun releaseIntents() {
+        val app = ApplicationProvider.getApplicationContext() as MyApplication
+        app.getActiveUser()?.removeUserFromDatabase()
     }
 
     @Test

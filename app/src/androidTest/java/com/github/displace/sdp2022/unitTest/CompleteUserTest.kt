@@ -14,7 +14,7 @@ class CompleteUserTest {
 
     private fun checkThatUserIsReadOnly(completeUser: CompleteUser) {
         val achievementsSizeBefore = completeUser.getAchievements().size
-        completeUser.addAchievement(Achievement("aaa", "2020-01-01"))
+        completeUser.addAchievement(Achievement("aaa", date = "2020-01-01"))
         assertTrue(completeUser.getAchievements().size == achievementsSizeBefore)
 
         completeUser.updateStats("stats1", 99L)
@@ -78,7 +78,7 @@ class CompleteUserTest {
         val completeUser = CompleteUser(ApplicationProvider.getApplicationContext() as MyApplication, null, false)
         Thread.sleep(3000)
         val achSize = completeUser.getAchievements().size
-        val ach = Achievement("AchievementTest1", "28-03-2022")
+        val ach = Achievement("AchievementTest1", date = "28-03-2022")
         completeUser.addAchievement(ach)
         val userAchievements = completeUser.getAchievements()[achSize]
         assertTrue(userAchievements.name == ach.name && userAchievements.date == ach.date)

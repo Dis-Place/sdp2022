@@ -16,7 +16,6 @@ import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.R
 import com.github.displace.sdp2022.RealTimeDatabase
 import com.github.displace.sdp2022.profile.achievements.AchViewAdapter
-import com.github.displace.sdp2022.profile.achievements.Achievement
 import com.github.displace.sdp2022.profile.achievements.AchievementsLibrary
 import com.github.displace.sdp2022.profile.friendInvites.AddFriendActivity
 import com.github.displace.sdp2022.profile.friendInvites.FriendRequestViewAdapter

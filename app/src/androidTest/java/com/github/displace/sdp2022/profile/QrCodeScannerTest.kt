@@ -53,10 +53,11 @@ class QrCodeScannerTest {
         intent = Intent(ApplicationProvider.getApplicationContext(),QrCodeTemp::class.java)
     }
 
-
     @After
     fun releaseIntents() {
         Intents.release()
+        val app = ApplicationProvider.getApplicationContext() as MyApplication
+        app.getActiveUser()?.removeUserFromDatabase()
     }
 
     @get:Rule

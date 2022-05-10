@@ -37,7 +37,8 @@ class OfflineUserFetcher(private val context: Context?) {
         Log.e("debug", "offlineAchievements: $offlineAchievements")
         return offlineAchievements ?: mutableListOf(
             Achievement(
-                "Create your account !",
+                "Welcome home!",
+                "Create your account",
                 getCurrentDate()
             )
         )

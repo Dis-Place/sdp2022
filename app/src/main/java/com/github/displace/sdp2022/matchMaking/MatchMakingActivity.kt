@@ -656,13 +656,7 @@ class MatchMakingActivity : AppCompatActivity() {
         app.getMessageHandler().removeListener()
 
         //check for match making achievements
-        for( cond in AchievementsLibrary.mmtLib){
-            val res = cond(lobbyType == "private")
-            if(res.first){
-                val ach = Achievement(res.second,app.getCurrentDate())
-                app.getActiveUser()!!.addAchievement(ach)
-            }
-        }
+        AchievementsLibrary.achievementCheck(app,app.getActiveUser()!!,lobbyType == "private",AchievementsLibrary.mmtLib)
 
     }
 
