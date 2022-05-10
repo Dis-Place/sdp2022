@@ -68,6 +68,10 @@ class GameVersusViewActivity : AppCompatActivity() {
     private var gid = ""
     private var uid = ""
 
+    private var oldPos = GeoPoint(0.0,0.0)
+    private var totalDist = 0.0
+    private var totalTime = 0
+
     //CHAT
     private lateinit var chat : Chat
 
@@ -190,7 +194,7 @@ class GameVersusViewActivity : AppCompatActivity() {
         gpsPositionManager.listenersManager.addCall(initGoalPlacer)
         gpsPositionUpdater = GPSPositionUpdater(this, gpsPositionManager)
         pinpointsManager = PinpointsManager(mapView)
-        for(i in nbPlayer downTo 1){
+        for(i in nbPlayer downTo 0){
             otherPlayersPinpoints = otherPlayersPinpoints.plus(pinpointsManager.PinpointsRef())
         }
         MockGPS.mockIfNeeded(intent,gpsPositionManager)
@@ -204,6 +208,11 @@ class GameVersusViewActivity : AppCompatActivity() {
                 )
             )
         })
+
+        gpsPositionManager.listenersManager.addCall(GeoPointListener { geoPoint ->
+            addTotals(geoPoint)
+        })
+
         gpsPositionManager.updateLocation()
         GPSLocationMarker(mapView, gpsPositionManager).add()
 
@@ -236,6 +245,14 @@ class GameVersusViewActivity : AppCompatActivity() {
         chat = Chat(chatPath,db,findViewById<View?>(android.R.id.content).rootView,applicationContext)
     }
 
+    private fun addTotals(point : GeoPoint){
+        if(point.latitude != 0.0 && point.longitude != 0.0 && oldPos.longitude == 0.0 && oldPos.latitude == 0.0){
+            oldPos = point
+        }
+        totalDist += CoordinatesUtil.distance(oldPos,point)
+        oldPos = point
+        totalTime += 5
+    }
 
     //close the screen
     @Suppress("UNUSED_PARAMETER")
@@ -269,6 +286,8 @@ class GameVersusViewActivity : AppCompatActivity() {
         extras.putString(EXTRA_MODE, gameMode)
         intent.putExtras(extras)
         intent.putExtra("others",others as Serializable)
+        intent.putExtra("totalDist",totalDist)
+        intent.putExtra("totalTime",totalTime)
         startActivity(intent)
     }
 
@@ -303,7 +322,7 @@ class GameVersusViewActivity : AppCompatActivity() {
                 otherPlayerId,
                 otherPlayersPinpoints[i]
             )
-            }catch(e: Exception){ throw error(otherPlayerId)}
+            }catch(e: Exception){ throw error(otherPlayerId + " i = $i")}
 
             game.handleEvent(
                 GameEvent.OnStart(

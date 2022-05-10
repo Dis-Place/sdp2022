@@ -319,9 +319,10 @@ class CompleteUser(
 
     private fun initializeStats() {
         stats = mutableListOf(
-            Statistic("stat1", 0),
-            Statistic("stat2", 0)
-        )      // It's a dummy list for now, will be replaced with a list of all the possible statistics initialized to 0
+            Statistic("nbWin", 0),
+            Statistic("totalTime", 0),
+            Statistic("totalDist", 0)
+        )
 
         if(!guestBoolean && firebaseUser != null) {
             offlineUserFetcher.setOfflineStats(stats)
