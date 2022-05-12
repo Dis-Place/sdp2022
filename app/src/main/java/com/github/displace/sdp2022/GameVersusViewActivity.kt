@@ -279,7 +279,7 @@ class GameVersusViewActivity : AppCompatActivity() {
         gpsPositionManager.updateLocation()
     }
 
-    //show the game sumarry by launching a new activity
+    //show the game summary by launching a new activity
     private fun showGameSummaryActivity() {
 
         others.forEach { x ->

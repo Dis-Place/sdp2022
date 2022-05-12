@@ -1,18 +1,19 @@
 package com.github.displace.sdp2022.util.gps
 
 import android.app.Activity
-import kotlinx.coroutines.channels.ticker
-import org.osmdroid.views.MapView
 import java.util.*
 
 
 class GPSPositionUpdater(private val activity: Activity, private val gpsPositionManager: GPSPositionManager) {
 
     lateinit var timer : Timer
-    val timerTask = object : TimerTask() {
-        override fun run() {
-            if(!activity.isDestroyed) {
-                gpsPositionManager.updateLocation()
+
+    fun timerTask(): TimerTask {
+        return object : TimerTask() {
+            override fun run() {
+                if(!activity.isDestroyed) {
+                    gpsPositionManager.updateLocation()
+                }
             }
         }
     }
@@ -21,9 +22,9 @@ class GPSPositionUpdater(private val activity: Activity, private val gpsPosition
         initTimer()
     }
 
-    private fun initTimer() {
+    fun initTimer() {
         timer = Timer()
-        timer.schedule(timerTask, SCHEDULE_DELAY_MILLIS, UPDATE_PERIOD_MILLIS)
+        timer.schedule(timerTask(), SCHEDULE_DELAY_MILLIS, UPDATE_PERIOD_MILLIS)
     }
 
     fun stopUpdates(){

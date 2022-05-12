@@ -1,4 +1,6 @@
+import android.content.Context
 import android.content.Context.MODE_PRIVATE
+import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.intent.Intents
@@ -21,7 +23,8 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class MainActivityTest {
     private lateinit var copyCompleteUser: CompleteUser
-    private val context = InstrumentationRegistry.getInstrumentation().context
+  //  private val context = InstrumentationRegistry.getInstrumentation().context
+    private val context : Context = ApplicationProvider.getApplicationContext()
 
     @get:Rule
     val activityScenarioRule = ActivityScenarioRule(MainActivity::class.java)

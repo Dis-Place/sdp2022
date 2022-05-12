@@ -40,12 +40,12 @@ class QrCodeActivityTest {
         intent = Intent(ApplicationProvider.getApplicationContext(),QrCodeTemp::class.java)
     }
 
-
     @After
     fun releaseIntents() {
         Intents.release()
+        val app = ApplicationProvider.getApplicationContext() as MyApplication
+        app.getActiveUser()?.removeUserFromDatabase()
     }
-
 
     @Test
     fun testShowButton() {
