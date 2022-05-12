@@ -56,11 +56,6 @@ class SettingsActivityTest {
     }
 
     @Test
-    fun pressingSfxButtonDisplayToastMessage() {
-        genericSettingsCheck("SFX", "Sound effects")
-    }
-
-    @Test
     fun pressingMusicButtonDisplayToastMessage() {
         genericSettingsCheck("Music", "Music")
     }
