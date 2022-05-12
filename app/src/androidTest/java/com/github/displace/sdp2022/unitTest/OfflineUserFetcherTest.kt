@@ -64,8 +64,8 @@ class OfflineUserFetcherTest {
     fun testOfflineNonEmptyAchievements() {
         val offlineUserFetcher = OfflineUserFetcher(context)
         val achievements = mutableListOf(
-            Achievement("Spent 3 days in the lobby", "01-01-2001"),
-            Achievement("Spent 10 days in the lobby", "11-01-2001")
+            Achievement("Spent 3 days in the lobby", date ="01-01-2001"),
+            Achievement("Spent 10 days in the lobby", date ="11-01-2001")
         )
         offlineUserFetcher.setOfflineAchievements(achievements)
         assert(offlineUserFetcher.getOfflineAchievements() == achievements)
@@ -114,7 +114,8 @@ class OfflineUserFetcherTest {
         assert(
             offlineUserFetcher.getOfflineAchievements() == mutableListOf(
                 Achievement(
-                    "Create your account !",
+                    "Welcome home!",
+                    "Create your account",
                     SimpleDateFormat("dd-MM-yyyy").format(Date())
                 )
             )
