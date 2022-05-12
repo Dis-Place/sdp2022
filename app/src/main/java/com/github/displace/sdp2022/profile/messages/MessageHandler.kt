@@ -13,6 +13,7 @@ import com.github.displace.sdp2022.MainMenuActivity
 import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.R
 import com.github.displace.sdp2022.RealTimeDatabase
+import com.github.displace.sdp2022.profile.ProfileActivity
 import com.github.displace.sdp2022.users.PartialUser
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -48,7 +49,7 @@ class MessageHandler(val activePartialUser : PartialUser, app : MyApplication) {
                     msgLs = tempList
                 }else if(tempList != msgLs){
                     //notification of the new message
-                    messageNotification(tempList[0])
+                    messageNotification(tempList[0].sender.username,tempList[0].message)
                     msgLs = tempList
                 }
             }
@@ -59,14 +60,14 @@ class MessageHandler(val activePartialUser : PartialUser, app : MyApplication) {
 
     }
 
-    fun messageNotification(message: Message) {
+    fun messageNotification(title : String, content : String) {
         val channelId = "i.apps.notifications"
         val description = "Test notification"
         val notificationManager: NotificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         val notificationChannel: NotificationChannel
         val builder: Notification.Builder
 
-        val intent = Intent(context, MainMenuActivity::class.java)
+        val intent = Intent(context, ProfileActivity::class.java)
 
         // FLAG_UPDATE_CURRENT specifies that if a previous
         // PendingIntent already exists, then the current one
@@ -87,16 +88,16 @@ class MessageHandler(val activePartialUser : PartialUser, app : MyApplication) {
             notificationManager.createNotificationChannel(notificationChannel)
 
             builder = Notification.Builder(context, channelId)
-                .setContentTitle(message.sender.username)
-                .setContentText(message.message)
+                .setContentTitle(title)
+                .setContentText(content)
                 .setSmallIcon(R.drawable.ic_launcher_background)
                 .setLargeIcon(BitmapFactory.decodeResource(context.resources, R.drawable.ic_launcher_background))
                 .setContentIntent(pendingIntent)
         } else {
 
             builder = Notification.Builder(context)
-                .setContentTitle(message.sender.username)
-                .setContentText(message.message)
+                .setContentTitle(title)
+                .setContentText(content)
                 .setSmallIcon(R.drawable.ic_launcher_background)
                 .setLargeIcon(BitmapFactory.decodeResource(context.resources, R.drawable.ic_launcher_background))
                 .setContentIntent(pendingIntent)

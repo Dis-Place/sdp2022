@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.R
 import com.github.displace.sdp2022.RealTimeDatabase
+import com.github.displace.sdp2022.profile.achievements.AchievementsLibrary
 import com.github.displace.sdp2022.profile.messages.MessageHandler
 
 class NewsActivity : AppCompatActivity() {
@@ -37,6 +38,12 @@ class NewsActivity : AppCompatActivity() {
             val newsAdapter = NewsViewAdapter(applicationContext, ls)
             newsRecyclerView.adapter = newsAdapter
             newsRecyclerView.layoutManager = LinearLayoutManager(applicationContext)
+
+            val app = applicationContext as MyApplication
+            AchievementsLibrary.achievementCheck(app,app.getActiveUser()!!,true,
+                AchievementsLibrary.newsLib)
+
+
         }.addOnFailureListener{
             val ls = arrayListOf<News>(News(
                 "NO NEWS FOUND",

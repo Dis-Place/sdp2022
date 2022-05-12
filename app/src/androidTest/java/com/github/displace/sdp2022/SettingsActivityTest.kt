@@ -15,6 +15,11 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.displace.sdp2022.R.style.Theme_DisPlace1
 import com.github.displace.sdp2022.R.style.Theme_DisPlace2
 import org.hamcrest.Matchers.*
+import com.github.displace.sdp2022.profile.messages.MessageHandler
+import com.github.displace.sdp2022.users.CompleteUser
+import org.hamcrest.Matchers.*
+import org.junit.After
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -25,6 +30,24 @@ class SettingsActivityTest {
     @get:Rule
     val testRule = ActivityScenarioRule(SettingsActivity::class.java)
 
+    @Before
+    fun setUp() {
+        val app = ApplicationProvider.getApplicationContext() as MyApplication
+        app.setActiveUser(CompleteUser(app, null))
+        Thread.sleep(3000)
+        app.setMessageHandler(MessageHandler(app.getActiveUser()!!.getPartialUser(), app))
+        Thread.sleep(1000)
+
+        val intent =
+            Intent(ApplicationProvider.getApplicationContext(), SettingsActivity::class.java)
+        ActivityScenario.launch<SettingsActivity>(intent)
+    }
+
+    @After
+    fun setDown() {
+        val app = ApplicationProvider.getApplicationContext() as MyApplication
+        app.getActiveUser()?.removeUserFromDatabase()
+    }
 
     @Test
     fun pressingDarkModeButtonDisplayToastMessage() {

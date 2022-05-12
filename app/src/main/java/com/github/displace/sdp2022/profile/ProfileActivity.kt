@@ -16,6 +16,7 @@ import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.R
 import com.github.displace.sdp2022.RealTimeDatabase
 import com.github.displace.sdp2022.profile.achievements.AchViewAdapter
+import com.github.displace.sdp2022.profile.achievements.AchievementsLibrary
 import com.github.displace.sdp2022.profile.friendInvites.AddFriendActivity
 import com.github.displace.sdp2022.profile.friendInvites.FriendRequestViewAdapter
 import com.github.displace.sdp2022.profile.friendInvites.InviteWithId
@@ -52,6 +53,11 @@ class ProfileActivity : AppCompatActivity() {
         val activeUser = app.getActiveUser()
         findViewById<TextView>(R.id.profileUsername).text =
             activeUser?.getPartialUser()?.username ?: "defaultNotLoggedIn"
+        var activePartialUser = PartialUser("defaultName","dummy_id")
+        if(activeUser != null){
+            activePartialUser = activeUser.getPartialUser()
+        }
+
 
         /* Show status */
         val onlineLight = findViewById<ImageView>(R.id.onlineStatus)
@@ -61,16 +67,16 @@ class ProfileActivity : AppCompatActivity() {
             offlineLight.visibility = View.VISIBLE
         }
 
-        /* Achievements */
+        /* Achievements */ //Should add a listener to it
         val achRecyclerView = findViewById<RecyclerView>(R.id.recyclerAch)
         val achs = activeUser?.getAchievements() ?: mutableListOf()
 
         val achAdapter =
-            AchViewAdapter(applicationContext, achs)
+            AchViewAdapter(applicationContext, achs.reversed())
         achRecyclerView.adapter = achAdapter
         achRecyclerView.layoutManager = LinearLayoutManager(applicationContext)
 
-        /* Statistics */
+        /* Statistics */ //Should add a listener to it
         val statRecyclerView = findViewById<RecyclerView>(R.id.recyclerStats)
 
         val stats = activeUser?.getStats() ?: mutableListOf()
@@ -80,33 +86,23 @@ class ProfileActivity : AppCompatActivity() {
         statRecyclerView.adapter = statAdapter
         statRecyclerView.layoutManager = LinearLayoutManager(applicationContext)
 
-        /* Games History */
+        /* Games History */ //Should add a listener to it
         val historyRecyclerView = findViewById<RecyclerView>(R.id.recyclerHist)
 
         val hist = activeUser?.getGameHistory() ?: mutableListOf()
 
         val historyAdapter =
-            HistoryViewAdapter(applicationContext, hist)
+            HistoryViewAdapter(applicationContext, hist.reversed())
         historyRecyclerView.adapter = historyAdapter
         historyRecyclerView.layoutManager = LinearLayoutManager(applicationContext)
 
         /* Friends */
-        val friendRecyclerView = findViewById<RecyclerView>(R.id.recyclerFriend)
+        updateFriendListView()
 
-        val friends = activeUser?.getFriendsList() ?: mutableListOf()
-        val friendAdapter = FriendViewAdapter(
-            applicationContext,
-            friends,
-            0
-        )
-        friendRecyclerView.adapter = friendAdapter
-        friendRecyclerView.layoutManager = LinearLayoutManager(applicationContext)
+        db.getDbReference("CompleteUsers/" + activePartialUser.uid + "/friendsList").addValueEventListener(friendListListener())
 
         /* Messages */
-        var activePartialUser = PartialUser("defaultName","dummy_id")
-        if(activeUser != null){
-            activePartialUser = activeUser.getPartialUser()
-        }
+
 
         if(activeUser != null && activeUser.offlineMode) {
             updateMessageListView(activeUser.getMessageHistory())
@@ -231,6 +227,44 @@ class ProfileActivity : AppCompatActivity() {
         )
         messageRecyclerView.adapter = messageAdapter
         messageRecyclerView.layoutManager = LinearLayoutManager(applicationContext)
+
+        /**
+         * Check for achievements on messages
+         */
+        val app = applicationContext as MyApplication
+        val user = app.getActiveUser()!!
+
+        AchievementsLibrary.achievementCheck(app,user,list.size.toLong(),AchievementsLibrary.messageLib)
+
+    }
+
+    //if the adding friend uses the local list
+    private fun friendListListener() = object : ValueEventListener{
+        override fun onDataChange(snapshot: DataSnapshot) {
+            updateFriendListView()
+        }
+
+        override fun onCancelled(error: DatabaseError) {
+        }
+
+    }
+    private fun updateFriendListView(){
+        val friendRecyclerView = findViewById<RecyclerView>(R.id.recyclerFriend)
+        val app = applicationContext as MyApplication
+        val activeUser = app.getActiveUser()
+
+        val friends = activeUser?.getFriendsList() ?: mutableListOf()
+        val friendAdapter = FriendViewAdapter(
+            applicationContext,
+            friends.reversed(),
+            0
+        )
+        friendRecyclerView.adapter = friendAdapter
+        friendRecyclerView.layoutManager = LinearLayoutManager(applicationContext)
+
+        //Check for achievements
+        AchievementsLibrary.achievementCheck(app,activeUser!!,friends.size.toLong(),AchievementsLibrary.friendLib)
+
     }
 
 

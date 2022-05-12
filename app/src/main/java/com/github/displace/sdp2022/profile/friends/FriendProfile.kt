@@ -35,7 +35,7 @@ class FriendProfile : AppCompatActivity() {
 
             val achList = mutableListOf<Achievement>()
             for( map in cu["achievements"] as ArrayList<MutableMap<String,Any>> ){
-                achList.add(Achievement(map["name"] as String, map["date"] as String))
+                achList.add(Achievement(map["name"] as String, map["description"] as String, map["date"] as String))
             }
             /* Achievements */
             val achRecyclerView = findViewById<RecyclerView>(R.id.friendRecyclerAch)

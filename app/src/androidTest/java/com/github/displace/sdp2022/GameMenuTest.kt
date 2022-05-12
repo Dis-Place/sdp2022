@@ -49,7 +49,10 @@ class GameMenuTest {
     @After
     fun releaseIntents() {
         Intents.release()
+        val app = ApplicationProvider.getApplicationContext() as MyApplication
+        app.getActiveUser()?.removeUserFromDatabase()
     }
+
 
     @get:Rule
     val permissionRule = GrantPermissionRule.grant(
