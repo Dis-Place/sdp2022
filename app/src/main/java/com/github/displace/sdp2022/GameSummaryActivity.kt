@@ -9,9 +9,15 @@ import android.view.View
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.constraintlayout.widget.Group
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.github.displace.sdp2022.profile.FriendRequest
+import com.github.displace.sdp2022.profile.friends.FriendViewAdapter
+import com.github.displace.sdp2022.profile.friends.NewFriendViewAdapter
 import com.github.displace.sdp2022.profile.statistics.Statistic
 import com.github.displace.sdp2022.users.CompleteUser
+import com.github.displace.sdp2022.users.PartialUser
 import com.google.firebase.database.FirebaseDatabase
 
 class GameSummaryActivity : AppCompatActivity() {
@@ -26,6 +32,7 @@ class GameSummaryActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_game_summary)
 
+        findViewById<Group>(R.id.FriendGroup).visibility = View.INVISIBLE
         layout = findViewById<LinearLayout>(R.id.layoutGameStats)
         val extras = intent.extras
         app = applicationContext as MyApplication
@@ -58,6 +65,22 @@ class GameSummaryActivity : AppCompatActivity() {
 
         mainMenuButton.setOnClickListener { backToMainMenu() }
         replayButton.setOnClickListener { backToGameList() }
+
+        val friendRecyclerView = findViewById<RecyclerView>(R.id.recyclerFriend)
+
+        var others :List<PartialUser> = listOf()
+        (intent.getSerializableExtra("others") as List<List<String>>).forEach { x ->
+            others = others.plus(PartialUser(x[0],x[1]))
+        }
+
+        val friendAdapter = NewFriendViewAdapter(
+            applicationContext,
+            others,
+            1
+        )
+        friendRecyclerView.adapter = friendAdapter
+        friendRecyclerView.layoutManager = LinearLayoutManager(applicationContext)
+
     }
 
     fun addRoundStat(info: String) {
@@ -92,17 +115,12 @@ class GameSummaryActivity : AppCompatActivity() {
 
 
     fun friendInviteToOpponent(View : View) {
-        val app = applicationContext as MyApplication
-        val otherId = (intent.getSerializableExtra("others") as List<List<String>>)[0][1]
-        val db = RealTimeDatabase().noCacheInstantiate(
-            "https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",
-            false
-        ) as RealTimeDatabase
-        db.referenceGet("CompleteUsers/$otherId/CompleteUser/partialUser","username").addOnSuccessListener { snapshot ->
-            val name = snapshot.value as String? ?: ""
-            FriendRequest.sendFriendRequest(this,otherId,FirebaseDatabase.getInstance("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/").reference,
-                app.getActiveUser()!!.getPartialUser()
-            )
-        }
+        findViewById<Group>(R.id.FriendGroup).visibility = android.view.View.VISIBLE
+        findViewById<Group>(R.id.MainScreen).visibility = android.view.View.INVISIBLE
+    }
+
+    fun cancelButton(View: View) {
+        findViewById<Group>(R.id.FriendGroup).visibility = android.view.View.INVISIBLE
+        findViewById<Group>(R.id.MainScreen).visibility = android.view.View.VISIBLE
     }
 }

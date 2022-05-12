@@ -281,6 +281,14 @@ class GameVersusViewActivity : AppCompatActivity() {
 
     //show the game sumarry by launching a new activity
     private fun showGameSummaryActivity() {
+
+        others.forEach { x ->
+            db.removeList(
+                "GameInstance/Game${intent.getStringExtra("gid")!!}/id:${x[1]}",
+                "finish",
+                endListener
+            )
+        }
         val intent = Intent(this, GameSummaryActivity::class.java)
         extras.putStringArrayList(EXTRA_STATS, statsList)
         extras.putString(EXTRA_MODE, gameMode)
@@ -302,19 +310,24 @@ class GameVersusViewActivity : AppCompatActivity() {
         var i = 0
         other.toList().forEach { x ->
             val otherPlayerId = x.first.removePrefix("id:")
-            print(" \n $otherPlayerId \n")
             db.addList(
                 "GameInstance/Game${intent.getStringExtra("gid")!!}/id:${otherPlayerId}",
                 "finish",
                 endListener
             )
 
-            db.referenceGet("CompleteUsers/${otherPlayerId}/CompleteUser/partialUser", "username").addOnSuccessListener { snapshot ->
-                try {
-                    val name = snapshot.value as String
-                    val list = listOf(listOf(name, otherPlayerId))
-                    others = others.plus(list)
-                }catch(e: Exception){}
+            if(!intent.getStringExtra("uid")!!.contains("guest")) {
+                db.referenceGet(
+                    "CompleteUsers/${otherPlayerId}/CompleteUser/partialUser",
+                    "username"
+                ).addOnSuccessListener { snapshot ->
+                    try {
+                        val name = snapshot.value as String
+                        val list = listOf(listOf(name, otherPlayerId))
+                        others = others.plus(list)
+                    } catch (e: Exception) {
+                    }
+                }
             }
 
             try{
