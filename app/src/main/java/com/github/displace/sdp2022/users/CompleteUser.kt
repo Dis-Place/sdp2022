@@ -363,7 +363,7 @@ class CompleteUser(
     private fun initializePartialUser() {
         googleName = "defaultName"
         if (firebaseUser != null) {
-            if (firebaseUser.displayName == null) {
+            if (firebaseUser.displayName == null/* && firebaseUser.displayName != ""*/) {
                 setupDefaultOrGuestPartialUser()
             } else {
                 partialUser = PartialUser(firebaseUser.displayName!!, firebaseUser.uid)
