@@ -74,21 +74,21 @@ class MainMenuActivityTest {
         Intents.release()
     }
 
-    @Test
-    fun testSettingsButton() {
-        Intents.init()
-
-        val intent =
-            Intent(ApplicationProvider.getApplicationContext(), MainMenuActivity::class.java)
-        val scenario = ActivityScenario.launch<MainMenuActivity>(intent)
-
-        scenario.use {
-            Espresso.onView(withId(R.id.settingsButton)).perform(click())
-        }
-
-        intended(hasComponent(SettingsActivity::class.java.name))
-        Intents.release()
-    }
+//    @Test
+//    fun testSettingsButton() {
+//        Intents.init()
+//
+//        val intent =
+//            Intent(ApplicationProvider.getApplicationContext(), MainMenuActivity::class.java)
+//        val scenario = ActivityScenario.launch<MainMenuActivity>(intent)
+//
+//        scenario.use {
+//            Espresso.onView(withId(R.id.settingsButton)).perform(click())
+//        }
+//
+//        intended(hasComponent(SettingsActivity::class.java.name))
+//        Intents.release()
+//    }
 
     @Test
     fun testNewsButton() {
