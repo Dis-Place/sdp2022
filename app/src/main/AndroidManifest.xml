@@ -22,6 +22,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.DisPlace1">
+
         <activity
             android:name=".profile.qrcode.QrCodeScannerActivity"
             android:exported="false"
@@ -32,16 +33,11 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
-
-        </activity>
-            android:name=".profile.friendInvites.FriendRequest"
-            android:exported="false" />
+        android:name=".profile.friendInvites.FriendRequest"
+        android:exported="false" />
         <activity
             android:name=".profile.friendInvites.AddFriendActivity"
             android:exported="false" />
-        <activity
-        <activity
-
         <activity
             android:name=".profile.qrcode.QrCodeTemp"
             android:exported="false"
@@ -61,10 +57,6 @@
             android:name=".authentication.SignInActivity"
             android:exported="false"
             android:parentActivityName=".MainActivity" />
-        <activity
-            android:name=".authentication.SignOutActivity"
-            android:exported="false"
-            android:parentActivityName=".MainMenuActivity" />
         <activity
             android:name=".matchMaking.MatchMakingActivity"
             android:exported="false" />
