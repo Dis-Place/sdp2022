@@ -212,9 +212,8 @@ class CompleteUser(
                     completeUser["achievements"] as ArrayList<HashMap<String, String>>
 
                 achievements = achievementsDB.map { ach ->
-                    Achievement(
-                        ach["name"]!!,
-                        ach["date"]!!
+                    Achievement(ach["name"]!!,
+                            ach["date"]!!
                     )
                 } as MutableList<Achievement>
 
