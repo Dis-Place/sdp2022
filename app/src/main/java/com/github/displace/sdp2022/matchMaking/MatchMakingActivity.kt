@@ -291,8 +291,8 @@ class MatchMakingActivity : AppCompatActivity() {
                                 currentData.value as MutableMap<String, Any>? ?: return Transaction.success(currentData)
                             val positionMap = lobby["lobbyPosition"] as HashMap<String,Any>
 
-                            if (lobby["lobbyCount"] as Long == lobby["lobbyMax"] as Long || lobby["lobbyLaunch"] as Boolean ||
-                                CoordinatesUtil.distance(geoPoint, GeoPoint((positionMap["latitude"] as Double)/*.toDouble() */ , (positionMap["longitude"] as Double)/*.toDouble()*/ ) ) > Constants.GAME_AREA_RADIUS ) {   //the lobby is not available : will be deleted from the list soon
+                            if (lobby["lobbyCount"] as Long == lobby["lobbyMax"] as Long || lobby["lobbyLaunch"] as Boolean
+                                || CoordinatesUtil.distance(geoPoint, GeoPoint((positionMap["latitude"] as Double) , (positionMap["longitude"] as Double) ) ) > Constants.GAME_AREA_RADIUS ) {   //the lobby is not available : will be deleted from the list soon
                                 return Transaction.abort()
                             }
                             lobby["lobbyCount"] = lobby["lobbyCount"] as Long + 1
