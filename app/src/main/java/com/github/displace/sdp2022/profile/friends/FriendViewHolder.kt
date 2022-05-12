@@ -4,6 +4,7 @@ import android.content.Intent
 import android.view.View
 import android.widget.ImageButton
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.R
@@ -17,6 +18,7 @@ class FriendViewHolder(itemview: View) : RecyclerView.ViewHolder(itemview) {
     val friendNameView: TextView = itemView.findViewById(R.id.friendName)
     val messageButton: ImageButton = itemView.findViewById(R.id.messageButton)
     val inviteButton: ImageButton = itemView.findViewById(R.id.inviteButton)
+    val removeFriendButton: ImageButton = itemView.findViewById(R.id.removeFriendButton)
 
     lateinit var friend: PartialUser
     var tapUser : Boolean = false
@@ -56,6 +58,10 @@ class FriendViewHolder(itemview: View) : RecyclerView.ViewHolder(itemview) {
                 putExtra("FriendUsername", friend.username)
             }
             v.context.startActivity(intent)
+        }
+
+        removeFriendButton.setOnClickListener { v ->
+            Toast.makeText(removeFriendButton.context,"REMOVE FRIEND ${friend.username}", Toast.LENGTH_LONG).show()
         }
 
     }

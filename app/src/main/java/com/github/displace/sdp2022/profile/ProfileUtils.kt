@@ -246,4 +246,31 @@ class RequestAcceptor(val source : PartialUser) : Transaction.Handler {
 }
 
 
+class FriendDeleter(val source : PartialUser) : Transaction.Handler {
+
+    override fun doTransaction(currentData: MutableData): Transaction.Result {
+        val ls = currentData.value as ArrayList<MutableMap<String,Any>>?
+
+        if(ls == null){
+            return Transaction.success(currentData)
+        }else{
+            val partialUserMap = HashMap<String,Any>()
+            partialUserMap["uid"] = source.uid
+            partialUserMap["username"] = source.username
+            ls.add(partialUserMap)
+        }
+        currentData.value = ls
+        return Transaction.success(currentData)
+    }
+
+    override fun onComplete(
+        error: DatabaseError?,
+        committed: Boolean,
+        currentData: DataSnapshot?
+    ) {
+    }
+
+}
+
+
 
