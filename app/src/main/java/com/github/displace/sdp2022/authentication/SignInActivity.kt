@@ -20,11 +20,8 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import kotlinx.coroutines.tasks.await
-import kotlinx.coroutines.withContext
 
 const val REQUEST_CODE_SIGN_IN = 0
 
@@ -88,10 +85,7 @@ class SignInActivity : AppCompatActivity() {
         auth.signInAnonymously().addOnCompleteListener {
             if (it.isSuccessful) {
                 handleNewUser(true)
-
-                while (app.getActiveUser() == null)
-                    Thread.sleep(1_000)
-
+                
                 val intent = Intent(this, MainMenuActivity::class.java)
                 startActivity(intent)
             }
@@ -155,7 +149,7 @@ class SignInActivity : AppCompatActivity() {
                         val user =
                             CompleteUser(app, current, offlineMode = rememberMeButton.isChecked)
                         app.setActiveUser(user)
-                        Thread.sleep(1_000)
+                        delay(1_000)
                         startActivity(Intent(this@SignInActivity, MainMenuActivity::class.java))
                     }
                 }
