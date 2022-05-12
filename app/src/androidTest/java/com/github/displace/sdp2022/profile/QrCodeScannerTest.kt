@@ -1,34 +1,26 @@
 package com.github.displace.sdp2022.profile
 
-import android.R
 import android.app.Activity
 import android.app.Instrumentation
 import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
-import android.graphics.BitmapFactory
 import android.net.Uri
 import android.provider.MediaStore
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions
-import androidx.test.espresso.assertion.ViewAssertions
 import androidx.test.espresso.intent.Intents
-import androidx.test.espresso.intent.Intents.intending
 import androidx.test.espresso.intent.matcher.IntentMatchers
-import androidx.test.espresso.intent.matcher.IntentMatchers.toPackage
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.GrantPermissionRule
 import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.profile.messages.MessageHandler
 import com.github.displace.sdp2022.profile.qrcode.QrCodeScannerActivity
-import com.github.displace.sdp2022.profile.qrcode.QrCodeTemp
 import com.github.displace.sdp2022.users.CompleteUser
-import org.hamcrest.CoreMatchers
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -50,7 +42,7 @@ class QrCodeScannerTest {
         Thread.sleep(1000)
 
         Intents.init()
-        intent = Intent(ApplicationProvider.getApplicationContext(),QrCodeTemp::class.java)
+        intent = Intent(ApplicationProvider.getApplicationContext(),ProfileActivity::class.java)
     }
 
 
@@ -88,7 +80,9 @@ class QrCodeScannerTest {
                 val expectedIntent = IntentMatchers.hasAction(MediaStore.INTENT_ACTION_VIDEO_CAMERA)
                 val response = Instrumentation.ActivityResult(Activity.RESULT_OK, resultData)
                 Intents.intending(expectedIntent).respondWith(response)
-                onView(withId(com.github.displace.sdp2022.R.id.button5)).perform(
+                onView(ViewMatchers.withId(com.github.displace.sdp2022.R.id.friendsButton))
+                    .perform(ViewActions.click())
+                onView(withId(com.github.displace.sdp2022.R.id.scanQRButton)).perform(
                     ViewActions.click()
                 )
                 //check toast error message

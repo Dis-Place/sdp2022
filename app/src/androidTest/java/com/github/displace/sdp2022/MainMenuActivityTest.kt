@@ -18,7 +18,6 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
 import com.github.displace.sdp2022.news.NewsActivity
 import com.github.displace.sdp2022.profile.ProfileActivity
-import com.github.displace.sdp2022.profile.qrcode.QrCodeTemp
 import com.github.displace.sdp2022.users.CompleteUser
 import org.junit.After
 import org.junit.Before
@@ -136,21 +135,6 @@ class MainMenuActivityTest {
                 .check(matches(ViewMatchers.isDisplayed()))
         }
 
-        Intents.release()
-    }
-
-    @Test
-    fun testDemoButton() {
-        Intents.init()
-        val intent =
-            Intent(ApplicationProvider.getApplicationContext(), MainMenuActivity::class.java)
-        val scenario = ActivityScenario.launch<MainMenuActivity>(intent)
-
-        scenario.use {
-            Espresso.onView(withId(R.id.qrCodeDemo)).perform(click())
-        }
-
-        intended(hasComponent(QrCodeTemp::class.java.name))
         Intents.release()
     }
 
