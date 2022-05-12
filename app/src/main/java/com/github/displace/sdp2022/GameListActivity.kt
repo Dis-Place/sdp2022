@@ -59,4 +59,9 @@ class GameListActivity : AppCompatActivity() {
         Toast.makeText(this, "A game of hide and seek with 5 peoples. When someone is found, he get expulsed from the game. The winner is the last player in the game.", Toast.LENGTH_LONG).show()
     }
 
+    override fun onBackPressed() {
+        intent = Intent(this, MainMenuActivity::class.java)
+        startActivity(intent)
+    }
+
 }

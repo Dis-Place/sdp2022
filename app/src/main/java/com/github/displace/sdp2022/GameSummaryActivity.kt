@@ -123,4 +123,8 @@ class GameSummaryActivity : AppCompatActivity() {
         findViewById<Group>(R.id.FriendGroup).visibility = android.view.View.INVISIBLE
         findViewById<Group>(R.id.MainScreen).visibility = android.view.View.VISIBLE
     }
+
+    override fun onBackPressed() {
+        backToGameList()
+    }
 }
