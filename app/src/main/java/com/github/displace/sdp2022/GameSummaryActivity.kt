@@ -16,6 +16,7 @@ import com.github.displace.sdp2022.profile.statistics.Statistic
 import com.github.displace.sdp2022.users.CompleteUser
 import com.github.displace.sdp2022.users.PartialUser
 import com.github.displace.sdp2022.profile.achievements.AchievementsLibrary
+import java.lang.Exception
 
 class GameSummaryActivity : AppCompatActivity() {
 
@@ -74,9 +75,12 @@ class GameSummaryActivity : AppCompatActivity() {
         val friendRecyclerView = findViewById<RecyclerView>(R.id.recyclerFriend)
 
         var others :List<PartialUser> = listOf()
-        (intent.getSerializableExtra("others") as List<List<String>>).forEach { x ->
-            others = others.plus(PartialUser(x[0],x[1]))
-        }
+
+        try {
+            (intent.getSerializableExtra("others")!! as List<List<String>>).forEach { x ->
+                others = others.plus(PartialUser(x[0], x[1]))
+            }
+        }catch(e: Exception){}
 
         val friendAdapter = NewFriendViewAdapter(
             applicationContext,
