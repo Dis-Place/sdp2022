@@ -8,12 +8,7 @@
         android:key="darkMode"
         android:summary="Choose your style"
         android:title="Enable Dark Mode" />
-    <SwitchPreference
-        android:contentDescription="music button"
-        android:defaultValue="true"
-        android:key="musicKey"
-        android:summary="[May come later] You will soon be able to enable/disable music "
-        android:title="Enable Music" />
+
     <ListPreference
         android:contentDescription="theme button"
         android:defaultValue="purple"

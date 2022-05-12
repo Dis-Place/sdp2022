@@ -14,7 +14,6 @@ import androidx.preference.PreferenceManager
 import com.github.displace.sdp2022.profile.achievements.AchievementsLibrary
 
 const val DARK_MODE_SETTINGS_SWITCH: String = "darkMode"
-const val MUSIC_SETTINGS_SWITCH: String = "musicKey"
 const val THEME_SETTINGS_SWITCH: String = "themeKey"
 
 
@@ -43,14 +42,12 @@ class SettingsActivity : AppCompatActivity() {
         //Retrieve which settings it is
         val contentString: String = when (key) {
             DARK_MODE_SETTINGS_SWITCH -> "Dark mode"
-            MUSIC_SETTINGS_SWITCH -> "Music"
             THEME_SETTINGS_SWITCH -> "Theme"
             else -> "Unknown settings"
         }
 
         when (key) {
             DARK_MODE_SETTINGS_SWITCH -> darkMode(prefs)
-            MUSIC_SETTINGS_SWITCH -> music(prefs)
             THEME_SETTINGS_SWITCH -> chooseTheme(prefs)
 
         }

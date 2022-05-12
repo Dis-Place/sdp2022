@@ -55,11 +55,6 @@ class SettingsActivityTest {
         genericSettingsCheck("Dark Mode", "dark mode")
     }
 
-    @Test
-    fun pressingMusicButtonDisplayToastMessage() {
-        genericSettingsCheck("Music", "Music")
-    }
-
     private fun genericSettingsCheck(fullName: String, name: String) {
         //Select the dark mode switch and then press it
         onView(withId(androidx.preference.R.id.recycler_view))
