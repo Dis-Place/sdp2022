@@ -24,7 +24,7 @@ class AchViewAdapter(val context: Context, private val data: List<Achievement>) 
     override fun onBindViewHolder(holder: AchViewHolder, position: Int) {
         //    TODO("Not yet implemented")
         val index = holder.adapterPosition
-        holder.name.text = data[index].name
+        "${data[index].name} : ${data[index].description}".also { holder.name.text = it }
         holder.date.text = data[index].date
     }
 

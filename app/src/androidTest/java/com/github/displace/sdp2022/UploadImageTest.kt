@@ -12,6 +12,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.displace.sdp2022.R
 import com.github.displace.sdp2022.profile.messages.MessageHandler
 import com.github.displace.sdp2022.users.CompleteUser
+import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -34,6 +35,12 @@ class UploadImageTest {
         Thread.sleep(1000)
     }
 
+    @After
+    fun releaseIntents() {
+        val app = ApplicationProvider.getApplicationContext() as MyApplication
+        app.getActiveUser()?.removeUserFromDatabase()
+    }
+
     @Test
     fun canSearchImage() {
         Intents.init()
@@ -42,7 +49,7 @@ class UploadImageTest {
         Intents.release()
     }
 
-    /**
+
     @Test
     fun canUploadImage() {
         Intents.init()
@@ -50,5 +57,5 @@ class UploadImageTest {
         intended(IntentMatchers.hasComponent(MainMenuActivity::class.java.name))
         Intents.release()
     }
-     **/
+
 }
