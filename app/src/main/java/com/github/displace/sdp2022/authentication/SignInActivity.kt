@@ -77,14 +77,6 @@ class SignInActivity : AppCompatActivity() {
                 Log.e("debug", e.message!!)
             }
         }
-
-        Thread.sleep(3_000)
-
-        while (app.getActiveUser() == null)
-            Thread.sleep(1_000)
-
-        val intent = Intent(this@SignInActivity, MainMenuActivity::class.java)
-        startActivity(intent)
     }
 
     @Suppress("UNUSED_PARAMETER")
@@ -163,6 +155,8 @@ class SignInActivity : AppCompatActivity() {
                         val user =
                             CompleteUser(app, current, offlineMode = rememberMeButton.isChecked)
                         app.setActiveUser(user)
+                        Thread.sleep(1_000)
+                        startActivity(Intent(this@SignInActivity, MainMenuActivity::class.java))
                     }
                 }
             } catch (e: Exception) {

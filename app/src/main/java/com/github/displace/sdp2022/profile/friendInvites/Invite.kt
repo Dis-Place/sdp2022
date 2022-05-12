@@ -1,4 +1,4 @@
-package com.github.displace.sdp2022.profile
+package com.github.displace.sdp2022.profile.friendInvites
 
 import com.github.displace.sdp2022.users.PartialUser
 
@@ -16,3 +16,6 @@ data class Invite(val source: PartialUser, val target : PartialUser){
         return source.hashCode()
     }
 }
+
+data class InviteWithId(val invite: Invite, val id : String)
+
