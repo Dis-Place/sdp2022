@@ -9,12 +9,6 @@
         android:summary="Choose your style"
         android:title="Enable Dark Mode" />
     <SwitchPreference
-        android:contentDescription="sfx button"
-        android:defaultValue="true"
-        android:key="sfxKey"
-        android:summary="[May come later] You will soon be able to enable/disable sound effect "
-        android:title="Enable SFX" />
-    <SwitchPreference
         android:contentDescription="music button"
         android:defaultValue="true"
         android:key="musicKey"

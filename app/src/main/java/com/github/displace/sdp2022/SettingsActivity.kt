@@ -14,7 +14,6 @@ import androidx.preference.PreferenceManager
 import com.github.displace.sdp2022.profile.achievements.AchievementsLibrary
 
 const val DARK_MODE_SETTINGS_SWITCH: String = "darkMode"
-const val SFX_SETTINGS_SWITCH: String = "sfxKey"
 const val MUSIC_SETTINGS_SWITCH: String = "musicKey"
 const val THEME_SETTINGS_SWITCH: String = "themeKey"
 
@@ -44,16 +43,13 @@ class SettingsActivity : AppCompatActivity() {
         //Retrieve which settings it is
         val contentString: String = when (key) {
             DARK_MODE_SETTINGS_SWITCH -> "Dark mode"
-            SFX_SETTINGS_SWITCH -> "Sound effects"
             MUSIC_SETTINGS_SWITCH -> "Music"
             THEME_SETTINGS_SWITCH -> "Theme"
-
             else -> "Unknown settings"
         }
 
         when (key) {
             DARK_MODE_SETTINGS_SWITCH -> darkMode(prefs)
-            SFX_SETTINGS_SWITCH -> sfx(prefs)
             MUSIC_SETTINGS_SWITCH -> music(prefs)
             THEME_SETTINGS_SWITCH -> chooseTheme(prefs)
 
@@ -69,10 +65,6 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     private fun music(prefs: SharedPreferences) {
-        //TODO: Implement later
-    }
-
-    private fun sfx(prefs: SharedPreferences) {
         //TODO: Implement later
     }
 
