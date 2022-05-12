@@ -1,8 +1,10 @@
 package com.github.displace.sdp2022
 
+import android.content.Intent
 import androidx.lifecycle.Lifecycle
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
@@ -38,8 +40,7 @@ class SettingsActivityTest {
         app.setMessageHandler(MessageHandler(app.getActiveUser()!!.getPartialUser(), app))
         Thread.sleep(1000)
 
-        val intent =
-            Intent(ApplicationProvider.getApplicationContext(), SettingsActivity::class.java)
+        val intent = Intent(ApplicationProvider.getApplicationContext(), SettingsActivity::class.java)
         ActivityScenario.launch<SettingsActivity>(intent)
     }
 
