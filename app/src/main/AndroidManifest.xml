@@ -26,7 +26,7 @@
         <activity
             android:name=".profile.qrcode.QrCodeScannerActivity"
             android:exported="false"
-            android:parentActivityName=".profile.qrcode.QrCodeTemp">
+            android:parentActivityName=".profile.ProfileActivity">
 
             <!-- The meta-data tag is required if you support API level 15 and lower -->
             <meta-data
@@ -38,10 +38,6 @@
         <activity
             android:name=".profile.friendInvites.AddFriendActivity"
             android:exported="false" />
-        <activity
-            android:name=".profile.qrcode.QrCodeTemp"
-            android:exported="false"
-            android:parentActivityName=".profile.ProfileActivity">
 
             <!-- The meta-data tag is required if you support API level 15 and lower -->
             <meta-data
