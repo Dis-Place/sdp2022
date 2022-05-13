@@ -14,8 +14,7 @@ import androidx.preference.PreferenceManager
 import com.github.displace.sdp2022.profile.achievements.AchievementsLibrary
 
 const val DARK_MODE_SETTINGS_SWITCH: String = "darkMode"
-const val SFX_SETTINGS_SWITCH: String = "sfxKey"
-const val MUSIC_SETTINGS_SWITCH: String = "musicKey"
+const val THEME_SETTINGS_SWITCH: String = "themeKey"
 
 
 class SettingsActivity : AppCompatActivity() {
@@ -43,14 +42,15 @@ class SettingsActivity : AppCompatActivity() {
         //Retrieve which settings it is
         val contentString: String = when (key) {
             DARK_MODE_SETTINGS_SWITCH -> "Dark mode"
-            SFX_SETTINGS_SWITCH -> "Sound effects"
-            MUSIC_SETTINGS_SWITCH -> "Music"
-
+            THEME_SETTINGS_SWITCH -> "Theme"
             else -> "Unknown settings"
         }
 
-        darkMode(prefs)
+        when (key) {
+            DARK_MODE_SETTINGS_SWITCH -> darkMode(prefs)
+            THEME_SETTINGS_SWITCH -> chooseTheme(prefs)
 
+        }
         val stringToDisplay: String = contentString + enabledDisabledString
 
         //Display a toast message
@@ -61,14 +61,27 @@ class SettingsActivity : AppCompatActivity() {
 
     }
 
-    private fun darkMode(prefs: SharedPreferences){
-        val cur = prefs.getBoolean("darkMode", false)
-        if( cur) {
-            AppCompatDelegate.setDefaultNightMode(MODE_NIGHT_YES)
+    private fun music(prefs: SharedPreferences) {
+        //TODO: Implement later
+    }
+
+    private fun chooseTheme(prefs: SharedPreferences) {
+        when (prefs.getString("themeKey", "purple")!!) {
+            "purple" -> theme.applyStyle(R.style.Theme_DisPlace1, true)
+            "green" -> theme.applyStyle(R.style.Theme_DisPlace2, true)
+            else -> theme.applyStyle(R.style.Theme_DisPlace1, true)
         }
-        else{
+
+    }
+
+    private fun darkMode(prefs: SharedPreferences) {
+        val cur = prefs.getBoolean("darkMode", false)
+        if (cur) {
+            AppCompatDelegate.setDefaultNightMode(MODE_NIGHT_YES)
+        } else {
             AppCompatDelegate.setDefaultNightMode(MODE_NIGHT_NO)
         }
     }
+
 
 }
