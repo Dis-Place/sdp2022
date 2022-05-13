@@ -39,8 +39,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
-            android:name=".profile.friendInvites.FriendRequest"
-            android:exported="false" />
         <activity
             android:name=".profile.friendInvites.AddFriendActivity"
             android:exported="false" />

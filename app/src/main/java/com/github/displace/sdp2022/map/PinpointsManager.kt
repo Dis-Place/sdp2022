@@ -1,6 +1,7 @@
 package com.github.displace.sdp2022.map
 
 import android.app.Activity
+import android.media.MediaPlayer
 import com.github.displace.sdp2022.util.RandomColor
 import com.github.displace.sdp2022.util.math.Constants.THRESHOLD
 import org.osmdroid.util.GeoPoint
@@ -13,7 +14,7 @@ import org.osmdroid.views.MapView
  * @param mapView on which we put the markers
  * @author LeoLgdr
  */
-class PinpointsManager(private val mapView: MapView) {
+class PinpointsManager(private val mapView: MapView, private val clickSoundPlayer: MediaPlayer? = null) {
     private var pinPointsMap = mutableMapOf<PinpointsRef,List<Pinpoint>>()
     val playerPinPointsRef = PinpointsRef()
 
@@ -26,6 +27,7 @@ class PinpointsManager(private val mapView: MapView) {
      */
     fun putMarker(pos: GeoPoint) {
         playerPinPointsRef.add(pos,true)
+        clickSoundPlayer?.start()
         mapView.invalidate()
     }
 
