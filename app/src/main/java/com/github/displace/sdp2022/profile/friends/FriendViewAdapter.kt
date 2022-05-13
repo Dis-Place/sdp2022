@@ -13,6 +13,7 @@ class FriendViewAdapter(
     private val data: List<PartialUser>,
     private val MM : Int
 ) : RecyclerView.Adapter<FriendViewHolder>() {
+    private lateinit var curHolder : FriendViewHolder
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FriendViewHolder {
         val parentContext = parent.context
@@ -23,6 +24,7 @@ class FriendViewAdapter(
     }
 
     override fun onBindViewHolder(holder: FriendViewHolder, position: Int) {
+        curHolder = holder
         val index = holder.adapterPosition
         holder.friendNameView.text = data[index].username
         holder.friend = data[index]
@@ -46,5 +48,7 @@ class FriendViewAdapter(
     override fun getItemCount(): Int {
         return data.size
     }
+
+
 
 }

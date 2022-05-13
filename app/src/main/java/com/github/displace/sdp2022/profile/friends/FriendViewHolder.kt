@@ -4,11 +4,14 @@ import android.content.Intent
 import android.view.View
 import android.widget.ImageButton
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.R
 import com.github.displace.sdp2022.RealTimeDatabase
+import com.github.displace.sdp2022.profile.FriendDeleter
 import com.github.displace.sdp2022.profile.MessageUpdater
+import com.github.displace.sdp2022.profile.RequestAcceptor
 import com.github.displace.sdp2022.profile.messages.SendMessageActivity
 import com.github.displace.sdp2022.users.PartialUser
 
@@ -17,6 +20,7 @@ class FriendViewHolder(itemview: View) : RecyclerView.ViewHolder(itemview) {
     val friendNameView: TextView = itemView.findViewById(R.id.friendName)
     val messageButton: ImageButton = itemView.findViewById(R.id.messageButton)
     val inviteButton: ImageButton = itemView.findViewById(R.id.inviteButton)
+    val removeFriendButton: ImageButton = itemView.findViewById(R.id.removeFriendButton)
 
     lateinit var friend: PartialUser
     var tapUser : Boolean = false
@@ -56,6 +60,30 @@ class FriendViewHolder(itemview: View) : RecyclerView.ViewHolder(itemview) {
                 putExtra("FriendUsername", friend.username)
             }
             v.context.startActivity(intent)
+        }
+
+        removeFriendButton.setOnClickListener { v ->
+            Toast.makeText(removeFriendButton.context,"REMOVE FRIEND ${friend.username}", Toast.LENGTH_LONG).show()
+
+
+            val db : RealTimeDatabase = RealTimeDatabase().noCacheInstantiate("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",false) as RealTimeDatabase
+            val app = v.context.applicationContext as MyApplication
+            val activeUser = app.getActiveUser()
+            var activePartialUser = PartialUser("defaultName","dummy_id")
+            if(activeUser != null){
+                activePartialUser = activeUser.getPartialUser()
+            }
+//            db.getDbReference("CompleteUsers/${activePartialUser.uid}/CompleteUser/friendsList").runTransaction(
+//                FriendDeleter(friend)
+//            )
+            db.getDbReference("CompleteUsers/${friend.uid}/CompleteUser/friendsList").runTransaction(
+                FriendDeleter(activePartialUser)
+            )
+            activeUser?.removeFriend(friend)
+            friendNameView.visibility = View.GONE
+            messageButton.visibility = View.GONE
+            inviteButton.visibility = View.GONE
+            removeFriendButton.visibility = View.GONE
         }
 
     }

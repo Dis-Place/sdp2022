@@ -89,6 +89,8 @@
         <entry key="app/src/main/res/layout/activity_game_versus.xml" value="0.19610507246376813" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_temp_login.xml" value="0.17135416666666667" />
+        <entry key="app/src/main/res/layout/friend.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/friend_request.xml" value="0.18072916666666666" />
       </map>
     </option>
   </component>

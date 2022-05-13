@@ -11,6 +11,7 @@ import com.github.displace.sdp2022.profile.friendInvites.InviteWithId
 import com.github.displace.sdp2022.profile.messages.Message
 import com.github.displace.sdp2022.users.PartialUser
 import com.google.firebase.database.*
+import java.net.ConnectException
 
 class MessageUpdater(val applicationContext : Context, val message : String, private val activePartialUser : PartialUser ) : Transaction.Handler {
     val app = applicationContext as MyApplication
@@ -231,6 +232,44 @@ class RequestAcceptor(val source : PartialUser) : Transaction.Handler {
             partialUserMap["uid"] = source.uid
             partialUserMap["username"] = source.username
             ls.add(partialUserMap)
+        }
+        currentData.value = ls
+        return Transaction.success(currentData)
+    }
+
+    override fun onComplete(
+        error: DatabaseError?,
+        committed: Boolean,
+        currentData: DataSnapshot?
+    ) {
+    }
+
+}
+
+
+class FriendDeleter(val toRemove : PartialUser) : Transaction.Handler {
+    private val TAG = "FriendDeleter"
+
+    override fun doTransaction(currentData: MutableData): Transaction.Result {
+        val ls = currentData.value as ArrayList<MutableMap<String,Any>>?
+
+        if(ls == null){
+            return Transaction.success(currentData)
+        }else{
+            var indexOfUserToRemove = -1
+            for((index, user) in ls.withIndex()){
+                Log.d(TAG, "for index $index got ${user["uid"]}")
+                if(user["uid"] == toRemove.uid){
+                    indexOfUserToRemove = index
+                }
+            }
+            if( indexOfUserToRemove == -1){
+                Log.d(TAG, "did not find ${toRemove.username} ")
+            }
+            else {
+                Log.d(TAG, "FOUND ${toRemove.username} at index $indexOfUserToRemove")
+                ls.removeAt(indexOfUserToRemove)
+            }
         }
         currentData.value = ls
         return Transaction.success(currentData)
