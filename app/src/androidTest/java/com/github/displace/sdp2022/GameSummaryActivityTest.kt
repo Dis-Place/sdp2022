@@ -17,6 +17,7 @@ import com.github.displace.sdp2022.profile.friendInvites.Invite
 import com.github.displace.sdp2022.profile.messages.MessageHandler
 import com.github.displace.sdp2022.users.CompleteUser
 import com.github.displace.sdp2022.users.PartialUser
+import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -34,6 +35,19 @@ class GameSummaryActivityTest {
     fun createIntentAndBundle() {
         bundle = Bundle()
         intent = Intent(getApplicationContext(),GameSummaryActivity::class.java)
+
+        val app = ApplicationProvider.getApplicationContext() as MyApplication
+        app.setActiveUser(CompleteUser(app,null, false))
+        Thread.sleep(3000)
+        app.setMessageHandler(MessageHandler(app.getActiveUser()!!.getPartialUser(),app))
+        Thread.sleep(1000)
+
+    }
+
+    @After
+    fun releaseIntents() {
+        val app = ApplicationProvider.getApplicationContext() as MyApplication
+        app.getActiveUser()?.removeUserFromDatabase()
     }
 
     @Test
@@ -73,12 +87,6 @@ class GameSummaryActivityTest {
         val h = i1.hashCode()
         var p1 = i1.source
         p1 = i1.target
-
-        val app = ApplicationProvider.getApplicationContext() as MyApplication
-        app.setActiveUser(CompleteUser(app,null, false))
-        Thread.sleep(3000)
-        app.setMessageHandler(MessageHandler(app.getActiveUser()!!.getPartialUser(),app))
-        Thread.sleep(1000)
 
         val mode = "example_mode"
         val id = "dummy_id"
@@ -128,13 +136,6 @@ class GameSummaryActivityTest {
     @Test
     fun mainMenuButtonWorks() {
         Intents.init()
-
-
-        val app = getApplicationContext() as MyApplication
-
-        app.setActiveUser(CompleteUser(app, null, false))
-
-        Thread.sleep(3_000)
 
         ActivityScenario.launch<GameSummaryActivity>(intent).use {
             onView(withId(R.id.mainMenuButton)).perform(click())

@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO
 import androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES
 import androidx.preference.PreferenceManager
+import com.github.displace.sdp2022.profile.achievements.AchievementsLibrary
 
 const val DARK_MODE_SETTINGS_SWITCH: String = "darkMode"
 const val SFX_SETTINGS_SWITCH: String = "sfxKey"
@@ -54,6 +55,10 @@ class SettingsActivity : AppCompatActivity() {
 
         //Display a toast message
         Toast.makeText(this, stringToDisplay, Toast.LENGTH_SHORT).show()
+
+        val app = applicationContext as MyApplication
+        AchievementsLibrary.achievementCheck(app , app.getActiveUser()!! , Pair(contentString,enabledDisabledString) , AchievementsLibrary.settingsLib )
+
     }
 
     private fun darkMode(prefs: SharedPreferences){
