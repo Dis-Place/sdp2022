@@ -71,6 +71,7 @@ class MainMenuActivity : AppCompatActivity() {
         AuthUI.getInstance().signOut(this).addOnCompleteListener {
             Toast.makeText(this, "Logging Out", Toast.LENGTH_SHORT).show()
             (applicationContext as MyApplication).getMessageHandler().removeListener()
+            getSharedPreferences("login", MODE_PRIVATE).edit().putBoolean("remembered", false).apply()
 
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
