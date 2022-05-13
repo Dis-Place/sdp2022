@@ -27,12 +27,13 @@ class NewsActivity : AppCompatActivity() {
             val ls = arrayListOf<News>(News(
                 "NO NEWS FOUND",
                 "It seems there was a problem getting the news, come back later!",
-                "NOW"
+                "NOW",
+                null
             ))
             if(news != null){
                 ls.clear()
                 for(map in news){
-                    ls.add( News(map["title"] as String , map["description"] as String , map["date"] as String) )
+                    ls.add( News(map["title"] as String , map["description"] as String , map["date"] as String, (applicationContext as MyApplication).getActiveUser()?.getProfilePic() ))
                 }
             }
             val newsAdapter = NewsViewAdapter(applicationContext, ls)
@@ -48,7 +49,8 @@ class NewsActivity : AppCompatActivity() {
             val ls = arrayListOf<News>(News(
                 "NO NEWS FOUND",
                 "It seems you're offline, News aren't available !",
-                "NOW"
+                "NOW",
+                null
             ))
             val newsAdapter = NewsViewAdapter(applicationContext, ls)
             newsRecyclerView.adapter = newsAdapter
