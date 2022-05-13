@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.github.displace.sdp2022.matchMaking.MatchMakingActivity
-import com.github.displace.sdp2022.profile.messages.MessageHandler
+import android.widget.Toast
 
 
 class GameListActivity : AppCompatActivity() {
@@ -41,6 +41,26 @@ class GameListActivity : AppCompatActivity() {
         val intent = Intent(this, MatchMakingActivity::class.java)
         intent.putExtra("nbPlayer",5L)
         intent.putExtra("gameMode","Versus5P")
+        startActivity(intent)
+    }
+
+    @Suppress("UNUSED_PARAMETER")
+    fun infoVsButton(view: View) {
+        Toast.makeText(this, "A game of hide and seek with 2 peoples. The first player to find the other win", Toast.LENGTH_LONG).show()
+    }
+
+    @Suppress("UNUSED_PARAMETER")
+    fun infoVs3Button(view: View) {
+        Toast.makeText(this, "A game of hide and seek with 3 peoples. When someone is found, he get expulsed from the game. The winner is the last player in the game.", Toast.LENGTH_LONG).show()
+    }
+
+    @Suppress("UNUSED_PARAMETER")
+    fun infoVs5Button(view: View) {
+        Toast.makeText(this, "A game of hide and seek with 5 peoples. When someone is found, he get expulsed from the game. The winner is the last player in the game.", Toast.LENGTH_LONG).show()
+    }
+
+    override fun onBackPressed() {
+        intent = Intent(this, MainMenuActivity::class.java)
         startActivity(intent)
     }
 

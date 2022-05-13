@@ -63,6 +63,10 @@ class GameVersusViewActivity : AppCompatActivity() {
     private var gid = ""
     private var uid = ""
 
+    private var oldPos = GeoPoint(0.0,0.0)
+    private var totalDist = 0.0
+    private var totalTime = 0
+
     //CHAT
     private lateinit var chat: Chat
 
@@ -199,7 +203,8 @@ class GameVersusViewActivity : AppCompatActivity() {
         else null
 
         pinpointsManager = PinpointsManager(mapView, clickSoundPlayer)
-        for (i in nbPlayer downTo 1) {
+        for(i in nbPlayer downTo 0){
+
             otherPlayersPinpoints = otherPlayersPinpoints.plus(pinpointsManager.PinpointsRef())
         }
         MockGPS.mockIfNeeded(intent, gpsPositionManager)
@@ -213,6 +218,11 @@ class GameVersusViewActivity : AppCompatActivity() {
                 )
             )
         })
+
+        gpsPositionManager.listenersManager.addCall(GeoPointListener { geoPoint ->
+            addTotals(geoPoint)
+        })
+
         gpsPositionManager.updateLocation()
         GPSLocationMarker(mapView, gpsPositionManager).add()
 
@@ -266,6 +276,14 @@ class GameVersusViewActivity : AppCompatActivity() {
         musicPlayer.isLooping = false
     }
 
+    private fun addTotals(point : GeoPoint){
+        if(point.latitude != 0.0 && point.longitude != 0.0 && oldPos.longitude == 0.0 && oldPos.latitude == 0.0){
+            oldPos = point
+        }
+        totalDist += CoordinatesUtil.distance(oldPos,point)
+        oldPos = point
+        totalTime += 5
+    }
 
     //close the screen
     @Suppress("UNUSED_PARAMETER")
@@ -295,6 +313,13 @@ class GameVersusViewActivity : AppCompatActivity() {
     //show the game summary by launching a new activity
     private fun showGameSummaryActivity() {
 
+        others.forEach { x ->
+            db.removeList(
+                "GameInstance/Game${intent.getStringExtra("gid")!!}/id:${x[1]}",
+                "finish",
+                endListener
+            )
+        }
         if (PreferenceManager.getDefaultSharedPreferences(this)
                 .getBoolean(SFX_SETTINGS_SWITCH, true)
         ) {
@@ -304,7 +329,11 @@ class GameVersusViewActivity : AppCompatActivity() {
         extras.putStringArrayList(EXTRA_STATS, statsList)
         extras.putString(EXTRA_MODE, gameMode)
         intent.putExtras(extras)
-        intent.putExtra("others", others as Serializable)
+
+        intent.putExtra("others",others as Serializable)
+        intent.putExtra("totalDist",totalDist)
+        intent.putExtra("totalTime",totalTime)
+
         startActivity(intent)
     }
 
@@ -319,15 +348,17 @@ class GameVersusViewActivity : AppCompatActivity() {
         var i = 0
         other.toList().forEach { x ->
             val otherPlayerId = x.first.removePrefix("id:")
-            print(" \n $otherPlayerId \n")
             db.addList(
                 "GameInstance/Game${intent.getStringExtra("gid")!!}/id:${otherPlayerId}",
                 "finish",
                 endListener
             )
 
-            db.referenceGet("CompleteUsers/${otherPlayerId}/CompleteUser/partialUser", "username")
-                .addOnSuccessListener { snapshot ->
+            if(!intent.getStringExtra("uid")!!.contains("guest")) {
+                db.referenceGet(
+                    "CompleteUsers/${otherPlayerId}/CompleteUser/partialUser",
+                    "username"
+                ).addOnSuccessListener { snapshot ->
                     try {
                         val name = snapshot.value as String
                         val list = listOf(listOf(name, otherPlayerId))
@@ -335,15 +366,14 @@ class GameVersusViewActivity : AppCompatActivity() {
                     } catch (e: Exception) {
                     }
                 }
-
-            try {
-                pinpointsDBHandler.enableAutoupdateLocalPinpoints(
-                    otherPlayerId,
-                    otherPlayersPinpoints[i]
-                )
-            } catch (e: Exception) {
-                throw error(otherPlayerId)
             }
+
+            try{
+            pinpointsDBHandler.enableAutoupdateLocalPinpoints(
+                otherPlayerId,
+                otherPlayersPinpoints[i]
+            )
+            }catch(e: Exception){ throw error(otherPlayerId + " i = $i")}
 
             game.handleEvent(
                 GameEvent.OnStart(

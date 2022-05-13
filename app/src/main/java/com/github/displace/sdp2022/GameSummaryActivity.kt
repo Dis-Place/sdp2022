@@ -8,26 +8,40 @@ import android.view.View
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
-import com.github.displace.sdp2022.profile.FriendRequest
+import androidx.constraintlayout.widget.Group
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.github.displace.sdp2022.profile.friends.NewFriendViewAdapter
+import com.github.displace.sdp2022.profile.statistics.Statistic
+import com.github.displace.sdp2022.users.CompleteUser
+import com.github.displace.sdp2022.users.PartialUser
 import com.github.displace.sdp2022.profile.achievements.AchievementsLibrary
-import com.google.firebase.database.FirebaseDatabase
+import java.lang.Exception
 
 class GameSummaryActivity : AppCompatActivity() {
 
     lateinit var layout: LinearLayout
     private val db : RealTimeDatabase = RealTimeDatabase().instantiate("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",false) as RealTimeDatabase
+
+    private lateinit var activeUser: CompleteUser
+    private lateinit var stats: List<Statistic>
+
     lateinit var app : MyApplication
     var mode : String? = ""
     var victory : Boolean = false
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_game_summary)
 
+        findViewById<Group>(R.id.FriendGroup).visibility = View.INVISIBLE
         app = applicationContext as MyApplication
-
         layout = findViewById<LinearLayout>(R.id.layoutGameStats)
         val extras = intent.extras
+        app = applicationContext as MyApplication
+        activeUser = app.getActiveUser()!!
+        stats = activeUser.getStats()
 
         if (extras != null) {
             val roundStats = extras.getStringArrayList(EXTRA_STATS)
@@ -54,6 +68,25 @@ class GameSummaryActivity : AppCompatActivity() {
 
         mainMenuButton.setOnClickListener { backToMainMenu() }
         replayButton.setOnClickListener { backToGameList() }
+
+        val friendRecyclerView = findViewById<RecyclerView>(R.id.recyclerFriend)
+
+        var others :List<PartialUser> = listOf()
+
+        try {
+            (intent.getSerializableExtra("others")!! as List<List<String>>).forEach { x ->
+                others = others.plus(PartialUser(x[0], x[1]))
+            }
+        }catch(e: Exception){}
+
+        val friendAdapter = NewFriendViewAdapter(
+            applicationContext,
+            others,
+            1
+        )
+        friendRecyclerView.adapter = friendAdapter
+        friendRecyclerView.layoutManager = LinearLayoutManager(applicationContext)
+
     }
 
     fun addRoundStat(info: String) {
@@ -107,7 +140,7 @@ class GameSummaryActivity : AppCompatActivity() {
         val played = user.getStat("Games Played")
         val won = user.getStat("Games Won")
         val distance = user.getStat("Distance Moved")
-        val distThisGame : Long = 0 //TODO : CHANGE TO THE REAL VALUE
+        val distThisGame : Long = intent.getDoubleExtra("totalDist",0.0)!!.toLong()
         user.updateStats("Distance Moved" , distance.value+distThisGame)
 
 
@@ -125,17 +158,16 @@ class GameSummaryActivity : AppCompatActivity() {
 
 
     fun friendInviteToOpponent(View : View) {
+        findViewById<Group>(R.id.FriendGroup).visibility = android.view.View.VISIBLE
+        findViewById<Group>(R.id.MainScreen).visibility = android.view.View.INVISIBLE
+    }
 
-        val otherId = (intent.getSerializableExtra("others") as List<List<String>>)[0][1]
-        val db = RealTimeDatabase().noCacheInstantiate(
-            "https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",
-            false
-        ) as RealTimeDatabase
-        db.referenceGet("CompleteUsers/$otherId/CompleteUser/partialUser","username").addOnSuccessListener { snapshot ->
-            val name = snapshot.value as String? ?: ""
-            FriendRequest.sendFriendRequest(this,otherId,FirebaseDatabase.getInstance("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/").reference,
-                app.getActiveUser()!!.getPartialUser()
-            )
-        }
+    fun cancelButton(View: View) {
+        findViewById<Group>(R.id.FriendGroup).visibility = android.view.View.INVISIBLE
+        findViewById<Group>(R.id.MainScreen).visibility = android.view.View.VISIBLE
+    }
+
+    override fun onBackPressed() {
+        backToGameList()
     }
 }
