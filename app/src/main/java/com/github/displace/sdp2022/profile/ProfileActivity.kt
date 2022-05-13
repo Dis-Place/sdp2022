@@ -1,5 +1,6 @@
 package com.github.displace.sdp2022.profile
 
+import android.Manifest
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -8,6 +9,9 @@ import android.widget.ScrollView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.core.content.PermissionChecker
 import androidx.lifecycle.Observer
 
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -24,6 +28,8 @@ import com.github.displace.sdp2022.profile.friends.FriendViewAdapter
 import com.github.displace.sdp2022.profile.history.HistoryViewAdapter
 import com.github.displace.sdp2022.profile.messages.Message
 import com.github.displace.sdp2022.profile.messages.MsgViewAdapter
+import com.github.displace.sdp2022.profile.qrcode.QrCodeScannerActivity
+import com.github.displace.sdp2022.profile.qrcode.QrCodeUtils
 import com.github.displace.sdp2022.profile.settings.AccountSettingsActivity
 import com.github.displace.sdp2022.profile.statistics.StatViewAdapter
 import com.github.displace.sdp2022.users.PartialUser
@@ -271,6 +277,58 @@ class ProfileActivity : AppCompatActivity() {
     @Suppress("UNUSED_PARAMETER")
     fun addFriendButton(view: View) {
         startActivity(Intent(this, AddFriendActivity::class.java))
+    }
+
+    /**
+     * Show the QR code corresponding to the partial user after generating the bitmap
+     */
+    @Suppress("UNUSED_PARAMETER")
+    fun showQR(view : View){
+        val app = applicationContext as MyApplication
+        val bmp = QrCodeUtils.generateQrCodeBitmap(app.getActiveUser()!!.getPartialUser())
+        if(bmp != null){
+            QrCodeUtils.createImagePopup(bmp,this)
+        }else{
+            TODO("There was an error while creating the bitmap, no idea what we can do here")
+        }
+
+    }
+
+    private fun launchQRScanner(){
+        val intent = Intent(this, QrCodeScannerActivity::class.java)
+        startActivity(intent)
+    }
+
+
+    /**
+     * Transition to the scanning activity
+     */
+    @Suppress("UNUSED_PARAMETER")
+    fun useScannerQR(view : View){
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PermissionChecker.PERMISSION_GRANTED) {
+            launchQRScanner()
+        } else {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA), QR_CAMERA_REQUEST_CODE)
+        }
+    }
+
+    @Override
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when(requestCode){
+            QR_CAMERA_REQUEST_CODE ->
+                if(grantResults[0]==PermissionChecker.PERMISSION_GRANTED) {
+                    launchQRScanner()
+                } else {
+                    Toast.makeText(this, "Please grant Camera permissions in order to scan QR codes", Toast.LENGTH_SHORT).show()
+                }
+        }
+
+
+    }
+
+    companion object {
+        const val QR_CAMERA_REQUEST_CODE = 1256
     }
 
 
