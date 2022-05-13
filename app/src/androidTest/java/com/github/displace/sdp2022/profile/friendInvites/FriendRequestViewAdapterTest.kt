@@ -25,7 +25,7 @@ class FriendRequestViewAdapterTest {
             InviteWithId(Invite(PartialUser("c", "3"), PartialUser("d", "4")), "c3d4")
         )
 
-        friendRequestViewAdapter = FriendRequestViewAdapter(dataset)
+        friendRequestViewAdapter = FriendRequestViewAdapter(dataset, null)
         Thread.sleep(100)
     }
 
@@ -50,7 +50,7 @@ class FriendRequestViewAdapterTest {
 
 
     @Test
-    fun frienRequestViewAdapterTest(){
+    fun friendRequestViewAdapterTest(){
 
     }
 

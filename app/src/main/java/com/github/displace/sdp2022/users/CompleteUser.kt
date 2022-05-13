@@ -5,6 +5,7 @@ import android.app.AlertDialog
 import android.content.Context
 import android.graphics.Bitmap
 import android.util.Log
+import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.RealTimeDatabase
 import com.github.displace.sdp2022.profile.achievements.Achievement
 import com.github.displace.sdp2022.profile.history.History
@@ -21,7 +22,8 @@ class CompleteUser(
     context: Context?,
     private val firebaseUser: FirebaseUser?,
     val guestBoolean: Boolean = false,
-    val offlineMode: Boolean = false,
+    var offlineMode: Boolean = false,
+    val remembered: Boolean = false,
     val progress_dialog: AlertDialog? = null
 ) {
 
@@ -44,6 +46,8 @@ class CompleteUser(
         }
     }
 
+    private val app : MyApplication = context as MyApplication
+
     private val offlineUserFetcher: OfflineUserFetcher = OfflineUserFetcher(context)
 
     private var partialUser: PartialUser = PartialUser("this cannot be a user", "still cannot be a user")
@@ -53,8 +57,9 @@ class CompleteUser(
     private lateinit var achievements: MutableList<Achievement>
     private lateinit var stats: MutableList<Statistic>
     private lateinit var friendsList: MutableList<PartialUser>
-    private lateinit var gameHistory: MutableList<History>
+    private var gameHistory: MutableList<History> = mutableListOf()
     private var profilePic: Bitmap? = null
+
 
     init {
         initializeUser()
@@ -79,22 +84,30 @@ class CompleteUser(
         this.gameHistory = gameHistory
     }
 
-
     fun addAchievement(ach: Achievement) {
         if (offlineMode)
             return
 
-        achievements.add(ach)
-        db.update(dbReference, "achievements/${achievements.size - 1}", ach)
-        if(!guestBoolean) {
-            offlineUserFetcher.setOfflineAchievements(achievements)
+        if(!achievements.contains(ach)){
+
+            /**
+             * This part should also send a notification
+             */
+            app.getMessageHandler().messageNotification(ach.description,ach.name)
+
+            achievements.add(ach)
+            db.update(dbReference, "achievements/${achievements.size - 1}", ach)
+            if(!guestBoolean) {
+                offlineUserFetcher.setOfflineAchievements(achievements)
+            }
         }
+
     }
 
     fun updateStats(statName: String, newValue: Long) {
         if (offlineMode)
             return
-        for (i in 0..stats.size) {
+        for (i in 0 until stats.size) {
             if (statName == stats[i].name) {
                 stats[i].value = newValue
                 db.update(dbReference, "stats/$i/value", newValue)
@@ -175,6 +188,10 @@ class CompleteUser(
         return profilePic
     }
 
+    fun setOffline(offline: Boolean) {
+        offlineMode = offline
+    }
+
     private fun initializeUser() {
         // Initialization if it's a guest
         if (guestBoolean) {
@@ -188,6 +205,7 @@ class CompleteUser(
             gameHistory = mutableListOf(
                 History("dummy_map", getCurrentDate(), "VICTORY")
             )
+            gameHistory = mutableListOf()
             createFirstMessageList()
             progress_dialog?.dismiss()
             return
@@ -195,7 +213,7 @@ class CompleteUser(
 
 
         // Initialization if the user is offline, using the cache
-        if (offlineMode) {
+        if (offlineMode || remembered) {
             achievements = offlineUserFetcher.getOfflineAchievements()
             stats = offlineUserFetcher.getOfflineStats()
             friendsList = offlineUserFetcher.getOfflineFriendsList()
@@ -211,16 +229,6 @@ class CompleteUser(
             if (usr.value != null) {
                 val completeUser = usr.value as HashMap<String, *>
 
-                // Get achievements from the database
-                val achievementsDB =
-                    completeUser["achievements"] as ArrayList<HashMap<String, String>>
-
-                achievements = achievementsDB.map { ach ->
-                    Achievement(
-                        ach["name"]!!,
-                        ach["date"]!!
-                    )
-                } as MutableList<Achievement>
 
                 // Get statistics from the database
                 val statsDB = completeUser["stats"] as ArrayList<HashMap<String, String>>
@@ -230,6 +238,19 @@ class CompleteUser(
                         s["value"] as Long
                     )
                 } as MutableList<Statistic>
+
+
+                // Get achievements from the database
+                val achievementsDB =
+                    completeUser["achievements"] as ArrayList<HashMap<String, String>>
+
+                achievements = achievementsDB.map { ach ->
+                    Achievement(
+                        ach["name"]!!,
+                        ach["description"]!!,
+                        ach["date"]!!
+                    )
+                } as MutableList<Achievement>
 
                 // Get friends list from the database
                 val friendsListHash =
@@ -244,15 +265,16 @@ class CompleteUser(
 
                 // Get game history from the database
                 val gameHistoryHash =
-                    completeUser["gameHistory"] as ArrayList<HashMap<String, String>>
-                gameHistory = gameHistoryHash.map { g ->
-                    History(
-                        g["map"]!!,
-                        g["date"]!!,
-                        g["result"]!!
-                    )
-                } as MutableList<History>
-
+                    completeUser["gameHistory"] as ArrayList<HashMap<String, String>>?
+                if(gameHistoryHash != null) {
+                    gameHistory = gameHistoryHash.map { g ->
+                        History(
+                            g["map"]!!,
+                            g["date"]!!,
+                            g["result"]!!
+                        )
+                    } as MutableList<History>
+                }
                 // Get Partial User from the database
                 val partialUserMap = completeUser["partialUser"] as HashMap<String, String>
                 partialUser =
@@ -267,9 +289,10 @@ class CompleteUser(
                 friendsList = mutableListOf(
                     PartialUser("THE SYSTEM", "dummy_friend_id")
                 )
-                gameHistory = mutableListOf(
+           /*     gameHistory = mutableListOf(
                     History("dummy_map", getCurrentDate(), "VICTORY")
-                )
+                )*/
+                gameHistory = mutableListOf()
                 initializePartialUser()
                 addUserToDatabase()
                 createFirstMessageList()
@@ -304,7 +327,7 @@ class CompleteUser(
     @SuppressLint("SimpleDateFormat")
     private fun initializeAchievements() {
         achievements = mutableListOf(
-            Achievement("Create your account !", getCurrentDate())
+            Achievement("Welcome home!","Create your account", getCurrentDate())
         )
 
         if(!guestBoolean && firebaseUser != null) {
@@ -326,8 +349,9 @@ class CompleteUser(
 
     private fun initializeStats() {
         stats = mutableListOf(
-            Statistic("stat1", 0),
-            Statistic("stat2", 0)
+            Statistic("Games Played", 0),
+            Statistic("Games Won", 0),
+            Statistic("Distance Moved", 0)
         )      // It's a dummy list for now, will be replaced with a list of all the possible statistics initialized to 0
 
         if(!guestBoolean && firebaseUser != null) {
@@ -344,7 +368,7 @@ class CompleteUser(
     private fun initializePartialUser() {
         googleName = "defaultName"
         if (firebaseUser != null) {
-            if (firebaseUser.displayName == null) {
+            if (firebaseUser.displayName == null || firebaseUser.displayName == "") {
                 setupDefaultOrGuestPartialUser()
             } else {
                 partialUser = PartialUser(firebaseUser.displayName!!, firebaseUser.uid)
@@ -376,6 +400,15 @@ class CompleteUser(
 
     fun getStats(): List<Statistic> {
         return stats
+    }
+
+    fun getStat(name : String): Statistic {
+        for(stat in stats){
+            if(stat.name == name){
+                return stat
+            }
+        }
+        return Statistic("ERROR",0)
     }
 
     fun getFriendsList(): MutableList<PartialUser> {

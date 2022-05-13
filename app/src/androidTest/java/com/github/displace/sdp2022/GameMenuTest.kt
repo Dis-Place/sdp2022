@@ -49,7 +49,10 @@ class GameMenuTest {
     @After
     fun releaseIntents() {
         Intents.release()
+        val app = ApplicationProvider.getApplicationContext() as MyApplication
+        app.getActiveUser()?.removeUserFromDatabase()
     }
+
 
     @get:Rule
     val permissionRule = GrantPermissionRule.grant(
@@ -68,6 +71,9 @@ class GameMenuTest {
             onView(withId(R.id.TryText))
                 .check(matches(withText("remaining tries : 4")))
         }
+
+        val app = ApplicationProvider.getApplicationContext() as MyApplication
+        app.getActiveUser()!!.removeUserFromDatabase()
     }
 
     @Test
@@ -80,6 +86,8 @@ class GameMenuTest {
         ActivityScenario.launch<GameVersusViewActivity>(intent).use {
             onView(withId(R.id.map)).check(matches(ViewMatchers.isDisplayed()))
         }
+        val app = ApplicationProvider.getApplicationContext() as MyApplication
+        app.getActiveUser()!!.removeUserFromDatabase()
 
     }
 
@@ -105,6 +113,8 @@ class GameMenuTest {
             Intents.intended(IntentMatchers.hasComponent(GameSummaryActivity::class.java.name))
 
         }
+        val app = ApplicationProvider.getApplicationContext() as MyApplication
+        app.getActiveUser()!!.removeUserFromDatabase()
     }
 
     @Test
@@ -122,6 +132,8 @@ class GameMenuTest {
                 .check(matches(withText("wrong guess, remaining tries : 3")))
 
         }
+        val app = ApplicationProvider.getApplicationContext() as MyApplication
+        app.getActiveUser()!!.removeUserFromDatabase()
 
     }
 
@@ -136,6 +148,8 @@ class GameMenuTest {
             onView(withId(R.id.map)).perform(ViewActions.longClick())
             //Intents.intended(IntentMatchers.hasComponent(GameSummaryActivity::class.java.name))
         }
+        val app = ApplicationProvider.getApplicationContext() as MyApplication
+        app.getActiveUser()!!.removeUserFromDatabase()
 
     }
 
@@ -150,6 +164,8 @@ class GameMenuTest {
             onView(withId(R.id.closeButton)).perform(click())
             Intents.intended(IntentMatchers.hasComponent(GameListActivity::class.java.name))
         }
+        val app = ApplicationProvider.getApplicationContext() as MyApplication
+        app.getActiveUser()!!.removeUserFromDatabase()
     }
 
     private fun swipeUp(): ViewAction? {
@@ -180,6 +196,8 @@ class GameMenuTest {
             onView(withId(R.id.button4)).perform(click())
 
         }
+        val app = ApplicationProvider.getApplicationContext() as MyApplication
+        app.getActiveUser()!!.removeUserFromDatabase()
     }
 
 }
