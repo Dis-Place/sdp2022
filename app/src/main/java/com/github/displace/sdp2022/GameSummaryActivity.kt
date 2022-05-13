@@ -63,9 +63,6 @@ class GameSummaryActivity : AppCompatActivity() {
 
         }
 
-        activeUser.updateStats(stats[1].name, stats[1].value + intent.getIntExtra("totalTime",0)!!) // is totalTime
-        activeUser.updateStats(stats[2].name, (stats[2].value + intent.getDoubleExtra("totalDist",0.0)!!).toLong()) // is totalDist
-
         val mainMenuButton = findViewById<Button>(R.id.mainMenuButton)
         val replayButton = findViewById<Button>(R.id.gameListButton)
 
@@ -107,7 +104,6 @@ class GameSummaryActivity : AppCompatActivity() {
 
         if(vict) {
             victoryText.setTextColor(Color.rgb(0,255,0))
-            activeUser.updateStats(stats[0].name, stats[0].value + 1) // is nbWin
         } else {
             victoryText.setTextColor(Color.rgb(255,0,0))
         }
@@ -144,7 +140,7 @@ class GameSummaryActivity : AppCompatActivity() {
         val played = user.getStat("Games Played")
         val won = user.getStat("Games Won")
         val distance = user.getStat("Distance Moved")
-        val distThisGame : Long = 0 //TODO : CHANGE TO THE REAL VALUE
+        val distThisGame : Long = intent.getDoubleExtra("totalDist",0.0)!!.toLong()
         user.updateStats("Distance Moved" , distance.value+distThisGame)
 
 
