@@ -15,6 +15,8 @@ import com.github.displace.sdp2022.profile.achievements.AchievementsLibrary
 
 const val DARK_MODE_SETTINGS_SWITCH: String = "darkMode"
 const val THEME_SETTINGS_SWITCH: String = "themeKey"
+const val SFX_SETTINGS_SWITCH: String = "sfx mode"
+const val MUSIC_SETTINGS_SWITCH: String = "music mode"
 
 
 class SettingsActivity : AppCompatActivity() {
