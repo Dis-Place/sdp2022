@@ -21,7 +21,8 @@ class CompleteUser(
     context: Context?,
     private val firebaseUser: FirebaseUser?,
     val guestBoolean: Boolean = false,
-    val offlineMode: Boolean = false,
+    var offlineMode: Boolean = false,
+    val remembered: Boolean = false,
     val progress_dialog: AlertDialog? = null
 ) {
 
@@ -175,6 +176,10 @@ class CompleteUser(
         return profilePic
     }
 
+    fun setOffline(offline: Boolean) {
+        offlineMode = offline
+    }
+
     private fun initializeUser() {
         // Initialization if it's a guest
         if (guestBoolean) {
@@ -195,7 +200,7 @@ class CompleteUser(
 
 
         // Initialization if the user is offline, using the cache
-        if (offlineMode) {
+        if (offlineMode || remembered) {
             achievements = offlineUserFetcher.getOfflineAchievements()
             stats = offlineUserFetcher.getOfflineStats()
             friendsList = offlineUserFetcher.getOfflineFriendsList()
@@ -344,7 +349,7 @@ class CompleteUser(
     private fun initializePartialUser() {
         googleName = "defaultName"
         if (firebaseUser != null) {
-            if (firebaseUser.displayName == null) {
+            if (firebaseUser.displayName == null || firebaseUser.displayName == "") {
                 setupDefaultOrGuestPartialUser()
             } else {
                 partialUser = PartialUser(firebaseUser.displayName!!, firebaseUser.uid)

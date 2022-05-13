@@ -11,6 +11,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.github.displace.sdp2022.MainMenuActivity
 import com.github.displace.sdp2022.R
+import com.github.displace.sdp2022.profile.ProfileActivity
 import com.github.displace.sdp2022.users.CompleteUser
 import com.github.displace.sdp2022.users.OfflineUserFetcher
 import org.junit.Rule
@@ -47,6 +48,7 @@ class SignInActivityTest {
         Thread.sleep(2_000)
 
         //TODO: check that we have 2 intents
+        intended(hasComponent(ProfileActivity::class.java.name))
         assert(true)
 
         OfflineUserFetcher(context).setCompleteUser(tempCompleteteUser)
