@@ -1,20 +1,22 @@
 package com.github.displace.sdp2022.profile.friendInvites
 
+import android.content.Context
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.R
 import com.github.displace.sdp2022.RealTimeDatabase
 import com.github.displace.sdp2022.profile.*
+import com.github.displace.sdp2022.util.CheckConnection.checkForInternet
 
 
-
-class FriendRequestViewAdapter(private var dataSet: MutableList<InviteWithId>) :
+class FriendRequestViewAdapter(private var dataSet: MutableList<InviteWithId>, private val context: ProfileActivity?) :
     RecyclerView.Adapter<FriendRequestViewAdapter.ViewHolder>() {
 
     val TAG : String = "FriendRequestViewAdapter"
@@ -31,31 +33,44 @@ class FriendRequestViewAdapter(private var dataSet: MutableList<InviteWithId>) :
 
         init{
             rejectButton.setOnClickListener{
-                Log.d(TAG, " REJECTING FRIEND OFFER" )
-                val inviteId = deleteRequest( adapterPosition)
-                DeleteInvite.deleteInvite(inviteId.id)
+                if(context != null && !checkForInternet(context)) {
+                    context.setStatus(false)
+                    Toast.makeText(context, "You're offline ! Please connect to the internet", Toast.LENGTH_LONG).show()
+                } else {
+                    Log.d(TAG, " REJECTING FRIEND OFFER")
+                    val inviteId = deleteRequest(adapterPosition)
+                    DeleteInvite.deleteInvite(inviteId.id)
+                }
 
 
             }
             acceptButton.setOnClickListener{
-                Log.d(TAG, " ACCEPTING FRIEND OFFER" )
-                val invite = deleteRequest( adapterPosition)
-
+                if(!checkForInternet(context as Context)) {
+                    Toast.makeText(context, "You're offline ! Please connect to the internet", Toast.LENGTH_LONG).show()
+                } else {
+                    Log.d(TAG, " ACCEPTING FRIEND OFFER")
+                    val invite = deleteRequest(adapterPosition)
 
 
 //                val app = acceptButton.context.applicationContext as MyApplication
 //                val user = app.getActiveUser()!!
 //                user.addFriend(invite.invite.source)
 
-                val db : RealTimeDatabase = RealTimeDatabase().noCacheInstantiate("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",false) as RealTimeDatabase
-                db.getDbReference("CompleteUsers/${invite.invite.source.uid}/CompleteUser/friendsList").runTransaction(
-                    RequestAcceptor(invite.invite.target)
-                )
-                db.getDbReference("CompleteUsers/${invite.invite.target.uid}/CompleteUser/friendsList").runTransaction(
-                    RequestAcceptor(invite.invite.source)
-                )
+                    val db: RealTimeDatabase = RealTimeDatabase().noCacheInstantiate(
+                        "https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",
+                        false
+                    ) as RealTimeDatabase
+                    db.getDbReference("CompleteUsers/${invite.invite.source.uid}/CompleteUser/friendsList")
+                        .runTransaction(
+                            RequestAcceptor(invite.invite.target)
+                        )
+                    db.getDbReference("CompleteUsers/${invite.invite.target.uid}/CompleteUser/friendsList")
+                        .runTransaction(
+                            RequestAcceptor(invite.invite.source)
+                        )
 
-                DeleteInvite.deleteInvite(invite.id)
+                    DeleteInvite.deleteInvite(invite.id)
+                }
             }
         }
     }

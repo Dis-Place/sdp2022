@@ -25,6 +25,7 @@ class NewsViewAdapter(val context: Context, private val data: List<News>) :
         holder.title.text = data[index].title
         holder.description.text = data[index].description
         holder.date.text = data[index].date
+        holder.image.setImageBitmap(data[index].image)
     }
 
     override fun getItemCount(): Int {
