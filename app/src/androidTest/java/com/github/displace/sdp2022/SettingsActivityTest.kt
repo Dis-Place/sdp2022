@@ -13,7 +13,10 @@ import androidx.test.espresso.matcher.RootMatchers.withDecorView
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.github.displace.sdp2022.profile.messages.MessageHandler
+import com.github.displace.sdp2022.users.CompleteUser
 import org.hamcrest.Matchers.*
+import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -27,9 +30,21 @@ class SettingsActivityTest {
 
     @Before
     fun setUp() {
+        val app = ApplicationProvider.getApplicationContext() as MyApplication
+        app.setActiveUser(CompleteUser(app, null))
+        Thread.sleep(3000)
+        app.setMessageHandler(MessageHandler(app.getActiveUser()!!.getPartialUser(), app))
+        Thread.sleep(1000)
+
         val intent =
             Intent(ApplicationProvider.getApplicationContext(), SettingsActivity::class.java)
         ActivityScenario.launch<SettingsActivity>(intent)
+    }
+
+    @After
+    fun setDown() {
+        val app = ApplicationProvider.getApplicationContext() as MyApplication
+        app.getActiveUser()?.removeUserFromDatabase()
     }
 
     @Test
