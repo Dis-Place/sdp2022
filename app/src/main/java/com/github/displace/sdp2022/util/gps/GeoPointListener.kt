@@ -10,11 +10,4 @@ import org.osmdroid.views.MapView
  */
 fun interface GeoPointListener {
     fun invoke(geoPoint: GeoPoint)
-
-    companion object {
-        fun markerPlacer(mapView: MapView) : GeoPointListener {
-            val pinpointsManager = PinpointsManager(mapView)
-            return GeoPointListener { geoPoint -> pinpointsManager.putMarker(geoPoint) }
-        }
-    }
 }

@@ -1,5 +1,7 @@
 package com.github.displace.sdp2022
 
+import android.media.MediaPlayer
+import android.media.SoundPool
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -12,6 +14,7 @@ import com.github.displace.sdp2022.map.MapViewManager
 import com.github.displace.sdp2022.map.MapViewManager.Companion.DEFAULT_CENTER
 import com.github.displace.sdp2022.map.PinpointsManager
 import com.github.displace.sdp2022.map.GoodPinpointsDBHandler
+import com.github.displace.sdp2022.sound.SoundsManager
 import com.github.displace.sdp2022.util.PreferencesUtil
 import com.github.displace.sdp2022.util.gps.GPSPositionManager
 import com.github.displace.sdp2022.util.gps.GPSPositionUpdater
@@ -33,6 +36,8 @@ class DemoMapActivity : AppCompatActivity() {
     lateinit var mockPinpointsRef: PinpointsManager.PinpointsRef
     lateinit var remoteMockPinpointsRef: PinpointsManager.PinpointsRef
     private lateinit var dbHandler: GoodPinpointsDBHandler
+    private lateinit var s : List<Int>
+    private  lateinit var soundPool : SoundPool
 
     /**
      * @param savedInstanceState
@@ -45,7 +50,8 @@ class DemoMapActivity : AppCompatActivity() {
         setContentView(R.layout.activity_demo_map)
         mapView = findViewById<MapView>(R.id.map)
         mapViewManager = MapViewManager(mapView)
-        pinpointsManager = PinpointsManager(mapView)
+        val clickSoundPlayer = MediaPlayer.create(this, R.raw.zapsplat_sound_design_hit_punchy_bright_71725)
+        pinpointsManager = PinpointsManager(mapView,clickSoundPlayer)
         markerListener = GeoPointListener {p -> pinpointsManager.putMarker(p)}
         posToastListener = GeoPointListener { geoPoint -> Toast.makeText(this,String.format("( %.4f ; %.4f )",geoPoint.latitude,geoPoint.longitude),Toast.LENGTH_SHORT).show() }
         gpsPositionManager = GPSPositionManager(this)

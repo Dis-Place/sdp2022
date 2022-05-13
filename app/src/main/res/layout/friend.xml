@@ -34,12 +34,22 @@
         <ImageButton
             android:id="@+id/inviteButton"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="55dp"
+            android:contentDescription="message"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/removeFriendButton"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@android:drawable/ic_dialog_email" />
+
+        <ImageButton
+            android:id="@+id/removeFriendButton"
+            android:layout_width="wrap_content"
+            android:layout_height="55dp"
             android:contentDescription="invite"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@android:drawable/ic_dialog_email" />
+            app:srcCompat="@android:drawable/ic_delete" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </RelativeLayout>

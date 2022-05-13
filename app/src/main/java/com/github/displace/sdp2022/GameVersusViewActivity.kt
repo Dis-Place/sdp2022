@@ -1,36 +1,31 @@
 package com.github.displace.sdp2022
 
 import android.content.Intent
-import android.os.Build
+import android.media.MediaPlayer
 import android.os.Bundle
 import android.view.View
-import android.widget.EditText
 import android.widget.TextView
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import androidx.preference.PreferenceManager
 import com.github.displace.sdp2022.gameComponents.GameEvent
 import com.github.displace.sdp2022.gameComponents.Point
 import com.github.displace.sdp2022.gameVersus.Chat
 import com.github.displace.sdp2022.gameVersus.ClientServerLink
 import com.github.displace.sdp2022.gameVersus.GameVersusViewModel
 import com.github.displace.sdp2022.map.*
-import com.github.displace.sdp2022.profile.FriendRequest
-import com.github.displace.sdp2022.users.PartialUser
 import com.github.displace.sdp2022.util.DateTimeUtil
 import com.github.displace.sdp2022.util.PreferencesUtil
 import com.github.displace.sdp2022.util.gps.GPSPositionManager
 import com.github.displace.sdp2022.util.gps.GPSPositionUpdater
 import com.github.displace.sdp2022.util.gps.GeoPointListener
 import com.github.displace.sdp2022.util.gps.MockGPS
+import com.github.displace.sdp2022.util.math.Constants
 import com.github.displace.sdp2022.util.math.CoordinatesUtil
-import com.google.firebase.database.*
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
-import kotlin.collections.ArrayList
-import com.github.displace.sdp2022.util.math.Constants
 import java.io.Serializable
 import kotlin.random.Random
 
@@ -58,11 +53,11 @@ class GameVersusViewActivity : AppCompatActivity() {
     private lateinit var pinpointsManager: PinpointsManager
     private var otherPlayersPinpoints = listOf<PinpointsManager.PinpointsRef>()
     private lateinit var conditionalGoalPlacer: ConditionalGoalPlacer
-    private lateinit var clientServerLink : ClientServerLink
+    private lateinit var clientServerLink: ClientServerLink
     private var clickableArea = Constants.CLICKABLE_AREA_RADIUS
 
     private var nbPlayer = 1L
-    private lateinit var gameMode : String
+    private lateinit var gameMode: String
     private var order = 0.0
 
     private var gid = ""
@@ -73,13 +68,17 @@ class GameVersusViewActivity : AppCompatActivity() {
     private var totalTime = 0
 
     //CHAT
-    private lateinit var chat : Chat
+    private lateinit var chat: Chat
+
+    //MEDIA PLAYER
+    private lateinit var musicPlayer: MediaPlayer
+    private lateinit var endPlayer: MediaPlayer
 
 
     //listener to initialise the goal
     private val initGoalPlacer = object : GeoPointListener {
         override fun invoke(geoPoint: GeoPoint) {
-            conditionalGoalPlacer = ConditionalGoalPlacer(mapView,game.getGameInstance(),geoPoint)
+            conditionalGoalPlacer = ConditionalGoalPlacer(mapView, game.getGameInstance(), geoPoint)
             gpsPositionManager.listenersManager.removeCall(this)
         }
     }
@@ -88,8 +87,11 @@ class GameVersusViewActivity : AppCompatActivity() {
     // 3 possibility : win => guess == position of the goal, continue => guess != position and lost => you missed the max number of time and lost
     private val guessListener = GeoPointListener { geoPoint ->
         run {
-            if (CoordinatesUtil.distance(game.getPos(), CoordinatesUtil.coordinates(geoPoint)) <= clickableArea)
-            {
+            if (CoordinatesUtil.distance(
+                    game.getPos(),
+                    CoordinatesUtil.coordinates(geoPoint)
+                ) <= clickableArea
+            ) {
                 pinpointsManager.putMarker(geoPoint)
                 val res = game.handleEvent(
                     GameEvent.OnPointSelected(
@@ -105,7 +107,7 @@ class GameVersusViewActivity : AppCompatActivity() {
                     statsList.clear()
                     statsList.add(DateTimeUtil.currentTime())
                     showGameSummaryActivity()
-                } else if(res == GameVersusViewModel.WIN){
+                } else if (res == GameVersusViewModel.WIN) {
                     findViewById<TextView>(R.id.TryText).apply {
                         text = "correct guess, remaining tries : ${4 - game.getNbEssai()}"
                     }
@@ -138,7 +140,7 @@ class GameVersusViewActivity : AppCompatActivity() {
         override fun onDataChange(dataSnapshot: DataSnapshot) {
             val x = dataSnapshot.value
 
-            if(x == GameVersusViewModel.LOSE){
+            if (x == GameVersusViewModel.LOSE) {
                 nbPlayer -= 1
             }
             if ((x == GameVersusViewModel.LOSE && nbPlayer < 2) || x == order) {
@@ -147,8 +149,8 @@ class GameVersusViewActivity : AppCompatActivity() {
                 statsList.clear()
                 statsList.add(DateTimeUtil.currentTime())
                 if (x == order) {
-                    db.update("GameInstance/Game$gid/id:$uid", "pos", listOf(0.0,0.0, order))
-                    db.update("GameInstance/Game$gid/id:$uid","finish",GameVersusViewModel.LOSE)
+                    db.update("GameInstance/Game$gid/id:$uid", "pos", listOf(0.0, 0.0, order))
+                    db.update("GameInstance/Game$gid/id:$uid", "finish", GameVersusViewModel.LOSE)
                     findViewById<TextView>(R.id.TryText).apply {
                         text =
                             "status : end of game"
@@ -175,15 +177,15 @@ class GameVersusViewActivity : AppCompatActivity() {
         uid = intent.getStringExtra("uid")!!
         gid = intent.getStringExtra("gid")!!
         gameMode = intent.getStringExtra("gameMode")!!
-        clickableArea = intent.getIntExtra("dist",Constants.CLICKABLE_AREA_RADIUS)
+        clickableArea = intent.getIntExtra("dist", Constants.CLICKABLE_AREA_RADIUS)
         db = RealTimeDatabase().noCacheInstantiate(
             "https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",
             false
         ) as RealTimeDatabase
-        order = Random.nextDouble(0.0,1000000000000000000000000.0)
+        order = Random.nextDouble(0.0, 1000000000000000000000000.0)
         clientServerLink = ClientServerLink(db, order)
         game = GameVersusViewModel(clientServerLink)
-        nbPlayer = intent.getLongExtra("nbPlayer",1)
+        nbPlayer = intent.getLongExtra("nbPlayer", 1)
 
         //initialise all the viewer and manager.
         mapView = findViewById(R.id.map)
@@ -193,11 +195,19 @@ class GameVersusViewActivity : AppCompatActivity() {
         gpsPositionManager = GPSPositionManager(this)
         gpsPositionManager.listenersManager.addCall(initGoalPlacer)
         gpsPositionUpdater = GPSPositionUpdater(this, gpsPositionManager)
-        pinpointsManager = PinpointsManager(mapView)
+
+        val clickSoundPlayer = if (PreferenceManager.getDefaultSharedPreferences(this)
+                .getBoolean(SFX_SETTINGS_SWITCH, true)
+        )
+            MediaPlayer.create(this, R.raw.zapsplat_sound_design_hit_punchy_bright_71725)
+        else null
+
+        pinpointsManager = PinpointsManager(mapView, clickSoundPlayer)
         for(i in nbPlayer downTo 0){
+
             otherPlayersPinpoints = otherPlayersPinpoints.plus(pinpointsManager.PinpointsRef())
         }
-        MockGPS.mockIfNeeded(intent,gpsPositionManager)
+        MockGPS.mockIfNeeded(intent, gpsPositionManager)
 
         //update the actual position of the player on the database
         gpsPositionManager.listenersManager.addCall(GeoPointListener { geoPoint ->
@@ -227,22 +237,43 @@ class GameVersusViewActivity : AppCompatActivity() {
         }
 
         gpsPositionManager.listenersManager.addCall(GeoPointListener { gp ->
-            if(this::conditionalGoalPlacer.isInitialized) {
+            if (this::conditionalGoalPlacer.isInitialized) {
                 conditionalGoalPlacer.update(gp)
             }
 
         })
 
         clientServerLink.listenerManager.addCall { gameInstance ->
-            if(this::conditionalGoalPlacer.isInitialized) {
+            if (this::conditionalGoalPlacer.isInitialized) {
                 gpsPositionManager.updateLocation()
                 conditionalGoalPlacer.update(gameInstance)
             }
         }
 
         //initialise the chat
-        val chatPath = "/GameInstance/Game" + intent.getStringExtra("gid")!!  + "/Chat"
-        chat = Chat(chatPath,db,findViewById<View?>(android.R.id.content).rootView,applicationContext)
+        val chatPath = "/GameInstance/Game" + intent.getStringExtra("gid")!! + "/Chat"
+        chat = Chat(
+            chatPath,
+            db,
+            findViewById<View?>(android.R.id.content).rootView,
+            applicationContext
+        )
+
+        //music and sound effects
+        musicPlayer = MediaPlayer.create(this, R.raw.music_zapsplat_electric_drum_and_bass)
+        musicPlayer.setLooping(true)
+
+        if (PreferenceManager.getDefaultSharedPreferences(this)
+                .getBoolean(MUSIC_SETTINGS_SWITCH, true)
+        ) {
+            musicPlayer.start()
+        }
+
+        endPlayer = MediaPlayer.create(
+            this,
+            R.raw.zapsplat_sound_design_designed_metal_hit_ring_chime_80212
+        )
+        musicPlayer.isLooping = false
     }
 
     private fun addTotals(point : GeoPoint){
@@ -289,13 +320,20 @@ class GameVersusViewActivity : AppCompatActivity() {
                 endListener
             )
         }
+        if (PreferenceManager.getDefaultSharedPreferences(this)
+                .getBoolean(SFX_SETTINGS_SWITCH, true)
+        ) {
+            endPlayer.start()
+        }
         val intent = Intent(this, GameSummaryActivity::class.java)
         extras.putStringArrayList(EXTRA_STATS, statsList)
         extras.putString(EXTRA_MODE, gameMode)
         intent.putExtras(extras)
+
         intent.putExtra("others",others as Serializable)
         intent.putExtra("totalDist",totalDist)
         intent.putExtra("totalTime",totalTime)
+
         startActivity(intent)
     }
 
@@ -350,6 +388,25 @@ class GameVersusViewActivity : AppCompatActivity() {
         }
     }
 
+    override fun onResume() {
+        if (PreferenceManager.getDefaultSharedPreferences(this)
+                .getBoolean(MUSIC_SETTINGS_SWITCH, true)
+        ) {
+            musicPlayer.start()
+        }
+        super.onResume()
+    }
+
+    override fun onDestroy() {
+        if (PreferenceManager.getDefaultSharedPreferences(this)
+                .getBoolean(MUSIC_SETTINGS_SWITCH, true)
+        ) {
+            musicPlayer.stop()
+        }
+        super.onDestroy()
+    }
+
+
     companion object {
         private val DEFAULT_GOAL = CoordinatesUtil.coordinates(MapViewManager.DEFAULT_CENTER)
     }
@@ -358,21 +415,27 @@ class GameVersusViewActivity : AppCompatActivity() {
      * CHAT SECTION OF THE ACTIVITY
      */
 
-    fun addToChat(view : View){
+    fun addToChat(view: View) {
         chat.addToChat()
     }
 
-    fun showChatButton(view : View){
+    fun showChatButton(view: View) {
         chat.showChat()
     }
 
-    fun closeChatButton(view : View){
+    fun closeChatButton(view: View) {
         chat.hideChat()
     }
 
     override fun onPause() {
         //CHAT
         chat.removeListener()
+
+        if (PreferenceManager.getDefaultSharedPreferences(this)
+                .getBoolean(MUSIC_SETTINGS_SWITCH, true)
+        ) {
+            musicPlayer.pause()
+        }
         super.onPause()
     }
 
