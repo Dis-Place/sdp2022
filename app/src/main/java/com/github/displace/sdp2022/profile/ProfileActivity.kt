@@ -33,6 +33,7 @@ import com.github.displace.sdp2022.profile.qrcode.QrCodeUtils
 import com.github.displace.sdp2022.profile.settings.AccountSettingsActivity
 import com.github.displace.sdp2022.profile.statistics.StatViewAdapter
 import com.github.displace.sdp2022.users.PartialUser
+import com.github.displace.sdp2022.util.CheckConnection.checkForInternet
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -66,12 +67,7 @@ class ProfileActivity : AppCompatActivity() {
 
 
         /* Show status */
-        val onlineLight = findViewById<ImageView>(R.id.onlineStatus)
-        val offlineLight = findViewById<ImageView>(R.id.offlineStatus)
-        if(activeUser == null || activeUser.offlineMode) {
-            onlineLight.visibility = View.INVISIBLE
-            offlineLight.visibility = View.VISIBLE
-        }
+        setStatus(activeUser != null && !activeUser.offlineMode)
 
         /* Achievements */ //Should add a listener to it
         val achRecyclerView = findViewById<RecyclerView>(R.id.recyclerAch)
@@ -133,11 +129,11 @@ class ProfileActivity : AppCompatActivity() {
         val recyclerview = findViewById<RecyclerView>(R.id.friendRequestRecyclerView)
 
         recyclerview.layoutManager = LinearLayoutManager(this)
-        recyclerview.adapter = FriendRequestViewAdapter( mutableListOf<InviteWithId>())
+        recyclerview.adapter = FriendRequestViewAdapter( mutableListOf<InviteWithId>(), this)
 
         ReceiveFriendRequests.receiveRequests(rootRef, currentUser)
             .observe(this,  Observer{
-                val adapter = FriendRequestViewAdapter(it)
+                val adapter = FriendRequestViewAdapter(it, this)
 
                 // Setting the Adapter with the recyclerview
                 recyclerview.adapter = adapter
@@ -145,6 +141,18 @@ class ProfileActivity : AppCompatActivity() {
             })
 
 
+    }
+
+    fun setStatus(online: Boolean) {
+        val onlineLight = findViewById<ImageView>(R.id.onlineStatus)
+        val offlineLight = findViewById<ImageView>(R.id.offlineStatus)
+        if(online) {
+            onlineLight.visibility = View.VISIBLE
+            offlineLight.visibility = View.INVISIBLE
+        } else {
+            onlineLight.visibility = View.INVISIBLE
+            offlineLight.visibility = View.VISIBLE
+        }
     }
 
     override fun onResume() {
@@ -186,10 +194,9 @@ class ProfileActivity : AppCompatActivity() {
         val activeUser = app.getActiveUser()
 
         if(activeUser != null) {
-            if(activeUser.offlineMode) {
+            if(activeUser.offlineMode || !checkForInternet(this)) {
                 Toast.makeText(this, "You're offline ! Please connect to the internet", Toast.LENGTH_LONG).show()
             } else if(activeUser.guestBoolean) {
-
                 Toast.makeText(this, "You're in guest mode !", Toast.LENGTH_LONG).show()
             } else {
 
@@ -276,7 +283,13 @@ class ProfileActivity : AppCompatActivity() {
 
     @Suppress("UNUSED_PARAMETER")
     fun addFriendButton(view: View) {
-        startActivity(Intent(this, AddFriendActivity::class.java))
+        if(checkForInternet(this)) {
+            startActivity(Intent(this, AddFriendActivity::class.java))
+        } else {
+            setStatus(false)
+
+            Toast.makeText(this, "You're offline ! Please connect to the internet", Toast.LENGTH_LONG).show()
+        }
     }
 
     /**

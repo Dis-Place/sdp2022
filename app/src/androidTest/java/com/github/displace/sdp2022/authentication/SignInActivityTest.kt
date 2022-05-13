@@ -14,6 +14,7 @@ import androidx.test.platform.app.InstrumentationRegistry
 import com.github.displace.sdp2022.MainMenuActivity
 import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.R
+import com.github.displace.sdp2022.profile.ProfileActivity
 import com.github.displace.sdp2022.users.CompleteUser
 import com.github.displace.sdp2022.users.OfflineUserFetcher
 import org.junit.Rule
