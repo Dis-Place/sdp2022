@@ -41,17 +41,20 @@
         <entry key="..\:/Users/Franck/Desktop/EPFL/BA6/SDP/Display_final_inch/sdp2022/app/src/main/res/layout/activity_game_list.xml" value="0.20989583333333334" />
         <entry key="..\:/Users/Franck/Desktop/EPFL/BA6/SDP/Display_final_inch/sdp2022/app/src/main/res/layout/activity_game_versus.xml" value="0.20989583333333334" />
         <entry key="..\:/Users/Franck/Desktop/EPFL/BA6/SDP/Display_final_inch/sdp2022/app/src/main/res/layout/activity_main_menu.xml" value="0.18034447821681865" />
-        <entry key="..\:/Users/Franck/Desktop/EPFL/BA6/SDP/Display_final_inch/sdp2022/app/src/main/res/layout/activity_profile.xml" value="0.33" />
+        <entry key="..\:/Users/Franck/Desktop/EPFL/BA6/SDP/Display_final_inch/sdp2022/app/src/main/res/layout/activity_news.xml" value="0.2128623188405797" />
         <entry key="..\:/Users/Franck/Desktop/EPFL/BA6/SDP/Display_final_inch/sdp2022/app/src/main/res/layout/activity_profile.xml" value="0.33" />
         <entry key="..\:/Users/Franck/Desktop/EPFL/BA6/SDP/Display_final_inch/sdp2022/app/src/main/res/layout/activity_qr_code_scanner.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/Franck/Desktop/EPFL/BA6/SDP/Display_final_inch/sdp2022/app/src/main/res/layout/activity_qr_code_temp.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/Franck/Desktop/EPFL/BA6/SDP/Display_final_inch/sdp2022/app/src/main/res/layout/activity_sign_in.xml" value="0.2128623188405797" />
         <entry key="..\:/Users/Franck/Desktop/EPFL/BA6/SDP/Display_final_inch/sdp2022/app/src/main/res/layout/activity_temp_login.xml" value="0.33" />
         <entry key="..\:/Users/Franck/Desktop/EPFL/BA6/SDP/Display_final_inch/sdp2022/app/src/main/res/layout/activity_upload_image.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/Franck/Desktop/EPFL/BA6/SDP/Display_final_inch/sdp2022/app/src/main/res/layout/c.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/Franck/Desktop/EPFL/BA6/SDP/Display_final_inch/sdp2022/app/src/main/res/layout/custom_image_dialog.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/Franck/Desktop/EPFL/BA6/SDP/Display_final_inch/sdp2022/app/src/main/res/layout/friend.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/Franck/Desktop/EPFL/BA6/SDP/Display_final_inch/sdp2022/app/src/main/res/layout/friend_request.xml" value="0.2128623188405797" />
         <entry key="..\:/Users/Franck/Desktop/EPFL/BA6/SDP/Display_final_inch/sdp2022/app/src/main/res/layout/hist.xml" value="0.36666666666666664" />
-        <entry key="..\:/Users/Franck/Desktop/EPFL/BA6/SDP/Display_final_inch/sdp2022/app/src/main/res/layout/news.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/Franck/Desktop/EPFL/BA6/SDP/Display_final_inch/sdp2022/app/src/main/res/layout/msg.xml" value="0.5" />
+        <entry key="..\:/Users/Franck/Desktop/EPFL/BA6/SDP/Display_final_inch/sdp2022/app/src/main/res/layout/news.xml" value="0.24494949494949494" />
         <entry key="..\:/Users/Franck/Desktop/EPFL/BA6/SDP/Display_final_inch/sdp2022/app/src/main/res/layout/password_update_dialog.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/Franck/Desktop/EPFL/BA6/SDP/Display_final_inch/sdp2022/app/src/main/res/layout/progress_dialog.xml" value="0.1" />
         <entry key="..\:/Users/Franck/Desktop/EPFL/BA6/SDP/Display_final_inch/sdp2022/app/src/main/res/layout/stat.xml" value="0.36666666666666664" />
@@ -80,15 +83,9 @@
         <entry key="..\:/Users/bapti/sdp2022/app/src/main/res/layout/fragment_settings.xml" value="0.153125" />
         <entry key="..\:/Users/bapti/sdp2022/app/src/main/res/layout/friend.xml" value="0.153125" />
         <entry key="..\:/Users/bapti/sdp2022/app/src/main/res/xml/preferences.xml" value="0.2988679352838745" />
-        <entry key="app/src/main/res/layout/activity_account_settings.xml" value="0.26666666666666666" />
-        <entry key="app/src/main/res/layout/activity_add_friend.xml" value="0.12968591691995948" />
-        <entry key="app/src/main/res/layout/activity_friend_profile.xml" value="0.12968591691995948" />
-        <entry key="app/src/main/res/layout/activity_friend_requests.xml" value="0.2477355072463768" />
         <entry key="app/src/main/res/layout/activity_game_versus.xml" value="0.19610507246376813" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.1" />
-        <entry key="app/src/main/res/layout/activity_profile.xml" value="0.22" />
         <entry key="app/src/main/res/layout/activity_temp_login.xml" value="0.17135416666666667" />
-        <entry key="app/src/main/res/layout/friend_request.xml" value="0.18072916666666666" />
       </map>
     </option>
   </component>
