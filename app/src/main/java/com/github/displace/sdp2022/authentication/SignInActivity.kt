@@ -1,6 +1,10 @@
 package com.github.displace.sdp2022.authentication
 
+import android.content.Context
 import android.content.Intent
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -22,6 +26,8 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.*
 import kotlinx.coroutines.tasks.await
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 const val REQUEST_CODE_SIGN_IN = 0
 
@@ -40,18 +46,25 @@ class SignInActivity : AppCompatActivity() {
         val guestModeButton = findViewById<Button>(R.id.signInActivityGuestModeButton)
         rememberMeButton = findViewById(R.id.signInActivityRememberMeCheckBox)
 
-        //TODO: Be sure that it works
         rememberMeButton.isChecked = true
 
-        //Signing in means logging in thanks to the Google sign in platform, and checking whether we want to be remembered or not so that we adapt our results
+        // Signing in means logging in thanks to the Google sign in platform,
+        // and checking whether we want to be remembered or not so that we adapt our results
         signInButton.setOnClickListener {
+
+            val sharedPreferences =  getSharedPreferences("login", MODE_PRIVATE)
+
+            if(rememberMeButton.isChecked) {
+                sharedPreferences.edit().putBoolean("remembered", true).apply()
+            }
+
             val options = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.webclient_id)).requestEmail().build()
             signInClient = GoogleSignIn.getClient(this, options)
             startActivityForResult(signInClient.signInIntent, REQUEST_CODE_SIGN_IN)
         }
 
-        //Signing in as a guest means that we have to create a new firebase user profile
+            //Signing in as a guest means that we have to create a new firebase user profile
         guestModeButton.setOnClickListener {
             signInAsGuest(it)
         }
@@ -144,10 +157,9 @@ class SignInActivity : AppCompatActivity() {
                             "Successfully logged in $name ",
                             Toast.LENGTH_LONG
                         ).show()
-                        //TODO: Check everything is ok
-                        //If the remember me check box is checked, then we have to log in as offlineMode user
+
                         val user =
-                            CompleteUser(app, current, offlineMode = rememberMeButton.isChecked)
+                            CompleteUser(app, current)
                         app.setActiveUser(user)
                         delay(1_000)
                         startActivity(Intent(this@SignInActivity, MainMenuActivity::class.java))

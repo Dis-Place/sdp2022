@@ -18,7 +18,6 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
 import com.github.displace.sdp2022.news.NewsActivity
 import com.github.displace.sdp2022.profile.ProfileActivity
-import com.github.displace.sdp2022.profile.qrcode.QrCodeTemp
 import com.github.displace.sdp2022.users.CompleteUser
 import org.junit.After
 import org.junit.Before
@@ -29,16 +28,17 @@ import org.junit.runner.RunWith
 class MainMenuActivityTest {
 
     @Before
-    fun before(){
+    fun before() {
         val app = ApplicationProvider.getApplicationContext() as MyApplication
-        app.setActiveUser(CompleteUser(app,null))
+        app.setActiveUser(CompleteUser(app, null))
 
         Thread.sleep(3000)
     }
 
     @After
     fun after() {
-        (ApplicationProvider.getApplicationContext() as MyApplication).getActiveUser()?.removeUserFromDatabase()
+        (ApplicationProvider.getApplicationContext() as MyApplication).getActiveUser()
+            ?.removeUserFromDatabase()
     }
 
     /*
@@ -73,21 +73,21 @@ class MainMenuActivityTest {
         Intents.release()
     }
 
-    @Test
-    fun testSettingsButton() {
-        Intents.init()
-
-        val intent =
-            Intent(ApplicationProvider.getApplicationContext(), MainMenuActivity::class.java)
-        val scenario = ActivityScenario.launch<MainMenuActivity>(intent)
-
-        scenario.use {
-            Espresso.onView(withId(R.id.settingsButton)).perform(click())
-        }
-
-        intended(hasComponent(SettingsActivity::class.java.name))
-        Intents.release()
-    }
+//    @Test
+//    fun testSettingsButton() {
+//        Intents.init()
+//
+//        val intent =
+//            Intent(ApplicationProvider.getApplicationContext(), MainMenuActivity::class.java)
+//        val scenario = ActivityScenario.launch<MainMenuActivity>(intent)
+//
+//        scenario.use {
+//            Espresso.onView(withId(R.id.settingsButton)).perform(click())
+//        }
+//
+//        intended(hasComponent(SettingsActivity::class.java.name))
+//        Intents.release()
+//    }
 
     @Test
     fun testNewsButton() {
@@ -124,7 +124,7 @@ class MainMenuActivityTest {
     @Test
     fun playButtonDontWorkWhenOffline() {
         val app = ApplicationProvider.getApplicationContext() as MyApplication
-        app.setActiveUser(CompleteUser(app,null, offlineMode = true))
+        app.setActiveUser(CompleteUser(app, null, offlineMode = true))
         Intents.init()
         val intent =
             Intent(ApplicationProvider.getApplicationContext(), MainMenuActivity::class.java)
@@ -140,32 +140,19 @@ class MainMenuActivityTest {
     }
 
     @Test
-    fun testDemoButton() {
-        Intents.init()
-        val intent =
-            Intent(ApplicationProvider.getApplicationContext(), MainMenuActivity::class.java)
-        val scenario = ActivityScenario.launch<MainMenuActivity>(intent)
-
-        scenario.use {
-            Espresso.onView(withId(R.id.qrCodeDemo)).perform(click())
-        }
-
-        intended(hasComponent(QrCodeTemp::class.java.name))
-        Intents.release()
-    }
-
-    @Test
     fun mapButtonGoesToDemoMapActivity() {
         getInstrumentation().uiAutomation.executeShellCommand(
             "pm grant " + getTargetContext().packageName
-                    + " android.permission.ACCESS_FINE_LOCATION");
+                    + " android.permission.ACCESS_FINE_LOCATION"
+        );
         val intent =
             Intent(ApplicationProvider.getApplicationContext(), MainMenuActivity::class.java)
         val scenario = ActivityScenario.launch<MainMenuActivity>(intent)
 
         scenario.use {
             Espresso.onView(withId(R.id.mapButton)).perform(click())
-            Espresso.onView(withId(R.id.map)).check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
+            Espresso.onView(withId(R.id.map))
+                .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
         }
     }
 

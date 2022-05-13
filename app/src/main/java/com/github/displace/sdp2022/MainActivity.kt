@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.github.displace.sdp2022.authentication.SignInActivity
 import com.github.displace.sdp2022.users.CompleteUser
 import com.github.displace.sdp2022.users.OfflineUserFetcher
+import com.github.displace.sdp2022.util.CheckConnection.checkForInternet
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,20 +30,20 @@ class MainActivity : AppCompatActivity() {
 
             //TODO:Find a way to get the firebase user
             if (isRemembered) {
-                if (isConnected()) {
+                if (checkForInternet(this)) {
                     //As we are remembered and we are online, we can have a normal logged in profiles
                     if (app.getActiveUser() == null) {
-                        val user = CompleteUser(this, null, offlineMode = true)
+                        val user = CompleteUser(this, null, remembered = true)
                         app.setActiveUser(user)
                     }
                 } else {
-                    val user = OfflineUserFetcher(this).getCompleteUser()
+                    val user = CompleteUser(this, null, offlineMode = true, remembered = true)
                     app.setActiveUser(user)
                 }
                 Intent(this, MainMenuActivity::class.java).apply {
                     startActivity(this)
                 }
-            } else if (isConnected()) {
+            } else if (checkForInternet(this)) {
                 Intent(this, SignInActivity::class.java).apply {
                     startActivity(this)
                 }
@@ -55,16 +56,5 @@ class MainActivity : AppCompatActivity() {
             }
 
         }
-    }
-
-    /**
-     * Just a utility function to check if the user is connected to the internet or not
-     *
-     * @return
-     */
-    private fun isConnected(): Boolean {
-        val cm = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val capabilities = cm.getNetworkCapabilities(cm.activeNetwork)
-        return capabilities != null && capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
     }
 }

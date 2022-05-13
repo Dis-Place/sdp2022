@@ -11,7 +11,6 @@ import com.firebase.ui.auth.AuthUI
 import com.github.displace.sdp2022.news.NewsActivity
 import com.github.displace.sdp2022.profile.ProfileActivity
 import com.github.displace.sdp2022.profile.messages.MessageHandler
-import com.github.displace.sdp2022.profile.qrcode.QrCodeTemp
 
 
 class MainMenuActivity : AppCompatActivity() {
@@ -72,6 +71,7 @@ class MainMenuActivity : AppCompatActivity() {
         AuthUI.getInstance().signOut(this).addOnCompleteListener {
             Toast.makeText(this, "Logging Out", Toast.LENGTH_SHORT).show()
             (applicationContext as MyApplication).getMessageHandler().removeListener()
+            getSharedPreferences("login", MODE_PRIVATE).edit().putBoolean("remembered", false).apply()
 
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
@@ -96,13 +96,6 @@ class MainMenuActivity : AppCompatActivity() {
     @Suppress("UNUSED_PARAMETER")
     fun newsButton(view: View) {
         val intent = Intent(this, NewsActivity::class.java)
-        startActivity(intent)
-    }
-
-    //send the user to the database demonstration
-    @Suppress("UNUSED_PARAMETER")
-    fun qrCodeDemo(view: View) {
-        val intent = Intent(this, QrCodeTemp::class.java)
         startActivity(intent)
     }
 
