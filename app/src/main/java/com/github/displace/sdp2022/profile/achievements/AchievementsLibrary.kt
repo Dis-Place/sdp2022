@@ -6,30 +6,37 @@ import com.github.displace.sdp2022.users.CompleteUser
 object AchievementsLibrary {
 
 
+    fun genericLongCondition(cond : Long) : (Long) -> Boolean {
+        return {a -> a > cond}
+    }
 
     /**
      * These are checked on the user side after a game is completed
      * The value used for the condition is the number of games completed (played)
      */
     val gamesLib = listOf(
-        AchievementCheck( { i : Long -> i >= 1 } ,"Seek and Click" , "Play a game" ),
-        AchievementCheck( { i : Long -> i >= 5} ,"Time to move" , "Play five games" ),
-        AchievementCheck( { i : Long -> i >= 10} ,"Pinpoint the fun" , "Play ten games" ),
-        AchievementCheck( { i : Long -> i >= 100},"Dis Place looks familiar" , "Play a hundred games")
-    )
-    val victoryLib = listOf(
-
-        AchievementCheck( { i : Long -> i >= 1 } ,"The taste of victory ..." , "Win a game" ),
-        AchievementCheck( { i : Long -> i >= 5} ,"... is sweet" , "Win five games" ),
-        AchievementCheck( { i : Long -> i >= 10} ,"Champion" , "Win ten games" ),
-        AchievementCheck( { i : Long -> i >= 100} ,"There can only be one" , "Win a hundred games" )
-
-
+        AchievementCheck( genericLongCondition(1) ,"Seek and Click" , "Play a game" ),
+        AchievementCheck( genericLongCondition(5) ,"Time to move" , "Play five games" ),
+        AchievementCheck( genericLongCondition(10) ,"Pinpoint the fun" , "Play ten games" ),
+        AchievementCheck( genericLongCondition(100),"Dis Place looks familiar" , "Play a hundred games")
     )
 
     /**
      * These are checked when the friend list is updated
      * The value used for the condition is the number of games won
+     */
+    val victoryLib = listOf(
+
+        AchievementCheck( genericLongCondition(1) ,"The taste of victory ..." , "Win a game" ),
+        AchievementCheck( genericLongCondition(5) ,"... is sweet" , "Win five games" ),
+        AchievementCheck( genericLongCondition(10) ,"Champion" , "Win ten games" ),
+        AchievementCheck( genericLongCondition(100) ,"There can only be one" , "Win a hundred games" )
+
+    )
+
+    /**
+     * These are checked when the friend list is updated
+     * The value used for the condition is the number of friends of the user
      */
     val friendLib = listOf(
 
