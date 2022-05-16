@@ -156,21 +156,10 @@ class ProfileActivity : AppCompatActivity() {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        val app = applicationContext as MyApplication
-        val activeUser = app.getActiveUser()
-        findViewById<TextView>(R.id.profileUsername).text =
-            activeUser?.getPartialUser()?.username ?: "defaultNotLoggedIn"
 
-
-        app.getMessageHandler().checkForNewMessages()
-    }
 
     private fun activityStart() {
-        findViewById<ScrollView>(R.id.ProfileScroll).visibility = View.VISIBLE
-        findViewById<ScrollView>(R.id.InboxScroll).visibility = View.GONE
-        findViewById<ScrollView>(R.id.FriendsScroll).visibility = View.GONE
+        changeUi(R.id.ProfileScroll)
     }
 
     @Suppress("UNUSED_PARAMETER")
@@ -180,17 +169,27 @@ class ProfileActivity : AppCompatActivity() {
 
     @Suppress("UNUSED_PARAMETER")
     fun inboxButton(view: View) {
-        findViewById<ScrollView>(R.id.ProfileScroll).visibility = View.GONE
-        findViewById<ScrollView>(R.id.InboxScroll).visibility = View.VISIBLE
-        findViewById<ScrollView>(R.id.FriendsScroll).visibility = View.GONE
+        changeUi(R.id.InboxScroll)
     }
 
     @Suppress("UNUSED_PARAMETER")
     fun friendsButton(view: View) {
-        findViewById<ScrollView>(R.id.ProfileScroll).visibility = View.GONE
-        findViewById<ScrollView>(R.id.InboxScroll).visibility = View.GONE
-        findViewById<ScrollView>(R.id.FriendsScroll).visibility = View.VISIBLE
+        changeUi(R.id.FriendsScroll)
     }
+
+    private fun changeUi(toView : Int){
+        val ids = arrayOf(R.id.ProfileScroll,R.id.InboxScroll,R.id.FriendsScroll)
+
+        ids.map{ id ->
+            if(id == toView) {
+                findViewById<ScrollView>(id).visibility = View.VISIBLE
+            }else{
+                findViewById<ScrollView>(id).visibility = View.GONE
+            }
+        }
+
+    }
+
 
     @Suppress("UNUSED_PARAMETER")
     fun settingsButton(view: View) {
@@ -356,6 +355,18 @@ class ProfileActivity : AppCompatActivity() {
 
     companion object {
         const val QR_CAMERA_REQUEST_CODE = 1256
+    }
+
+
+    override fun onResume() {
+        super.onResume()
+        val app = applicationContext as MyApplication
+        val activeUser = app.getActiveUser()
+        findViewById<TextView>(R.id.profileUsername).text =
+            activeUser?.getPartialUser()?.username ?: "defaultNotLoggedIn"
+
+
+        app.getMessageHandler().checkForNewMessages()
     }
 
 
