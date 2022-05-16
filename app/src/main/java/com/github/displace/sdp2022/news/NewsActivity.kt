@@ -25,7 +25,9 @@ class NewsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_news)
 
-        val newsRecyclerView = findViewById<RecyclerView>(R.id.recyclerNews)
+
+        val app = applicationContext as MyApplication
+        app.getMessageHandler().checkForNewMessages()
 
         /**
          * Get the news from the database :
@@ -87,6 +89,13 @@ class NewsActivity : AppCompatActivity() {
         val app = applicationContext as MyApplication
         AchievementsLibrary.achievementCheck(app.getActiveUser()!!,true,
             AchievementsLibrary.newsLib)
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        val app = applicationContext as MyApplication
+        app.getMessageHandler().checkForNewMessages()
     }
 
 

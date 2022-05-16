@@ -104,6 +104,9 @@ class ProfileActivity : AppCompatActivity() {
         db.getDbReference("CompleteUsers/" + activePartialUser.uid + "/friendsList").addValueEventListener(friendListListener())
 
         /* Messages */
+
+        app.getMessageHandler().checkForNewMessages()
+
         if(activeUser != null && activeUser.offlineMode) {
             updateMessageListView(activeUser.getMessageHistory())
         } else {
@@ -159,6 +162,9 @@ class ProfileActivity : AppCompatActivity() {
         val activeUser = app.getActiveUser()
         findViewById<TextView>(R.id.profileUsername).text =
             activeUser?.getPartialUser()?.username ?: "defaultNotLoggedIn"
+
+
+        app.getMessageHandler().checkForNewMessages()
     }
 
     private fun activityStart() {

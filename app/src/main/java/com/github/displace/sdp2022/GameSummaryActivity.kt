@@ -88,6 +88,8 @@ class GameSummaryActivity : AppCompatActivity() {
         friendRecyclerView.adapter = friendAdapter
         friendRecyclerView.layoutManager = LinearLayoutManager(applicationContext)
 
+        app.getMessageHandler().checkForNewMessages()
+
     }
 
     fun addRoundStat(info: String) {
@@ -170,5 +172,12 @@ class GameSummaryActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         backToGameList()
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        val app = applicationContext as MyApplication
+        app.getMessageHandler().checkForNewMessages()
     }
 }

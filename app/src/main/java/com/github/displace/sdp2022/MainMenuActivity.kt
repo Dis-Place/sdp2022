@@ -41,7 +41,7 @@ class MainMenuActivity : AppCompatActivity() {
         super.onResume()
         updateUI()
         val app = applicationContext as MyApplication
-        app.getMessageHandler().addListener()
+        app.getMessageHandler().checkForNewMessages()
 
     }
 
@@ -52,7 +52,6 @@ class MainMenuActivity : AppCompatActivity() {
      */
     override fun onDestroy() {
         val app = applicationContext as MyApplication
-        app.getMessageHandler().removeListener()
         val user = app.getActiveUser()!!
         if (user.guestBoolean) {
             user.removeUserFromDatabase()
@@ -60,16 +59,7 @@ class MainMenuActivity : AppCompatActivity() {
         super.onDestroy()
     }
 
-    /**
-     * When the activity is paused.
-     * Removes the listener for the users' messages
-     */
-    override fun onPause() {
-        super.onPause()
 
-        val app = applicationContext as MyApplication
-        app.getMessageHandler().removeListener()
-    }
 
     /**
      * Updates the User Interface with the correct username.
@@ -116,7 +106,6 @@ class MainMenuActivity : AppCompatActivity() {
     fun signOut(view: View) {
         AuthUI.getInstance().signOut(this).addOnCompleteListener {
             Toast.makeText(this, "Logging Out", Toast.LENGTH_SHORT).show()
-            (applicationContext as MyApplication).getMessageHandler().removeListener()
             getSharedPreferences("login", MODE_PRIVATE).edit().putBoolean("remembered", false).apply()
 
             val intent = Intent(this, MainActivity::class.java)

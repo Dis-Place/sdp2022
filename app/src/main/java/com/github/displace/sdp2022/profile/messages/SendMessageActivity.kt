@@ -39,6 +39,9 @@ class SendMessageActivity : AppCompatActivity() {
         receiverName = intent.getStringExtra("MessageReceiverName").toString()
         findViewById<TextView>(R.id.receiverName).text = "Message to : $receiverName"
 
+        val app = applicationContext as MyApplication
+        app.getMessageHandler().checkForNewMessages()
+
     }
 
     /**
@@ -75,6 +78,12 @@ class SendMessageActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
+
+    override fun onResume() {
+        super.onResume()
+        val app = applicationContext as MyApplication
+        app.getMessageHandler().checkForNewMessages()
+    }
 
 
 }

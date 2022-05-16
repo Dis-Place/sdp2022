@@ -127,6 +127,8 @@ class AccountSettingsActivity : AppCompatActivity() {
         /*passwordUpdate.setOnClickListener {
             showChangePasswordDialog()
         }*/
+
+        app.getMessageHandler().checkForNewMessages()
     }
 
     @Suppress("UNUSED_PARAMETER")
@@ -381,4 +383,12 @@ class AccountSettingsActivity : AppCompatActivity() {
     private fun showToastText(string: String) {
         Toast.makeText(this, string, Toast.LENGTH_LONG).show()
     }
+
+    override fun onResume() {
+        super.onResume()
+
+        val app = applicationContext as MyApplication
+        app.getMessageHandler().checkForNewMessages()
+    }
+
 }

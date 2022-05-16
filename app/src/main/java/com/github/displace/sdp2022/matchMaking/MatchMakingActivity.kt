@@ -639,7 +639,7 @@ class MatchMakingActivity : AppCompatActivity() {
         changeVisibility<Group>(R.id.errorGroup, View.INVISIBLE)
 
         val app = applicationContext as MyApplication
-        app.getMessageHandler().addListener()
+        app.getMessageHandler().checkForNewMessages()
 
     }
 
@@ -652,8 +652,6 @@ class MatchMakingActivity : AppCompatActivity() {
         }
         changeVisibility<Group>(R.id.errorGroup, View.INVISIBLE)
 
-        val app = applicationContext as MyApplication
-        app.getMessageHandler().removeListener()
 
         //check for match making achievements
         AchievementsLibrary.achievementCheck(app.getActiveUser()!!,lobbyType == "private",AchievementsLibrary.mmtLib)

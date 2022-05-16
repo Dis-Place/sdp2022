@@ -34,6 +34,10 @@ class SettingsActivity : AppCompatActivity() {
             }
         val sharedPrefs: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
         sharedPrefs.registerOnSharedPreferenceChangeListener(prefListener)
+
+
+        val app = applicationContext as MyApplication
+        app.getMessageHandler().checkForNewMessages()
     }
 
     private fun handleChanges(prefs: SharedPreferences, key: String) {
@@ -85,5 +89,12 @@ class SettingsActivity : AppCompatActivity() {
         }
     }
 
+
+    override fun onResume() {
+        super.onResume()
+
+        val app = applicationContext as MyApplication
+        app.getMessageHandler().checkForNewMessages()
+    }
 
 }

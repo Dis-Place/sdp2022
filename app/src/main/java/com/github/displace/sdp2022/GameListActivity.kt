@@ -14,6 +14,8 @@ class GameListActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_game_list)
 
+        val app = applicationContext as MyApplication
+        app.getMessageHandler().checkForNewMessages()
     }
 
 
@@ -62,6 +64,12 @@ class GameListActivity : AppCompatActivity() {
     override fun onBackPressed() {
         intent = Intent(this, MainMenuActivity::class.java)
         startActivity(intent)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val app = applicationContext as MyApplication
+        app.getMessageHandler().checkForNewMessages()
     }
 
 }

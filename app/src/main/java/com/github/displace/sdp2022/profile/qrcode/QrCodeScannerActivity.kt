@@ -133,6 +133,9 @@ class QrCodeScannerActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         codeScanner.startPreview()
+
+        val app = applicationContext as MyApplication
+        app.getMessageHandler().checkForNewMessages()
     }
 
     /**

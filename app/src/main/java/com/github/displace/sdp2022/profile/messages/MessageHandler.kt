@@ -19,37 +19,34 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 
-class MessageHandler(val activePartialUser : PartialUser, app : MyApplication) {
+class MessageHandler(private val activePartialUser : PartialUser, app : MyApplication) {
 
     private var msgLs : ArrayList<Message> = arrayListOf()
     private val db : RealTimeDatabase = RealTimeDatabase().instantiate("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",false) as RealTimeDatabase
     private val context = app
 
-    fun getList() : ArrayList<Message>{
-        return msgLs
-    }
-
     init{
-        addListener()
+        checkForNewMessages()
     }
 
+    /**
+     * Listens for messages and sends a notification if anything new has been received
+     */
     private fun messageListener() = object : ValueEventListener {
         override fun onDataChange(snapshot: DataSnapshot) {
             val ls = snapshot.value as ArrayList<HashMap<String,Any>>?
-            var tempList : ArrayList<Message>
+            val tempList : ArrayList<Message>
             if(ls != null){
                 tempList = getListOfMessages(ls)
-                /*   for( map in ls ){
-                       val sender = map["sender"] as HashMap<String,Any>
-                       val m = Message(map["message"] as String,map["date"] as String, PartialUser(sender["username"] as String,sender["uid"] as String) )
-                       tempList.add(m)
-                   }*/
                 if(msgLs.isEmpty()){
-                    //setup of the list for the first time : no notification must be sent
+                    //setup of the listener for the first time : no notification must be sent
                     msgLs = tempList
                 }else if(tempList != msgLs){
-                    //notification of the new message
-                    messageNotification(tempList[0].sender.username,tempList[0].message)
+                    //notification of the new messages
+                    val diff = tempList.filter { it !in msgLs }
+                    for(msg in diff){
+                        messageNotification(msg.sender.username,msg.message)
+                    }
                     msgLs = tempList
                 }
             }
@@ -60,6 +57,11 @@ class MessageHandler(val activePartialUser : PartialUser, app : MyApplication) {
 
     }
 
+    /**
+     * Send a notification
+     * @param title : title of the notification
+     * @param content : content of the notification
+     */
     fun messageNotification(title : String, content : String) {
         val channelId = "i.apps.notifications"
         val description = "Test notification"
@@ -105,14 +107,17 @@ class MessageHandler(val activePartialUser : PartialUser, app : MyApplication) {
         notificationManager.notify(1234, builder.build())
     }
 
-    fun addListener(){
-        db.getDbReference("CompleteUsers/" + activePartialUser.uid + "/MessageHistory").addValueEventListener(messageListener())
+    /**
+     * adds the listener for the messages for the user : used to receive notifications
+     * use a single event to check at the start and end of any activity
+     */
+    fun checkForNewMessages(){
+        db.getDbReference("CompleteUsers/" + activePartialUser.uid + "/MessageHistory").addListenerForSingleValueEvent(messageListener())
     }
 
-    fun removeListener(){
-        db.getDbReference("CompleteUsers/" + activePartialUser.uid + "/MessageHistory").removeEventListener(messageListener())
-    }
-
+    /**
+     * Transforms the data of the database into a list of messages to
+     */
     fun getListOfMessages(maps: ArrayList<HashMap<String,Any>>) : ArrayList<Message> {
         val arr : ArrayList<Message> = arrayListOf()
         for( map in maps ){
