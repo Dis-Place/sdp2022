@@ -4,10 +4,7 @@ import android.Manifest
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.ImageView
-import android.widget.ScrollView
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -79,10 +76,10 @@ class ProfileActivity : AppCompatActivity() {
         /* Messages */
         setMessages()
 
-        /*Set the default at the start*/
+        /*Set the default UI at the start */
         activityStart()
 
-
+        /* Friend requests */
         val rootRef = FirebaseDatabase.
         getInstance("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app").reference
         val currentUser = activePartialUser // activeUser?.getPartialUser() ?: PartialUser("dummy", "dummy")
@@ -105,7 +102,7 @@ class ProfileActivity : AppCompatActivity() {
     }
 
     /**
-     *
+     * Sets the user info for the rest activity to use
      */
     private fun setUserInfo() {
         app = applicationContext as MyApplication
@@ -115,7 +112,7 @@ class ProfileActivity : AppCompatActivity() {
     }
 
     /**
-     *
+     * Sets the correct messages of the view
      */
     private fun setMessages() {
 
@@ -124,13 +121,13 @@ class ProfileActivity : AppCompatActivity() {
         if(activeUser.offlineMode) {
             updateMessageListView(activeUser.getMessageHistory())
         } else {
-
+            updateMessageListView(activeUser.getMessageHistory())
             db.getDbReference("CompleteUsers/" + activePartialUser.uid + "/MessageHistory").addValueEventListener(messageListener())
         }
     }
 
     /**
-     *
+     * Sets the correct friends of the view : using a listener
      */
     private fun setFriends() {
         updateFriendListView()
@@ -153,7 +150,7 @@ class ProfileActivity : AppCompatActivity() {
     }
 
     /**
-     *
+     * Sets the status of the user, online or offline
      */
     fun setStatus(online: Boolean) {
         val onlineLight = findViewById<ImageView>(R.id.onlineStatus)
@@ -174,13 +171,13 @@ class ProfileActivity : AppCompatActivity() {
     private fun activityStart() {
         changeUi(R.id.ProfileScroll)
 
-        findViewById<ScrollView>(R.id.innerProfileButton).setOnClickListener {
+        findViewById<Button>(R.id.innerProfileButton).setOnClickListener {
             changeUi(R.id.ProfileScroll)
         }
-        findViewById<ScrollView>(R.id.inboxButton).setOnClickListener {
+        findViewById<Button>(R.id.inboxButton).setOnClickListener {
             changeUi(R.id.InboxScroll)
         }
-        findViewById<ScrollView>(R.id.friendsButton).setOnClickListener {
+        findViewById<Button>(R.id.friendsButton).setOnClickListener {
             changeUi(R.id.FriendsScroll)
         }
 
@@ -203,7 +200,9 @@ class ProfileActivity : AppCompatActivity() {
 
     }
 
-
+    /**
+     * Launch the account settings activity
+     */
     @Suppress("UNUSED_PARAMETER")
     fun settingsButton(view: View) {
         if(activeUser.offlineMode || !checkForInternet(this)) {
@@ -217,6 +216,9 @@ class ProfileActivity : AppCompatActivity() {
 
     }
 
+    /**
+     * Listener for when a new message is received
+     */
     private fun messageListener() = object : ValueEventListener {
 
         override fun onDataChange(snapshot: DataSnapshot) {
@@ -230,6 +232,9 @@ class ProfileActivity : AppCompatActivity() {
 
     }
 
+    /**
+     * Transform teh data of the database into a list of messages
+     */
     private fun fromDBToMsgList(ls : ArrayList<HashMap<String,Any>>?): ArrayList<Message> {
         var list = arrayListOf<Message>()
         if(ls != null){
@@ -239,6 +244,9 @@ class ProfileActivity : AppCompatActivity() {
         return list
     }
 
+    /**
+     * Use a list of messages to update the UI
+     */
     private fun updateMessageListView(list: ArrayList<Message>){
         val messageRecyclerView = findViewById<RecyclerView>(R.id.recyclerMsg)
 
@@ -260,6 +268,9 @@ class ProfileActivity : AppCompatActivity() {
 
     }
 
+    /**
+     * The listener for when a new friend is added to the user
+     */
     //if the adding friend uses the local list
     private fun friendListListener() = object : ValueEventListener{
         override fun onDataChange(snapshot: DataSnapshot) {
@@ -270,6 +281,10 @@ class ProfileActivity : AppCompatActivity() {
         }
 
     }
+
+    /**
+     * Updates the UI with the new list of friends
+     */
     private fun updateFriendListView(){
         val friendRecyclerView = findViewById<RecyclerView>(R.id.recyclerFriend)
         val app = applicationContext as MyApplication
@@ -289,7 +304,9 @@ class ProfileActivity : AppCompatActivity() {
 
     }
 
-
+    /**
+     * Launch the activity to add friends
+     */
     @Suppress("UNUSED_PARAMETER")
     fun addFriendButton(view: View) {
         if(checkForInternet(this)) {
@@ -363,7 +380,9 @@ class ProfileActivity : AppCompatActivity() {
         const val QR_CAMERA_REQUEST_CODE = 1256
     }
 
-
+    /**
+     * When the activity is resumed, check if new messages have arrived, to be able to send a notification if needed
+     */
     override fun onResume() {
         super.onResume()
         findViewById<TextView>(R.id.profileUsername).text = activeUser.getPartialUser().username
