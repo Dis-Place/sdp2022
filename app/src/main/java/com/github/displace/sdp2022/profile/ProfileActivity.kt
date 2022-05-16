@@ -1,6 +1,7 @@
 package com.github.displace.sdp2022.profile
 
 import android.Manifest
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -20,11 +21,13 @@ import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.R
 import com.github.displace.sdp2022.RealTimeDatabase
 import com.github.displace.sdp2022.profile.achievements.AchViewAdapter
+import com.github.displace.sdp2022.profile.achievements.Achievement
 import com.github.displace.sdp2022.profile.achievements.AchievementsLibrary
 import com.github.displace.sdp2022.profile.friendInvites.AddFriendActivity
 import com.github.displace.sdp2022.profile.friendInvites.FriendRequestViewAdapter
 import com.github.displace.sdp2022.profile.friendInvites.InviteWithId
 import com.github.displace.sdp2022.profile.friends.FriendViewAdapter
+import com.github.displace.sdp2022.profile.history.History
 import com.github.displace.sdp2022.profile.history.HistoryViewAdapter
 import com.github.displace.sdp2022.profile.messages.Message
 import com.github.displace.sdp2022.profile.messages.MsgViewAdapter
@@ -32,6 +35,8 @@ import com.github.displace.sdp2022.profile.qrcode.QrCodeScannerActivity
 import com.github.displace.sdp2022.profile.qrcode.QrCodeUtils
 import com.github.displace.sdp2022.profile.settings.AccountSettingsActivity
 import com.github.displace.sdp2022.profile.statistics.StatViewAdapter
+import com.github.displace.sdp2022.profile.statistics.Statistic
+import com.github.displace.sdp2022.users.CompleteUser
 import com.github.displace.sdp2022.users.PartialUser
 import com.github.displace.sdp2022.util.CheckConnection.checkForInternet
 import com.google.firebase.database.DataSnapshot
@@ -50,74 +55,36 @@ class ProfileActivity : AppCompatActivity() {
     private lateinit var msgLs: ArrayList<HashMap<String, Any>>
 
     private lateinit var activePartialUser: PartialUser
+    private lateinit var activeUser: CompleteUser
+    private lateinit var app: MyApplication
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile)
 
         /* Active user Information */
-        val app = applicationContext as MyApplication
+        app = applicationContext as MyApplication
+        activeUser = app.getActiveUser()!!
         val activeUser = app.getActiveUser()
         findViewById<TextView>(R.id.profileUsername).text =
             activeUser?.getPartialUser()?.username ?: "defaultNotLoggedIn"
-        var activePartialUser = PartialUser("defaultName","dummy_id")
+        activePartialUser = PartialUser("defaultName","dummy_id")
         if(activeUser != null){
-            activePartialUser = activeUser.getPartialUser()
+            activePartialUser = activeUser!!.getPartialUser()
         }
-
 
         /* Show status */
-        setStatus(activeUser != null && !activeUser.offlineMode)
+        setStatus(activeUser != null && !activeUser!!.offlineMode)
 
-        /* Achievements */ //Should add a listener to it
-        val achRecyclerView = findViewById<RecyclerView>(R.id.recyclerAch)
-        val achs = activeUser?.getAchievements() ?: mutableListOf()
-
-        val achAdapter =
-            AchViewAdapter(applicationContext, achs.reversed())
-        achRecyclerView.adapter = achAdapter
-        achRecyclerView.layoutManager = LinearLayoutManager(applicationContext)
-
-        /* Statistics */ //Should add a listener to it
-        val statRecyclerView = findViewById<RecyclerView>(R.id.recyclerStats)
-
-        val stats = activeUser?.getStats() ?: mutableListOf()
-
-        val statAdapter =
-            StatViewAdapter(applicationContext, stats)
-        statRecyclerView.adapter = statAdapter
-        statRecyclerView.layoutManager = LinearLayoutManager(applicationContext)
-
-        /* Games History */ //Should add a listener to it
-        val historyRecyclerView = findViewById<RecyclerView>(R.id.recyclerHist)
-
-        val hist = activeUser?.getGameHistory() ?: mutableListOf()
-
-        val historyAdapter =
-            HistoryViewAdapter(applicationContext, hist.reversed())
-        historyRecyclerView.adapter = historyAdapter
-        historyRecyclerView.layoutManager = LinearLayoutManager(applicationContext)
+        setDefaultRecycler<Achievement,AchViewAdapter>(R.id.recyclerAch,activeUser!!.getAchievements().reversed() )
+        setDefaultRecycler<Statistic,StatViewAdapter>(R.id.recyclerStats,activeUser!!.getStats().reversed() )
+        setDefaultRecycler<History,HistoryViewAdapter>(R.id.recyclerHist,activeUser!!.getGameHistory().reversed() )
 
         /* Friends */
-        updateFriendListView()
-
-        db.getDbReference("CompleteUsers/" + activePartialUser.uid + "/friendsList").addValueEventListener(friendListListener())
+        setFriends()
 
         /* Messages */
-
-        app.getMessageHandler().checkForNewMessages()
-
-        if(activeUser != null && activeUser.offlineMode) {
-            updateMessageListView(activeUser.getMessageHistory())
-        } else {
-
-            db.referenceGet("CompleteUsers/" + activePartialUser.uid, "MessageHistory")
-                .addOnSuccessListener { msg ->
-                    val ls = msg.value as ArrayList<HashMap<String, Any>>?
-                    updateMessageListView(fromDBToMsgList(ls))
-                }
-            db.getDbReference("CompleteUsers/" + activePartialUser.uid + "/MessageHistory").addValueEventListener(messageListener())
-        }
+        setMessages()
 
         /*Set the default at the start*/
         activityStart()
@@ -142,6 +109,38 @@ class ProfileActivity : AppCompatActivity() {
             })
 
 
+    }
+
+    private fun setMessages() {
+
+        app.getMessageHandler().checkForNewMessages()
+
+        if(activeUser != null && activeUser!!.offlineMode) {
+            updateMessageListView(activeUser!!.getMessageHistory())
+        } else {
+
+            db.referenceGet("CompleteUsers/" + activePartialUser.uid, "MessageHistory")
+                .addOnSuccessListener { msg ->
+                    val ls = msg.value as ArrayList<HashMap<String, Any>>?
+                    updateMessageListView(fromDBToMsgList(ls))
+                }
+            db.getDbReference("CompleteUsers/" + activePartialUser.uid + "/MessageHistory").addValueEventListener(messageListener())
+        }
+    }
+
+    private fun setFriends() {
+        updateFriendListView()
+        db.getDbReference("CompleteUsers/" + activePartialUser.uid + "/friendsList").addValueEventListener(friendListListener())
+    }
+
+    private inline fun <T,reified U : RecyclerView.Adapter<*>> setDefaultRecycler(UiId : Int, data : List<T> ) {
+        val recyclerView = findViewById<RecyclerView>(UiId)
+
+        val adapter =
+            U::class.constructors.first().call(applicationContext, data)
+
+        recyclerView.adapter = adapter
+        recyclerView.layoutManager = LinearLayoutManager(applicationContext)
     }
 
     fun setStatus(online: Boolean) {
