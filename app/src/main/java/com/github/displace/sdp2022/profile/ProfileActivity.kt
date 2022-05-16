@@ -1,7 +1,6 @@
 package com.github.displace.sdp2022.profile
 
 import android.Manifest
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -122,15 +121,10 @@ class ProfileActivity : AppCompatActivity() {
 
         app.getMessageHandler().checkForNewMessages()
 
-        if(activeUser != null && activeUser!!.offlineMode) {
-            updateMessageListView(activeUser!!.getMessageHistory())
+        if(activeUser.offlineMode) {
+            updateMessageListView(activeUser.getMessageHistory())
         } else {
 
-            db.referenceGet("CompleteUsers/" + activePartialUser.uid, "MessageHistory")
-                .addOnSuccessListener { msg ->
-                    val ls = msg.value as ArrayList<HashMap<String, Any>>?
-                    updateMessageListView(fromDBToMsgList(ls))
-                }
             db.getDbReference("CompleteUsers/" + activePartialUser.uid + "/MessageHistory").addValueEventListener(messageListener())
         }
     }
@@ -179,21 +173,17 @@ class ProfileActivity : AppCompatActivity() {
      */
     private fun activityStart() {
         changeUi(R.id.ProfileScroll)
-    }
 
-    @Suppress("UNUSED_PARAMETER")
-    fun profileButton(view: View) {
-        activityStart()
-    }
+        findViewById<ScrollView>(R.id.innerProfileButton).setOnClickListener {
+            changeUi(R.id.ProfileScroll)
+        }
+        findViewById<ScrollView>(R.id.inboxButton).setOnClickListener {
+            changeUi(R.id.InboxScroll)
+        }
+        findViewById<ScrollView>(R.id.friendsButton).setOnClickListener {
+            changeUi(R.id.FriendsScroll)
+        }
 
-    @Suppress("UNUSED_PARAMETER")
-    fun inboxButton(view: View) {
-        changeUi(R.id.InboxScroll)
-    }
-
-    @Suppress("UNUSED_PARAMETER")
-    fun friendsButton(view: View) {
-        changeUi(R.id.FriendsScroll)
     }
 
     /**
