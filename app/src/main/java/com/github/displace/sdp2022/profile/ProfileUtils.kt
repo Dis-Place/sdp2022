@@ -13,8 +13,22 @@ import com.github.displace.sdp2022.users.PartialUser
 import com.google.firebase.database.*
 import java.net.ConnectException
 
+/**
+ * A class that represent the transaction done while sending a message
+ * It is used in the SendMessageActivity and to create invitations for private lobbies in MatchMaking
+ *
+ * @param applicationContext : the application context, used to obtain the date
+ * @param message : the message content
+ * @param activePartialUser : the current user, which is the sender of the message
+ */
 class MessageUpdater(val applicationContext : Context, val message : String, private val activePartialUser : PartialUser ) : Transaction.Handler {
     val app = applicationContext as MyApplication
+
+    /**
+     * Does the transaction as follows
+     * - Obtains the list of messages of the receiver
+     * - Puts the new message in that list
+     */
     override fun doTransaction(currentData: MutableData): Transaction.Result {
         val ls = currentData.value as ArrayList<MutableMap<String,Any>>?
         val msg = Message(message,app.getCurrentDate(), activePartialUser)
@@ -31,6 +45,9 @@ class MessageUpdater(val applicationContext : Context, val message : String, pri
         return Transaction.success(currentData)
     }
 
+    /**
+     * When the transaction completes there is nothing to do
+     */
     override fun onComplete(
         error: DatabaseError?,
         committed: Boolean,
@@ -39,22 +56,6 @@ class MessageUpdater(val applicationContext : Context, val message : String, pri
     }
 
 }
-
-/*
-class MessageReceiver{
-
-    fun getListOfMessages(maps: ArrayList<HashMap<String,Any>>) : ArrayList<Message> {
-        val arr : ArrayList<Message> = arrayListOf()
-        for( map in maps ){
-            val sender = map["sender"] as HashMap<String,Any>
-            val m = Message(map["message"] as String,map["date"] as String, PartialUser(sender["username"] as String,sender["uid"] as String) )
-            arr.add(m)
-        }
-        return arr
-    }
-
-}*/
-
 
 
 
