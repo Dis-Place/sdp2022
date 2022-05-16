@@ -63,19 +63,13 @@ class ProfileActivity : AppCompatActivity() {
         setContentView(R.layout.activity_profile)
 
         /* Active user Information */
-        app = applicationContext as MyApplication
-        activeUser = app.getActiveUser()!!
-        val activeUser = app.getActiveUser()
-        findViewById<TextView>(R.id.profileUsername).text =
-            activeUser?.getPartialUser()?.username ?: "defaultNotLoggedIn"
-        activePartialUser = PartialUser("defaultName","dummy_id")
-        if(activeUser != null){
-            activePartialUser = activeUser!!.getPartialUser()
-        }
+        setUserInfo()
+
 
         /* Show status */
         setStatus(activeUser != null && !activeUser!!.offlineMode)
 
+        /* Achievements, Statistics and Game History */
         setDefaultRecycler<Achievement,AchViewAdapter>(R.id.recyclerAch,activeUser!!.getAchievements().reversed() )
         setDefaultRecycler<Statistic,StatViewAdapter>(R.id.recyclerStats,activeUser!!.getStats().reversed() )
         setDefaultRecycler<History,HistoryViewAdapter>(R.id.recyclerHist,activeUser!!.getGameHistory().reversed() )
@@ -109,6 +103,13 @@ class ProfileActivity : AppCompatActivity() {
             })
 
 
+    }
+
+    private fun setUserInfo() {
+        app = applicationContext as MyApplication
+        activeUser = app.getActiveUser()!!
+        activePartialUser = activeUser.getPartialUser()
+        findViewById<TextView>(R.id.profileUsername).text = activePartialUser.username
     }
 
     private fun setMessages() {
