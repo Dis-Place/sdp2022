@@ -300,7 +300,8 @@ class ProfileActivity : AppCompatActivity() {
         if(bmp != null){
             QrCodeUtils.createImagePopup(bmp,this)
         }else{
-            TODO("There was an error while creating the bitmap, no idea what we can do here")
+            Toast.makeText(this, "The QR code could not be created, try again later",
+                Toast.LENGTH_LONG).show()
         }
 
     }

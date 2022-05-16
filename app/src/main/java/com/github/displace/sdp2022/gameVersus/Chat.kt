@@ -15,9 +15,9 @@ import com.google.firebase.database.*
 import com.github.displace.sdp2022.R
 import com.github.displace.sdp2022.util.DateTimeUtil
 
-class Chat(val chatPath : String , val db : RealTimeDatabase , val view : View, val applicationContext : Context) {
+class Chat(private val chatPath : String, val db : RealTimeDatabase, val view : View, val applicationContext : Context) {
 
-    val chatGroup : ConstraintLayout
+    private val chatGroup : ConstraintLayout
 
     init{
         db.getDbReference(chatPath).addValueEventListener(chatListener())
