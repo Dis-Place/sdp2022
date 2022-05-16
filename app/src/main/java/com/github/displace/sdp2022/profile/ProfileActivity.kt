@@ -104,8 +104,6 @@ class ProfileActivity : AppCompatActivity() {
         db.getDbReference("CompleteUsers/" + activePartialUser.uid + "/friendsList").addValueEventListener(friendListListener())
 
         /* Messages */
-
-
         if(activeUser != null && activeUser.offlineMode) {
             updateMessageListView(activeUser.getMessageHistory())
         } else {
@@ -307,6 +305,9 @@ class ProfileActivity : AppCompatActivity() {
 
     }
 
+    /**
+     * Transition to the QR scanner activity : allows to scan another users' code and send them a friend invite
+     */
     private fun launchQRScanner(){
         val intent = Intent(this, QrCodeScannerActivity::class.java)
         startActivity(intent)
@@ -314,7 +315,7 @@ class ProfileActivity : AppCompatActivity() {
 
 
     /**
-     * Transition to the scanning activity
+     * Checks if the permissions are correct before making the transition to the scanner
      */
     @Suppress("UNUSED_PARAMETER")
     fun useScannerQR(view : View){
@@ -325,6 +326,12 @@ class ProfileActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Check if the permissions have been correctly granted. If not do not transition to the scanner
+     * @param requestCode
+     * @param permissions
+     * @param grantResults
+     */
     @Override
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
