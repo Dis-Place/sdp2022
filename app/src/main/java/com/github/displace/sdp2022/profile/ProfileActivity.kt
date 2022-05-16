@@ -105,6 +105,9 @@ class ProfileActivity : AppCompatActivity() {
 
     }
 
+    /**
+     *
+     */
     private fun setUserInfo() {
         app = applicationContext as MyApplication
         activeUser = app.getActiveUser()!!
@@ -112,6 +115,9 @@ class ProfileActivity : AppCompatActivity() {
         findViewById<TextView>(R.id.profileUsername).text = activePartialUser.username
     }
 
+    /**
+     *
+     */
     private fun setMessages() {
 
         app.getMessageHandler().checkForNewMessages()
@@ -129,11 +135,19 @@ class ProfileActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     *
+     */
     private fun setFriends() {
         updateFriendListView()
         db.getDbReference("CompleteUsers/" + activePartialUser.uid + "/friendsList").addValueEventListener(friendListListener())
     }
 
+    /**
+     * Sets up the recycler view of type U with data of type T
+     * @param UiId : the ui element to update
+     * @param data : the data used to update that ui element
+     */
     private inline fun <T,reified U : RecyclerView.Adapter<*>> setDefaultRecycler(UiId : Int, data : List<T> ) {
         val recyclerView = findViewById<RecyclerView>(UiId)
 
@@ -144,6 +158,9 @@ class ProfileActivity : AppCompatActivity() {
         recyclerView.layoutManager = LinearLayoutManager(applicationContext)
     }
 
+    /**
+     *
+     */
     fun setStatus(online: Boolean) {
         val onlineLight = findViewById<ImageView>(R.id.onlineStatus)
         val offlineLight = findViewById<ImageView>(R.id.offlineStatus)
@@ -157,7 +174,9 @@ class ProfileActivity : AppCompatActivity() {
     }
 
 
-
+    /**
+     * How the UI must be at the beginning of the activity
+     */
     private fun activityStart() {
         changeUi(R.id.ProfileScroll)
     }
@@ -177,6 +196,10 @@ class ProfileActivity : AppCompatActivity() {
         changeUi(R.id.FriendsScroll)
     }
 
+    /**
+     * Only make the view with the given id visible
+     * @param toView : the id of the view that has to be visible
+     */
     private fun changeUi(toView : Int){
         val ids = arrayOf(R.id.ProfileScroll,R.id.InboxScroll,R.id.FriendsScroll)
 
@@ -193,21 +216,13 @@ class ProfileActivity : AppCompatActivity() {
 
     @Suppress("UNUSED_PARAMETER")
     fun settingsButton(view: View) {
-        val app = applicationContext as MyApplication
-        val activeUser = app.getActiveUser()
-
-        if(activeUser != null) {
-            if(activeUser.offlineMode || !checkForInternet(this)) {
-                Toast.makeText(this, "You're offline ! Please connect to the internet", Toast.LENGTH_LONG).show()
-            } else if(activeUser.guestBoolean) {
-                Toast.makeText(this, "You're in guest mode !", Toast.LENGTH_LONG).show()
-            } else {
-
-                val intent = Intent(this, AccountSettingsActivity::class.java)
-                startActivity(intent)
-            }
+        if(activeUser.offlineMode || !checkForInternet(this)) {
+            Toast.makeText(this, "You're offline ! Please connect to the internet", Toast.LENGTH_LONG).show()
+        } else if(activeUser.guestBoolean) {
+            Toast.makeText(this, "You're in guest mode !", Toast.LENGTH_LONG).show()
         } else {
-            Toast.makeText(this, "huh", Toast.LENGTH_LONG).show()
+            val intent = Intent(this, AccountSettingsActivity::class.java)
+            startActivity(intent)
         }
 
     }
@@ -220,6 +235,7 @@ class ProfileActivity : AppCompatActivity() {
         }
 
         override fun onCancelled(error: DatabaseError) {
+
         }
 
     }
@@ -360,11 +376,7 @@ class ProfileActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        val app = applicationContext as MyApplication
-        val activeUser = app.getActiveUser()
-        findViewById<TextView>(R.id.profileUsername).text =
-            activeUser?.getPartialUser()?.username ?: "defaultNotLoggedIn"
-
+        findViewById<TextView>(R.id.profileUsername).text = activeUser.getPartialUser().username
 
         app.getMessageHandler().checkForNewMessages()
     }
