@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.github.displace.sdp2022.R
 
 /**
- * The holder for the view of and game history entry
+ * The holder for the view of a game history entry
  */
 class HistoryViewHolder(itemview: View) : RecyclerView.ViewHolder(itemview) {
 

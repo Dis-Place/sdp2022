@@ -41,6 +41,7 @@ class AchViewAdapter(val context: Context, private val data: List<Achievement>) 
 
     /**
      * Returns the number of items in the recycler view list
+     * @return : number of items in the recycler view
      */
     override fun getItemCount(): Int {
         return data.size
