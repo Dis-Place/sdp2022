@@ -15,6 +15,11 @@ import com.github.displace.sdp2022.profile.messages.MessageHandler
 
 class MainMenuActivity : AppCompatActivity() {
 
+
+    /**
+     * When the activity is created.
+     * Updates the UI and sets up the messaging system.
+     */
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,14 +33,26 @@ class MainMenuActivity : AppCompatActivity() {
         app.setMessageHandler(handler)
     }
 
+    /**
+     * When the activity is resumed.
+     * Adds a new listener for the users' messages and update the UI (as the name could have changed)
+     */
     override fun onResume() {
         super.onResume()
         updateUI()
+        val app = applicationContext as MyApplication
+        app.getMessageHandler().addListener()
+
     }
 
-
+    /**
+     * When the activity is destroyed.
+     * Removes the listener for the users' messages.
+     * TODO : check if removing the user from the DB should be done here
+     */
     override fun onDestroy() {
         val app = applicationContext as MyApplication
+        app.getMessageHandler().removeListener()
         val user = app.getActiveUser()!!
         if (user.guestBoolean) {
             user.removeUserFromDatabase()
@@ -43,6 +60,10 @@ class MainMenuActivity : AppCompatActivity() {
         super.onDestroy()
     }
 
+    /**
+     * When the activity is paused.
+     * Removes the listener for the users' messages
+     */
     override fun onPause() {
         super.onPause()
 
@@ -50,8 +71,28 @@ class MainMenuActivity : AppCompatActivity() {
         app.getMessageHandler().removeListener()
     }
 
+    /**
+     * Updates the User Interface with the correct username.
+     */
+    @SuppressLint("SetTextI18n")
+    private fun updateUI() {
+        //load the username from the application
+        val app = applicationContext as MyApplication
+        val activeUser = app.getActiveUser()
+        val message = activeUser?.getPartialUser()?.username ?: "defaultNotLoggedIn"
 
-    //send the user to the Play screen : start a match
+        findViewById<TextView>(R.id.WelcomeText).apply {
+            text =
+                "Welcome $message!"
+        }
+    }
+
+    /**
+     * Function used by a button on the view.
+     * Sends the user to the Game List, which allows to choose a game mode.
+     *
+     * @param view : the view of the activity, will not be used
+     */
     @Suppress("UNUSED_PARAMETER")
     fun playButton(view: View) {
         val app = applicationContext as MyApplication
@@ -65,7 +106,12 @@ class MainMenuActivity : AppCompatActivity() {
         }
 
     }
-
+    /**
+     * Function used by a button on the view.
+     * Sends the user to the Login Menu and notifies that the user has to be logged out.
+     *
+     * @param view : the view of the activity, will not be used
+     */
     @Suppress("UNUSED_PARAMETER")
     fun signOut(view: View) {
         AuthUI.getInstance().signOut(this).addOnCompleteListener {
@@ -78,27 +124,43 @@ class MainMenuActivity : AppCompatActivity() {
         }
     }
 
-    //send the user to the Profile screen : view stats + edit profile
+    /**
+     * Function used by a button on the view.
+     * Sends the user to the Profile, which allows to view and edit the users' profile.
+     *
+     * @param view : the view of the activity, will not be used
+     */
     @Suppress("UNUSED_PARAMETER")
     fun profileButton(view: View) {
         val intent = Intent(this, ProfileActivity::class.java)
         startActivity(intent)
     }
 
-    //send the user to the Settings screen : change the apps settings
+    /**
+     * Function used by a button on the view.
+     * Sends the user to the Settings, which allows to change the applications general settings.
+     *
+     * @param view : the view of the activity, will not be used
+     */
     @Suppress("UNUSED_PARAMETER")
     fun settingsButton(view: View) {
         val intent = Intent(this, SettingsActivity::class.java)
         startActivity(intent)
     }
 
-    //send the user to the News screen : view news and updates
+    /**
+     * Function used by a button on the view.
+     * Sends the user to the News, which allows to view applications news and updates.
+     *
+     * @param view : the view of the activity, will not be used
+     */
     @Suppress("UNUSED_PARAMETER")
     fun newsButton(view: View) {
         val intent = Intent(this, NewsActivity::class.java)
         startActivity(intent)
     }
 
+    //TODO() : DELETE
     @Suppress("UNUSED_PARAMETER")
     fun openMap(view: View) {
         val intent =
@@ -106,20 +168,7 @@ class MainMenuActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    private fun updateUI() {
-        //load the username from the application
-        val app = applicationContext as MyApplication
-        val activeUser = app.getActiveUser()
-        val message = if (activeUser == null) {
-            "defaultNotLoggedIn"
-        } else {
-            activeUser.getPartialUser().username
-        }
-        findViewById<TextView>(R.id.WelcomeText).apply {
-            text =
-                "Welcome $message!"
-        }
-    }
+
 
 
 }
