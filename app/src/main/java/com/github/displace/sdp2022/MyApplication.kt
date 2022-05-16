@@ -14,7 +14,7 @@ class MyApplication : Application() {
     //the user that is currently active in the application
     private var completeUser: CompleteUser? = null
 
-    //the private lobby that is currently active (if there is one) - used to communicate between MatchMaking and MessageUpdater
+    //the private lobby that is currently active (if there is one) - used to communicate between MatchMaking and FriendViewHolder
     private var lobbyID : String = ""
 
     //the message handler that is used currently active : used to dispatch notifications

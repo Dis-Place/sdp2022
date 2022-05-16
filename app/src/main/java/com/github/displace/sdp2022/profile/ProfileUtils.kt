@@ -21,7 +21,7 @@ import java.net.ConnectException
  * @param message : the message content
  * @param activePartialUser : the current user, which is the sender of the message
  */
-class MessageUpdater( val message : String, private val activePartialUser : PartialUser ) : Transaction.Handler {
+class MessageUpdater(val message : String, private val activePartialUser : PartialUser ) : Transaction.Handler {
 
     /**
      * Does the transaction as follows
