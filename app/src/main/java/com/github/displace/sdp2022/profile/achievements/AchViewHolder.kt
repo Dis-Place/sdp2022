@@ -11,7 +11,7 @@ import com.github.displace.sdp2022.R
 class AchViewHolder(itemview: View) : RecyclerView.ViewHolder(itemview) {
 
     /**
-     * identifier for the name (includes the description) and date of the achievement
+     * Identifiers for the name (includes the description) and date of the achievement
      * They are used in the View Adapter
      */
     val name: TextView = itemview.findViewById(R.id.achName)

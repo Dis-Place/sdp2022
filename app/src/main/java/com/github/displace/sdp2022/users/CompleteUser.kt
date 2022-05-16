@@ -202,9 +202,9 @@ class CompleteUser(
             friendsList = mutableListOf(
                 PartialUser("THE SYSTEM", "dummy_friend_id")
             )
-            gameHistory = mutableListOf(
+       /*     gameHistory = mutableListOf(
                 History("dummy_map", getCurrentDate(), "VICTORY")
-            )
+            )*/
             gameHistory = mutableListOf()
             createFirstMessageList()
             progress_dialog?.dismiss()
@@ -269,7 +269,7 @@ class CompleteUser(
                 if(gameHistoryHash != null) {
                     gameHistory = gameHistoryHash.map { g ->
                         History(
-                            g["map"]!!,
+                            g["gameMode"]!!,
                             g["date"]!!,
                             g["result"]!!
                         )
