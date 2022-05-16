@@ -85,7 +85,7 @@ class NewsActivity : AppCompatActivity() {
         newsRecyclerView.layoutManager = LinearLayoutManager(applicationContext)
 
         val app = applicationContext as MyApplication
-        AchievementsLibrary.achievementCheck(app,app.getActiveUser()!!,true,
+        AchievementsLibrary.achievementCheck(app.getActiveUser()!!,true,
             AchievementsLibrary.newsLib)
     }
 

@@ -656,7 +656,7 @@ class MatchMakingActivity : AppCompatActivity() {
         app.getMessageHandler().removeListener()
 
         //check for match making achievements
-        AchievementsLibrary.achievementCheck(app,app.getActiveUser()!!,lobbyType == "private",AchievementsLibrary.mmtLib)
+        AchievementsLibrary.achievementCheck(app.getActiveUser()!!,lobbyType == "private",AchievementsLibrary.mmtLib)
 
     }
 

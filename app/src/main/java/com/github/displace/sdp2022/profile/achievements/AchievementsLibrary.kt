@@ -2,6 +2,7 @@ package com.github.displace.sdp2022.profile.achievements
 
 import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.users.CompleteUser
+import com.github.displace.sdp2022.util.DateTimeUtil
 
 object AchievementsLibrary {
 
@@ -110,16 +111,15 @@ object AchievementsLibrary {
      * Adds the completed Achievements from the specific list to the user.
      * A completed achievement is the one that indicates a true value with the value given.
      *
-     * @param app : the application context, used to obtain the date
      * @param user : the user to which to add the achievement to
      * @param value : the value used for the condition
      * @param ls : the list of Achievements to check for
      */
-    fun <T> achievementCheck( app : MyApplication,  user : CompleteUser , value : T , ls : List<AchievementCheck<T>> ){
+    fun <T> achievementCheck(   user : CompleteUser , value : T , ls : List<AchievementCheck<T>> ){
         for(check in ls){
             val res = check.cond(value)
             if(res){
-                user.addAchievement(Achievement(check.name,check.description,app.getCurrentDate()))
+                user.addAchievement(Achievement(check.name,check.description, DateTimeUtil.currentDate()))
             }
         }
     }

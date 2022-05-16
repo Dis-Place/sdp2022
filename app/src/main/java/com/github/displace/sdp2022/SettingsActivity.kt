@@ -59,7 +59,7 @@ class SettingsActivity : AppCompatActivity() {
         Toast.makeText(this, stringToDisplay, Toast.LENGTH_SHORT).show()
 
         val app = applicationContext as MyApplication
-        AchievementsLibrary.achievementCheck(app , app.getActiveUser()!! , Pair(contentString,enabledDisabledString) , AchievementsLibrary.settingsLib )
+        AchievementsLibrary.achievementCheck( app.getActiveUser()!! , Pair(contentString,enabledDisabledString) , AchievementsLibrary.settingsLib )
 
     }
 

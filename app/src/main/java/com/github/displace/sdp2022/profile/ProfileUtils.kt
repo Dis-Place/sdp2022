@@ -10,6 +10,7 @@ import com.github.displace.sdp2022.profile.friendInvites.Invite
 import com.github.displace.sdp2022.profile.friendInvites.InviteWithId
 import com.github.displace.sdp2022.profile.messages.Message
 import com.github.displace.sdp2022.users.PartialUser
+import com.github.displace.sdp2022.util.DateTimeUtil
 import com.google.firebase.database.*
 import java.net.ConnectException
 
@@ -17,12 +18,10 @@ import java.net.ConnectException
  * A class that represent the transaction done while sending a message
  * It is used in the SendMessageActivity and to create invitations for private lobbies in MatchMaking
  *
- * @param applicationContext : the application context, used to obtain the date
  * @param message : the message content
  * @param activePartialUser : the current user, which is the sender of the message
  */
-class MessageUpdater(val applicationContext : Context, val message : String, private val activePartialUser : PartialUser ) : Transaction.Handler {
-    val app = applicationContext as MyApplication
+class MessageUpdater( val message : String, private val activePartialUser : PartialUser ) : Transaction.Handler {
 
     /**
      * Does the transaction as follows
@@ -31,13 +30,13 @@ class MessageUpdater(val applicationContext : Context, val message : String, pri
      */
     override fun doTransaction(currentData: MutableData): Transaction.Result {
         val ls = currentData.value as ArrayList<MutableMap<String,Any>>?
-        val msg = Message(message,app.getCurrentDate(), activePartialUser)
+        val msg = Message(message, DateTimeUtil.currentDate(), activePartialUser)
         if(ls == null){
             return Transaction.success(currentData)
         }else{
             val msgMap = HashMap<String,Any>()
             msgMap["message"] = msg.message
-            msgMap["date"] = app.getCurrentDate()
+            msgMap["date"] = DateTimeUtil.currentDate()
             msgMap["sender"] = msg.sender
             ls.add(0,msgMap)
         }

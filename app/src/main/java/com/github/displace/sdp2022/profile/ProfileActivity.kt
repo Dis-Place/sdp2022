@@ -247,7 +247,7 @@ class ProfileActivity : AppCompatActivity() {
         val app = applicationContext as MyApplication
         val user = app.getActiveUser()!!
 
-        AchievementsLibrary.achievementCheck(app,user,list.size.toLong(),AchievementsLibrary.messageLib)
+        AchievementsLibrary.achievementCheck(user,list.size.toLong(),AchievementsLibrary.messageLib)
 
     }
 
@@ -276,7 +276,7 @@ class ProfileActivity : AppCompatActivity() {
         friendRecyclerView.layoutManager = LinearLayoutManager(applicationContext)
 
         //Check for achievements
-        AchievementsLibrary.achievementCheck(app,activeUser!!,friends.size.toLong(),AchievementsLibrary.friendLib)
+        AchievementsLibrary.achievementCheck(activeUser!!,friends.size.toLong(),AchievementsLibrary.friendLib)
 
     }
 

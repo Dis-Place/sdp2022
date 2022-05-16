@@ -13,6 +13,7 @@ import com.github.displace.sdp2022.profile.messages.MsgViewAdapter
 import com.github.displace.sdp2022.users.PartialUser
 import com.google.firebase.database.*
 import com.github.displace.sdp2022.R
+import com.github.displace.sdp2022.util.DateTimeUtil
 
 class Chat(val chatPath : String , val db : RealTimeDatabase , val view : View, val applicationContext : Context) {
 
@@ -53,7 +54,7 @@ class Chat(val chatPath : String , val db : RealTimeDatabase , val view : View, 
     fun addToChat(){
         val msg : String = view.findViewById<EditText>(R.id.chatEditText).text.toString()
         val partialUser : PartialUser = (applicationContext as MyApplication).getActiveUser()?.getPartialUser()!!
-        val date : String = (applicationContext as MyApplication).getCurrentTime()
+        val date : String = DateTimeUtil.currentDate()
         if(msg.isEmpty()){
             return
         }

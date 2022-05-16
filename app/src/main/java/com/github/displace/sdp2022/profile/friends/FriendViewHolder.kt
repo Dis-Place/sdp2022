@@ -47,7 +47,7 @@ class FriendViewHolder(itemview: View) : RecyclerView.ViewHolder(itemview) {
             }
 
             db.getDbReference("CompleteUsers/" + friend.uid + "/MessageHistory").runTransaction(
-                MessageUpdater(v.context.applicationContext,message,activePartialUser)
+                MessageUpdater(message,activePartialUser)
             )
         }
 
