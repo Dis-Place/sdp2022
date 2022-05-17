@@ -48,84 +48,9 @@ import kotlin.random.Random
  */
 @Suppress("UNUSED_PARAMETER")
 class MatchMakingActivity : MMView() {
-/*
-    //Database
-    // private lateinit var db: RealTimeDatabase
-    private lateinit  var db : GoodDB
-    private var currentLobbyId = ""
 
-    private var gamemode = "Versus"
-    private val map = "Map2"
-
-    //This has to be chaged to the real active user
-    private var activePartialUser = PartialUser("active","0")
-    //indicates if the lobby is public or private
-    private var lobbyType: String = "private"
-    //keeps a map of the lobby : just how the DB stores it
-    private var lobbyMap : MutableMap<String,Any> = HashMap()
-    private lateinit var app : MyApplication
-    private var nbPlayer = 2L
-
-    private lateinit var gpsPositionManager : GPSPositionManager
-    private lateinit var gpsPositionUpdater : GPSPositionUpdater
-
-    private var debug: Boolean = false
-*/
     private lateinit var model : MatchMakingModel
-/*
-    /**
-     * Listener for the lobby while it is still setting up : players can find it and join it
-     * It takes care of :
-     * - updating the UI : list of players
-     * - maintaining the lobbyMap variable
-     * - check if the lobby is ready to be launched (only by the leader)
-     */
-    private val lobbyListener = Listener<MutableMap<String, Any>?>{ lobby ->
-        if(lobby == null)
-            return@Listener
-        lobbyMap = lobby
-        updateUI()
-        if(lobbyMap["lobbyCount"] as Long == lobbyMap["lobbyMax"] as Long  ){
-            lobbyMap["lobbyLaunch"] = true
-            setupLaunchListener()
 
-            //UI
-            findViewById<Button>(R.id.MMCancelButton).visibility = View.INVISIBLE
-
-            if (lobbyMap["lobbyLeader"] as String == activePartialUser.uid) {    //This client is the leader : perform the checks and launch if needed
-                db.getThenCall<ArrayList<String>?>("MM/$gamemode/$map/$lobbyType/freeList") { ls ->
-
-                    if (ls != null) {
-                        ls.remove(currentLobbyId) //remove this lobby from the free list
-                        db.update("MM/$gamemode/$map/$lobbyType/freeList", ls)
-                    }
-                    db.delete("MM/$gamemode/$map/$lobbyType/freeLobbies/$currentLobbyId")
-                    db.update(
-                        "MM/$gamemode/$map/$lobbyType/launchLobbies/$currentLobbyId",
-                        lobbyMap
-                    )    //add this lobby to the launching lobbies
-                }
-
-            }
-        }
-    }
-
-
-    /**
-     * Listener for the launching lobby : this lobby is leaking players into the game mode
-     * It takes care of :
-     * - Maintaining the lobbyMap variable
-     * - Making the transition to the game screen
-     */
-    private val launchLobbyListener = Listener<MutableMap<String, Any>?>{ lobby ->
-        if(lobby == null)
-            return@Listener
-
-        lobbyMap = lobby
-        if(lobbyMap["lobbyLeader"] as String == activePartialUser.uid ){
-            leaveMM(true)
-        }
-    }*/
 
     /**
      * On creation of the activity we must :
@@ -141,48 +66,14 @@ class MatchMakingActivity : MMView() {
 
         setFriendList(model.activeUser)
         uiToSetup()
-/*
-        /*
-        set up the database
-         */
-        db = DatabaseFactory.getDB(intent)
-        /*
-        set up the gps managers
-         */
-        gpsPositionManager = GPSPositionManager(this)
-        gpsPositionUpdater = GPSPositionUpdater(this,gpsPositionManager)
-        gpsPositionUpdater.stopUpdates()
 
-        /*
-        set up the user infromation
-         */
-        app = applicationContext as MyApplication
-        val activeUser = app.getActiveUser()!!
-        activePartialUser = activeUser.getPartialUser()
-
-        /*
-        set up the number of players and game mode
-         */
-        nbPlayer = intent.getLongExtra("nbPlayer",2L)
-        gamemode = try {
-            intent.getStringExtra("gameMode")!!
-        }catch (e: Exception){
-            "Versus"
+        findViewById<Button>(R.id.privateLobbyCreate).setOnClickListener {
+            model.createPrivateLobby()
+        }
+        findViewById<Button>(R.id.privateLobbyJoin).setOnClickListener {
+            model.joinPrivateLobby()
         }
 
-        /*
-        set up the mock for the gps location
-         */
-        debug = intent.getBooleanExtra("DEBUG", false)
-        if (debug) { //mock the position for everyone if testing is ongoing
-            gpsPositionManager.mockProvider(GeoPoint(0.00001,0.00001))
-        }
-*/
-        /*
-        set up the UI elements
-         */
-    //    setFriendList(activeUser) //UI
-     //   uiToSetup() //UI
     }
 
     /**
@@ -203,9 +94,6 @@ class MatchMakingActivity : MMView() {
         friendRecyclerView.layoutManager = LinearLayoutManager(applicationContext)
 
     }
-
-
-
 
 
     override fun checkNonEmpty() : String {
@@ -234,11 +122,6 @@ class MatchMakingActivity : MMView() {
         friendRecyclerView.adapter = friendAdapter
         friendRecyclerView.layoutManager = LinearLayoutManager(applicationContext)
     }
-
-
-
-
-
 
     /**
      * Checks if the Group (UI elements) is visible
@@ -321,7 +204,6 @@ class MatchMakingActivity : MMView() {
             findViewById<TextView>(R.id.lobbyIdWaitShowing).text = model.currentLobbyId
         }
         changeVisibility<Group>(R.id.errorGroup, View.INVISIBLE)
-
 
         //check for match making achievements
         AchievementsLibrary.achievementCheck(model.app.getActiveUser()!!,model.lobbyType == "private",AchievementsLibrary.mmtLib)

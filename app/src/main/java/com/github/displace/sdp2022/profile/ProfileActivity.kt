@@ -17,6 +17,7 @@ import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.R
 import com.github.displace.sdp2022.RealTimeDatabase
 import com.github.displace.sdp2022.database.DatabaseFactory
+import com.github.displace.sdp2022.database.GoodDB
 import com.github.displace.sdp2022.profile.achievements.AchViewAdapter
 import com.github.displace.sdp2022.profile.achievements.Achievement
 import com.github.displace.sdp2022.profile.achievements.AchievementsLibrary
@@ -46,7 +47,7 @@ import com.google.firebase.database.ValueEventListener
 class ProfileActivity : AppCompatActivity() {
 
 
-    private val db = DatabaseFactory.getDB(intent)
+    private lateinit var db : GoodDB
 
     private lateinit var msgLs: ArrayList<HashMap<String, Any>>
 
@@ -57,6 +58,8 @@ class ProfileActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile)
+
+        db = DatabaseFactory.getDB(intent)
 
         /* Active user Information */
         setUserInfo()

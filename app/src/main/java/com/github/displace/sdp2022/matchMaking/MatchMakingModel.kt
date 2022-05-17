@@ -50,9 +50,6 @@ class MatchMakingModel( val activity: MMView ){
 
     init{
         /*
-        set up the database
-         */
-        /*
         set up the gps managers
          */
         gpsPositionUpdater.stopUpdates()
@@ -288,7 +285,7 @@ class MatchMakingModel( val activity: MMView ){
      * - has to insert the lobbyID in the freeList too
      * - has to make sure no other lobby with the same ID exists : no repetitions are allowed
      */
-    fun createPrivateLobby(view: View) {
+    fun createPrivateLobby() {
         val id = activity.checkNonEmpty()
         if(id.isEmpty()){
             return
@@ -330,7 +327,7 @@ class MatchMakingModel( val activity: MMView ){
      * Join a private lobby : uses the same method as the public lobby except
      * - it checks that the lobby ID exists in the freeList
      */
-    fun joinPrivateLobby(view: View) {
+    fun joinPrivateLobby() {
 
         val id = activity.checkNonEmpty()
         if(id.isEmpty()){
@@ -411,6 +408,28 @@ class MatchMakingModel( val activity: MMView ){
     }
 
     /**
+     * Remove the current player from the lobby only if it is not the only player left and change the leader if needed
+     * @param lobby : the lobby to modify, in the form of a map so that it can be used by the database
+     * @return the modified lobby
+     */
+    private fun removePlayerFromList(lobby: MutableMap<String, Any>): MutableMap<String, Any> {
+
+        if(lobby["lobbyCount"] as Long == 1L){
+            return lobby
+        }
+        lobby["lobbyCount"] = lobby["lobbyCount"] as Long - 1
+        val userMap = activePartialUser.asMap()
+        val players = lobby["lobbyPlayers"] as ArrayList<MutableMap<String, Any>>
+        (players).remove(userMap)
+        lobby["lobbyPlayers"] = players
+        if (lobby["lobbyLeader"] as String == activePartialUser.uid) { //leader?
+            lobby["lobbyLeader"] = (players)[0]["uid"] as String //use the next player as the new leader
+        }
+        return lobby
+
+    }
+
+    /**
      * Get the path for the database
      * @param toGame : if the user is leaving the lobby to the game or to the menu
      */
@@ -441,34 +460,13 @@ class MatchMakingModel( val activity: MMView ){
 
 
     /**
-     * TODO
+     * Check the condition to see if the position of the player is close to the position of the lobby
+     * @param gp : position of the player
+     * @param positionMap : position fo the lobby as given by the database
+     * @return true if the position of the player is close enough to the lobby
      */
     private fun positionCondition(gp : GeoPoint , positionMap : MutableMap<String,Any> ) : Boolean{
         return CoordinatesUtil.distance(gp, GeoPoint((positionMap["latitude"] as Double)  , (positionMap["longitude"] as Double) ) ) <= Constants.GAME_AREA_RADIUS
-    }
-
-
-    /**
-     * Remove the current player from the lobby only if it is not the only player left and change the leader if needed
-     * @param lobby : the lobby to modify, in the form of a map so that it can be used by the database
-     * @return the modified lobby
-     */
-    private fun removePlayerFromList(lobby: MutableMap<String, Any>): MutableMap<String, Any> {
-
-        if(lobby["lobbyCount"] as Long == 1L){
-            return lobby
-        }
-        lobby["lobbyCount"] = lobby["lobbyCount"] as Long - 1
-        val userMap = HashMap<String, Any>()
-        userMap["username"] = activePartialUser.username
-        userMap["uid"] = activePartialUser.uid
-        (lobby["lobbyPlayers"] as ArrayList<MutableMap<String, Any>>).remove(userMap)
-
-        if (lobby["lobbyLeader"] as String == activePartialUser.uid) { //leader?
-            lobby["lobbyLeader"] = (lobby["lobbyPlayers"] as ArrayList<MutableMap<String, Any>>)[0]["uid"] as String //use the next player as the new leader
-        }
-        return lobby
-
     }
 
 

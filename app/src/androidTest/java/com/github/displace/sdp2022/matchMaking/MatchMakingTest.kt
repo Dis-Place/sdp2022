@@ -153,13 +153,19 @@ class MatchMakingTest {
             Espresso.onView(ViewMatchers.withId(R.id.RandomLobbySearch)).perform(ViewActions.click())
             Thread.sleep(1000) //wait for the info to arrive
 
-            db.update("MM/Versus/Map2/public/freeLobbies/test","lobbyCount",2)
-            Thread.sleep(1000)
+            db.referenceGet("MM/Versus/Map2/public/freeList","").addOnSuccessListener {
+                val lobbies = it.value as ArrayList<String>
+                val lobby = lobbies[1]
+                db.update("MM/Versus/Map2/public/freeLobbies/$lobby","lobbyCount",2)
 
+            }
+
+            Thread.sleep(3000)
             db.delete("MM","")
+            Thread.sleep(1000)
             Intents.intended(IntentMatchers.hasComponent(GameVersusViewActivity::class.java.name))
 
-            Thread.sleep(1000)
+
 
         }
         Intents.release()
