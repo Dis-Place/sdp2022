@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.R
 import com.github.displace.sdp2022.RealTimeDatabase
+import com.github.displace.sdp2022.database.DatabaseFactory
 import com.github.displace.sdp2022.profile.achievements.AchViewAdapter
 import com.github.displace.sdp2022.profile.achievements.Achievement
 import com.github.displace.sdp2022.profile.achievements.AchievementsLibrary
@@ -35,6 +36,7 @@ import com.github.displace.sdp2022.profile.statistics.Statistic
 import com.github.displace.sdp2022.users.CompleteUser
 import com.github.displace.sdp2022.users.PartialUser
 import com.github.displace.sdp2022.util.CheckConnection.checkForInternet
+import com.github.displace.sdp2022.util.listeners.Listener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -43,10 +45,8 @@ import com.google.firebase.database.ValueEventListener
 
 class ProfileActivity : AppCompatActivity() {
 
-    private val db: RealTimeDatabase = RealTimeDatabase().instantiate(
-        "https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",
-        false
-    ) as RealTimeDatabase
+
+    private val db = DatabaseFactory.getDB(intent)
 
     private lateinit var msgLs: ArrayList<HashMap<String, Any>>
 
@@ -122,7 +122,7 @@ class ProfileActivity : AppCompatActivity() {
             updateMessageListView(activeUser.getMessageHistory())
         } else {
             updateMessageListView(activeUser.getMessageHistory())
-            db.getDbReference("CompleteUsers/" + activePartialUser.uid + "/MessageHistory").addValueEventListener(messageListener())
+            db.addListener<ArrayList<HashMap<String, Any>>?>("CompleteUsers/" + activePartialUser.uid + "/MessageHistory",messageListener)
         }
     }
 
@@ -131,7 +131,7 @@ class ProfileActivity : AppCompatActivity() {
      */
     private fun setFriends() {
         updateFriendListView()
-        db.getDbReference("CompleteUsers/" + activePartialUser.uid + "/friendsList").addValueEventListener(friendListListener())
+        db.addListener("CompleteUsers/" + activePartialUser.uid + "/friendsList",friendListListener)
     }
 
     /**
@@ -216,21 +216,7 @@ class ProfileActivity : AppCompatActivity() {
 
     }
 
-    /**
-     * Listener for when a new message is received
-     */
-    private fun messageListener() = object : ValueEventListener {
 
-        override fun onDataChange(snapshot: DataSnapshot) {
-            val ls = snapshot.value as ArrayList<HashMap<String,Any>>?
-            updateMessageListView(fromDBToMsgList(ls))
-        }
-
-        override fun onCancelled(error: DatabaseError) {
-
-        }
-
-    }
 
     /**
      * Transform teh data of the database into a list of messages
@@ -271,16 +257,15 @@ class ProfileActivity : AppCompatActivity() {
     /**
      * The listener for when a new friend is added to the user
      */
-    //if the adding friend uses the local list
-    private fun friendListListener() = object : ValueEventListener{
-        override fun onDataChange(snapshot: DataSnapshot) {
-            updateFriendListView()
-        }
+    private val friendListListener = Listener<Unit?>{ updateFriendListView() }
 
-        override fun onCancelled(error: DatabaseError) {
-        }
+    /**
+     * Listener for when a new message is received
+     */
+    private val messageListener = Listener<ArrayList<HashMap<String, Any>>?> { value -> updateMessageListView(fromDBToMsgList(value)) }
 
-    }
+
+
 
     /**
      * Updates the UI with the new list of friends

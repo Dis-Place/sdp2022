@@ -8,6 +8,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.R
 import com.github.displace.sdp2022.RealTimeDatabase
+import com.github.displace.sdp2022.database.DatabaseFactory
+import com.github.displace.sdp2022.database.FirebaseDatabaseAdapter
+import com.github.displace.sdp2022.database.GoodDB
 import com.github.displace.sdp2022.profile.achievements.AchievementsLibrary
 import com.github.displace.sdp2022.profile.messages.MessageHandler
 
@@ -16,8 +19,8 @@ import com.github.displace.sdp2022.profile.messages.MessageHandler
  */
 class NewsActivity : AppCompatActivity() {
 
-    private val db : RealTimeDatabase = RealTimeDatabase().instantiate("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",false) as RealTimeDatabase
-
+    //private val db : RealTimeDatabase = RealTimeDatabase().instantiate("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",false) as RealTimeDatabase
+    private val db = DatabaseFactory.getDB(intent)
     /**
      * Creates the activity
      */
@@ -32,24 +35,9 @@ class NewsActivity : AppCompatActivity() {
         /**
          * Get the news from the database :
          */
-        db.referenceGet("","News").addOnSuccessListener { snapshot ->
-            val news = snapshot.value as ArrayList<HashMap<String,Any>>?
-
+        db.getThenCall< ArrayList<HashMap<String,Any>> >("News") { news ->
             val ls = mapToList(news)    //transform the database data into the News type
-
-            showNews(ls)    //show the news in the Ui
-
-
-        }.addOnFailureListener{
-            val ls = arrayListOf<News>(News(
-                "NO NEWS FOUND",
-                "It seems you're offline, News aren't available !",
-                "NOW",
-                null
-            ))  //it failed, show the default news
-
             showNews(ls)
-
         }
 
     }

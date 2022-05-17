@@ -16,6 +16,8 @@ import com.github.displace.sdp2022.GameVersusViewActivity
 import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.R
 import com.github.displace.sdp2022.RealTimeDatabase
+import com.github.displace.sdp2022.database.DatabaseFactory
+import com.github.displace.sdp2022.database.TransactionSpecification
 import com.github.displace.sdp2022.profile.achievements.Achievement
 import com.github.displace.sdp2022.profile.achievements.AchievementsLibrary
 import com.github.displace.sdp2022.profile.friends.Friend
@@ -25,6 +27,7 @@ import com.github.displace.sdp2022.users.PartialUser
 import com.github.displace.sdp2022.util.gps.GPSPositionManager
 import com.github.displace.sdp2022.util.gps.GPSPositionUpdater
 import com.github.displace.sdp2022.util.gps.GeoPointListener
+import com.github.displace.sdp2022.util.listeners.Listener
 import com.github.displace.sdp2022.util.math.Constants
 import com.github.displace.sdp2022.util.math.CoordinatesUtil
 import com.google.firebase.database.*
@@ -50,7 +53,8 @@ import kotlin.random.Random
 class MatchMakingActivity : AppCompatActivity() {
 
     //Database
-    private lateinit var db: RealTimeDatabase
+   // private lateinit var db: RealTimeDatabase
+    private val db = DatabaseFactory.getDB(intent)
     private var currentLobbyId = ""
 
     private var gamemode = "Versus"
@@ -74,42 +78,33 @@ class MatchMakingActivity : AppCompatActivity() {
      * Listener for the lobby while it is still setting up : players can find it and join it
      * It takes care of :
      * - updating the UI : list of players
-     * - mantaining the lobbyMap variable
+     * - maintaining the lobbyMap variable
      * - check if the lobby is ready to be launched (only by the leader)
      */
-    private val lobbyListener = object : ValueEventListener {
-        override fun onDataChange(snapshot: DataSnapshot) {
-            if (isGroupVisible(R.id.setupGroup)) {    //nothing should be done if the player is not in a lobby
-                return
-            }
-            val lobby = snapshot.value as MutableMap<String, Any>? ?: return
-            lobbyMap = lobby
-            updateUI()
-            if(lobbyMap["lobbyCount"] as Long == lobbyMap["lobbyMax"] as Long  ){
-                lobbyMap["lobbyLaunch"] = true
-                setupLaunchListener()
-                findViewById<Button>(R.id.MMCancelButton).visibility = View.INVISIBLE
-                if (lobbyMap["lobbyLeader"] as String == activePartialUser.uid) {    //This client is the leader : perform the checks and launch if needed
-                    db.referenceGet("MM/$gamemode/$map/$lobbyType", "freeList")
-                        .addOnSuccessListener { free ->
-                            val ls = free.value as ArrayList<String>?
-                            if (ls != null) {
-                                ls.remove(currentLobbyId) //remove this lobby from the free list
-                                db.update("MM/$gamemode/$map/$lobbyType", "freeList", ls)
-                            }
-                            db.delete("MM/$gamemode/$map/$lobbyType/freeLobbies", currentLobbyId)
-                            db.update(
-                                "MM/$gamemode/$map/$lobbyType/launchLobbies",
-                                currentLobbyId,
-                                lobbyMap
-                            )    //add this lobby to the launching lobbies
-                        }
+    private val lobbyListener = Listener<MutableMap<String, Any>?>{ lobby ->
+        if(lobby == null)
+            return@Listener
+        lobbyMap = lobby
+        updateUI()
+        if(lobbyMap["lobbyCount"] as Long == lobbyMap["lobbyMax"] as Long  ){
+            lobbyMap["lobbyLaunch"] = true
+            setupLaunchListener()
+            findViewById<Button>(R.id.MMCancelButton).visibility = View.INVISIBLE
+            if (lobbyMap["lobbyLeader"] as String == activePartialUser.uid) {    //This client is the leader : perform the checks and launch if needed
+                db.getThenCall<ArrayList<String>?>("MM/$gamemode/$map/$lobbyType/freeList") { ls ->
+
+                    if (ls != null) {
+                        ls.remove(currentLobbyId) //remove this lobby from the free list
+                        db.update("MM/$gamemode/$map/$lobbyType/freeList", ls)
+                    }
+                    db.delete("MM/$gamemode/$map/$lobbyType/freeLobbies/$currentLobbyId")
+                    db.update(
+                        "MM/$gamemode/$map/$lobbyType/launchLobbies/$currentLobbyId",
+                        lobbyMap
+                    )    //add this lobby to the launching lobbies
                 }
+
             }
-        }
-
-
-        override fun onCancelled(error: DatabaseError) {
         }
     }
 
@@ -120,18 +115,14 @@ class MatchMakingActivity : AppCompatActivity() {
      * - Maintaining the lobbyMap variable
      * - Making the transition to the game screen
      */
-    private val launchLobbyListener = object : ValueEventListener {
-        override fun onDataChange(snapshot: DataSnapshot) {
-            val lobby = snapshot.value as MutableMap<String, Any>? ?: return
+    private val launchLobbyListener = Listener<MutableMap<String, Any>?>{ lobby ->
+            if(lobby == null)
+                return@Listener
+
             lobbyMap = lobby
             if(lobbyMap["lobbyLeader"] as String == activePartialUser.uid ){
                 leaveMM(true)
             }
-        }
-
-        override fun onCancelled(error: DatabaseError) {
-        }
-
     }
 
     /**
@@ -142,11 +133,6 @@ class MatchMakingActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_match_making)
-
-        /*
-        TODO
-         */
-        db = RealTimeDatabase().noCacheInstantiate("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",  debug ) as RealTimeDatabase
 
         /*
         TODO
@@ -206,6 +192,8 @@ class MatchMakingActivity : AppCompatActivity() {
 
     }
 
+
+
     /**
      * Search a public lobby
      * Always search the first close enough lobby of the list, so that they fill in an orderly manner
@@ -218,54 +206,46 @@ class MatchMakingActivity : AppCompatActivity() {
     private fun publicSearch( lastId : String = "head" ) {
         var toCreateId = ""
         var toSearchId = ""
-        db.getDbReference("MM/$gamemode/$map/$lobbyType/freeList")
-            .runTransaction(object : Transaction.Handler {
-                override fun doTransaction(currentData: MutableData): Transaction.Result {
-                    toCreateId = ""
-                    toSearchId = ""
-                    val ls = currentData.value as ArrayList<String>? ?: return Transaction.success(currentData)
 
-                    val idx : Int = ls.indexOf(lastId)+1
-                    if(idx == 0){
-                        return Transaction.abort()
-                    }
-                    if (idx == ls.size) {
-                        //only the head exists : add a new ID to the list and create a new lobby with that ID
-                        //we reached the end of the list, create a new lobby
-                        val nextId = if (!debug) {
-                            Random.nextLong().toString()
-                        } else {
-                            "test"
-                        }
-                        ls.add(nextId)
+        val publicSearchTransaction : TransactionSpecification<ArrayList<String>> =
+            TransactionSpecification.Builder<ArrayList<String>> { ls ->
+                toCreateId = ""
+                toSearchId = ""
 
-                        toCreateId = nextId
-                        currentData.value = ls
+                val idx : Int = ls.indexOf(lastId)+1
+                if (idx == ls.size) {
+                    //only the head exists : add a new ID to the list and create a new lobby with that ID
+                    //we reached the end of the list, create a new lobby
+                    val nextId = if (!debug) {
+                        Random.nextLong().toString()
                     } else {
-                        //more than only the head exists : check the first one out
-                        toSearchId = ls[idx]
+                        "test"
                     }
-                    return Transaction.success(currentData)
+                    ls.add(nextId)
+
+                    toCreateId = nextId
+                } else {
+                    //more than only the head exists : check the first one out
+                    toSearchId = ls[idx]
                 }
 
-                override fun onComplete(
-                    error: DatabaseError?,
-                    committed: Boolean,
-                    currentData: DataSnapshot?
-                ) {
-                    if (committed) {
-                        if (toCreateId != "") {   //we need to create a lobby
-                            createPublicLobby(toCreateId)
-                        } else {  //we need to check out a lobby
-                            checkOutLobby(toSearchId,false)
-                        }
-                    } else {
-                        publicSearch()
+                return@Builder ls
+            }.preCheckChange { ls ->
+                val idx : Int = ls.indexOf(lastId)+1
+                idx != 0
+            }.onCompleteChange { committed ->
+                if (committed) {
+                    if (toCreateId != "") {   //we need to create a lobby
+                        createPublicLobby(toCreateId)
+                    } else {  //we need to check out a lobby
+                        checkOutLobby(toSearchId,false)
                     }
+                } else {
+                    publicSearch()
                 }
+            }.build()
 
-            })
-
+        db.runTransaction("MM/$gamemode/$map/$lobbyType/freeList",publicSearchTransaction)
 
     }
 
@@ -281,57 +261,46 @@ class MatchMakingActivity : AppCompatActivity() {
      */
     private fun checkOutLobby(toSearchId: String , private : Boolean) {
 
+
         val checkOutWithPos = object : GeoPointListener{
             override fun invoke(geoPoint: GeoPoint) {
                 gpsPositionManager.listenersManager.removeCall(this)
 
-                db.getDbReference("MM/$gamemode/$map/$lobbyType/freeLobbies/$toSearchId")
-                    .runTransaction(object : Transaction.Handler {
-                        override fun doTransaction(currentData: MutableData): Transaction.Result {
-                            val lobby =
-                                currentData.value as MutableMap<String, Any>? ?: return Transaction.success(currentData)
-                            val positionMap = lobby["lobbyPosition"] as HashMap<String,Any>
+                val checkOutTransaction : TransactionSpecification<MutableMap<String, Any>> =
+                    TransactionSpecification.Builder<MutableMap<String, Any>> { lobby ->
 
-                            if (lobby["lobbyCount"] as Long == lobby["lobbyMax"] as Long || lobby["lobbyLaunch"] as Boolean
-                                || CoordinatesUtil.distance(geoPoint, GeoPoint((positionMap["latitude"] as Double) , (positionMap["longitude"] as Double) ) ) > Constants.GAME_AREA_RADIUS ) {   //the lobby is not available : will be deleted from the list soon
-                                return Transaction.abort()
+                        lobby["lobbyCount"] = lobby["lobbyCount"] as Long + 1
+                        val ls = lobby["lobbyPlayers"] as ArrayList<MutableMap<String, Any>>
+                        val userMap =
+                            HashMap<String, Any>() //elements have to be added as maps into the DB
+                        userMap["username"] = activePartialUser.username
+                        userMap["uid"] = activePartialUser.uid
+                        ls.add(userMap)
+                        lobby["lobbyPlayers"] = ls
+
+                        return@Builder lobby
+                    }.preCheckChange { lobby ->
+                        val positionMap = lobby["lobbyPosition"] as HashMap<String,Any>
+                        lobby["lobbyCount"] as Long == lobby["lobbyMax"] as Long || lobby["lobbyLaunch"] as Boolean || CoordinatesUtil.distance(geoPoint, GeoPoint((positionMap["latitude"] as Double) , (positionMap["longitude"] as Double) ) ) > Constants.GAME_AREA_RADIUS
+                    }.onCompleteChange { committed ->
+                        if (committed) {  //setups the listeners and makes the UI transition
+                            if(private){
+                                app.setLobbyID(toSearchId)
                             }
-                            lobby["lobbyCount"] = lobby["lobbyCount"] as Long + 1
-                            val ls = lobby["lobbyPlayers"] as ArrayList<MutableMap<String, Any>>
-                            val userMap =
-                                HashMap<String, Any>() //elements have to be added as maps into the DB
-                            userMap["username"] = activePartialUser.username
-                            userMap["uid"] = activePartialUser.uid
-                            ls.add(userMap)
-                            lobby["lobbyPlayers"] = ls
-                            currentData.value = lobby
-                            return Transaction.success(currentData)
-                        }
+                            currentLobbyId = toSearchId
+                            setupLobbyListener()
+                            uiToSearch()
 
-                        override fun onComplete(
-                            error: DatabaseError?,
-                            committed: Boolean,
-                            currentData: DataSnapshot?
-                        ) {
-                            if (committed) {  //setups the listeners and makes the UI transition
-                                if(private){
-                                    app.setLobbyID(toSearchId)
-                                }
-                                currentLobbyId = toSearchId
-                                setupLobbyListener()
-                                uiToSearch()
+                            positionCheckOnTimer()
 
-                                positionCheckOnTimer()
-
-                            } else {
-                                if(!private){
-                                    publicSearch(toSearchId)  //if the join failed, search a lobby again, this one will probably not exist anymore
-                                }
+                        } else {
+                            if(!private){
+                                publicSearch(toSearchId)  //if the join failed, search a lobby again, this one will probably not exist anymore
                             }
                         }
+                    }.build()
 
-                    })
-
+                db.runTransaction("MM/$gamemode/$map/$lobbyType/freeLobbies/$toSearchId",checkOutTransaction)
 
             }
 
@@ -356,7 +325,7 @@ class MatchMakingActivity : AppCompatActivity() {
 
                 val lobby = Lobby(id, nbPlayer, activePartialUser,geoPoint)
                 currentLobbyId = id
-                db.update("MM/$gamemode/$map/$lobbyType/freeLobbies", id, lobby)
+                db.update("MM/$gamemode/$map/$lobbyType/freeLobbies/$id", lobby)
                 setupLobbyListener()
                 uiToSearch()
 
@@ -389,16 +358,17 @@ class MatchMakingActivity : AppCompatActivity() {
             override fun invoke(geoPoint: GeoPoint) {
                 gpsPositionManager.listenersManager.removeCall(this)
                 val lobby = Lobby(currentLobbyId, nbPlayer, activePartialUser, geoPoint)
-                db.referenceGet("MM/$gamemode/$map/$lobbyType", "freeList").addOnSuccessListener { free ->
-                    val ls = free.value as MutableList<String>
-                    if (ls.contains(id.toString())) {
+
+                db.getThenCall<MutableList<String>>("MM/$gamemode/$map/$lobbyType/freeList"
+                ) { ls ->
+                    if (ls!!.contains(id.toString())) {
                         changeVisibility<TextView>(R.id.errorIdExists, View.VISIBLE)
                     } else {
                         currentLobbyId = id.toString()
                         app.setLobbyID(currentLobbyId)
                         ls.add(currentLobbyId)
-                        db.update("MM/$gamemode/$map/$lobbyType", "freeList", ls)
-                        db.update("MM/$gamemode/$map/$lobbyType/freeLobbies", currentLobbyId, lobby)
+                        db.update("MM/$gamemode/$map/$lobbyType/freeList", ls)
+                        db.update("MM/$gamemode/$map/$lobbyType/freeLobbies/$currentLobbyId", lobby)
                         setupLobbyListener()
                         uiToSearch()
 
@@ -431,14 +401,15 @@ class MatchMakingActivity : AppCompatActivity() {
         val privateJoining = object : GeoPointListener{
             override fun invoke(geoPoint: GeoPoint) {
                 gpsPositionManager.listenersManager.removeCall(this)
-                db.referenceGet("MM/$gamemode/$map/$lobbyType", "freeList").addOnSuccessListener { free ->
-                    val ls = free.value as MutableList<String>
-                    if (ls.contains(id.toString())) { //the lobby has to be searchable
-                        checkOutLobby(id.toString(),true)
+
+                db.getThenCall<MutableList<String>>("MM/$gamemode/$map/$lobbyType/freeList") { ls ->
+                    if (ls!!.contains(id.toString())) { //the lobby has to be searchable
+                        checkOutLobby(id.toString(), true)
                     } else {
                         changeVisibility<TextView>(R.id.errorIdNotFound, View.VISIBLE)
                     }
                 }
+
             }
 
         }
@@ -473,7 +444,7 @@ class MatchMakingActivity : AppCompatActivity() {
     private fun gameScreenTransition(){
         val intent = Intent(applicationContext, GameVersusViewActivity::class.java)
 
-        db.update("GameInstance/Game" + this.currentLobbyId + "/id:" + activePartialUser.uid, "finish", 0)
+        db.update("GameInstance/Game" + this.currentLobbyId + "/id:" + activePartialUser.uid + "/finish", 0)
 
         intent.putExtra("gid",this.currentLobbyId)
         intent.putExtra("uid",activePartialUser.uid)
@@ -494,46 +465,36 @@ class MatchMakingActivity : AppCompatActivity() {
         if (isGroupVisible(R.id.setupGroup)) {    //nothing should be done if the player is not in a lobby
             return
         }
-        db.getDbReference("MM/$gamemode/$map/$lobbyType")
-            .runTransaction(object : Transaction.Handler {
-                override fun doTransaction(currentData: MutableData): Transaction.Result {
 
-                    val lobbyTypeLevel = currentData.value as MutableMap<String, Any>? ?: return Transaction.success( currentData )
+        val leaveMMTransaction : TransactionSpecification<MutableMap<String, Any>> =
+            TransactionSpecification.Builder<MutableMap<String, Any>> { lobbyTypeLevel ->
 
-                    val path = getPath(toGame)
+                val path = getPath(toGame)
 
-                    val lobbyState = lobbyTypeLevel[path] as MutableMap<String, Any>? ?: return Transaction.success(currentData)
-                    var lobby = lobbyState[currentLobbyId] as MutableMap<String, Any>? ?: return Transaction.success(currentData)
+                val lobbyState = lobbyTypeLevel[path] as MutableMap<String, Any>//? ?: return@Builder lobbyTypeLevel
+                var lobby = lobbyState[currentLobbyId] as MutableMap<String, Any>//? ?: return@Builder lobbyTypeLevel
 
-                    if (lobby["lobbyLeader"] as String == activePartialUser.uid) { //leader?
-                        if (lobby["lobbyCount"] as Long == 1L) {    //alone?
-                            if (!toGame) {  //not launching?
-                                val ls = lobbyTypeLevel["freeList"] as ArrayList<String>?
-                                    ?: return Transaction.success(currentData)
-                                ls.remove(currentLobbyId)
-                                lobbyTypeLevel["freeList"] = ls
-                            }
-                            lobbyState.remove(currentLobbyId)
-                        } else {
-                            lobby = removePlayerFromList(lobby)
-                            lobby["lobbyLeader"] =
-                                (lobby["lobbyPlayers"] as ArrayList<MutableMap<String, Any>>)[0]["uid"] as String //use the next player as the new leader
-                            lobbyState[currentLobbyId] = lobby
+                if (lobby["lobbyLeader"] as String == activePartialUser.uid) { //leader?
+                    if (lobby["lobbyCount"] as Long == 1L) {    //alone?
+                        if (!toGame) {  //not launching?
+                            val ls = lobbyTypeLevel["freeList"] as ArrayList<String>//? ?: return@Builder lobbyTypeLevel
+                            ls.remove(currentLobbyId)
+                            lobbyTypeLevel["freeList"] = ls
                         }
+                        lobbyState.remove(currentLobbyId)
                     } else {
                         lobby = removePlayerFromList(lobby)
+                        lobby["lobbyLeader"] = (lobby["lobbyPlayers"] as ArrayList<MutableMap<String, Any>>)[0]["uid"] as String //use the next player as the new leader
                         lobbyState[currentLobbyId] = lobby
                     }
-                    lobbyTypeLevel[path] = lobbyState
-                    currentData.value = lobbyTypeLevel
-                    return Transaction.success(currentData)
+                } else {
+                    lobby = removePlayerFromList(lobby)
+                    lobbyState[currentLobbyId] = lobby
                 }
+                lobbyTypeLevel[path] = lobbyState
 
-            override fun onComplete(
-                error: DatabaseError?,
-                committed: Boolean,
-                currentData: DataSnapshot?
-            ) {
+                return@Builder lobbyTypeLevel
+            }.onCompleteChange { committed ->
                 if(committed) {
                     gpsPositionUpdater.stopUpdates()
                     gpsPositionManager.listenersManager.clearAllCalls()
@@ -545,10 +506,10 @@ class MatchMakingActivity : AppCompatActivity() {
                 }else{
                     leaveMM(toGame)
                 }
+            }.build()
 
-            }
+        db.runTransaction("MM/$gamemode/$map/$lobbyType",leaveMMTransaction)
 
-            })
 
     }
 
@@ -557,12 +518,10 @@ class MatchMakingActivity : AppCompatActivity() {
      */
     private fun getPath(toGame : Boolean) : String {
         return if (toGame) { //depending if the game is launching the path changes
-            db.getDbReference("MM/$gamemode/$map/$lobbyType/freeLobbies/$currentLobbyId")
-                .removeEventListener(launchLobbyListener)
+            db.removeListener("MM/$gamemode/$map/$lobbyType/freeLobbies/$currentLobbyId",launchLobbyListener)
             "launchLobbies"
         } else {
-            db.getDbReference("MM/$gamemode/$map/$lobbyType/freeLobbies/$currentLobbyId")
-                .removeEventListener(lobbyListener)
+            db.removeListener("MM/$gamemode/$map/$lobbyType/freeLobbies/$currentLobbyId",lobbyListener)
             "freeLobbies"
         }
     }
@@ -573,13 +532,11 @@ class MatchMakingActivity : AppCompatActivity() {
     private fun positionCheckOnTimer(){
         gpsPositionUpdater.initTimer()
         gpsPositionManager.listenersManager.addCall( { gp ->
-            db.referenceGet("MM/$gamemode/$map/$lobbyType/freeLobbies",currentLobbyId ).addOnSuccessListener { snapshot ->
-                val lobby = snapshot.value as HashMap<String,Any>? ?: return@addOnSuccessListener
-                val positionMap = lobby["lobbyPosition"] as HashMap<String,Any>
-                if( CoordinatesUtil.distance(gp, GeoPoint((positionMap["latitude"] as Double)  , (positionMap["longitude"] as Double) ) ) > Constants.GAME_AREA_RADIUS  ){
-                    leaveMM(false)
-                }
+            val positionMap = lobbyMap["lobbyPosition"] as MutableMap<String,Any>
+            if( CoordinatesUtil.distance(gp, GeoPoint((positionMap["latitude"] as Double)  , (positionMap["longitude"] as Double) ) ) > Constants.GAME_AREA_RADIUS  ){
+                leaveMM(false)
             }
+
         } )
     }
 
@@ -682,18 +639,15 @@ class MatchMakingActivity : AppCompatActivity() {
      * Setup the listener for the free lobby
      */
     private fun setupLobbyListener() {
-        db.getDbReference("MM/$gamemode/$map/$lobbyType/freeLobbies/$currentLobbyId")
-            .addValueEventListener(lobbyListener)
+        db.addListener("MM/$gamemode/$map/$lobbyType/freeLobbies/$currentLobbyId",lobbyListener)
     }
 
     /**
      * Remove the listener for the free lobby and setup the one for the launching lobby
      */
     private fun setupLaunchListener() {
-        db.getDbReference("MM/$gamemode/$map/$lobbyType/freeLobbies/$currentLobbyId")
-            .removeEventListener(lobbyListener)
-        db.getDbReference("MM/$gamemode/$map/$lobbyType/launchLobbies/$currentLobbyId")
-            .addValueEventListener(launchLobbyListener)
+        db.removeListener("MM/$gamemode/$map/$lobbyType/freeLobbies/$currentLobbyId",lobbyListener)
+        db.addListener("MM/$gamemode/$map/$lobbyType/launchLobbies/$currentLobbyId",launchLobbyListener)
     }
 
 }
@@ -712,7 +666,6 @@ class Lobby(id: String, max_p: Long, leader: PartialUser , gp : GeoPoint) {
     var lobbyCount = 1
     var lobbyLaunch = false
     var lobbyLeader = leader.uid
-    var lobbyPlayers =
-        mutableListOf<PartialUser>(leader)    //PARTIAL USER : should be a list of partial users
+    var lobbyPlayers = mutableListOf<PartialUser>(leader)    //PARTIAL USER : should be a list of partial users
     var lobbyPosition : GeoPoint = gp
 }
