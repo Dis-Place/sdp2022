@@ -15,8 +15,8 @@ package com.github.displace.sdp2022.database
  * @see GoodDB
  */
 class TransactionSpecification<T> private constructor(
-    val preCheck: (T) -> Boolean,
-    val computeUpdatedData: (T) -> T,
+    val preCheck: (T?) -> Boolean,
+    val computeUpdatedData: (T?) -> T,
     val onCompleteCallback: (Boolean) -> Unit
 ) {
 
@@ -31,7 +31,7 @@ class TransactionSpecification<T> private constructor(
      * @see TransactionSpecification
      * @see GoodDB
      */
-    class Builder<T>(private val computeUpdatedData : (T) -> T) {
+    class Builder<T>(private val computeUpdatedData : (T?) -> T) {
 
         /**
          * called after Transaction completion
@@ -46,21 +46,21 @@ class TransactionSpecification<T> private constructor(
          *
          * returns true by default
          */
-        var preCheck: (T) -> Boolean = { _ -> true }
+        var preCheck: (T?) -> Boolean = { _ -> true }
 
         /**
          * Set the preCheck to a new one
          */
-        fun preCheckChange ( new : (T) -> Boolean ) : Builder<T>{
-            preCheck = new
+        fun preCheckChange ( newPreCheck : (T?) -> Boolean ) : Builder<T>{
+            preCheck = newPreCheck
             return this
         }
 
         /**
          * Set the onCompleteCallback to a new one
          */
-        fun onCompleteChange ( new : (Boolean) -> Unit ) : Builder<T>{
-            onCompleteCallback = new
+        fun onCompleteChange ( newOnComplete : (Boolean) -> Unit ) : Builder<T>{
+            onCompleteCallback = newOnComplete
             return this
         }
 

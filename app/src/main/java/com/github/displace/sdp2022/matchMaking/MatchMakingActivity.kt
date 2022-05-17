@@ -17,6 +17,7 @@ import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.R
 import com.github.displace.sdp2022.RealTimeDatabase
 import com.github.displace.sdp2022.database.DatabaseFactory
+import com.github.displace.sdp2022.database.GoodDB
 import com.github.displace.sdp2022.database.TransactionSpecification
 import com.github.displace.sdp2022.profile.achievements.Achievement
 import com.github.displace.sdp2022.profile.achievements.AchievementsLibrary
@@ -54,7 +55,7 @@ class MatchMakingActivity : AppCompatActivity() {
 
     //Database
    // private lateinit var db: RealTimeDatabase
-    private val db = DatabaseFactory.getDB(intent)
+    private lateinit  var db : GoodDB
     private var currentLobbyId = ""
 
     private var gamemode = "Versus"
@@ -137,6 +138,10 @@ class MatchMakingActivity : AppCompatActivity() {
         /*
         TODO
          */
+        db = DatabaseFactory.getDB(intent)
+        /*
+        TODO
+         */
         gpsPositionManager = GPSPositionManager(this)
         gpsPositionUpdater = GPSPositionUpdater(this,gpsPositionManager)
         gpsPositionUpdater.stopUpdates()
@@ -212,7 +217,7 @@ class MatchMakingActivity : AppCompatActivity() {
                 toCreateId = ""
                 toSearchId = ""
 
-                val idx : Int = ls.indexOf(lastId)+1
+                val idx : Int = ls!!.indexOf(lastId)+1
                 if (idx == ls.size) {
                     //only the head exists : add a new ID to the list and create a new lobby with that ID
                     //we reached the end of the list, create a new lobby
@@ -231,7 +236,7 @@ class MatchMakingActivity : AppCompatActivity() {
 
                 return@Builder ls
             }.preCheckChange { ls ->
-                val idx : Int = ls.indexOf(lastId)+1
+                val idx : Int = ls!!.indexOf(lastId)+1
                 idx != 0
             }.onCompleteChange { committed ->
                 if (committed) {
@@ -269,7 +274,7 @@ class MatchMakingActivity : AppCompatActivity() {
                 val checkOutTransaction : TransactionSpecification<MutableMap<String, Any>> =
                     TransactionSpecification.Builder<MutableMap<String, Any>> { lobby ->
 
-                        lobby["lobbyCount"] = lobby["lobbyCount"] as Long + 1
+                        lobby!!["lobbyCount"] = lobby["lobbyCount"] as Long + 1
                         val ls = lobby["lobbyPlayers"] as ArrayList<MutableMap<String, Any>>
                         val userMap =
                             HashMap<String, Any>() //elements have to be added as maps into the DB
@@ -280,7 +285,7 @@ class MatchMakingActivity : AppCompatActivity() {
 
                         return@Builder lobby
                     }.preCheckChange { lobby ->
-                        val positionMap = lobby["lobbyPosition"] as HashMap<String,Any>
+                        val positionMap = lobby!!["lobbyPosition"] as HashMap<String,Any>
                         lobby["lobbyCount"] as Long == lobby["lobbyMax"] as Long || lobby["lobbyLaunch"] as Boolean || CoordinatesUtil.distance(geoPoint, GeoPoint((positionMap["latitude"] as Double) , (positionMap["longitude"] as Double) ) ) > Constants.GAME_AREA_RADIUS
                     }.onCompleteChange { committed ->
                         if (committed) {  //setups the listeners and makes the UI transition
@@ -471,7 +476,7 @@ class MatchMakingActivity : AppCompatActivity() {
 
                 val path = getPath(toGame)
 
-                val lobbyState = lobbyTypeLevel[path] as MutableMap<String, Any>//? ?: return@Builder lobbyTypeLevel
+                val lobbyState = lobbyTypeLevel!![path] as MutableMap<String, Any>//? ?: return@Builder lobbyTypeLevel
                 var lobby = lobbyState[currentLobbyId] as MutableMap<String, Any>//? ?: return@Builder lobbyTypeLevel
 
                 if (lobby["lobbyLeader"] as String == activePartialUser.uid) { //leader?
@@ -493,7 +498,7 @@ class MatchMakingActivity : AppCompatActivity() {
                 }
                 lobbyTypeLevel[path] = lobbyState
 
-                return@Builder lobbyTypeLevel
+                return@Builder lobbyTypeLevel!!
             }.onCompleteChange { committed ->
                 if(committed) {
                     gpsPositionUpdater.stopUpdates()
