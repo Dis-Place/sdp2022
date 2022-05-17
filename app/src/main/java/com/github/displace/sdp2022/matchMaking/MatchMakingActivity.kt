@@ -117,7 +117,7 @@ class MatchMakingActivity : AppCompatActivity() {
     /**
      * Listener for the launching lobby : this lobby is leaking players into the game mode
      * It takes care of :
-     * - Mantaining the lobbyMap variable
+     * - Maintaining the lobbyMap variable
      * - Making the transition to the game screen
      */
     private val launchLobbyListener = object : ValueEventListener {
@@ -143,40 +143,57 @@ class MatchMakingActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_match_making)
 
-
-        gpsPositionManager = GPSPositionManager(this)
-        gpsPositionUpdater = GPSPositionUpdater(this,gpsPositionManager)
-        gpsPositionUpdater.stopUpdates()
-
-
-        nbPlayer = intent.getLongExtra("nbPlayer",2L)
-        try {
-            gamemode = intent.getStringExtra("gameMode")!!
-        }catch (e: Exception){
-            gamemode = "Versus"
-        }
-
-        debug = intent.getBooleanExtra("DEBUG", false)
+        /*
+        TODO
+         */
         db = RealTimeDatabase().noCacheInstantiate(
             "https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",
             debug
         ) as RealTimeDatabase
-        if (debug) {
-            gpsPositionManager.mockProvider(GeoPoint(0.00001,0.00001))
-        }
-        uiToSetup()
 
+        /*
+        TODO
+         */
+        gpsPositionManager = GPSPositionManager(this)
+        gpsPositionUpdater = GPSPositionUpdater(this,gpsPositionManager)
+        gpsPositionUpdater.stopUpdates()
+
+        /*
+        TODO
+         */
         app = applicationContext as MyApplication
         val activeUser = app.getActiveUser()!!
         activePartialUser = activeUser.getPartialUser()
 
+        /*
+        TODO
+         */
+        nbPlayer = intent.getLongExtra("nbPlayer",2L)
+        gamemode = try {
+            intent.getStringExtra("gameMode")!!
+        }catch (e: Exception){
+            "Versus"
+        }
 
+        /*
+        TODO
+         */
+        debug = intent.getBooleanExtra("DEBUG", false)
+        if (debug) { //mock the position for everyone if testing is ongoing
+            gpsPositionManager.mockProvider(GeoPoint(0.00001,0.00001))
+        }
 
+        /*
+        TODO
+         */
         setFriendList(activeUser)
-
-
+        uiToSetup()
     }
 
+    /**
+     * TODO
+     * @param activeUser
+     */
     private fun setFriendList( activeUser : CompleteUser){
         /* Friends in private lobby */
         val friendRecyclerView = findViewById<RecyclerView>(R.id.friendsMMRecycler)
@@ -194,10 +211,12 @@ class MatchMakingActivity : AppCompatActivity() {
 
     /**
      * Search a public lobby
-     * Always search the first lobby of the list, so that they fill in an orderly manner    TODO : will have to add the filter by position
+     * Always search the first close enough lobby of the list, so that they fill in an orderly manner
      * If no public lobbies are available, create one and add it to the list
      *
      * This is done in a Transaction such as if another player searches for a lobby, creation is separated
+     *
+     * @param lastId : TODO
      */
     private fun publicSearch( lastId : String = "head" ) {
         var toCreateId = ""
@@ -258,6 +277,10 @@ class MatchMakingActivity : AppCompatActivity() {
      *
      * Add yourself to the list of players of the lobby and increase the count, it also sets up the listeners
      * It is done in a transaction such as if another player tries to join the same lobby only one of you is successful
+     *
+     * TODO
+     * @param toSearchId :
+     * @param private :
      */
     private fun checkOutLobby(toSearchId: String , private : Boolean) {
 
@@ -302,16 +325,7 @@ class MatchMakingActivity : AppCompatActivity() {
                                 setupLobbyListener()
                                 uiToSearch()
 
-                                gpsPositionUpdater.initTimer()
-                                gpsPositionManager.listenersManager.addCall( { gp ->
-                                    db.referenceGet("MM/$gamemode/$map/$lobbyType/freeLobbies",toSearchId ).addOnSuccessListener { snapshot ->
-                                        val lobby = snapshot.value as HashMap<String,Any>? ?: return@addOnSuccessListener
-                                        val positionMap = lobby["lobbyPosition"] as HashMap<String,Any>
-                                        if( CoordinatesUtil.distance(geoPoint, GeoPoint((positionMap["latitude"] as Double)/*.toDouble()*/  , (positionMap["longitude"] as Double)/*.toDouble()*/ ) ) > Constants.GAME_AREA_RADIUS  ){
-                                            leaveMM(false)
-                                        }
-                                    }
-                                } )
+                                positionCheckOnTimer()
 
                             } else {
                                 if(!private){
@@ -335,6 +349,8 @@ class MatchMakingActivity : AppCompatActivity() {
     /**
      * Create a public lobby with the specified ID
      * Inserts the lobby data into the DB and setups the listeners and UI for search
+     * TODO
+     * @param id :
      */
     private fun createPublicLobby(id: String) {
 
@@ -348,16 +364,7 @@ class MatchMakingActivity : AppCompatActivity() {
                 setupLobbyListener()
                 uiToSearch()
 
-                gpsPositionUpdater.initTimer()
-                gpsPositionManager.listenersManager.addCall( { gp ->
-                    db.referenceGet("MM/$gamemode/$map/$lobbyType/freeLobbies",id ).addOnSuccessListener { snapshot ->
-                        val lobby = snapshot.value as HashMap<String,Any>? ?: return@addOnSuccessListener
-                        val positionMap = lobby["lobbyPosition"] as HashMap<String,Any>
-                        if( CoordinatesUtil.distance(geoPoint, GeoPoint((positionMap["latitude"] as Double)/*.toDouble()*/  , (positionMap["longitude"] as Double)/*.toDouble()*/ ) ) > Constants.GAME_AREA_RADIUS  ){
-                            leaveMM(false)
-                        }
-                    }
-                } )
+                positionCheckOnTimer()
 
             }
 
@@ -399,19 +406,7 @@ class MatchMakingActivity : AppCompatActivity() {
                         setupLobbyListener()
                         uiToSearch()
 
-                        gpsPositionUpdater.initTimer()
-                        gpsPositionManager.listenersManager.addCall( { gp ->
-                            db.referenceGet("MM/$gamemode/$map/$lobbyType/freeLobbies",currentLobbyId ).addOnSuccessListener { snapshot ->
-                                val lobby = snapshot.value as HashMap<String,Any>? ?: return@addOnSuccessListener
-                                val positionMap = lobby["lobbyPosition"] as HashMap<String,Any>
-                                if( CoordinatesUtil.distance(geoPoint, GeoPoint((positionMap["latitude"] as Double)/*.toDouble()*/  , (positionMap["longitude"] as Double)/*.toDouble()*/ ) ) > Constants.GAME_AREA_RADIUS  ){
-                                    leaveMM(false)
-                                }
-                            }
-                        } )
-
-
-
+                        positionCheckOnTimer()
 
                     }
                 }
@@ -464,8 +459,6 @@ class MatchMakingActivity : AppCompatActivity() {
      */
     private fun updateUI() {
 
-        //REPLACE WITH PARTIAL USERS ONCE IT IS IMPLEMENTED
-        //PARTIAL USER : should replace getFriendsList with the list of partials users (the players)
         val friendRecyclerView = findViewById<RecyclerView>(R.id.playersRecycler)
         val friendAdapter = FriendViewAdapter(  //reuses the friend list format without any buttons
             applicationContext,
@@ -567,6 +560,25 @@ class MatchMakingActivity : AppCompatActivity() {
 
     }
 
+    /**
+     * TODO
+     */
+    private fun positionCheckOnTimer(){
+        gpsPositionUpdater.initTimer()
+        gpsPositionManager.listenersManager.addCall( { gp ->
+            db.referenceGet("MM/$gamemode/$map/$lobbyType/freeLobbies",currentLobbyId ).addOnSuccessListener { snapshot ->
+                val lobby = snapshot.value as HashMap<String,Any>? ?: return@addOnSuccessListener
+                val positionMap = lobby["lobbyPosition"] as HashMap<String,Any>
+                if( CoordinatesUtil.distance(gp, GeoPoint((positionMap["latitude"] as Double)  , (positionMap["longitude"] as Double) ) ) > Constants.GAME_AREA_RADIUS  ){
+                    leaveMM(false)
+                }
+            }
+        } )
+    }
+
+    /**
+     * TODO
+     */
     private fun removePlayerFromList(lobby: MutableMap<String, Any>): MutableMap<String, Any> {
 
         lobby["lobbyCount"] = lobby["lobbyCount"] as Long - 1
@@ -578,32 +590,48 @@ class MatchMakingActivity : AppCompatActivity() {
 
     }
 
+    /**
+     * TODO
+     */
     private fun isGroupVisible(id: Int): Boolean {
         return findViewById<Group>(id).visibility == View.VISIBLE
     }
 
+    /**
+     * TODO
+     */
     private fun <T : View> changeVisibility(id: Int, visibility: Int) {
         findViewById<T>(id).visibility = visibility
     }
 
-
+    /**
+     * TODO
+     */
     override fun onDestroy() {
         leaveMM(false)
         super.onDestroy()
     }
 
+    /**
+     * TODO
+     */
     override fun onPause() {
         leaveMM(false)
         uiToSetup()
         super.onPause()
     }
 
-
+    /**
+     * TODO
+     */
     fun onCancelButton(v: View) {
         leaveMM(false)
         uiToSetup()
     }
 
+    /**
+     * TODO
+     */
     fun onPublicLobbySearchButton(v: View) {
         lobbyType = "public"
         publicSearch()
@@ -625,6 +653,9 @@ class MatchMakingActivity : AppCompatActivity() {
 
     }
 
+    /**
+     * TODO
+     */
     private fun uiToSearch() {
         changeVisibility<Group>(R.id.setupGroup, View.INVISIBLE)
         changeVisibility<Group>(R.id.waitGroup, View.VISIBLE)
@@ -662,6 +693,11 @@ class MatchMakingActivity : AppCompatActivity() {
 
 /**
  * A lobby : used exclusively to insert the data into the DB since it cannot be retrieved in such form later
+ * TODO
+ * @param id :
+ * @param max_p :
+ * @param leader :
+ * @param gp :
  */
 class Lobby(id: String, max_p: Long, leader: PartialUser , gp : GeoPoint) {
     val lobbyId = id
