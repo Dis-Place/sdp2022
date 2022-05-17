@@ -50,7 +50,7 @@ import kotlin.random.Random
 class MatchMakingActivity : AppCompatActivity() {
 
     //Database
-   // private lateinit var db: RealTimeDatabase
+    // private lateinit var db: RealTimeDatabase
     private lateinit  var db : GoodDB
     private var currentLobbyId = ""
 
@@ -116,13 +116,13 @@ class MatchMakingActivity : AppCompatActivity() {
      * - Making the transition to the game screen
      */
     private val launchLobbyListener = Listener<MutableMap<String, Any>?>{ lobby ->
-            if(lobby == null)
-                return@Listener
+        if(lobby == null)
+            return@Listener
 
-            lobbyMap = lobby
-            if(lobbyMap["lobbyLeader"] as String == activePartialUser.uid ){
-                leaveMM(true)
-            }
+        lobbyMap = lobby
+        if(lobbyMap["lobbyLeader"] as String == activePartialUser.uid ){
+            leaveMM(true)
+        }
     }
 
     /**
@@ -475,26 +475,19 @@ class MatchMakingActivity : AppCompatActivity() {
             TransactionSpecification.Builder<MutableMap<String, Any>> { lobbyTypeLevel ->
 
                 val path = getPath(toGame)
-
                 val lobbyState = lobbyTypeLevel!![path] as MutableMap<String, Any>
                 var lobby = lobbyState[currentLobbyId] as MutableMap<String, Any>
 
-                if (lobby["lobbyLeader"] as String == activePartialUser.uid) { //leader?
+                lobby = removePlayerFromList(lobby)
+                lobbyState[currentLobbyId] = lobby
 
-                    lobby = removePlayerFromList(lobby)
-                    lobby["lobbyLeader"] = (lobby["lobbyPlayers"] as ArrayList<MutableMap<String, Any>>)[0]["uid"] as String //use the next player as the new leader
-                    lobbyState[currentLobbyId] = lobby
+                if (lobby["lobbyLeader"] as String == activePartialUser.uid && lobby["lobbyCount"] as Long == 1L) { //leader and alone?
 
-                    if (lobby["lobbyCount"] as Long == 1L) {    //alone?
-                        val ls = lobbyTypeLevel["freeList"] as ArrayList<String>
-                        ls.remove(currentLobbyId)
-                        lobbyTypeLevel["freeList"] = ls
-                        lobbyState.remove(currentLobbyId)
-                    }
+                    val ls = lobbyTypeLevel["freeList"] as ArrayList<String>
+                    ls.remove(currentLobbyId)
+                    lobbyTypeLevel["freeList"] = ls
+                    lobbyState.remove(currentLobbyId)
 
-                } else {
-                    lobby = removePlayerFromList(lobby)
-                    lobbyState[currentLobbyId] = lobby
                 }
                 lobbyTypeLevel[path] = lobbyState
 
@@ -551,7 +544,7 @@ class MatchMakingActivity : AppCompatActivity() {
         return CoordinatesUtil.distance(gp, GeoPoint((positionMap["latitude"] as Double)  , (positionMap["longitude"] as Double) ) ) <= Constants.GAME_AREA_RADIUS
     }
     /**
-     * Remove the current player from the lobby only if it is not the only player left
+     * Remove the current player from the lobby only if it is not the only player left and change the leader if needed
      * @param lobby : the lobby to modify, in the form of a map so that it can be used by the database
      * @return the modified lobby
      */
@@ -565,6 +558,10 @@ class MatchMakingActivity : AppCompatActivity() {
         userMap["username"] = activePartialUser.username
         userMap["uid"] = activePartialUser.uid
         (lobby["lobbyPlayers"] as ArrayList<MutableMap<String, Any>>).remove(userMap)
+
+        if (lobby["lobbyLeader"] as String == activePartialUser.uid) { //leader?
+            lobby["lobbyLeader"] = (lobby["lobbyPlayers"] as ArrayList<MutableMap<String, Any>>)[0]["uid"] as String //use the next player as the new leader
+        }
         return lobby
 
     }
