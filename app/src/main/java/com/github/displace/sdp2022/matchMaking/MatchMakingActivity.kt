@@ -224,11 +224,8 @@ class MatchMakingActivity : AppCompatActivity() {
                 if (idx == ls.size) {
                     //only the head exists : add a new ID to the list and create a new lobby with that ID
                     //we reached the end of the list, create a new lobby
-                    val nextId = //if (!debug) {
-                        Random.nextLong().toString()
-                 //   } else {
-                 //       "test"
-                 //   }
+                    val nextId = Random.nextLong().toString()
+
                     ls.add(nextId)
 
                     toCreateId = nextId
