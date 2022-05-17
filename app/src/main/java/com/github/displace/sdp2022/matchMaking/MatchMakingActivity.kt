@@ -355,10 +355,8 @@ class MatchMakingActivity : AppCompatActivity() {
      * - has to make sure no other lobby with the same ID exists : no repetitions are allowed
      */
     fun createPrivateLobby(view: View) {
-        lobbyType = "private"
-        val id = findViewById<EditText>(R.id.lobbyIdInsert).text
-        if (id.isEmpty()) {   //the ID can not be empty
-            changeVisibility<TextView>(R.id.errorIdNonEmpty, View.VISIBLE)
+        val id = checkNonEmpty()
+        if(id.isEmpty()){
             return
         }
 
@@ -399,13 +397,11 @@ class MatchMakingActivity : AppCompatActivity() {
      * - it checks that the lobby ID exists in the freeList
      */
     fun joinPrivateLobby(view: View) {
-        lobbyType = "private"
-        val id = findViewById<EditText>(R.id.lobbyIdInsert).text
-        if (id.isEmpty()) { //UI
-            changeVisibility<TextView>(R.id.errorIdNonEmpty, View.VISIBLE)
+
+        val id = checkNonEmpty()
+        if(id.isEmpty()){
             return
         }
-
         val privateJoining = object : GeoPointListener{
             override fun invoke(geoPoint: GeoPoint) {
                 gpsPositionManager.listenersManager.removeCall(this)
@@ -426,6 +422,15 @@ class MatchMakingActivity : AppCompatActivity() {
         gpsPositionManager.listenersManager.addCall(privateJoining)
         gpsPositionManager.updateLocation()
 
+    }
+
+    private fun checkNonEmpty() : String {
+        lobbyType = "private"
+        val id = findViewById<EditText>(R.id.lobbyIdInsert).text.toString()
+        if (id.isEmpty()) { //UI  //the ID can not be empty
+            changeVisibility<TextView>(R.id.errorIdNonEmpty, View.VISIBLE)
+        }
+        return id
     }
 
     /**
