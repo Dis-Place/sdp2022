@@ -517,7 +517,7 @@ class MatchMakingActivity : AppCompatActivity() {
      */
     private fun getPath(toGame : Boolean) : String {
         return if (toGame) { //depending if the game is launching the path changes
-            db.removeListener("MM/$gamemode/$map/$lobbyType/freeLobbies/$currentLobbyId",launchLobbyListener)
+            db.removeListener("MM/$gamemode/$map/$lobbyType/launchLobbies/$currentLobbyId",launchLobbyListener)
             "launchLobbies"
         } else {
             db.removeListener("MM/$gamemode/$map/$lobbyType/freeLobbies/$currentLobbyId",lobbyListener)
