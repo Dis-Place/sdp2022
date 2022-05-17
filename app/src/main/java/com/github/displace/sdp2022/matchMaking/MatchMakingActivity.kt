@@ -135,25 +135,25 @@ class MatchMakingActivity : AppCompatActivity() {
         setContentView(R.layout.activity_match_making) //UI
 
         /*
-        TODO
+        set up the database
          */
         db = DatabaseFactory.getDB(intent)
         /*
-        TODO
+        set up the gps managers
          */
         gpsPositionManager = GPSPositionManager(this)
         gpsPositionUpdater = GPSPositionUpdater(this,gpsPositionManager)
         gpsPositionUpdater.stopUpdates()
 
         /*
-        TODO
+        set up the user infromation
          */
         app = applicationContext as MyApplication
         val activeUser = app.getActiveUser()!!
         activePartialUser = activeUser.getPartialUser()
 
         /*
-        TODO
+        set up the number of players and game mode
          */
         nbPlayer = intent.getLongExtra("nbPlayer",2L)
         gamemode = try {
@@ -163,7 +163,7 @@ class MatchMakingActivity : AppCompatActivity() {
         }
 
         /*
-        TODO
+        set up the mock for the gps location
          */
         debug = intent.getBooleanExtra("DEBUG", false)
         if (debug) { //mock the position for everyone if testing is ongoing
@@ -171,7 +171,7 @@ class MatchMakingActivity : AppCompatActivity() {
         }
 
         /*
-        TODO
+        set up the UI elements
          */
         setFriendList(activeUser) //UI
         uiToSetup() //UI
@@ -519,7 +519,8 @@ class MatchMakingActivity : AppCompatActivity() {
     }
 
     /**
-     * TODO
+     * Get the path for the database
+     * @param toGame : if the user is leaving the lobby to the game or to the menu
      */
     private fun getPath(toGame : Boolean) : String {
         return if (toGame) { //depending if the game is launching the path changes
@@ -532,7 +533,8 @@ class MatchMakingActivity : AppCompatActivity() {
     }
 
     /**
-     * TODO
+     * Set up the check for position linked to a timer
+     * If the position is too far from the lobby, leave the lobby
      */
     private fun positionCheckOnTimer(){
         gpsPositionUpdater.initTimer()
@@ -549,7 +551,9 @@ class MatchMakingActivity : AppCompatActivity() {
         return CoordinatesUtil.distance(gp, GeoPoint((positionMap["latitude"] as Double)  , (positionMap["longitude"] as Double) ) ) <= Constants.GAME_AREA_RADIUS
     }
     /**
-     * TODO
+     * Remove the current player from the lobby only if it is not the only player left
+     * @param lobby : the lobby to modify, in the form of a map so that it can be used by the database
+     * @return the modified lobby
      */
     private fun removePlayerFromList(lobby: MutableMap<String, Any>): MutableMap<String, Any> {
 
@@ -566,21 +570,26 @@ class MatchMakingActivity : AppCompatActivity() {
     }
 
     /**
-     * TODO
+     * Checks if the Group (UI elements) is visible
+     * @param id : id of the group
+     * @return true if the given group is visible
      */
     private fun isGroupVisible(id: Int): Boolean { //UI
         return findViewById<Group>(id).visibility == View.VISIBLE
     }
 
     /**
-     * TODO
+     * Change the visibility of the UI element
+     * @param T : the type of the UI element
+     * @param id : id of the UI element
+     * @param visibility : VISIBLE / INVISIBLE / GONE
      */
     private fun <T : View> changeVisibility(id: Int, visibility: Int) { //UI
         findViewById<T>(id).visibility = visibility
     }
 
     /**
-     * TODO
+     * When the activity is destroyed, leave the current lobby
      */
     override fun onDestroy() { //UI
         leaveMM(false)
@@ -588,7 +597,7 @@ class MatchMakingActivity : AppCompatActivity() {
     }
 
     /**
-     * TODO
+     * When the activity is paused, leave the current lobby
      */
     override fun onPause() { //UI
         leaveMM(false)
@@ -597,7 +606,7 @@ class MatchMakingActivity : AppCompatActivity() {
     }
 
     /**
-     * TODO
+     * When the user cancels the search, leave the current lobby and return to the setup screen
      */
     fun onCancelButton(v: View) { //UI
         leaveMM(false)
@@ -605,7 +614,7 @@ class MatchMakingActivity : AppCompatActivity() {
     }
 
     /**
-     * TODO
+     * When the user starts the search
      */
     fun onPublicLobbySearchButton(v: View) {
         lobbyType = "public"
@@ -614,6 +623,7 @@ class MatchMakingActivity : AppCompatActivity() {
 
     /**
      * UI transition between multiple groups of UI elements : done to keep the same activity
+     * Goes from Search to Setup
      */
     private fun uiToSetup() { //UI
         changeVisibility<Group>(R.id.setupGroup, View.VISIBLE)
@@ -629,7 +639,8 @@ class MatchMakingActivity : AppCompatActivity() {
     }
 
     /**
-     * TODO
+     * UI transition between multiple groups of UI elements : done to keep the same activity
+     * Goes from Setup to Search
      */
     private fun uiToSearch() { //UI
         changeVisibility<Group>(R.id.setupGroup, View.INVISIBLE)
@@ -665,11 +676,11 @@ class MatchMakingActivity : AppCompatActivity() {
 
 /**
  * A lobby : used exclusively to insert the data into the DB since it cannot be retrieved in such form later
- * TODO
- * @param id :
- * @param max_p :
- * @param leader :
- * @param gp :
+ *
+ * @param id : id of the new lobby
+ * @param max_p : the maximum amount of players in the lobby
+ * @param leader : the id of the leader of the lobby
+ * @param gp : the gps position of the lobby
  */
 class Lobby(id: String, max_p: Long, leader: PartialUser , gp : GeoPoint) {
     val lobbyId = id
