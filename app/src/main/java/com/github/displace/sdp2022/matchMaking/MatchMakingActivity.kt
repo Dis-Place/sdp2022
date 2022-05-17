@@ -146,10 +146,7 @@ class MatchMakingActivity : AppCompatActivity() {
         /*
         TODO
          */
-        db = RealTimeDatabase().noCacheInstantiate(
-            "https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",
-            debug
-        ) as RealTimeDatabase
+        db = RealTimeDatabase().noCacheInstantiate("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",  debug ) as RealTimeDatabase
 
         /*
         TODO
