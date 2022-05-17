@@ -15,13 +15,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.github.displace.sdp2022.GameVersusViewActivity
 import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.R
-import com.github.displace.sdp2022.RealTimeDatabase
 import com.github.displace.sdp2022.database.DatabaseFactory
 import com.github.displace.sdp2022.database.GoodDB
 import com.github.displace.sdp2022.database.TransactionSpecification
-import com.github.displace.sdp2022.profile.achievements.Achievement
 import com.github.displace.sdp2022.profile.achievements.AchievementsLibrary
-import com.github.displace.sdp2022.profile.friends.Friend
 import com.github.displace.sdp2022.profile.friends.FriendViewAdapter
 import com.github.displace.sdp2022.users.CompleteUser
 import com.github.displace.sdp2022.users.PartialUser
@@ -31,7 +28,6 @@ import com.github.displace.sdp2022.util.gps.GeoPointListener
 import com.github.displace.sdp2022.util.listeners.Listener
 import com.github.displace.sdp2022.util.math.Constants
 import com.github.displace.sdp2022.util.math.CoordinatesUtil
-import com.google.firebase.database.*
 import org.osmdroid.util.GeoPoint
 import kotlin.random.Random
 
@@ -66,7 +62,7 @@ class MatchMakingActivity : AppCompatActivity() {
     //indicates if the lobby is public or private
     private var lobbyType: String = "private"
     //keeps a map of the lobby : just how the DB stores it
-    private var lobbyMap : MutableMap<String,Any> = HashMap<String,Any>()
+    private var lobbyMap : MutableMap<String,Any> = HashMap()
     private lateinit var app : MyApplication
     private var nbPlayer = 2L
 
@@ -182,8 +178,8 @@ class MatchMakingActivity : AppCompatActivity() {
     }
 
     /**
-     * TODO
-     * @param activeUser
+     * Sets up the list of friends used to be able to invite them to a private lobby
+     * @param activeUser : the active user, which is the source of the friends
      */
     private fun setFriendList( activeUser : CompleteUser){
         /* Friends in private lobby */
@@ -209,7 +205,7 @@ class MatchMakingActivity : AppCompatActivity() {
      *
      * This is done in a Transaction such as if another player searches for a lobby, creation is separated
      *
-     * @param lastId : TODO
+     * @param lastId : the id of the last lobby we checked out
      */
     private fun publicSearch( lastId : String = "head" ) {
         var toCreateId = ""
@@ -262,15 +258,14 @@ class MatchMakingActivity : AppCompatActivity() {
      * Add yourself to the list of players of the lobby and increase the count, it also sets up the listeners
      * It is done in a transaction such as if another player tries to join the same lobby only one of you is successful
      *
-     * TODO
-     * @param toSearchId :
-     * @param private :
+     * @param toSearchId : the id of the lobby to check out
+     * @param private : signals if the lobby is private (value == true)
      */
     private fun checkOutLobby(toSearchId: String , private : Boolean) {
 
 
         val checkOutWithPos = object : GeoPointListener{
-            override fun invoke(gp: GeoPoint) {
+            override fun invoke(geoPoint: GeoPoint) {
                 gpsPositionManager.listenersManager.removeCall(this)
 
                 val checkOutTransaction : TransactionSpecification<MutableMap<String, Any>> =
@@ -287,7 +282,7 @@ class MatchMakingActivity : AppCompatActivity() {
                     }.preCheckChange { lobby ->
 
                         val positionMap = lobby!!["lobbyPosition"] as HashMap<String,Any>
-                        positionCondition(gp,positionMap)
+                        positionCondition(geoPoint,positionMap)
 
                     }.onCompleteChange { committed ->
                         if (committed) {  //setups the listeners and makes the UI transition
@@ -319,8 +314,8 @@ class MatchMakingActivity : AppCompatActivity() {
     /**
      * Create a public lobby with the specified ID
      * Inserts the lobby data into the DB and setups the listeners and UI for search
-     * TODO
-     * @param id :
+     *
+     * @param id : the id of the lobby to create
      */
     private fun createPublicLobby(id: String) {
 
@@ -364,10 +359,10 @@ class MatchMakingActivity : AppCompatActivity() {
 
                 db.getThenCall<MutableList<String>>("MM/$gamemode/$map/$lobbyType/freeList"
                 ) { ls ->
-                    if (ls!!.contains(id.toString())) {
+                    if (ls!!.contains(id)) {
                         changeVisibility<TextView>(R.id.errorIdExists, View.VISIBLE)
                     } else {
-                        currentLobbyId = id.toString()
+                        currentLobbyId = id
                         app.setLobbyID(currentLobbyId)
                         ls.add(currentLobbyId)
                         db.update("MM/$gamemode/$map/$lobbyType/freeList", ls)
@@ -404,8 +399,8 @@ class MatchMakingActivity : AppCompatActivity() {
                 gpsPositionManager.listenersManager.removeCall(this)
 
                 db.getThenCall<MutableList<String>>("MM/$gamemode/$map/$lobbyType/freeList") { ls ->
-                    if (ls!!.contains(id.toString())) { //the lobby has to be searchable
-                        checkOutLobby(id.toString(), true)
+                    if (ls!!.contains(id)) { //the lobby has to be searchable
+                        checkOutLobby(id, true)
                     } else {
                         changeVisibility<TextView>(R.id.errorIdNotFound, View.VISIBLE)
                     }
@@ -431,7 +426,7 @@ class MatchMakingActivity : AppCompatActivity() {
     }
 
     /**
-     * Update the UI of the lobby search            TODO : show when the lobby is launching + the amount of players compared to the MAX
+     * Update the UI of the lobby search
      * - updates the list of players in the lobby
      */
     private fun updateUI() {
@@ -503,7 +498,7 @@ class MatchMakingActivity : AppCompatActivity() {
                 }
                 lobbyTypeLevel[path] = lobbyState
 
-                return@Builder lobbyTypeLevel!!
+                return@Builder lobbyTypeLevel
             }.onCompleteChange { committed ->
                 if(committed) {
                     gpsPositionUpdater.stopUpdates()
@@ -682,6 +677,6 @@ class Lobby(id: String, max_p: Long, leader: PartialUser , gp : GeoPoint) {
     var lobbyCount = 1
     var lobbyLaunch = false
     var lobbyLeader = leader.uid
-    var lobbyPlayers = mutableListOf<PartialUser>(leader)    //PARTIAL USER : should be a list of partial users
+    var lobbyPlayers = mutableListOf(leader)    //PARTIAL USER : should be a list of partial users
     var lobbyPosition : GeoPoint = gp
 }
