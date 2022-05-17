@@ -285,7 +285,6 @@ class MatchMakingActivity : AppCompatActivity() {
             override fun invoke(geoPoint: GeoPoint) {
                 gpsPositionManager.listenersManager.removeCall(this)
 
-
                 db.getDbReference("MM/$gamemode/$map/$lobbyType/freeLobbies/$toSearchId")
                     .runTransaction(object : Transaction.Handler {
                         override fun doTransaction(currentData: MutableData): Transaction.Result {
@@ -498,26 +497,17 @@ class MatchMakingActivity : AppCompatActivity() {
         db.getDbReference("MM/$gamemode/$map/$lobbyType")
             .runTransaction(object : Transaction.Handler {
                 override fun doTransaction(currentData: MutableData): Transaction.Result {
-                    val lobbyTypeLevel =
-                        currentData.value as MutableMap<String, Any>? ?: return Transaction.success(
-                            currentData
-                        )
-                    val path = if (toGame) { //depending if the game is launching the path changes
-                        "launchLobbies"
-                    } else {
-                        db.getDbReference("MM/$gamemode/$map/$lobbyType/freeLobbies/$currentLobbyId")
-                            .removeEventListener(lobbyListener)
-                        "freeLobbies"
-                    }
 
-                    val lobbyState = lobbyTypeLevel[path] as MutableMap<String, Any>?
-                        ?: return Transaction.success(currentData)
-                    var lobby = lobbyState[currentLobbyId] as MutableMap<String, Any>?
-                        ?: return Transaction.success(currentData)
+                    val lobbyTypeLevel = currentData.value as MutableMap<String, Any>? ?: return Transaction.success( currentData )
 
-                    if (lobby["lobbyLeader"] as String == activePartialUser.uid) {
-                        if (lobby["lobbyCount"] as Long == 1L) {
-                            if (!toGame) {
+                    val path = getPath(toGame)
+
+                    val lobbyState = lobbyTypeLevel[path] as MutableMap<String, Any>? ?: return Transaction.success(currentData)
+                    var lobby = lobbyState[currentLobbyId] as MutableMap<String, Any>? ?: return Transaction.success(currentData)
+
+                    if (lobby["lobbyLeader"] as String == activePartialUser.uid) { //leader?
+                        if (lobby["lobbyCount"] as Long == 1L) {    //alone?
+                            if (!toGame) {  //not launching?
                                 val ls = lobbyTypeLevel["freeList"] as ArrayList<String>?
                                     ?: return Transaction.success(currentData)
                                 ls.remove(currentLobbyId)
@@ -544,17 +534,37 @@ class MatchMakingActivity : AppCompatActivity() {
                 committed: Boolean,
                 currentData: DataSnapshot?
             ) {
-               gpsPositionUpdater.stopUpdates()
-               gpsPositionManager.listenersManager.clearAllCalls()
-               if(toGame){
-                   gameScreenTransition()
-               }else{
-                   uiToSetup()
-               }
+                if(committed) {
+                    gpsPositionUpdater.stopUpdates()
+                    gpsPositionManager.listenersManager.clearAllCalls()
+                    if(toGame){
+                        gameScreenTransition()
+                    }else{
+                        uiToSetup()
+                    }
+                }else{
+                    leaveMM(toGame)
+                }
+
             }
 
             })
 
+    }
+
+    /**
+     * TODO
+     */
+    private fun getPath(toGame : Boolean) : String {
+        return if (toGame) { //depending if the game is launching the path changes
+            db.getDbReference("MM/$gamemode/$map/$lobbyType/freeLobbies/$currentLobbyId")
+                .removeEventListener(launchLobbyListener)
+            "launchLobbies"
+        } else {
+            db.getDbReference("MM/$gamemode/$map/$lobbyType/freeLobbies/$currentLobbyId")
+                .removeEventListener(lobbyListener)
+            "freeLobbies"
+        }
     }
 
     /**
