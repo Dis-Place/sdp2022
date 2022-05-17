@@ -239,15 +239,17 @@ class MatchMakingActivity : AppCompatActivity() {
                 val idx : Int = ls!!.indexOf(lastId)+1
                 idx != 0
             }.onCompleteChange { committed ->
-                if (committed) {
-                    if (toCreateId != "") {   //we need to create a lobby
-                        createPublicLobby(toCreateId)
-                    } else {  //we need to check out a lobby
-                        checkOutLobby(toSearchId,false)
-                    }
-                } else {
+                if (!committed) {
                     publicSearch()
+                    return@onCompleteChange
                 }
+                if (toCreateId != "") {   //we need to create a lobby
+                    createPublicLobby(toCreateId)
+                    return@onCompleteChange
+                }
+                //we need to check out a lobby
+                checkOutLobby(toSearchId,false)
+
             }.build()
 
         db.runTransaction("MM/$gamemode/$map/$lobbyType/freeList",publicSearchTransaction)
@@ -289,9 +291,6 @@ class MatchMakingActivity : AppCompatActivity() {
 
                     }.onCompleteChange { committed ->
                         if (committed) {  //setups the listeners and makes the UI transition
-                      //      if(private){
-                      //      app.setLobbyID(toSearchId)
-                      //      }
                             currentLobbyId = toSearchId
                             app.setLobbyID(currentLobbyId)
                             setupLobbyListener()
@@ -482,22 +481,22 @@ class MatchMakingActivity : AppCompatActivity() {
 
                 val path = getPath(toGame)
 
-                val lobbyState = lobbyTypeLevel!![path] as MutableMap<String, Any>//? ?: return@Builder lobbyTypeLevel
-                var lobby = lobbyState[currentLobbyId] as MutableMap<String, Any>//? ?: return@Builder lobbyTypeLevel
+                val lobbyState = lobbyTypeLevel!![path] as MutableMap<String, Any>
+                var lobby = lobbyState[currentLobbyId] as MutableMap<String, Any>
 
                 if (lobby["lobbyLeader"] as String == activePartialUser.uid) { //leader?
+
+                    lobby = removePlayerFromList(lobby)
+                    lobby["lobbyLeader"] = (lobby["lobbyPlayers"] as ArrayList<MutableMap<String, Any>>)[0]["uid"] as String //use the next player as the new leader
+                    lobbyState[currentLobbyId] = lobby
+
                     if (lobby["lobbyCount"] as Long == 1L) {    //alone?
-                        if (!toGame) {  //not launching?
-                            val ls = lobbyTypeLevel["freeList"] as ArrayList<String>//? ?: return@Builder lobbyTypeLevel
-                            ls.remove(currentLobbyId)
-                            lobbyTypeLevel["freeList"] = ls
-                        }
+                        val ls = lobbyTypeLevel["freeList"] as ArrayList<String>
+                        ls.remove(currentLobbyId)
+                        lobbyTypeLevel["freeList"] = ls
                         lobbyState.remove(currentLobbyId)
-                    } else {
-                        lobby = removePlayerFromList(lobby)
-                        lobby["lobbyLeader"] = (lobby["lobbyPlayers"] as ArrayList<MutableMap<String, Any>>)[0]["uid"] as String //use the next player as the new leader
-                        lobbyState[currentLobbyId] = lobby
                     }
+
                 } else {
                     lobby = removePlayerFromList(lobby)
                     lobbyState[currentLobbyId] = lobby
@@ -559,6 +558,9 @@ class MatchMakingActivity : AppCompatActivity() {
      */
     private fun removePlayerFromList(lobby: MutableMap<String, Any>): MutableMap<String, Any> {
 
+        if(lobby["lobbyCount"] as Long == 1L){
+            return lobby
+        }
         lobby["lobbyCount"] = lobby["lobbyCount"] as Long - 1
         val userMap = HashMap<String, Any>()
         userMap["username"] = activePartialUser.username
