@@ -276,10 +276,8 @@ class MatchMakingActivity : AppCompatActivity() {
 
                         lobby!!["lobbyCount"] = lobby["lobbyCount"] as Long + 1
                         val ls = lobby["lobbyPlayers"] as ArrayList<MutableMap<String, Any>>
-                        val userMap =
-                            HashMap<String, Any>() //elements have to be added as maps into the DB
-                        userMap["username"] = activePartialUser.username
-                        userMap["uid"] = activePartialUser.uid
+                        val userMap = activePartialUser.asMap()
+
                         ls.add(userMap)
                         lobby["lobbyPlayers"] = ls
 
