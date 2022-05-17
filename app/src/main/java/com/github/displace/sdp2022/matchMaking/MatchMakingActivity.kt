@@ -224,11 +224,11 @@ class MatchMakingActivity : AppCompatActivity() {
                 if (idx == ls.size) {
                     //only the head exists : add a new ID to the list and create a new lobby with that ID
                     //we reached the end of the list, create a new lobby
-                    val nextId = if (!debug) {
+                    val nextId = //if (!debug) {
                         Random.nextLong().toString()
-                    } else {
-                        "test"
-                    }
+                 //   } else {
+                 //       "test"
+                 //   }
                     ls.add(nextId)
 
                     toCreateId = nextId
@@ -546,7 +546,7 @@ class MatchMakingActivity : AppCompatActivity() {
         gpsPositionUpdater.initTimer()
         gpsPositionManager.listenersManager.addCall( { gp ->
             val positionMap = lobbyMap["lobbyPosition"] as MutableMap<String,Any>
-            if( positionCondition(gp,positionMap) ){
+            if( !positionCondition(gp,positionMap) ){
                 leaveMM(false)
             }
 
@@ -554,7 +554,7 @@ class MatchMakingActivity : AppCompatActivity() {
     }
 
     private fun positionCondition(gp : GeoPoint , positionMap : MutableMap<String,Any> ) : Boolean{
-        return CoordinatesUtil.distance(gp, GeoPoint((positionMap["latitude"] as Double)  , (positionMap["longitude"] as Double) ) ) > Constants.GAME_AREA_RADIUS
+        return CoordinatesUtil.distance(gp, GeoPoint((positionMap["latitude"] as Double)  , (positionMap["longitude"] as Double) ) ) <= Constants.GAME_AREA_RADIUS
     }
     /**
      * TODO
