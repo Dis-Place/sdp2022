@@ -36,6 +36,34 @@ class MatchMakingTest {
         Thread.sleep(3000)
         app.setMessageHandler(MessageHandler(app.getActiveUser()!!.getPartialUser(),app))
         Thread.sleep(1000)
+        val db : RealTimeDatabase = RealTimeDatabase().noCacheInstantiate("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",true) as RealTimeDatabase
+        Thread.sleep(1000)
+
+        db.insert("MM/Versus/Map2/private", "freeList", listOf("head"))
+        db.insert(
+            "MM/Versus/Map2/private/freeLobbies",
+            "freeHead",
+            Lobby("freeHead", 0, PartialUser("FREE", "FREE") , GeoPoint(0.0,0.0))
+        )
+        db.insert(
+            "MM/Versus/Map2/private/launchLobbies",
+            "launchHead",
+            Lobby("launchHead", 0, PartialUser("FREE", "FREE"),GeoPoint(0.0,0.0))
+        )
+        db.insert("MM/Versus/Map2/public", "freeList", listOf("head"))
+        db.insert(
+            "MM/Versus/Map2/public/freeLobbies",
+            "freeHead",
+            Lobby("freeHead", 0, PartialUser("FREE", "FREE"),GeoPoint(0.0,0.0))
+        )
+        db.insert(
+            "MM/Versus/Map2/public/launchLobbies",
+            "launchHead",
+            Lobby("launchHead", 0, PartialUser("FREE", "FREE"),GeoPoint(0.0,0.0))
+        )
+
+        Thread.sleep(3000)
+
     }
 
     @After
