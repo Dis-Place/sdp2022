@@ -90,7 +90,10 @@ class MatchMakingActivity : AppCompatActivity() {
         if(lobbyMap["lobbyCount"] as Long == lobbyMap["lobbyMax"] as Long  ){
             lobbyMap["lobbyLaunch"] = true
             setupLaunchListener()
+
+            //UI
             findViewById<Button>(R.id.MMCancelButton).visibility = View.INVISIBLE
+
             if (lobbyMap["lobbyLeader"] as String == activePartialUser.uid) {    //This client is the leader : perform the checks and launch if needed
                 db.getThenCall<ArrayList<String>?>("MM/$gamemode/$map/$lobbyType/freeList") { ls ->
 
@@ -133,7 +136,7 @@ class MatchMakingActivity : AppCompatActivity() {
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_match_making)
+        setContentView(R.layout.activity_match_making) //UI
 
         /*
         TODO
@@ -174,8 +177,8 @@ class MatchMakingActivity : AppCompatActivity() {
         /*
         TODO
          */
-        setFriendList(activeUser)
-        uiToSetup()
+        setFriendList(activeUser) //UI
+        uiToSetup() //UI
     }
 
     /**
@@ -268,7 +271,7 @@ class MatchMakingActivity : AppCompatActivity() {
 
 
         val checkOutWithPos = object : GeoPointListener{
-            override fun invoke(geoPoint: GeoPoint) {
+            override fun invoke(gp: GeoPoint) {
                 gpsPositionManager.listenersManager.removeCall(this)
 
                 val checkOutTransaction : TransactionSpecification<MutableMap<String, Any>> =
@@ -286,7 +289,7 @@ class MatchMakingActivity : AppCompatActivity() {
                         return@Builder lobby
                     }.preCheckChange { lobby ->
                         val positionMap = lobby!!["lobbyPosition"] as HashMap<String,Any>
-                        lobby["lobbyCount"] as Long == lobby["lobbyMax"] as Long || lobby["lobbyLaunch"] as Boolean || CoordinatesUtil.distance(geoPoint, GeoPoint((positionMap["latitude"] as Double) , (positionMap["longitude"] as Double) ) ) > Constants.GAME_AREA_RADIUS
+                        positionCondition(gp,positionMap)
                     }.onCompleteChange { committed ->
                         if (committed) {  //setups the listeners and makes the UI transition
                             if(private){
@@ -294,7 +297,7 @@ class MatchMakingActivity : AppCompatActivity() {
                             }
                             currentLobbyId = toSearchId
                             setupLobbyListener()
-                            uiToSearch()
+                            uiToSearch() //UI
 
                             positionCheckOnTimer()
 
@@ -332,7 +335,7 @@ class MatchMakingActivity : AppCompatActivity() {
                 currentLobbyId = id
                 db.update("MM/$gamemode/$map/$lobbyType/freeLobbies/$id", lobby)
                 setupLobbyListener()
-                uiToSearch()
+                uiToSearch() //UI
 
                 positionCheckOnTimer()
 
@@ -375,7 +378,7 @@ class MatchMakingActivity : AppCompatActivity() {
                         db.update("MM/$gamemode/$map/$lobbyType/freeList", ls)
                         db.update("MM/$gamemode/$map/$lobbyType/freeLobbies/$currentLobbyId", lobby)
                         setupLobbyListener()
-                        uiToSearch()
+                        uiToSearch() //UI
 
                         positionCheckOnTimer()
 
@@ -398,7 +401,7 @@ class MatchMakingActivity : AppCompatActivity() {
     fun joinPrivateLobby(view: View) {
         lobbyType = "private"
         val id = findViewById<EditText>(R.id.lobbyIdInsert).text
-        if (id.isEmpty()) {
+        if (id.isEmpty()) { //UI
             changeVisibility<TextView>(R.id.errorIdNonEmpty, View.VISIBLE)
             return
         }
@@ -469,7 +472,7 @@ class MatchMakingActivity : AppCompatActivity() {
     private fun leaveMM(toGame: Boolean) {
         if (isGroupVisible(R.id.setupGroup)) {    //nothing should be done if the player is not in a lobby
             return
-        }
+        } //UI
 
         val leaveMMTransaction : TransactionSpecification<MutableMap<String, Any>> =
             TransactionSpecification.Builder<MutableMap<String, Any>> { lobbyTypeLevel ->
@@ -506,7 +509,7 @@ class MatchMakingActivity : AppCompatActivity() {
                     if(toGame){
                         gameScreenTransition()
                     }else{
-                        uiToSetup()
+                        uiToSetup() //UI
                     }
                 }else{
                     leaveMM(toGame)
@@ -538,13 +541,16 @@ class MatchMakingActivity : AppCompatActivity() {
         gpsPositionUpdater.initTimer()
         gpsPositionManager.listenersManager.addCall( { gp ->
             val positionMap = lobbyMap["lobbyPosition"] as MutableMap<String,Any>
-            if( CoordinatesUtil.distance(gp, GeoPoint((positionMap["latitude"] as Double)  , (positionMap["longitude"] as Double) ) ) > Constants.GAME_AREA_RADIUS  ){
+            if( positionCondition(gp,positionMap) ){
                 leaveMM(false)
             }
 
         } )
     }
 
+    private fun positionCondition(gp : GeoPoint , positionMap : MutableMap<String,Any> ) : Boolean{
+        return CoordinatesUtil.distance(gp, GeoPoint((positionMap["latitude"] as Double)  , (positionMap["longitude"] as Double) ) ) > Constants.GAME_AREA_RADIUS
+    }
     /**
      * TODO
      */
@@ -562,21 +568,21 @@ class MatchMakingActivity : AppCompatActivity() {
     /**
      * TODO
      */
-    private fun isGroupVisible(id: Int): Boolean {
+    private fun isGroupVisible(id: Int): Boolean { //UI
         return findViewById<Group>(id).visibility == View.VISIBLE
     }
 
     /**
      * TODO
      */
-    private fun <T : View> changeVisibility(id: Int, visibility: Int) {
+    private fun <T : View> changeVisibility(id: Int, visibility: Int) { //UI
         findViewById<T>(id).visibility = visibility
     }
 
     /**
      * TODO
      */
-    override fun onDestroy() {
+    override fun onDestroy() { //UI
         leaveMM(false)
         super.onDestroy()
     }
@@ -584,7 +590,7 @@ class MatchMakingActivity : AppCompatActivity() {
     /**
      * TODO
      */
-    override fun onPause() {
+    override fun onPause() { //UI
         leaveMM(false)
         uiToSetup()
         super.onPause()
@@ -593,7 +599,7 @@ class MatchMakingActivity : AppCompatActivity() {
     /**
      * TODO
      */
-    fun onCancelButton(v: View) {
+    fun onCancelButton(v: View) { //UI
         leaveMM(false)
         uiToSetup()
     }
@@ -609,7 +615,7 @@ class MatchMakingActivity : AppCompatActivity() {
     /**
      * UI transition between multiple groups of UI elements : done to keep the same activity
      */
-    private fun uiToSetup() {
+    private fun uiToSetup() { //UI
         changeVisibility<Group>(R.id.setupGroup, View.VISIBLE)
         changeVisibility<Group>(R.id.waitGroup, View.INVISIBLE)
         if (lobbyType == "private") {
@@ -625,7 +631,7 @@ class MatchMakingActivity : AppCompatActivity() {
     /**
      * TODO
      */
-    private fun uiToSearch() {
+    private fun uiToSearch() { //UI
         changeVisibility<Group>(R.id.setupGroup, View.INVISIBLE)
         changeVisibility<Group>(R.id.waitGroup, View.VISIBLE)
         if (lobbyType == "private") {
