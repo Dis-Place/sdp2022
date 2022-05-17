@@ -283,14 +283,17 @@ class MatchMakingActivity : AppCompatActivity() {
 
                         return@Builder lobby
                     }.preCheckChange { lobby ->
+
                         val positionMap = lobby!!["lobbyPosition"] as HashMap<String,Any>
                         positionCondition(gp,positionMap)
+
                     }.onCompleteChange { committed ->
                         if (committed) {  //setups the listeners and makes the UI transition
-                            if(private){
-                                app.setLobbyID(toSearchId)
-                            }
+                      //      if(private){
+                      //      app.setLobbyID(toSearchId)
+                      //      }
                             currentLobbyId = toSearchId
+                            app.setLobbyID(currentLobbyId)
                             setupLobbyListener()
                             uiToSearch() //UI
 
