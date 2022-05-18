@@ -7,6 +7,7 @@ import android.graphics.Bitmap
 import android.util.Log
 import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.RealTimeDatabase
+import com.github.displace.sdp2022.authentication.SignInActivity
 import com.github.displace.sdp2022.profile.achievements.Achievement
 import com.github.displace.sdp2022.profile.history.History
 import com.github.displace.sdp2022.profile.messages.Message
@@ -24,7 +25,8 @@ class CompleteUser(
     val guestBoolean: Boolean = false,
     var offlineMode: Boolean = false,
     val remembered: Boolean = false,
-    val progress_dialog: AlertDialog? = null
+    val progress_dialog: AlertDialog? = null,
+    val activity: SignInActivity? = null
 ) {
 
     private val db: RealTimeDatabase = RealTimeDatabase().instantiate(
@@ -207,7 +209,7 @@ class CompleteUser(
             )
             gameHistory = mutableListOf()
             createFirstMessageList()
-            progress_dialog?.dismiss()
+            //progress_dialog?.dismiss()
             return
         }
 
@@ -219,7 +221,7 @@ class CompleteUser(
             friendsList = offlineUserFetcher.getOfflineFriendsList()
             gameHistory = offlineUserFetcher.getOfflineGameHistory()
             partialUser = offlineUserFetcher.getOfflinePartialUser()
-            progress_dialog?.dismiss()
+            //progress_dialog?.dismiss()
             return
         }
 
@@ -281,7 +283,8 @@ class CompleteUser(
                     PartialUser(partialUserMap["username"]!!, partialUserMap["uid"]!!)
 
                 offlineUserFetcher.setCompleteUser(this)
-                progress_dialog?.dismiss()
+                activity?.launchMainMenuActivity()
+                //progress_dialog?.dismiss()
             } else {    // if user not existing in database, initialize it and adding it to database
 
                 initializeAchievements()
@@ -296,11 +299,12 @@ class CompleteUser(
                 initializePartialUser()
                 addUserToDatabase()
                 createFirstMessageList()
-                progress_dialog?.dismiss()
+
+                //progress_dialog?.dismiss()
             }
         }.addOnFailureListener { e ->
             e.message?.let { Log.e("DBFailure", it) }
-            progress_dialog?.dismiss()
+            //progress_dialog?.dismiss()
         }
 
     }

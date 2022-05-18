@@ -99,8 +99,7 @@ class SignInActivity : AppCompatActivity() {
             if (it.isSuccessful) {
                 handleNewUser(true)
                 
-                val intent = Intent(this, MainMenuActivity::class.java)
-                startActivity(intent)
+                launchMainMenuActivity()
             }
         }
     }
@@ -159,10 +158,10 @@ class SignInActivity : AppCompatActivity() {
                         ).show()
 
                         val user =
-                            CompleteUser(app, current)
+                            CompleteUser(app, current, activity = this@SignInActivity)
                         app.setActiveUser(user)
-                        delay(1_000)
-                        startActivity(Intent(this@SignInActivity, MainMenuActivity::class.java))
+                        //delay(1_000)
+                        //launchMainMenuActivity()
                     }
                 }
             } catch (e: Exception) {
@@ -172,5 +171,9 @@ class SignInActivity : AppCompatActivity() {
             }
         }
 
+    }
+
+    fun launchMainMenuActivity() {
+        startActivity(Intent(this@SignInActivity, MainMenuActivity::class.java))
     }
 }
