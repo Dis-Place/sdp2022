@@ -14,7 +14,7 @@
         app:layout_constraintEnd_toStartOf="@+id/titleText"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.489"
+        app:layout_constraintVertical_bias="0.488"
         app:srcCompat="@color/purple_200"
         tools:src="@color/purple_200"
         tools:visibility="visible" />

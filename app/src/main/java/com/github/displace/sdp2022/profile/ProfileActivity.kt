@@ -287,8 +287,8 @@ class ProfileActivity : AppCompatActivity() {
             startActivity(Intent(this, AddFriendActivity::class.java))
         } else {
             setStatus(false)
-
             Toast.makeText(this, "You're offline ! Please connect to the internet", Toast.LENGTH_LONG).show()
+
         }
     }
 

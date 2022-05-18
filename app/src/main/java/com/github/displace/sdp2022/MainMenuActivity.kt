@@ -68,13 +68,20 @@ class MainMenuActivity : AppCompatActivity() {
 
     @Suppress("UNUSED_PARAMETER")
     fun signOut(view: View) {
+        val app = applicationContext as MyApplication
         AuthUI.getInstance().signOut(this).addOnCompleteListener {
             Toast.makeText(this, "Logging Out", Toast.LENGTH_SHORT).show()
-            (applicationContext as MyApplication).getMessageHandler().removeListener()
+            app.getMessageHandler().removeListener()
             getSharedPreferences("login", MODE_PRIVATE).edit().putBoolean("remembered", false).apply()
 
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
+        }
+
+        if(app.getActiveUser() != null) {
+            if (app.getActiveUser()!!.guestBoolean) {
+                app.getActiveUser()!!.removeUserFromDatabase()
+            }
         }
     }
 
