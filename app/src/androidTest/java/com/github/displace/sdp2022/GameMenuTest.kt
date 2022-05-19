@@ -178,11 +178,9 @@ class GameMenuTest {
     companion object {
         val MOCK_GPS_POSITION = MapViewManager.DEFAULT_CENTER
     }
-    /*
+
     @Test
     fun testChatButton() {
-
-
 
         intent.putExtra("gid","GameVersusTest")
         intent.putExtra("uid","hCkhhJ0dkINs0BIpx8eqhLWzXw43")
@@ -200,7 +198,5 @@ class GameMenuTest {
         val app = ApplicationProvider.getApplicationContext() as MyApplication
         app.getActiveUser()!!.removeUserFromDatabase()
     }
-    
-     */
 
 }
