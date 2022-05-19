@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.Group
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.github.displace.sdp2022.GameListActivity
 import com.github.displace.sdp2022.GameVersusViewActivity
 import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.R
@@ -210,6 +211,15 @@ class MatchMakingActivity : MMView() {
 
     }
 
+    override fun onBackPressed() {
+        if(isGroupVisible(R.id.setupGroup)) {
+            val intent = Intent(applicationContext, GameListActivity::class.java)
+            startActivity(intent)
+        }else{
+            model.leaveMM(false)
+        }
+
+    }
 
 
 }

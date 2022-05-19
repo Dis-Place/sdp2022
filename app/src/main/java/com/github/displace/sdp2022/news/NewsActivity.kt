@@ -1,13 +1,12 @@
 package com.github.displace.sdp2022.news
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.github.displace.sdp2022.MyApplication
-import com.github.displace.sdp2022.R
-import com.github.displace.sdp2022.RealTimeDatabase
+import com.github.displace.sdp2022.*
 import com.github.displace.sdp2022.database.DatabaseFactory
 import com.github.displace.sdp2022.database.FirebaseDatabaseAdapter
 import com.github.displace.sdp2022.database.GoodDB
@@ -87,5 +86,9 @@ class NewsActivity : AppCompatActivity() {
         app.getMessageHandler().checkForNewMessages()
     }
 
+    override fun onBackPressed() {
+        val intent = Intent(applicationContext, MainMenuActivity::class.java)
+        startActivity(intent)
+    }
 
 }

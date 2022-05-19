@@ -13,6 +13,7 @@ import androidx.lifecycle.Observer
 
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.github.displace.sdp2022.MainMenuActivity
 import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.R
 import com.github.displace.sdp2022.RealTimeDatabase
@@ -378,5 +379,9 @@ class ProfileActivity : AppCompatActivity() {
         app.getMessageHandler().checkForNewMessages()
     }
 
+    override fun onBackPressed() {
+        val intent = Intent(applicationContext, MainMenuActivity::class.java)
+        startActivity(intent)
+    }
 
 }
