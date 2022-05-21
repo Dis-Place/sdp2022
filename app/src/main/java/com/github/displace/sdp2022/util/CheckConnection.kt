@@ -5,8 +5,20 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
 
+/**
+ * CheckConnection
+ *
+ * Object used to host methods to check the connection status of the device.
+ *
+ * @author Seaulyd
+ */
 object CheckConnection {
-
+    /**
+     * Check if the device is connected to the internet
+     *
+     * @param context the context of the application
+     * @return true if the device is connected to the internet, false otherwise
+     */
     fun checkForInternet(context: Context): Boolean {
 
         // register activity with the connectivity manager service

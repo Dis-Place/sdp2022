@@ -1,4 +1,4 @@
-package com.github.displace.sdp2022
+package com.github.displace.sdp2022.settings
 
 import android.content.Intent
 import androidx.lifecycle.Lifecycle

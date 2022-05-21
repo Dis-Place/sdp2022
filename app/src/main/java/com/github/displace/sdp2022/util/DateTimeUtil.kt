@@ -8,12 +8,12 @@ import java.util.*
  * @author LeoLgdr
  */
 object DateTimeUtil {
-    private const val PATTERN  = "dd-MM-yyyy HH:mm:ss"
+    private const val PATTERN = "dd-MM-yyyy HH:mm:ss"
 
     /**
      * @return current date & time formatted according to pattern dd-MM-yyyy HH:mm:ss
      */
-    fun currentTime() : String {
+    fun currentTime(): String {
         return SimpleDateFormat(PATTERN, Locale.getDefault()).format(Calendar.getInstance().time)
     }
 }
