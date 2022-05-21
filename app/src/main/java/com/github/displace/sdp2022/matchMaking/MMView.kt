@@ -1,6 +1,7 @@
 package com.github.displace.sdp2022.matchMaking
 
 import android.view.View
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.github.displace.sdp2022.users.CompleteUser
 

@@ -4,10 +4,12 @@ package com.github.displace.sdp2022.matchMaking
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.Group
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -52,6 +54,7 @@ class MatchMakingActivity : MMView() {
 
     private lateinit var model : MatchMakingModel
 
+    private lateinit var progressDialog : AlertDialog
 
     /**
      * On creation of the activity we must :
@@ -65,15 +68,29 @@ class MatchMakingActivity : MMView() {
 
         model = MatchMakingModel(this)
 
+
+        val view = LayoutInflater.from(this).inflate(R.layout.progress_dialog, null)
+
+        val dialogBuilder = AlertDialog.Builder(this)
+        dialogBuilder.setView(view)
+        progressDialog = dialogBuilder.create()
+
+
+
         setFriendList(model.activeUser)
         uiToSetup()
 
         findViewById<Button>(R.id.privateLobbyCreate).setOnClickListener {
+            progressDialog.show()
             model.createPrivateLobby()
         }
         findViewById<Button>(R.id.privateLobbyJoin).setOnClickListener {
+            progressDialog.show()
             model.joinPrivateLobby()
         }
+
+
+
 
     }
 
@@ -148,6 +165,7 @@ class MatchMakingActivity : MMView() {
      */
     override fun onDestroy() { //UI
         model.leaveMM(false)
+        progressDialog.dismiss()
         super.onDestroy()
     }
 
@@ -164,6 +182,7 @@ class MatchMakingActivity : MMView() {
      * When the user cancels the search, leave the current lobby and return to the setup screen
      */
     fun onCancelButton(v: View) { //UI
+        progressDialog.show()
         model.leaveMM(false)
         uiToSetup()
     }
@@ -172,6 +191,7 @@ class MatchMakingActivity : MMView() {
      * When the user starts the search
      */
     fun onPublicLobbySearchButton(v: View) {
+        progressDialog.show()
         model.lobbyType = "public"
         model.publicSearch()
     }
@@ -191,6 +211,7 @@ class MatchMakingActivity : MMView() {
         val app = applicationContext as MyApplication
         app.getMessageHandler().checkForNewMessages()
 
+        progressDialog.dismiss()
     }
 
     /**
@@ -209,6 +230,7 @@ class MatchMakingActivity : MMView() {
         //check for match making achievements
         AchievementsLibrary.achievementCheck(model.app.getActiveUser()!!,model.lobbyType == "private",AchievementsLibrary.mmtLib)
 
+        progressDialog.dismiss()
     }
 
     override fun onBackPressed() {
