@@ -1,6 +1,7 @@
 package com.github.displace.sdp2022
 
 import android.graphics.Bitmap
+import com.github.displace.sdp2022.database.Database
 import com.github.displace.sdp2022.util.math.Constants.TWENTY_MEGA_BYTE
 import com.google.android.gms.tasks.Task
 import com.google.firebase.database.DataSnapshot

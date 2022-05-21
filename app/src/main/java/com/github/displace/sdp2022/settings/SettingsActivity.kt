@@ -1,6 +1,5 @@
-package com.github.displace.sdp2022
+package com.github.displace.sdp2022.settings
 
-import SettingsFragment
 import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.os.Bundle
@@ -11,7 +10,11 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO
 import androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES
 import androidx.preference.PreferenceManager
+import com.github.displace.sdp2022.MyApplication
+import com.github.displace.sdp2022.R
 import com.github.displace.sdp2022.profile.achievements.AchievementsLibrary
+import com.github.displace.sdp2022.settings.SettingsConstants.GREEN_THEME_KEY
+import com.github.displace.sdp2022.settings.SettingsConstants.PURPLE_THEME_KEY
 
 const val DARK_MODE_SETTINGS_SWITCH: String = "darkMode"
 const val THEME_SETTINGS_SWITCH: String = "themeKey"
@@ -68,16 +71,16 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     private fun chooseTheme(prefs: SharedPreferences) {
-        when (prefs.getString("themeKey", "purple")!!) {
-            "purple" -> theme.applyStyle(R.style.Theme_DisPlace1, true)
-            "green" -> theme.applyStyle(R.style.Theme_DisPlace2, true)
+        when (prefs.getString(THEME_SETTINGS_SWITCH, PURPLE_THEME_KEY)!!) {
+            PURPLE_THEME_KEY -> theme.applyStyle(R.style.Theme_DisPlace1, true)
+            GREEN_THEME_KEY -> theme.applyStyle(R.style.Theme_DisPlace2, true)
             else -> theme.applyStyle(R.style.Theme_DisPlace1, true)
         }
 
     }
 
     private fun darkMode(prefs: SharedPreferences) {
-        val cur = prefs.getBoolean("darkMode", false)
+        val cur = prefs.getBoolean(DARK_MODE_SETTINGS_SWITCH, false)
         if (cur) {
             AppCompatDelegate.setDefaultNightMode(MODE_NIGHT_YES)
         } else {

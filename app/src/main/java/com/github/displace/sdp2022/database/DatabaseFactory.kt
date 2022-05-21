@@ -1,6 +1,7 @@
 package com.github.displace.sdp2022.database
 
 import android.content.Intent
+import com.github.displace.sdp2022.database.DatabaseConstants.DB_URL
 
 /**
  * to instantiate a Database
@@ -20,7 +21,7 @@ object DatabaseFactory {
     const val MOCK_DB_EXTRA_ID = "MOCK_DB"
     const val DEBUG_EXTRA_ID = "DEBUG"
 
-    private const val DB_URL = "https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/"
+
     /*private const val IMAGE_DB_url = "gs://displace-dd51e.appspot.com/"*/
 
 

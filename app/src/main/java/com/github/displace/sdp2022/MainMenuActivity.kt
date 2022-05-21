@@ -11,6 +11,7 @@ import com.firebase.ui.auth.AuthUI
 import com.github.displace.sdp2022.news.NewsActivity
 import com.github.displace.sdp2022.profile.ProfileActivity
 import com.github.displace.sdp2022.profile.messages.MessageHandler
+import com.github.displace.sdp2022.settings.SettingsActivity
 
 
 class MainMenuActivity : AppCompatActivity() {

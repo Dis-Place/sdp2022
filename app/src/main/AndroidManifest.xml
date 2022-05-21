@@ -42,7 +42,7 @@
             android:name=".profile.friendInvites.AddFriendActivity"
             android:exported="false" />
         <activity
-            android:name=".SettingsActivity"
+            android:name=".settings.SettingsActivity"
             android:exported="false"
             android:parentActivityName=".MainMenuActivity" />
         <activity
