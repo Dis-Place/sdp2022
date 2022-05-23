@@ -33,7 +33,7 @@ import com.github.displace.sdp2022.profile.qrcode.QrCodeUtils
 import com.github.displace.sdp2022.profile.settings.AccountSettingsActivity
 import com.github.displace.sdp2022.profile.statistics.StatViewAdapter
 import com.github.displace.sdp2022.users.PartialUser
-import com.github.displace.sdp2022.util.CheckConnection.checkForInternet
+import com.github.displace.sdp2022.util.CheckConnectionUtil.checkForInternet
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase

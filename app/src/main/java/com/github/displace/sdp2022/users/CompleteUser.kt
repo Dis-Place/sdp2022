@@ -37,11 +37,13 @@ class CompleteUser(
     private val guestNumber = Random.nextUInt()
 
     private val dbReference: String = if (firebaseUser != null) {
-        "CompleteUsers/${firebaseUser.uid}/CompleteUser"
+        if(guestBoolean) {
+            "CompleteUsers/guest_${firebaseUser.uid}/CompleteUser"
+        } else {
+            "CompleteUsers/${firebaseUser.uid}/CompleteUser"
+        }
     } else {
-        if (guestBoolean) {
-            "CompleteUsers/guest_$guestNumber/CompleteUser"
-        } else if(offlineMode) {
+        if(offlineMode) {
             ""  // useless
         } else {
             "CompleteUsers/dummy_id/CompleteUser"
@@ -68,7 +70,11 @@ class CompleteUser(
     }
 
     private fun addUserToDatabase() {
-        db.insert(dbReference, "", this)
+        db.update(dbReference,"achievements", achievements)
+        db.update(dbReference,"stats", stats)
+        db.update(dbReference,"friendsList", friendsList)
+        db.update(dbReference,"gameHistory", gameHistory)
+        db.update(dbReference,"partialUser", partialUser)
     }
 
 
@@ -209,7 +215,8 @@ class CompleteUser(
             )
             gameHistory = mutableListOf()
             createFirstMessageList()
-            //progress_dialog?.dismiss()
+            addUserToDatabase()
+            activity?.launchMainMenuActivity()
             return
         }
 
@@ -221,7 +228,7 @@ class CompleteUser(
             friendsList = offlineUserFetcher.getOfflineFriendsList()
             gameHistory = offlineUserFetcher.getOfflineGameHistory()
             partialUser = offlineUserFetcher.getOfflinePartialUser()
-            //progress_dialog?.dismiss()
+            activity?.launchMainMenuActivity()
             return
         }
 
@@ -283,28 +290,25 @@ class CompleteUser(
                     PartialUser(partialUserMap["username"]!!, partialUserMap["uid"]!!)
 
                 offlineUserFetcher.setCompleteUser(this)
-                activity?.launchMainMenuActivity()
-                //progress_dialog?.dismiss()
             } else {    // if user not existing in database, initialize it and adding it to database
 
+                initializePartialUser()
                 initializeAchievements()
                 initializeStats()
                 friendsList = mutableListOf(
                     PartialUser("THE SYSTEM", "dummy_friend_id")
                 )
-           /*     gameHistory = mutableListOf(
-                    History("dummy_map", getCurrentDate(), "VICTORY")
-                )*/
                 gameHistory = mutableListOf()
-                initializePartialUser()
                 addUserToDatabase()
                 createFirstMessageList()
 
                 //progress_dialog?.dismiss()
             }
+            activity?.launchMainMenuActivity()
+
         }.addOnFailureListener { e ->
             e.message?.let { Log.e("DBFailure", it) }
-            //progress_dialog?.dismiss()
+            activity?.launchMainMenuActivity()
         }
 
     }
@@ -326,6 +330,7 @@ class CompleteUser(
 
     fun removeUserFromDatabase() {
         db.delete("CompleteUsers", partialUser.uid)
+        firebaseUser?.delete()
     }
 
     @SuppressLint("SimpleDateFormat")
@@ -337,12 +342,6 @@ class CompleteUser(
         if(!guestBoolean && firebaseUser != null) {
             offlineUserFetcher.setOfflineAchievements(achievements)
         }
-
-        db.update(
-            "CompleteUsers/${partialUser.uid}",
-            "achievements",
-            achievements
-        )
     }
 
     @SuppressLint("SimpleDateFormat")
@@ -361,12 +360,6 @@ class CompleteUser(
         if(!guestBoolean && firebaseUser != null) {
             offlineUserFetcher.setOfflineStats(stats)
         }
-
-        db.update(
-            "CompleteUsers/${partialUser.uid}",
-            "Stats",
-            stats
-        )
     }
 
     private fun initializePartialUser() {
@@ -385,13 +378,6 @@ class CompleteUser(
         if(!guestBoolean && firebaseUser != null) {
             offlineUserFetcher.setOfflinePartialUser(partialUser)
         }
-
-        db.update(
-            "CompleteUsers/${partialUser.uid}",
-            "PartialUser",
-            partialUser
-        )
-
     }
 
     fun getPartialUser(): PartialUser {
@@ -434,7 +420,7 @@ class CompleteUser(
 
     private fun setupDefaultOrGuestPartialUser() {
         partialUser = if (guestBoolean) {
-            PartialUser("Guest$guestNumber", "guest_$guestNumber")
+            PartialUser("Guest$guestNumber", "guest_${firebaseUser?.uid}")
         } else {
             PartialUser("defaultName", "dummy_id")
         }

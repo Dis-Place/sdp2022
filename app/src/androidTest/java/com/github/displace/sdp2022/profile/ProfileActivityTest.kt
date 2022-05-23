@@ -38,7 +38,8 @@ class ProfileActivityTest {
         val app = ApplicationProvider.getApplicationContext() as MyApplication
         completeUser = CompleteUser(app,null)
         app.setActiveUser(completeUser)
-        Thread.sleep(100)
+        Thread.sleep(500)
+        app.setMessageHandler(MessageHandler(completeUser.getPartialUser(), app))
     }
 
     @After

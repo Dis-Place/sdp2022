@@ -33,11 +33,9 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
-        
         <activity
-        android:name=".profile.friendInvites.FriendRequest"
-        android:exported="false" />
-        
+            android:name=".profile.friendInvites.FriendRequest"
+            android:exported="false" />
         <activity
             android:name=".profile.friendInvites.AddFriendActivity"
             android:exported="false" />
@@ -71,6 +69,7 @@
         <activity
             android:name=".profile.settings.AccountSettingsActivity"
             android:exported="false">
+
             <!-- The meta-data tag is required if you support API level 15 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -142,4 +141,5 @@
             </intent-filter>
         </activity>
     </application>
+
 </manifest>

@@ -11,6 +11,8 @@ import com.firebase.ui.auth.AuthUI
 import com.github.displace.sdp2022.news.NewsActivity
 import com.github.displace.sdp2022.profile.ProfileActivity
 import com.github.displace.sdp2022.profile.messages.MessageHandler
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 
 
 class MainMenuActivity : AppCompatActivity() {
@@ -122,7 +124,7 @@ class MainMenuActivity : AppCompatActivity() {
         } else {
             activeUser.getPartialUser().username
         }
-        findViewById<TextView>(R.id.WelcomeText).apply {
+        findViewById<TextView>(R.id.welcomeText).apply {
             text =
                 "Welcome $message!"
         }
