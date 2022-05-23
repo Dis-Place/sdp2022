@@ -18,6 +18,7 @@ import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiSelector
 import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.R
+import com.github.displace.sdp2022.profile.messages.MessageHandler
 import com.github.displace.sdp2022.profile.settings.AccountSettingsActivity
 import com.github.displace.sdp2022.users.CompleteUser
 import org.hamcrest.CoreMatchers.*
@@ -38,6 +39,8 @@ class AccountSettingsActivityNoPermsTest {
         completeUser = CompleteUser(app,null)
         app.setActiveUser(completeUser)
         Thread.sleep(1000)
+        app.setMessageHandler(MessageHandler(app.getActiveUser()!!.getPartialUser(),app))
+        Thread.sleep(100)
     }
 
     @After

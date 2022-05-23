@@ -39,6 +39,8 @@ class ProfileActivityTest {
         completeUser = CompleteUser(app,null)
         app.setActiveUser(completeUser)
         Thread.sleep(100)
+        app.setMessageHandler(MessageHandler(completeUser.getPartialUser(),app))
+        Thread.sleep(100)
     }
 
     @After
