@@ -21,9 +21,10 @@ import com.google.firebase.database.ValueEventListener
 
 class MessageHandler(private val activePartialUser : PartialUser, app : MyApplication) {
 
-    private var msgLs : ArrayList<Message> = arrayListOf()
+    private var msgLs : ArrayList<Message> = app.getActiveUser()!!.getMessageHistory()
     private val db : RealTimeDatabase = RealTimeDatabase().instantiate("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",false) as RealTimeDatabase
     private val context = app
+
 
     init{
         checkForNewMessages()

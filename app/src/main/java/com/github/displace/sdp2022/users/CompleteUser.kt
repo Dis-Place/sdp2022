@@ -88,7 +88,7 @@ class CompleteUser(
         if (offlineMode)
             return
 
-        if(!achievements.contains(ach)){
+        if(!achievements.map{ ach -> ach.name}.contains(ach.name)){
 
             /**
              * This part should also send a notification

@@ -384,4 +384,14 @@ class ProfileActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
+    override fun onPause() {
+        super.onPause()
+        db.removeListener("CompleteUsers/" + activePartialUser.uid + "/friendsList",friendListListener)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        db.removeListener("CompleteUsers/" + activePartialUser.uid + "/friendsList",friendListListener)
+    }
+
 }
