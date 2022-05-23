@@ -50,7 +50,7 @@ class SignInActivityTest {
     fun signInAsGuestWorks() {
         init()
         onView(withId(R.id.signInActivityGuestModeButton)).perform(click())
-        Thread.sleep(700)      // Test fails once every 3 times for some unknown reason without this and my heart can't take it
+        Thread.sleep(1000)      // Test fails once every 3 times for some unknown reason without this and my heart can't take it
         intended(hasComponent(MainMenuActivity::class.java.name))
         onView(withId(R.id.welcomeText)).check(matches(withText(containsString("Guest"))))
         onView(withId(R.id.mainMenuLogOutButton)).perform(click())
