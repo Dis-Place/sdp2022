@@ -62,6 +62,7 @@ class FriendRequest {
     companion object {
 
         private const val TAG = "FriendRequest"
+        private var invitesLiveData = MutableLiveData<MutableList<InviteWithId>>()
         private lateinit var rootRef : DatabaseReference
 
         // target is the user name
@@ -76,6 +77,7 @@ class FriendRequest {
 
             Log.d(TAG, "CHECK if $target exists")
             val usersRef: DatabaseReference = rootRef.child("CompleteUsers")
+            val InvitesRef : DatabaseReference = rootRef.child("Invites")
 
             val eventListener: ValueEventListener = object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -83,8 +85,15 @@ class FriendRequest {
                     if (checkUserExists(partialUsers, target)) {
                         val source = currentUser
                         val target = getTargetUser( partialUsers, target)
-                        sendInvite(source, target)
-                    }
+                        if( alreadyInvited(FriendRequest.invitesLiveData, source, target)){
+                            Toast.makeText(context,"Already invited ${target.username} ", Toast.LENGTH_LONG).show()
+                        }
+                        else{
+                            sendInvite(source, target)
+                            Toast.makeText(context,"Invite to ${target.username} sent", Toast.LENGTH_LONG).show()
+
+                            }
+                        }
                     else{
                         Log.d(TAG, "$target DOES NOTEXISTS")
                         Toast.makeText(context,"User $target does not exist", Toast.LENGTH_LONG).show()
@@ -93,6 +102,19 @@ class FriendRequest {
 
                 override fun onCancelled(databaseError: DatabaseError) {}
             }
+
+            val eventInviteListener: ValueEventListener = object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot){
+                    var invites = ReceiveFriendRequests.getInvites(dataSnapshot)
+
+                    invitesLiveData.value = invites
+                }
+                override fun onCancelled(databaseError: DatabaseError) {}
+            }
+            InvitesRef.addListenerForSingleValueEvent(eventInviteListener)
+
+
+
             usersRef.addListenerForSingleValueEvent(eventListener)
 
 
@@ -135,7 +157,22 @@ class FriendRequest {
             }
             return PartialUser("empty", "empty") // never gets executed as we check that the user exists before
         }
+
+        fun alreadyInvited(invitesWithId : MutableLiveData<MutableList<InviteWithId>>, source: PartialUser, target: PartialUser ) : Boolean {
+            val inviteDirection1 = Invite(source, target)
+            val inviteDirection2 = Invite(target, source)
+            for( inviteWithId in invitesWithId.value!!){
+                if(inviteWithId.invite == inviteDirection1 ||  inviteWithId.invite == inviteDirection2){
+                    return true
+                }
+            }
+            return false
+        }
+
+
     }
+
+
 }
 
 
