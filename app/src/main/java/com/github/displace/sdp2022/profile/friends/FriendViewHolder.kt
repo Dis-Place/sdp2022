@@ -11,7 +11,6 @@ import com.github.displace.sdp2022.R
 import com.github.displace.sdp2022.RealTimeDatabase
 import com.github.displace.sdp2022.profile.FriendDeleter
 import com.github.displace.sdp2022.profile.MessageUpdater
-import com.github.displace.sdp2022.profile.RequestAcceptor
 import com.github.displace.sdp2022.profile.messages.SendMessageActivity
 import com.github.displace.sdp2022.users.PartialUser
 

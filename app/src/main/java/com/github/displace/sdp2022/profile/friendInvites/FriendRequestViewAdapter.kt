@@ -64,10 +64,13 @@ class FriendRequestViewAdapter(private var dataSet: MutableList<InviteWithId>, p
                         .runTransaction(
                             RequestAcceptor(invite.invite.target)
                         )
-                    db.getDbReference("CompleteUsers/${invite.invite.target.uid}/CompleteUser/friendsList")
-                        .runTransaction(
-                            RequestAcceptor(invite.invite.source)
-                        )
+//                    db.getDbReference("CompleteUsers/${invite.invite.target.uid}/CompleteUser/friendsList")
+//                        .runTransaction(
+//                            RequestAcceptor(invite.invite.source)
+//                        )
+                    val app = acceptButton.context.applicationContext as MyApplication
+                    val user = app.getActiveUser()!!
+                    user.addFriend(invite.invite.source)
 
                     DeleteInvite.deleteInvite(invite.id)
                 }

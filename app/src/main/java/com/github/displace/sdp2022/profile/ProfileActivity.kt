@@ -3,6 +3,7 @@ package com.github.displace.sdp2022.profile
 import android.Manifest
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.ScrollView
@@ -131,14 +132,9 @@ class ProfileActivity : AppCompatActivity() {
         recyclerview.layoutManager = LinearLayoutManager(this)
         recyclerview.adapter = FriendRequestViewAdapter( mutableListOf<InviteWithId>(), this)
 
-        ReceiveFriendRequests.receiveRequests(rootRef, currentUser)
-            .observe(this,  Observer{
-                val adapter = FriendRequestViewAdapter(it, this)
+        Log.d("inbox", "curent partial $activePartialUser")
+        observeInbox(activePartialUser)
 
-                // Setting the Adapter with the recyclerview
-                recyclerview.adapter = adapter
-
-            })
 
 
     }
@@ -176,6 +172,13 @@ class ProfileActivity : AppCompatActivity() {
 
     @Suppress("UNUSED_PARAMETER")
     fun inboxButton(view: View) {
+        val app = applicationContext as MyApplication
+        val activeUser = app.getActiveUser()
+        var partialUser = PartialUser("defaultName","dummy_id")
+        if(activeUser != null){
+            partialUser = activeUser.getPartialUser()
+        }
+        observeInbox(partialUser)
         findViewById<ScrollView>(R.id.ProfileScroll).visibility = View.GONE
         findViewById<ScrollView>(R.id.InboxScroll).visibility = View.VISIBLE
         findViewById<ScrollView>(R.id.FriendsScroll).visibility = View.GONE
@@ -183,6 +186,7 @@ class ProfileActivity : AppCompatActivity() {
 
     @Suppress("UNUSED_PARAMETER")
     fun friendsButton(view: View) {
+        updateFriendListView()
         findViewById<ScrollView>(R.id.ProfileScroll).visibility = View.GONE
         findViewById<ScrollView>(R.id.InboxScroll).visibility = View.GONE
         findViewById<ScrollView>(R.id.FriendsScroll).visibility = View.VISIBLE
@@ -267,6 +271,7 @@ class ProfileActivity : AppCompatActivity() {
         val activeUser = app.getActiveUser()
 
         val friends = activeUser?.getFriendsList() ?: mutableListOf()
+        Log.d("UpdateFriendList", "current friends $friends")
         val friendAdapter = FriendViewAdapter(
             applicationContext,
             friends.reversed(),
@@ -338,6 +343,18 @@ class ProfileActivity : AppCompatActivity() {
         }
 
 
+    }
+
+    fun observeInbox(currentUser : PartialUser){
+        val recyclerview = findViewById<RecyclerView>(R.id.friendRequestRecyclerView)
+        ReceiveFriendRequests.receiveRequests(db.getDbReference(""), currentUser)
+            .observe(this,  Observer{
+                val adapter = FriendRequestViewAdapter(it, this)
+
+                // Setting the Adapter with the recyclerview
+                recyclerview.adapter = adapter
+
+            })
     }
 
     companion object {
