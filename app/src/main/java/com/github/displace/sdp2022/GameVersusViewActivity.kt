@@ -67,7 +67,6 @@ class GameVersusViewActivity : AppCompatActivity() {
 
     private var oldPos = GeoPoint(0.0,0.0)
     private var totalDist = 0.0
-    private var totalTime = 0
 
     //CHAT
     private lateinit var chat: Chat
@@ -171,12 +170,7 @@ class GameVersusViewActivity : AppCompatActivity() {
         override fun onCancelled(databaseError: DatabaseError) {}
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        PreferencesUtil.initOsmdroidPref(this)
-        setContentView(R.layout.activity_game_versus)
-
-        //initialise the stating value
+    private fun initStart(){
         uid = intent.getStringExtra("uid")!!
         gid = intent.getStringExtra("gid")!!
         gameMode = intent.getStringExtra("gameMode")!!
@@ -186,8 +180,9 @@ class GameVersusViewActivity : AppCompatActivity() {
         clientServerLink = ClientServerLink(db, order)
         game = GameVersusViewModel(clientServerLink)
         nbPlayer = intent.getLongExtra("nbPlayer", 1)
+    }
 
-        //initialise all the viewer and manager.
+    private fun initMap(){
         mapView = findViewById(R.id.map)
         mapViewManager = MapViewManager(mapView)
         pinpointsDBHandler = PinpointsDBHandler(db, "Game" + intent.getStringExtra("gid")!!, this)
@@ -195,18 +190,24 @@ class GameVersusViewActivity : AppCompatActivity() {
         gpsPositionManager = GPSPositionManager(this)
         gpsPositionManager.listenersManager.addCall(initGoalPlacer)
         gpsPositionUpdater = GPSPositionUpdater(this, gpsPositionManager)
+    }
 
+    private fun listenerOnMap(){
+        // add sound
         val clickSoundPlayer = if (PreferenceManager.getDefaultSharedPreferences(this)
                 .getBoolean(SFX_SETTINGS_SWITCH, true)
         )
             MediaPlayer.create(this, R.raw.zapsplat_sound_design_hit_punchy_bright_71725)
         else null
-
         pinpointsManager = PinpointsManager(mapView, clickSoundPlayer)
+
+        // add pinpoint manager for each other player. Make each player have a different color
         for(i in nbPlayer downTo 0){
 
             otherPlayersPinpoints = otherPlayersPinpoints.plus(pinpointsManager.PinpointsRef())
         }
+
+        // add mocking
         MockGPS.mockIfNeeded(intent, gpsPositionManager)
 
         //update the actual position of the player on the database
@@ -228,14 +229,9 @@ class GameVersusViewActivity : AppCompatActivity() {
 
         //add the listener on the map and database
         mapViewManager.addCallOnLongClick(guessListener) // add a listener on the guess to pinpoint your try
-        db.referenceGet("GameInstance", "Game${intent.getStringExtra("gid")!!}")
-            .addOnSuccessListener { gi -> initGame(gi) } // initialise the game
+    }
 
-        findViewById<TextView>(R.id.TryText).apply {
-            text =
-                "remaining tries : ${4 - game.getNbEssai()}"
-        }
-
+    private fun initOnlineVal(){
         gpsPositionManager.listenersManager.addCall(GeoPointListener { gp ->
             if (this::conditionalGoalPlacer.isInitialized) {
                 conditionalGoalPlacer.update(gp)
@@ -249,16 +245,9 @@ class GameVersusViewActivity : AppCompatActivity() {
                 conditionalGoalPlacer.update(gameInstance)
             }
         }
+    }
 
-        //initialise the chat
-        val chatPath = "/GameInstance/Game" + intent.getStringExtra("gid")!! + "/Chat"
-        chat = Chat(
-            chatPath,
-            db,
-            findViewById<View?>(android.R.id.content).rootView,
-            applicationContext
-        )
-
+    private fun initMusic(){
         //music and sound effects
         musicPlayer = MediaPlayer.create(this, R.raw.music_zapsplat_electric_drum_and_bass)
         musicPlayer.setLooping(true)
@@ -274,6 +263,40 @@ class GameVersusViewActivity : AppCompatActivity() {
             R.raw.zapsplat_sound_design_designed_metal_hit_ring_chime_80212
         )
         musicPlayer.isLooping = false
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        PreferencesUtil.initOsmdroidPref(this)
+        setContentView(R.layout.activity_game_versus)
+
+        //initialise the stating value
+        initStart()
+
+        //initialise all the viewer and manager.
+        initMap()
+
+        listenerOnMap()
+
+        db.getThenCall<DataSnapshot>("GameInstance/Game${intent.getStringExtra("gid")!!}"){  gi -> initGame(gi!!) } // initialise the game
+
+        findViewById<TextView>(R.id.TryText).apply {
+            text =
+                "remaining tries : ${4 - game.getNbEssai()}"
+        }
+
+        initOnlineVal()
+
+        //initialise the chat
+        val chatPath = "/GameInstance/Game" + intent.getStringExtra("gid")!! + "/Chat"
+        chat = Chat(
+            chatPath,
+            db,
+            findViewById<View?>(android.R.id.content).rootView,
+            applicationContext
+        )
+
+        initMusic()
     }
 
     // keep tract of the distance you moved this game
@@ -338,7 +361,7 @@ class GameVersusViewActivity : AppCompatActivity() {
     }
 
     //initialise the game
-    private fun initGame(gi: DataSnapshot) {
+    private fun initGame(gi: DataSnapshot): Unit {
         other = (gi.value as MutableMap<String, Any>).filter { id -> // get the other player of the game (not you nor the chat).
             id.key != "id:${
                 intent.getStringExtra("uid")!!
@@ -348,9 +371,8 @@ class GameVersusViewActivity : AppCompatActivity() {
         var i = 0
         other.toList().forEach { x -> // add all the listener for each of them
             val otherPlayerId = x.first.removePrefix("id:")
-            db.addList(
-                "GameInstance/Game${intent.getStringExtra("gid")!!}/id:${otherPlayerId}",
-                "finish",
+            db.addListener(
+                "GameInstance/Game${intent.getStringExtra("gid")!!}/id:${otherPlayerId}/finish",
                 endListener
             )
 
