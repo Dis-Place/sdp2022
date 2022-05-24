@@ -35,7 +35,7 @@ class AccountSettingsActivityNoPermsTest {
     lateinit var completeUser: CompleteUser
     val intent =
         Intent(ApplicationProvider.getApplicationContext(), AccountSettingsActivity::class.java)
-    val scenario: ActivityScenario<AccountSettingsActivity> = ActivityScenario.launch(intent)
+
     @Before
     fun before(){
 
@@ -55,7 +55,7 @@ class AccountSettingsActivityNoPermsTest {
 
     @Test
     fun pictureDoesntUpdateWithoutCameraPermissions() {
-
+        val scenario: ActivityScenario<AccountSettingsActivity> = ActivityScenario.launch(intent)
         scenario.use {
             // Only clicks on the correct button but doesn't check if the picture changes or not
             onView(withId(R.id.profilePicUpdate)).perform(click())
@@ -73,7 +73,7 @@ class AccountSettingsActivityNoPermsTest {
     @Test
     fun pictureDoesntUpdateWithoutStoragePermissions() {
 
-
+        val scenario: ActivityScenario<AccountSettingsActivity> = ActivityScenario.launch(intent)
         scenario.use {
             // Only clicks on the correct button but doesn't check if the picture changes or not
             onView(withId(R.id.profilePicUpdate)).perform(click())
