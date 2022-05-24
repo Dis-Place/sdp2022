@@ -27,7 +27,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 
-@RunWith(AndroidJUnit4::class)
+//@RunWith(AndroidJUnit4::class)
 class SettingsActivityTest {
 //    @get:Rule
 //    val testRule = ActivityScenarioRule(SettingsActivity::class.java)
