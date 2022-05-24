@@ -8,6 +8,7 @@ import android.util.Log
 import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.RealTimeDatabase
 import com.github.displace.sdp2022.authentication.SignInActivity
+import com.github.displace.sdp2022.database.CleanUpGuests
 import com.github.displace.sdp2022.profile.achievements.Achievement
 import com.github.displace.sdp2022.profile.history.History
 import com.github.displace.sdp2022.profile.messages.Message
@@ -63,6 +64,7 @@ class CompleteUser(
     private lateinit var friendsList: MutableList<PartialUser>
     private var gameHistory: MutableList<History> = mutableListOf()
     private var profilePic: Bitmap? = null
+    private var guestIndex: Int = -1
 
 
     init {
@@ -70,11 +72,15 @@ class CompleteUser(
     }
 
     private fun addUserToDatabase() {
+        CleanUpGuests.updateGuestIndexesAndCleanUpDatabase(db, "guest_${firebaseUser!!.uid}")
         db.update(dbReference,"achievements", achievements)
         db.update(dbReference,"stats", stats)
         db.update(dbReference,"friendsList", friendsList)
         db.update(dbReference,"gameHistory", gameHistory)
         db.update(dbReference,"partialUser", partialUser)
+        if(guestBoolean) {
+            db.update(dbReference, "guestIndex", guestIndex)
+        }
     }
 
 
@@ -215,7 +221,11 @@ class CompleteUser(
             )
             gameHistory = mutableListOf()
             createFirstMessageList()
+
+            guestIndex = 0
+
             addUserToDatabase()
+
             activity?.launchMainMenuActivity()
             return
         }
@@ -301,7 +311,6 @@ class CompleteUser(
                 gameHistory = mutableListOf()
                 addUserToDatabase()
                 createFirstMessageList()
-
                 //progress_dialog?.dismiss()
             }
             activity?.launchMainMenuActivity()

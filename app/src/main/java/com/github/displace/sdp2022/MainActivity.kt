@@ -19,12 +19,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        if(Random.nextInt(0, 10) == 0) {
-            CleanUpGuests.cleanUpDatabaseFromGuests(intent)         // Removes all guest users from the database
-        // We only do this every 10 times, because it requires to go through
-        // all the users in the database and it wouldn't be efficient to do it every time
-        }
-
         val enterAppButton = findViewById<Button>(R.id.mainActivityLogInButton)
 
         val isRemembered =
