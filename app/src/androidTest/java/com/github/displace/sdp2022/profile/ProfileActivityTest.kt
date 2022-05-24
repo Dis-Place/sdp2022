@@ -34,13 +34,18 @@ class ProfileActivityTest {
 
     lateinit var completeUser: CompleteUser
 
+    val intent =
+        Intent(ApplicationProvider.getApplicationContext(), ProfileActivity::class.java)
+
+
     @Before
     fun before(){
+        MockDatabaseUtils.mockIntent(intent)
         val app = ApplicationProvider.getApplicationContext() as MyApplication
         completeUser = CompleteUser(app,null)
         app.setActiveUser(completeUser)
         Thread.sleep(100)
-        app.setMessageHandler(MessageHandler(completeUser.getPartialUser(),app))
+        app.setMessageHandler(MessageHandler(completeUser.getPartialUser(),app,intent))
         Thread.sleep(100)
     }
 
@@ -53,9 +58,6 @@ class ProfileActivityTest {
     @Test
     fun testInboxButton() {
 
-        val intent =
-            Intent(ApplicationProvider.getApplicationContext(), ProfileActivity::class.java)
-        MockDatabaseUtils.mockIntent(intent)
         val scenario = ActivityScenario.launch<ProfileActivity>(intent)
 
         scenario.use {
@@ -69,9 +71,7 @@ class ProfileActivityTest {
     @Test
     fun testMessageInInboxButton() {
 
-        val intent =
-            Intent(ApplicationProvider.getApplicationContext(), ProfileActivity::class.java)
-        MockDatabaseUtils.mockIntent(intent)
+
         val scenario = ActivityScenario.launch<ProfileActivity>(intent)
         scenario.use { _ ->
             Espresso.onView(ViewMatchers.withId(R.id.inboxButton)).perform(click())
@@ -95,8 +95,6 @@ class ProfileActivityTest {
     @Test
     fun testProfileButton() {
 
-        val intent =
-            Intent(ApplicationProvider.getApplicationContext(), ProfileActivity::class.java)
         MockDatabaseUtils.mockIntent(intent)
         val scenario = ActivityScenario.launch<ProfileActivity>(intent)
 
@@ -111,8 +109,6 @@ class ProfileActivityTest {
     @Test
     fun testFriendsButton() {
 
-        val intent =
-            Intent(ApplicationProvider.getApplicationContext(), ProfileActivity::class.java)
         MockDatabaseUtils.mockIntent(intent)
         val scenario = ActivityScenario.launch<ProfileActivity>(intent)
 
@@ -127,8 +123,6 @@ class ProfileActivityTest {
     @Test
     fun testSettingsButton() {
 
-        val intent =
-            Intent(ApplicationProvider.getApplicationContext(), ProfileActivity::class.java)
         MockDatabaseUtils.mockIntent(intent)
         val scenario = ActivityScenario.launch<ProfileActivity>(intent)
 
@@ -147,9 +141,6 @@ class ProfileActivityTest {
         app.setActiveUser(completeUser)
         Thread.sleep(100)
 
-        val intent =
-            Intent(ApplicationProvider.getApplicationContext(), ProfileActivity::class.java)
-        MockDatabaseUtils.mockIntent(intent)
         val scenario = ActivityScenario.launch<ProfileActivity>(intent)
 
         scenario.use {
@@ -166,10 +157,8 @@ class ProfileActivityTest {
         completeUser = CompleteUser(app,null, guestBoolean = true)
         app.setActiveUser(completeUser)
         Thread.sleep(100)
-        app.setMessageHandler(MessageHandler(completeUser.getPartialUser(),app))
+        app.setMessageHandler(MessageHandler(completeUser.getPartialUser(),app,intent))
 
-        val intent =
-            Intent(ApplicationProvider.getApplicationContext(), ProfileActivity::class.java)
         MockDatabaseUtils.mockIntent(intent)
         val scenario = ActivityScenario.launch<ProfileActivity>(intent)
 
@@ -183,9 +172,6 @@ class ProfileActivityTest {
 
     @Test
     fun testMessageInFriendsButton() {
-
-        val intent =
-            Intent(ApplicationProvider.getApplicationContext(), ProfileActivity::class.java)
         MockDatabaseUtils.mockIntent(intent)
         val scenario = ActivityScenario.launch<ProfileActivity>(intent)
         scenario.use {
@@ -211,8 +197,6 @@ class ProfileActivityTest {
     @Test
     fun testFriendProfile() {
 
-        val intent =
-            Intent(ApplicationProvider.getApplicationContext(), ProfileActivity::class.java)
         val scenario = ActivityScenario.launch<ProfileActivity>(intent)
 
         scenario.use {

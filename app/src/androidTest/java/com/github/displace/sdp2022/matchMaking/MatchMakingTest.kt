@@ -42,9 +42,8 @@ class MatchMakingTest {
         val app = ApplicationProvider.getApplicationContext() as MyApplication
         app.setActiveUser(CompleteUser(app,null, false))
         Thread.sleep(3000)
-        app.setMessageHandler(MessageHandler(app.getActiveUser()!!.getPartialUser(),app))
+        app.setMessageHandler(MessageHandler(app.getActiveUser()!!.getPartialUser(),app,intent))
         Thread.sleep(1000)
-      //  val db : RealTimeDatabase = RealTimeDatabase().noCacheInstantiate("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",true) as RealTimeDatabase
 
         Thread.sleep(1000)
 

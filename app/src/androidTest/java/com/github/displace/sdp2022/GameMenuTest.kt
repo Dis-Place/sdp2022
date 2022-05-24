@@ -38,12 +38,14 @@ class GameMenuTest {
         val app = ApplicationProvider.getApplicationContext() as MyApplication
         app.setActiveUser(CompleteUser(app,null))
         Thread.sleep(3000)
-        app.setMessageHandler(MessageHandler(app.getActiveUser()!!.getPartialUser(),app))
-        Thread.sleep(1000)
+
 
         Intents.init()
         intent = Intent(ApplicationProvider.getApplicationContext(),GameVersusViewActivity::class.java)
         MockGPS.specifyMock(intent, MOCK_GPS_POSITION)
+
+        app.setMessageHandler(MessageHandler(app.getActiveUser()!!.getPartialUser(),app,intent))
+        Thread.sleep(1000)
     }
 
     @After

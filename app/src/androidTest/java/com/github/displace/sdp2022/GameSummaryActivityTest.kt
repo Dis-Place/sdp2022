@@ -36,10 +36,10 @@ class GameSummaryActivityTest {
         bundle = Bundle()
         intent = Intent(getApplicationContext(),GameSummaryActivity::class.java)
 
-        val app = ApplicationProvider.getApplicationContext() as MyApplication
+        val app = getApplicationContext() as MyApplication
         app.setActiveUser(CompleteUser(app,null, false))
         Thread.sleep(3000)
-        app.setMessageHandler(MessageHandler(app.getActiveUser()!!.getPartialUser(),app))
+        app.setMessageHandler(MessageHandler(app.getActiveUser()!!.getPartialUser(),app,intent))
         Thread.sleep(1000)
 
     }

@@ -1,5 +1,6 @@
 package com.github.displace.sdp2022
 
+import android.content.Intent
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.action.ViewActions.click
@@ -12,6 +13,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.displace.sdp2022.R
 import com.github.displace.sdp2022.profile.messages.MessageHandler
 import com.github.displace.sdp2022.users.CompleteUser
+import com.github.displace.sdp2022.util.gps.MockGPS
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -24,14 +26,17 @@ class UploadImageTest {
  
     @get:Rule
     val testRule = ActivityScenarioRule(UploadImageActivity::class.java)
-
+    lateinit var intent: Intent
     @Before
     fun before(){
+        intent = Intent(ApplicationProvider.getApplicationContext(),UploadImageActivity::class.java)
+        MockGPS.specifyMock(intent, GameMenuTest.MOCK_GPS_POSITION)
+
         val app = ApplicationProvider.getApplicationContext() as MyApplication
         app.setActiveUser(CompleteUser(app,null, false))
 
         Thread.sleep(3000)
-        app.setMessageHandler(MessageHandler(app.getActiveUser()!!.getPartialUser(),app))
+        app.setMessageHandler(MessageHandler(app.getActiveUser()!!.getPartialUser(),app,intent))
         Thread.sleep(1000)
     }
 
