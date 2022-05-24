@@ -13,6 +13,7 @@ import androidx.test.espresso.intent.Intents.intended
 import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.github.displace.sdp2022.database.MockDatabaseUtils
 import com.github.displace.sdp2022.profile.friendInvites.Invite
 import com.github.displace.sdp2022.profile.messages.MessageHandler
 import com.github.displace.sdp2022.users.CompleteUser
@@ -35,7 +36,7 @@ class GameSummaryActivityTest {
     fun createIntentAndBundle() {
         bundle = Bundle()
         intent = Intent(getApplicationContext(),GameSummaryActivity::class.java)
-
+        MockDatabaseUtils.mockIntent(intent)
         val app = getApplicationContext() as MyApplication
         app.setActiveUser(CompleteUser(app,null, false))
         Thread.sleep(3000)

@@ -11,6 +11,7 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.displace.sdp2022.R
+import com.github.displace.sdp2022.database.MockDatabaseUtils
 import com.github.displace.sdp2022.profile.messages.MessageHandler
 import com.github.displace.sdp2022.users.CompleteUser
 import com.github.displace.sdp2022.util.gps.MockGPS
@@ -31,6 +32,7 @@ class UploadImageTest {
     fun before(){
         intent = Intent(ApplicationProvider.getApplicationContext(),UploadImageActivity::class.java)
         MockGPS.specifyMock(intent, GameMenuTest.MOCK_GPS_POSITION)
+        MockDatabaseUtils.mockIntent(intent)
 
         val app = ApplicationProvider.getApplicationContext() as MyApplication
         app.setActiveUser(CompleteUser(app,null, false))

@@ -30,14 +30,16 @@ class SettingsActivityTest {
 //
 //    @Before
 //    fun setUp() {
+    //        val intent = Intent(ApplicationProvider.getApplicationContext(), SettingsActivity::class.java)
+ //   MockDatabaseUtils.mockIntent(intent)
+//        ActivityScenario.launch<SettingsActivity>(intent)
 //        val app = ApplicationProvider.getApplicationContext() as MyApplication
 //        app.setActiveUser(CompleteUser(app, null))
 //        Thread.sleep(3000)
-//        app.setMessageHandler(MessageHandler(app.getActiveUser()!!.getPartialUser(), app))
+//        app.setMessageHandler(MessageHandler(app.getActiveUser()!!.getPartialUser(), app,intent))
 //        Thread.sleep(1000)
 //
-//        val intent = Intent(ApplicationProvider.getApplicationContext(), SettingsActivity::class.java)
-//        ActivityScenario.launch<SettingsActivity>(intent)
+
 //    }
 //
 //    @After
