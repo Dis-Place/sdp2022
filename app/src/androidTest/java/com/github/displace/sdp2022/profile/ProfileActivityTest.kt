@@ -17,6 +17,7 @@ import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.R
+import com.github.displace.sdp2022.database.DatabaseFactory
 import com.github.displace.sdp2022.profile.friendInvites.AddFriendActivity
 import com.github.displace.sdp2022.profile.friends.FriendViewHolder
 import com.github.displace.sdp2022.profile.messages.MessageHandler
@@ -36,16 +37,17 @@ class ProfileActivityTest {
     @Before
     fun before(){
         val app = ApplicationProvider.getApplicationContext() as MyApplication
-        completeUser = CompleteUser(app,null)
+        DatabaseFactory.clearMockDB()
+        completeUser = CompleteUser(app,null, DatabaseFactory.MOCK_DB)
         app.setActiveUser(completeUser)
-        Thread.sleep(500)
+        //Thread.sleep(500)
         app.setMessageHandler(MessageHandler(completeUser.getPartialUser(), app))
     }
 
-    @After
+    /*@After
     fun after() {
         completeUser.removeUserFromDatabase()
-    }
+    }*/
 
 
     @Test
@@ -141,9 +143,9 @@ class ProfileActivityTest {
     @Test
     fun settingsDontOpenWhenOffline() {
         val app = ApplicationProvider.getApplicationContext() as MyApplication
-        completeUser = CompleteUser(app,null, offlineMode = true)
+        completeUser = CompleteUser(app,null, DatabaseFactory.MOCK_DB, offlineMode = true)
         app.setActiveUser(completeUser)
-        Thread.sleep(100)
+        //Thread.sleep(100)
 
         val intent =
             Intent(ApplicationProvider.getApplicationContext(), ProfileActivity::class.java)
@@ -160,9 +162,10 @@ class ProfileActivityTest {
     @Test
     fun settingsDontOpenWhenGuest() {
         val app = ApplicationProvider.getApplicationContext() as MyApplication
-        completeUser = CompleteUser(app,null, guestBoolean = true)
+        DatabaseFactory.clearMockDB()
+        completeUser = CompleteUser(app,null, DatabaseFactory.MOCK_DB, guestBoolean = true)
         app.setActiveUser(completeUser)
-        Thread.sleep(100)
+        //Thread.sleep(100)
         app.setMessageHandler(MessageHandler(completeUser.getPartialUser(),app))
 
         val intent =

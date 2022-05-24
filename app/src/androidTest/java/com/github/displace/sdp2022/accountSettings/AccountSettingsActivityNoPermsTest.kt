@@ -18,6 +18,7 @@ import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiSelector
 import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.R
+import com.github.displace.sdp2022.database.DatabaseFactory
 import com.github.displace.sdp2022.profile.settings.AccountSettingsActivity
 import com.github.displace.sdp2022.users.CompleteUser
 import org.hamcrest.CoreMatchers.*
@@ -35,15 +36,16 @@ class AccountSettingsActivityNoPermsTest {
     @Before
     fun before(){
         val app = ApplicationProvider.getApplicationContext() as MyApplication
-        completeUser = CompleteUser(app,null)
+        DatabaseFactory.clearMockDB()
+        completeUser = CompleteUser(app,null, DatabaseFactory.MOCK_DB)
         app.setActiveUser(completeUser)
-        Thread.sleep(1000)
+        //Thread.sleep(1000)
     }
 
-    @After
+    /*@After
     fun after() {
         completeUser.removeUserFromDatabase()
-    }
+    }*/
 
     @Test
     fun pictureDoesntUpdateWithoutCameraPermissions() {

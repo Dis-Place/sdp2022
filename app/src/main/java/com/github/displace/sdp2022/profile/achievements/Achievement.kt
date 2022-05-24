@@ -6,4 +6,8 @@ import kotlinx.serialization.Serializable
 Make the date a Date or a String
  */
 @Serializable
-data class Achievement(val name: String , val description : String = "" ,val date: String) // date is in DD-MM-YYYY
+data class Achievement(val name: String , val description : String = "" ,val date: String) { // date is in DD-MM-YYYY
+    fun toMap(): Map<String, String> {
+        return mapOf(Pair("name", name), Pair("description", description), Pair("date", date))
+    }
+}

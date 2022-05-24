@@ -28,17 +28,7 @@ class MainActivityTest {
 
     @get:Rule
     val activityScenarioRule = ActivityScenarioRule(MainActivity::class.java)
-
-    @Before
-    fun setup() {
-        copyCompleteUser = OfflineUserFetcher(context).getCompleteUser()
-    }
-
-    @After
-    fun unSetup() {
-        OfflineUserFetcher(context).setCompleteUser(copyCompleteUser)
-    }
-
+/*
     @Test
     fun logInConnectionRemember() {
         val bool =
@@ -66,4 +56,5 @@ class MainActivityTest {
         context.getSharedPreferences("login", MODE_PRIVATE).edit().putBoolean("remembered", bool)
             .apply()
     }
+ */
 }

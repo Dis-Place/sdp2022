@@ -14,5 +14,7 @@ data class PartialUser(var username: String, val uid: String) { // profile pictu
         return uid.hashCode()
     }
 
-
+    fun toMap(): Map<String, *> {
+        return mapOf(Pair("username", username), Pair("uid", uid))
+    }
 }

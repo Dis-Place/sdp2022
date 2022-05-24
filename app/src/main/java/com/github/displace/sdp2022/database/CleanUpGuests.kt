@@ -16,9 +16,10 @@ object CleanUpGuests {
      * @param db database
      * @param guestId ID of the active guest
      */
-    fun updateGuestIndexesAndCleanUpDatabase(db: RealTimeDatabase, guestId: String) {
+    fun updateGuestIndexesAndCleanUpDatabase(db: GoodDB, guestId: String) {
 
-        db.referenceGet("CompleteUsers", "").addOnSuccessListener{ usrs ->
+        // Code for RealTimeDatabase
+        /*db.referenceGet("CompleteUsers", "").addOnSuccessListener{ usrs ->
             val usrsDB = usrs.value as HashMap<String, *>
 
             for (id in usrsDB.keys) {
@@ -33,22 +34,24 @@ object CleanUpGuests {
                     }
                 }
             }
+        }*/
 
-        }
         // Code for the GoodDB
-        /*db.getThenCall<HashMap<String, *>>("CompleteUsers") { usrs ->
-            for (id in usrs?.keys!!) {
-                if(id.contains("guest") && id != guestId) {
-                    val guestDB = usrs[id] as HashMap<String, *>
-                    val guestCompleteUserDB = guestDB["CompleteUser"] as HashMap<String, *>
-                    val newIndex = (guestCompleteUserDB["guestIndex"] as Long) + 1
-                    if(newIndex >= GUEST_THRESHOLD) {
-                        db.delete("CompleteUsers/$id")
-                    } else {
-                        db.update("CompleteUsers/$id/CompleteUser/guestIndex", newIndex)
+        db.getThenCall<Map<String, *>>("CompleteUsers") { usrs ->
+            if(usrs != null) {
+                for (id in usrs.keys) {
+                    if(id.contains("guest") && id != guestId) {
+                        val guestDB = usrs[id] as Map<String, *>
+                        val guestCompleteUserDB = guestDB["CompleteUser"] as Map<String, *>
+                        val newIndex = (guestCompleteUserDB["guestIndex"] as Long) + 1
+                        if(newIndex >= GUEST_THRESHOLD) {
+                            db.delete("CompleteUsers/$id")
+                        } else {
+                            db.update("CompleteUsers/$id/CompleteUser/guestIndex", newIndex)
+                        }
                     }
                 }
             }
-        }*/
+        }
     }
 }

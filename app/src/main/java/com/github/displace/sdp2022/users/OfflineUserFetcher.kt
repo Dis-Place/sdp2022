@@ -32,7 +32,7 @@ class OfflineUserFetcher(private val context: Context?) {
     }
 
     fun getOfflineAchievements(): MutableList<Achievement> {
-        var offlineAchievements: MutableList<Achievement>? =
+        val offlineAchievements: MutableList<Achievement>? =
             readPreferences(ACHIEVEMENT_PATH) as MutableList<Achievement>?
         Log.e("debug", "offlineAchievements: $offlineAchievements")
         return offlineAchievements ?: mutableListOf(
@@ -45,7 +45,7 @@ class OfflineUserFetcher(private val context: Context?) {
     }
 
     fun getOfflineStats(): MutableList<Statistic> {
-        var offlineStats: MutableList<Statistic>? =
+        val offlineStats: MutableList<Statistic>? =
             readPreferences(STATS_PATH) as MutableList<Statistic>?
         return offlineStats ?: mutableListOf(
             Statistic(
@@ -60,7 +60,7 @@ class OfflineUserFetcher(private val context: Context?) {
     }
 
     fun getOfflineFriendsList(): MutableList<PartialUser> {
-        var offlineFriendsList: MutableList<PartialUser>? =
+        val offlineFriendsList: MutableList<PartialUser>? =
             readPreferences(FRIEND_LIST_PATH) as MutableList<PartialUser>?
         return offlineFriendsList ?: mutableListOf(
             PartialUser(
@@ -71,7 +71,7 @@ class OfflineUserFetcher(private val context: Context?) {
     }
 
     fun getOfflineGameHistory(): MutableList<History> {
-        var offlineGameHistory: MutableList<History>? =
+        val offlineGameHistory: MutableList<History>? =
             readPreferences(GAME_HISTORY_PATH) as MutableList<History>?
         return offlineGameHistory ?: mutableListOf(
             History(
@@ -81,7 +81,7 @@ class OfflineUserFetcher(private val context: Context?) {
     }
 
     fun getOfflineMessageHistory(): ArrayList<Message> {
-        var offlineMessageHistory: ArrayList<Message>? =
+        val offlineMessageHistory: ArrayList<Message>? =
             readPreferences(MESSAGE_HISTORY_PATH) as ArrayList<Message>?
         return offlineMessageHistory ?: arrayListOf()
     }
@@ -118,7 +118,7 @@ class OfflineUserFetcher(private val context: Context?) {
         setOfflinePartialUser(completeUser.getPartialUser())
     }
 
-    fun getCompleteUser(): CompleteUser {
+    /*fun getCompleteUser(): CompleteUser {
         val completeUser = CompleteUser(context, null, offlineMode = true)
         completeUser.setCompleteUser(
             getOfflinePartialUser(),
@@ -128,7 +128,7 @@ class OfflineUserFetcher(private val context: Context?) {
             getOfflineGameHistory()
         )
         return completeUser
-    }
+    }*/
 
     /*
     * Utility functions for this class

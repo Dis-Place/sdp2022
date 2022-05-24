@@ -12,6 +12,7 @@ import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.GrantPermissionRule
 import com.github.displace.sdp2022.*
+import com.github.displace.sdp2022.database.DatabaseFactory
 import com.github.displace.sdp2022.profile.messages.MessageHandler
 import com.github.displace.sdp2022.profile.qrcode.QrCodeScannerActivity
 import com.github.displace.sdp2022.users.CompleteUser
@@ -34,7 +35,8 @@ class QrCodeActivityTest {
     @Before
     fun setup() {
         val app = ApplicationProvider.getApplicationContext() as MyApplication
-        app.setActiveUser(CompleteUser(app,null, false))
+        DatabaseFactory.clearMockDB()
+        app.setActiveUser(CompleteUser(app,null, DatabaseFactory.MOCK_DB))
         Thread.sleep(3000)
         app.setMessageHandler(MessageHandler(app.getActiveUser()!!.getPartialUser(),app))
         Thread.sleep(1000)
@@ -46,8 +48,8 @@ class QrCodeActivityTest {
     @After
     fun releaseIntents() {
         Intents.release()
-        val app = ApplicationProvider.getApplicationContext() as MyApplication
-        app.getActiveUser()?.removeUserFromDatabase()
+        //val app = ApplicationProvider.getApplicationContext() as MyApplication
+        //app.getActiveUser()?.removeUserFromDatabase()
     }
 
     @Test

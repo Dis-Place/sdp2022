@@ -20,6 +20,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.GrantPermissionRule
 import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.R
+import com.github.displace.sdp2022.database.DatabaseFactory
 import com.github.displace.sdp2022.profile.settings.AccountSettingsActivity
 import com.github.displace.sdp2022.users.CompleteUser
 import org.hamcrest.CoreMatchers
@@ -41,8 +42,9 @@ class AccountSettingsActivityPermsTest {
     @Before
     fun login() {
         val app = ApplicationProvider.getApplicationContext() as MyApplication
-        app.setActiveUser(CompleteUser(app, null))
-        Thread.sleep(1000)
+        DatabaseFactory.clearMockDB()
+        app.setActiveUser(CompleteUser(app, null, DatabaseFactory.MOCK_DB))
+        //Thread.sleep(1000)
         /*val intent =
             Intent(ApplicationProvider.getApplicationContext(), TempLoginActivity::class.java)
         val scenario: ActivityScenario<AccountSettingsActivity> = ActivityScenario.launch(intent)
@@ -55,13 +57,13 @@ class AccountSettingsActivityPermsTest {
         }*/
     }
 
-    @After
+    /*@After
     fun logout() {
         //pressBack()
         //pressBack()
         (ApplicationProvider.getApplicationContext() as MyApplication).getActiveUser()
             ?.removeUserFromDatabase()
-    }
+    }*/
 
     /*@Test
     fun passwordIsUpdated() {

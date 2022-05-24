@@ -9,6 +9,7 @@ import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.RealTimeDatabase
 import com.github.displace.sdp2022.authentication.SignInActivity
 import com.github.displace.sdp2022.database.CleanUpGuests
+import com.github.displace.sdp2022.database.GoodDB
 import com.github.displace.sdp2022.profile.achievements.Achievement
 import com.github.displace.sdp2022.profile.history.History
 import com.github.displace.sdp2022.profile.messages.Message
@@ -17,85 +18,86 @@ import com.google.firebase.auth.FirebaseUser
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 import kotlin.random.Random
 import kotlin.random.nextUInt
 
+/**
+ * Class that contains all the infos of an user
+ * @param context: Application context, used to get the cached infos
+ * @param db: Database
+ * @param guestBoolean: If the user is a guest
+ * @param offlineMode: If the user is in offline mode
+ * @param remembered: If the application remembers the user and has its information cached
+ * @param activity: Activity from where the User is initialized, used to dismiss the progress dialog that waits for the user to be initialize
+ */
 class CompleteUser(
     context: Context?,
     private val firebaseUser: FirebaseUser?,
+    private val db: GoodDB,
     val guestBoolean: Boolean = false,
     var offlineMode: Boolean = false,
     val remembered: Boolean = false,
-    val progress_dialog: AlertDialog? = null,
     val activity: SignInActivity? = null
 ) {
 
-    private val db: RealTimeDatabase = RealTimeDatabase().instantiate(
-        "https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",
-        false
-    ) as RealTimeDatabase
-
-    private val guestNumber = Random.nextUInt()
-
+    // Reference of the CompleteUser in the database
     private val dbReference: String = if (firebaseUser != null) {
         if(guestBoolean) {
-            "CompleteUsers/guest_${firebaseUser.uid}/CompleteUser"
+            "CompleteUsers/guest_${firebaseUser.uid}/CompleteUser"  // We add "guest-" to retain this information in the database
         } else {
-            "CompleteUsers/${firebaseUser.uid}/CompleteUser"
+            "CompleteUsers/${firebaseUser.uid}/CompleteUser"    // Basic reference
         }
     } else {
         if(offlineMode) {
-            ""  // useless
+            ""  // useless, since in offline mode we never use the database
         } else {
-            "CompleteUsers/dummy_id/CompleteUser"
+            "CompleteUsers/dummy_id/CompleteUser"       // This case if for testing
         }
     }
 
-    private val app : MyApplication = context as MyApplication
+    private val app : MyApplication = context as MyApplication  // application context
 
-    private val offlineUserFetcher: OfflineUserFetcher = OfflineUserFetcher(context)
+    private val guestNumber = Random.nextUInt()     // random number to differentiate guest users in a game
+    private var guestIndex: Int = -1        // Index for the guests in DB, useful for cleaning up the database from the unused guests
 
+    private val offlineUserFetcher: OfflineUserFetcher = OfflineUserFetcher(context)    // The offlineUserFetcher contains all the methods to get cached information
+
+    // Contains very basic information about the user
     private var partialUser: PartialUser = PartialUser("this cannot be a user", "still cannot be a user")
 
-    private lateinit var googleName: String
-
+    // Profile informations
     private lateinit var achievements: MutableList<Achievement>
     private lateinit var stats: MutableList<Statistic>
     private lateinit var friendsList: MutableList<PartialUser>
     private var gameHistory: MutableList<History> = mutableListOf()
-    private var profilePic: Bitmap? = null
-    private var guestIndex: Int = -1
+
+    private var profilePic: Bitmap? = null      // Stores the profile picture bitmap to prevent going to the database every time
 
 
     init {
         initializeUser()
     }
 
+    /**
+     * Add the user to the database
+     * Adding the achievements, statistics, friend's list, game history and partial user
+     */
     private fun addUserToDatabase() {
-        db.update(dbReference,"achievements", achievements)
-        db.update(dbReference,"stats", stats)
-        db.update(dbReference,"friendsList", friendsList)
-        db.update(dbReference,"gameHistory", gameHistory)
-        db.update(dbReference,"partialUser", partialUser)
+        db.update("$dbReference/achievements", achievements.map { a -> a.toMap() })
+        db.update("$dbReference/stats", stats.map { s -> s.toMap() })
+        db.update("$dbReference/friendsList", friendsList.map { f -> f.toMap() })
+        db.update("$dbReference/gameHistory", gameHistory.map { h -> h.toMap() })
+        db.update("$dbReference/partialUser", partialUser.toMap())
+
+        // If the user is a guest, we have to increment all the guest indexes of all guests in the database,
+        // and remove those that are too old
         if(guestBoolean) {
-            CleanUpGuests.updateGuestIndexesAndCleanUpDatabase(db, "guest_${firebaseUser!!.uid}")
-            db.update(dbReference, "guestIndex", guestIndex)
+            if(firebaseUser != null) {
+                CleanUpGuests.updateGuestIndexesAndCleanUpDatabase(db, "guest_${firebaseUser.uid}")
+                db.update("$dbReference/guestIndex", guestIndex)
+            }
         }
-    }
-
-
-    fun setCompleteUser(
-        partialUser: PartialUser,
-        achievements: MutableList<Achievement>,
-        stats: MutableList<Statistic>,
-        friendsList: MutableList<PartialUser>,
-        gameHistory: MutableList<History>
-    ) {
-        this.partialUser = partialUser
-        this.achievements = achievements
-        this.stats = stats
-        this.friendsList = friendsList
-        this.gameHistory = gameHistory
     }
 
     fun addAchievement(ach: Achievement) {
@@ -110,7 +112,7 @@ class CompleteUser(
             app.getMessageHandler().messageNotification(ach.description,ach.name)
 
             achievements.add(ach)
-            db.update(dbReference, "achievements/${achievements.size - 1}", ach)
+            db.update("$dbReference/achievements", achievements.map { a -> a.toMap() })  // We modify the entire list of stats to fit with the MockDB, and it's better practice
             if(!guestBoolean) {
                 offlineUserFetcher.setOfflineAchievements(achievements)
             }
@@ -124,7 +126,7 @@ class CompleteUser(
         for (i in 0 until stats.size) {
             if (statName == stats[i].name) {
                 stats[i].value = newValue
-                db.update(dbReference, "stats/$i/value", newValue)
+                db.update("$dbReference/stats", stats.map { s -> s.toMap() })      // We modify the entire list of stats to fit with the MockDB, and it's better practice
 
                 if(!guestBoolean) {
                     offlineUserFetcher.setOfflineStats(stats)
@@ -140,7 +142,7 @@ class CompleteUser(
 
         if (!containsPartialUser(friendsList, partialU)) {
             friendsList.add(partialU)
-            db.update(dbReference, "friendsList/${friendsList.size - 1}", partialU)
+            db.update("$dbReference/friendsList", friendsList.map { f -> f.toMap() })    // We modify the entire list of stats to fit with the MockDB, and it's better practice
 
             if(!guestBoolean) {
                 offlineUserFetcher.setOfflineFriendsList(friendsList)
@@ -157,7 +159,7 @@ class CompleteUser(
             if(!guestBoolean) {
                 offlineUserFetcher.setOfflineFriendsList(friendsList)
             }
-            db.update(dbReference, "friendsList", friendsList)
+            db.update("$dbReference/friendsList", friendsList.map { f -> f.toMap() })
         }
     }
 
@@ -182,7 +184,7 @@ class CompleteUser(
         if(!guestBoolean) {
             offlineUserFetcher.setOfflineGameHistory(gameHistory)
         }
-        db.update(dbReference, "gameHistory/${gameHistory.size - 1}", history)
+        db.update("$dbReference/gameHistory", gameHistory.map { h -> h.toMap() })  // We modify the entire list of stats to fit with the MockDB, and it's better practice
     }
 
     fun changeUsername(newName: String) {
@@ -191,7 +193,7 @@ class CompleteUser(
 
         partialUser.username = newName
         offlineUserFetcher.setOfflinePartialUser(partialUser)
-        db.update(dbReference, "username", newName)
+        db.update("$dbReference/partialUser/username", newName)
     }
 
     fun setProfilePic(pic: Bitmap) {
@@ -244,13 +246,11 @@ class CompleteUser(
 
 
         // Initialization if the user is online
-        db.referenceGet(dbReference, "").addOnSuccessListener { usr ->
-            if (usr.value != null) {
-                val completeUser = usr.value as HashMap<String, *>
 
-
+        db.getThenCall<HashMap<String, *>>(dbReference){completeUser ->
+            if(completeUser != null) {
                 // Get statistics from the database
-                val statsDB = completeUser["stats"] as ArrayList<HashMap<String, String>>
+                val statsDB = completeUser["stats"] as List<HashMap<String, String>>
                 stats = statsDB.map { s ->
                     Statistic(
                         s["name"]!!,
@@ -261,7 +261,7 @@ class CompleteUser(
 
                 // Get achievements from the database
                 val achievementsDB =
-                    completeUser["achievements"] as ArrayList<HashMap<String, String>>
+                    completeUser["achievements"] as List<HashMap<String, String>>
 
                 achievements = achievementsDB.map { ach ->
                     Achievement(
@@ -273,7 +273,7 @@ class CompleteUser(
 
                 // Get friends list from the database
                 val friendsListHash =
-                    completeUser["friendsList"] as ArrayList<HashMap<String, String>>
+                    completeUser["friendsList"] as List<HashMap<String, String>>
 
                 friendsList = friendsListHash.map { f ->
                     PartialUser(
@@ -284,7 +284,7 @@ class CompleteUser(
 
                 // Get game history from the database
                 val gameHistoryHash =
-                    completeUser["gameHistory"] as ArrayList<HashMap<String, String>>?
+                    completeUser["gameHistory"] as List<HashMap<String, String>>?
                 if(gameHistoryHash != null) {
                     gameHistory = gameHistoryHash.map { g ->
                         History(
@@ -295,7 +295,7 @@ class CompleteUser(
                     } as MutableList<History>
                 }
                 // Get Partial User from the database
-                val partialUserMap = completeUser["partialUser"] as HashMap<String, String>
+                val partialUserMap = completeUser["partialUser"] as Map<String, String>
                 partialUser =
                     PartialUser(partialUserMap["username"]!!, partialUserMap["uid"]!!)
 
@@ -311,34 +311,26 @@ class CompleteUser(
                 gameHistory = mutableListOf()
                 addUserToDatabase()
                 createFirstMessageList()
-                //progress_dialog?.dismiss()
             }
-            activity?.launchMainMenuActivity()
-
-        }.addOnFailureListener { e ->
-            e.message?.let { Log.e("DBFailure", it) }
             activity?.launchMainMenuActivity()
         }
 
     }
 
     private fun createFirstMessageList() {
-        val uid = partialUser.uid
-        db.update(
-            "CompleteUsers/$uid",
-            "MessageHistory",
+        db.update("$dbReference/MessageHistory",
             listOf(
                 Message(
                     "Welcome to DisPlace",
                     getCurrentDate(),
                     PartialUser("THE SYSTEM", "dummy_id")
-                )
+                ).toMap()
             )
         )
     }
 
     fun removeUserFromDatabase() {
-        db.delete("CompleteUsers", partialUser.uid)
+        db.delete("CompleteUsers/${partialUser.uid}")
         firebaseUser?.delete()
     }
 
@@ -372,13 +364,11 @@ class CompleteUser(
     }
 
     private fun initializePartialUser() {
-        googleName = "defaultName"
         if (firebaseUser != null) {
             if (firebaseUser.displayName == null || firebaseUser.displayName == "") {
                 setupDefaultOrGuestPartialUser()
             } else {
                 partialUser = PartialUser(firebaseUser.displayName!!, firebaseUser.uid)
-                googleName = firebaseUser.displayName!!
             }
         } else {
             setupDefaultOrGuestPartialUser()
