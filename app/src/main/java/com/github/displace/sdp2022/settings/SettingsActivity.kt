@@ -41,21 +41,12 @@ class SettingsActivity : AppCompatActivity() {
 
     private fun handleChanges(prefs: SharedPreferences, key: String) {
         //Retrieve the content of the setting
-        val enabledDisabledString: String = when (key) {
-            DARK_MODE_SETTINGS_SWITCH -> if (prefs.getBoolean(
-                    key,
-                    false
-                )
-            ) " enabled" else " disabled"
-            THEME_SETTINGS_SWITCH -> prefs.getString(
+        val enabledDisabledString: String = if (prefs.getBoolean(
                 key,
-                ""
-            ) + " theme enabled"
-            else -> {
-                Log.e("SettingsActivity", "The key is not recognized")
-                ""
-            }
-        }
+                false
+            )
+        ) " enabled" else " disabled"
+
 
         //Retrieve which settings it is
         val contentString: String = when (key) {
@@ -69,6 +60,7 @@ class SettingsActivity : AppCompatActivity() {
             THEME_SETTINGS_SWITCH -> chooseTheme(prefs)
 
         }
+
         val stringToDisplay: String = contentString + enabledDisabledString
 
         //Display a toast message
