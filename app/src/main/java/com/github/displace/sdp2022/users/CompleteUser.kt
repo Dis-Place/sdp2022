@@ -1,12 +1,9 @@
 package com.github.displace.sdp2022.users
 
 import android.annotation.SuppressLint
-import android.app.AlertDialog
 import android.content.Context
 import android.graphics.Bitmap
-import android.util.Log
 import com.github.displace.sdp2022.MyApplication
-import com.github.displace.sdp2022.RealTimeDatabase
 import com.github.displace.sdp2022.authentication.SignInActivity
 import com.github.displace.sdp2022.database.CleanUpGuests
 import com.github.displace.sdp2022.database.GoodDB
@@ -59,7 +56,6 @@ class CompleteUser(
     private val app : MyApplication = context as MyApplication  // application context
 
     private val guestNumber = Random.nextUInt()     // random number to differentiate guest users in a game
-    private var guestIndex: Int = -1        // Index for the guests in DB, useful for cleaning up the database from the unused guests
 
     private val offlineUserFetcher: OfflineUserFetcher = OfflineUserFetcher(context)    // The offlineUserFetcher contains all the methods to get cached information
 
@@ -80,137 +76,13 @@ class CompleteUser(
     }
 
     /**
-     * Add the user to the database
-     * Adding the achievements, statistics, friend's list, game history and partial user
+     * Initializes the user
      */
-    private fun addUserToDatabase() {
-        db.update("$dbReference/achievements", achievements.map { a -> a.toMap() })
-        db.update("$dbReference/stats", stats.map { s -> s.toMap() })
-        db.update("$dbReference/friendsList", friendsList.map { f -> f.toMap() })
-        db.update("$dbReference/gameHistory", gameHistory.map { h -> h.toMap() })
-        db.update("$dbReference/partialUser", partialUser.toMap())
-
-        // If the user is a guest, we have to increment all the guest indexes of all guests in the database,
-        // and remove those that are too old
-        if(guestBoolean) {
-            if(firebaseUser != null) {
-                CleanUpGuests.updateGuestIndexesAndCleanUpDatabase(db, "guest_${firebaseUser.uid}")
-                db.update("$dbReference/guestIndex", guestIndex)
-            }
-        }
-    }
-
-    fun addAchievement(ach: Achievement) {
-        if (offlineMode)
-            return
-
-        if(!achievements.contains(ach)){
-
-            /**
-             * This part should also send a notification
-             */
-            app.getMessageHandler().messageNotification(ach.description,ach.name)
-
-            achievements.add(ach)
-            db.update("$dbReference/achievements", achievements.map { a -> a.toMap() })  // We modify the entire list of stats to fit with the MockDB, and it's better practice
-            if(!guestBoolean) {
-                offlineUserFetcher.setOfflineAchievements(achievements)
-            }
-        }
-
-    }
-
-    fun updateStats(statName: String, newValue: Long) {
-        if (offlineMode)
-            return
-        for (i in 0 until stats.size) {
-            if (statName == stats[i].name) {
-                stats[i].value = newValue
-                db.update("$dbReference/stats", stats.map { s -> s.toMap() })      // We modify the entire list of stats to fit with the MockDB, and it's better practice
-
-                if(!guestBoolean) {
-                    offlineUserFetcher.setOfflineStats(stats)
-                }
-                return
-            }
-        }
-    }
-
-    fun addFriend(partialU: PartialUser) {
-        if (offlineMode)
-            return
-
-        if (!containsPartialUser(friendsList, partialU)) {
-            friendsList.add(partialU)
-            db.update("$dbReference/friendsList", friendsList.map { f -> f.toMap() })    // We modify the entire list of stats to fit with the MockDB, and it's better practice
-
-            if(!guestBoolean) {
-                offlineUserFetcher.setOfflineFriendsList(friendsList)
-            }
-
-        }
-    }
-
-    fun removeFriend(partialU: PartialUser) {
-        if (offlineMode)
-            return
-
-        if (friendsList.remove(partialU)) {
-            if(!guestBoolean) {
-                offlineUserFetcher.setOfflineFriendsList(friendsList)
-            }
-            db.update("$dbReference/friendsList", friendsList.map { f -> f.toMap() })
-        }
-    }
-
-    /**
-     * Check if a partial user is in a list, by using the user id to verify it
-     */
-    private fun containsPartialUser(pUserList: List<PartialUser>, partialU: PartialUser): Boolean {
-        for (f in pUserList) {
-            if (f.uid == partialU.uid) {
-                return true
-            }
-        }
-        return false
-    }
-
-    fun addGameInHistory(map: String, date: String, result: String) {
-        if (offlineMode)
-            return
-
-        val history = History(map, date, result)
-        gameHistory.add(history)
-        if(!guestBoolean) {
-            offlineUserFetcher.setOfflineGameHistory(gameHistory)
-        }
-        db.update("$dbReference/gameHistory", gameHistory.map { h -> h.toMap() })  // We modify the entire list of stats to fit with the MockDB, and it's better practice
-    }
-
-    fun changeUsername(newName: String) {
-        if (offlineMode)
-            return
-
-        partialUser.username = newName
-        offlineUserFetcher.setOfflinePartialUser(partialUser)
-        db.update("$dbReference/partialUser/username", newName)
-    }
-
-    fun setProfilePic(pic: Bitmap) {
-        profilePic = pic
-    }
-
-    fun getProfilePic(): Bitmap? {
-        return profilePic
-    }
-
-    fun setOffline(offline: Boolean) {
-        offlineMode = offline
-    }
-
     private fun initializeUser() {
-        // Initialization if it's a guest
+        // Initialization of a guest user
         if (guestBoolean) {
+
+            // Basic initialization of a user
             initializePartialUser()
 
             initializeAchievements()
@@ -224,28 +96,26 @@ class CompleteUser(
             gameHistory = mutableListOf()
             createFirstMessageList()
 
-            guestIndex = 0
-
             addUserToDatabase()
 
-            activity?.launchMainMenuActivity()
+            activity?.launchMainMenuActivity()  // If the user have been created in the login, we have to launch the main menu now that the user is initialized
             return
         }
 
 
-        // Initialization if the user is offline, using the cache
+        // Initialization if the user is offline, or if the user is cached
         if (offlineMode || remembered) {
             achievements = offlineUserFetcher.getOfflineAchievements()
             stats = offlineUserFetcher.getOfflineStats()
             friendsList = offlineUserFetcher.getOfflineFriendsList()
             gameHistory = offlineUserFetcher.getOfflineGameHistory()
             partialUser = offlineUserFetcher.getOfflinePartialUser()
-            activity?.launchMainMenuActivity()
+            activity?.launchMainMenuActivity()  // If the user have been created in the login, we have to launch the main menu now that the user is initialized
             return
         }
 
 
-        // Initialization if the user is online
+        // Initialization if the user is online and not cached, we have to search the infos in the database
 
         db.getThenCall<HashMap<String, *>>(dbReference){completeUser ->
             if(completeUser != null) {
@@ -294,13 +164,15 @@ class CompleteUser(
                         )
                     } as MutableList<History>
                 }
+
                 // Get Partial User from the database
                 val partialUserMap = completeUser["partialUser"] as Map<String, String>
                 partialUser =
                     PartialUser(partialUserMap["username"]!!, partialUserMap["uid"]!!)
 
+                // Save the user in the cache
                 offlineUserFetcher.setCompleteUser(this)
-            } else {    // if user not existing in database, initialize it and adding it to database
+            } else {    // if the user doesn't exist in database, initialize it and add it to database
 
                 initializePartialUser()
                 initializeAchievements()
@@ -312,11 +184,66 @@ class CompleteUser(
                 addUserToDatabase()
                 createFirstMessageList()
             }
-            activity?.launchMainMenuActivity()
+            activity?.launchMainMenuActivity()  // If the user have been created in the login, we have to launch the main menu now that the user is initialized
         }
 
     }
 
+    /**
+     * Initialization helper methods
+     */
+
+    /**
+     * Creates the first achievements' list of a new user
+     */
+    @SuppressLint("SimpleDateFormat")
+    private fun initializeAchievements() {
+        achievements = mutableListOf(
+            Achievement("Welcome home!","Create your account", getCurrentDate())
+        )
+
+        if(!guestBoolean && firebaseUser != null) {     // if firebaseUser is null, it's either an error or a automatic test
+            offlineUserFetcher.setOfflineAchievements(achievements)
+        }
+    }
+
+    /**
+     * Creates the first stats' list of a new user
+     */
+    private fun initializeStats() {
+        stats = mutableListOf(
+            Statistic("Games Played", 0),
+            Statistic("Games Won", 0),
+            Statistic("Distance Moved", 0)
+        )
+
+        if(!guestBoolean && firebaseUser != null) {     // if firebaseUser is null, it's either an error or a automatic test
+            offlineUserFetcher.setOfflineStats(stats)
+        }
+    }
+
+    /**
+     * Creates the partial user of a new user, based on the fact that it is a guest or not, and on its firebase authentication
+     */
+    private fun initializePartialUser() {
+        if (firebaseUser != null) {
+            if (firebaseUser.displayName == null || firebaseUser.displayName == "") {   // A firebaseUser without a name is an anonymous user (a guest)
+                partialUser = PartialUser("Guest$guestNumber", "guest_${firebaseUser?.uid}")
+            } else {        // We use the display name of the google user as the default name, and the firebaseUser id as an id
+                partialUser = PartialUser(firebaseUser.displayName!!, firebaseUser.uid)
+            }
+        } else {    // For testing
+            PartialUser("defaultName", "dummy_id")
+        }
+
+        if(!guestBoolean && firebaseUser != null) {     // if firebaseUser is null, it's either an error or a automatic test
+            offlineUserFetcher.setOfflinePartialUser(partialUser)
+        }
+    }
+
+    /**
+     * Creates the first message of a new user (which is a single message with "the system")
+     */
     private fun createFirstMessageList() {
         db.update("$dbReference/MessageHistory",
             listOf(
@@ -329,68 +256,224 @@ class CompleteUser(
         )
     }
 
+    /**
+     * Methods for the database
+     */
+
+    /**
+     * Add the user to the database
+     * Adding the achievements, statistics, friend's list, game history and partial user
+     */
+    private fun addUserToDatabase() {
+        db.update("$dbReference/achievements", achievements.map { a -> a.toMap() })
+        db.update("$dbReference/stats", stats.map { s -> s.toMap() })
+        db.update("$dbReference/friendsList", friendsList.map { f -> f.toMap() })
+        db.update("$dbReference/gameHistory", gameHistory.map { h -> h.toMap() })
+        db.update("$dbReference/partialUser", partialUser.toMap())
+
+        // If the user is a guest, we have to increment all the guest indexes of all guests in the database,
+        // and remove those that are too old
+        if(guestBoolean) {
+            if(firebaseUser != null) {
+                CleanUpGuests.updateGuestIndexesAndCleanUpDatabase(db, "guest_${firebaseUser.uid}")
+                db.update("$dbReference/guestIndex", 0)    // Index for the guests in DB, useful for cleaning up the database from the unused guests
+            }
+        }
+    }
+
+    /**
+     * Deletes the user from the database
+     */
     fun removeUserFromDatabase() {
         db.delete("CompleteUsers/${partialUser.uid}")
         firebaseUser?.delete()
     }
 
-    @SuppressLint("SimpleDateFormat")
-    private fun initializeAchievements() {
-        achievements = mutableListOf(
-            Achievement("Welcome home!","Create your account", getCurrentDate())
-        )
+    /**
+     * Methods to update the profile infos
+     */
 
-        if(!guestBoolean && firebaseUser != null) {
-            offlineUserFetcher.setOfflineAchievements(achievements)
+    /**
+     * Adds an achievement to the achievements' list
+     * @param ach: New achievement
+     */
+    fun addAchievement(ach: Achievement) {
+        if (offlineMode)        // Can't win a achievement when offline
+            return
+
+        if(!achievements.contains(ach)){
+            /**
+             * TODO: This part should also send a notification
+             */
+            app.getMessageHandler().messageNotification(ach.description,ach.name)
+
+            achievements.add(ach)
+            db.update("$dbReference/achievements", achievements.map { a -> a.toMap() })  // We modify the entire list of stats because it's better practice when using the database
+            if(!guestBoolean) {     // if the user is a guest, we do not cache the achievement since at the next use of the application it will be erased
+                offlineUserFetcher.setOfflineAchievements(achievements)
+            }
+        }
+
+    }
+
+    /**
+     * Updates a specific statistic to a new value
+     * @param statName: Name of the statistic to update
+     * @param newValue: New value for the statistic
+     */
+    fun updateStats(statName: String, newValue: Long) {
+        if (offlineMode)        // Can't update your stats when offline
+            return
+
+        for (i in 0 until stats.size) {         // Search for the corresponding stat
+            if (statName == stats[i].name) {
+                stats[i].value = newValue
+                db.update("$dbReference/stats", stats.map { s -> s.toMap() })      // We modify the entire list of stats because it's better practice
+                                                                                            // when using the database
+
+                if(!guestBoolean) { // if the user is a guest, we do not cache the stats since at the next use of the application it will be erased
+                    offlineUserFetcher.setOfflineStats(stats)
+                }
+                return
+            }
         }
     }
 
+    /**
+     * Adds a friend to the friend's list
+     * @param partialU: Basic infos of the new friend
+     */
+    fun addFriend(partialU: PartialUser) {
+        if (offlineMode)        // Can't add a friend when offline
+            return
+
+        if (!containsPartialUser(friendsList, partialU)) {
+            friendsList.add(partialU)
+            db.update("$dbReference/friendsList", friendsList.map { f -> f.toMap() })    // We modify the entire list of stats because it's better practice
+                                                                                                // when using the database
+
+            if(!guestBoolean) { // if the user is a guest, we do not cache the friends' list since at the next use of the application it will be erased
+                offlineUserFetcher.setOfflineFriendsList(friendsList)
+            }
+
+        }
+    }
+
+    /**
+     * Removes a friend from the friend's list
+     * @param partialU: Basic infos of the friend we want to remove
+     */
+    fun removeFriend(partialU: PartialUser) {
+        if (offlineMode)        // Can't remove a friend when offline
+            return
+
+        if (friendsList.remove(partialU)) {
+            if(!guestBoolean) { // if the user is a guest, we do not cache the friends' list since at the next use of the application it will be erased
+                offlineUserFetcher.setOfflineFriendsList(friendsList)
+            }
+            db.update("$dbReference/friendsList", friendsList.map { f -> f.toMap() })
+        }
+    }
+
+    /**
+     * Add the info of a new game in the game history
+     * @param map: Map of the game
+     * @param date: Date of the game
+     * @param result: Result of the game
+     */
+    fun addGameInHistory(map: String, date: String, result: String) {
+        if (offlineMode)    // Can't add a new game when offline
+            return
+
+        val history = History(map, date, result)
+        gameHistory.add(history)
+        if(!guestBoolean) { // if the user is a guest, we do not cache the game history since at the next use of the application it will be erased
+            offlineUserFetcher.setOfflineGameHistory(gameHistory)
+        }
+        db.update("$dbReference/gameHistory", gameHistory.map { h -> h.toMap() })  // We modify the entire list of stats to fit with the MockDB, and it's better practice
+    }
+
+    /**
+     * Updates the username
+     */
+    fun changeUsername(newName: String) {
+        if (offlineMode || guestBoolean)    // Can't change username when offline or when a guest
+            return
+
+        partialUser.username = newName
+        offlineUserFetcher.setOfflinePartialUser(partialUser)
+        db.update("$dbReference/partialUser/username", newName)
+    }
+
+    /**
+     * Setter for the profile picture
+     */
+    fun setProfilePic(pic: Bitmap) {
+        profilePic = pic
+    }
+
+    /**
+     * Changes the status of the user
+     */
+    fun setOffline(offline: Boolean) {
+        offlineMode = offline
+    }
+
+    /**
+     * Helper methods
+     */
+
+    /**
+     * Checks if a partial user is in a list, by using the user id to verify it
+     * @param pUserList: List of partial users
+     * @param partialU: Partial User we're searching
+     */
+    private fun containsPartialUser(pUserList: List<PartialUser>, partialU: PartialUser): Boolean {
+        for (f in pUserList) {
+            if (f.uid == partialU.uid) {
+                return true
+            }
+        }
+        return false
+    }
+
+    /**
+     * Gets the current date
+     */
     @SuppressLint("SimpleDateFormat")
     private fun getCurrentDate(): String {
         val simpleDate = SimpleDateFormat("dd-MM-yyyy")
         return simpleDate.format(Date())
     }
 
-    private fun initializeStats() {
-        stats = mutableListOf(
-            Statistic("Games Played", 0),
-            Statistic("Games Won", 0),
-            Statistic("Distance Moved", 0)
-        )      // It's a dummy list for now, will be replaced with a list of all the possible statistics initialized to 0
+    /**
+     * Getter methods
+     */
 
-        if(!guestBoolean && firebaseUser != null) {
-            offlineUserFetcher.setOfflineStats(stats)
-        }
-    }
-
-    private fun initializePartialUser() {
-        if (firebaseUser != null) {
-            if (firebaseUser.displayName == null || firebaseUser.displayName == "") {
-                setupDefaultOrGuestPartialUser()
-            } else {
-                partialUser = PartialUser(firebaseUser.displayName!!, firebaseUser.uid)
-            }
-        } else {
-            setupDefaultOrGuestPartialUser()
-        }
-
-        if(!guestBoolean && firebaseUser != null) {
-            offlineUserFetcher.setOfflinePartialUser(partialUser)
-        }
-    }
-
+    /**
+     * Getter for the Partial User
+     */
     fun getPartialUser(): PartialUser {
         return partialUser
     }
 
+    /**
+     * Getter for the achievements' list
+     */
     fun getAchievements(): MutableList<Achievement> {
         return achievements
     }
 
+    /**
+     * Getter for the stats' list
+     */
     fun getStats(): List<Statistic> {
         return stats
     }
 
+    /**
+     * Getter for the value of a specific statistic
+     */
     fun getStat(name : String): Statistic {
         for(stat in stats){
             if(stat.name == name){
@@ -400,12 +483,43 @@ class CompleteUser(
         return Statistic("ERROR",0)
     }
 
+    /**
+     * Getter for the friends' list
+     */
     fun getFriendsList(): MutableList<PartialUser> {
         return friendsList
     }
 
+    /**
+     * Getter for the game history
+     */
     fun getGameHistory(): MutableList<History> {
         return gameHistory
+    }
+
+    /**
+     * Getter for the message history
+     */
+    fun getMessageHistory(): ArrayList<Message> {
+        return offlineUserFetcher.getOfflineMessageHistory()
+    }
+
+    /**
+     * Getter for the profile picture
+     */
+    fun getProfilePic(): Bitmap? {
+        return profilePic
+    }
+
+    /**
+     * Other
+     */
+
+    /**
+     * Caches the message list
+     */
+    fun cacheMessages(msgList: ArrayList<Message>) {
+        offlineUserFetcher.setOfflineMessageHistory(msgList)
     }
 
     override fun equals(other: Any?): Boolean {
@@ -415,22 +529,6 @@ class CompleteUser(
 
     override fun hashCode(): Int {
         return partialUser.hashCode()
-    }
-
-    private fun setupDefaultOrGuestPartialUser() {
-        partialUser = if (guestBoolean) {
-            PartialUser("Guest$guestNumber", "guest_${firebaseUser?.uid}")
-        } else {
-            PartialUser("defaultName", "dummy_id")
-        }
-    }
-
-    fun cacheMessages(msgList: ArrayList<Message>) {
-        offlineUserFetcher.setOfflineMessageHistory(msgList)
-    }
-
-    fun getMessageHistory(): ArrayList<Message> {
-        return offlineUserFetcher.getOfflineMessageHistory()
     }
 
 }
