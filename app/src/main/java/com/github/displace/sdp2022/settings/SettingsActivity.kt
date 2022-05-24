@@ -41,8 +41,21 @@ class SettingsActivity : AppCompatActivity() {
 
     private fun handleChanges(prefs: SharedPreferences, key: String) {
         //Retrieve the content of the setting
-        val enabledDisabledString: String =
-            if (prefs.getBoolean(key, false)) " enabled" else " disabled"
+        val enabledDisabledString: String = when (key) {
+            DARK_MODE_SETTINGS_SWITCH -> if (prefs.getBoolean(
+                    key,
+                    false
+                )
+            ) " enabled" else " disabled"
+            THEME_SETTINGS_SWITCH -> prefs.getString(
+                key,
+                ""
+            ) + " theme enabled"
+            else -> {
+                Log.e("SettingsActivity", "The key is not recognized")
+                ""
+            }
+        }
 
         //Retrieve which settings it is
         val contentString: String = when (key) {
@@ -62,7 +75,12 @@ class SettingsActivity : AppCompatActivity() {
         Toast.makeText(this, stringToDisplay, Toast.LENGTH_SHORT).show()
 
         val app = applicationContext as MyApplication
-        AchievementsLibrary.achievementCheck(app , app.getActiveUser()!! , Pair(contentString,enabledDisabledString) , AchievementsLibrary.settingsLib )
+        AchievementsLibrary.achievementCheck(
+            app,
+            app.getActiveUser()!!,
+            Pair(contentString, enabledDisabledString),
+            AchievementsLibrary.settingsLib
+        )
 
     }
 
