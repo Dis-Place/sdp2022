@@ -33,11 +33,11 @@ class MainActivity : AppCompatActivity() {
                 if (checkForInternet(this)) {
                     //As we are remembered and we are online, we can have a normal logged in profiles
                     if (app.getActiveUser() == null) {
-                        val user = CompleteUser(this, null, remembered = true)
+                        val user = CompleteUser(applicationContext, null, remembered = true)
                         app.setActiveUser(user)
                     }
                 } else {
-                    val user = CompleteUser(this, null, offlineMode = true, remembered = true)
+                    val user = CompleteUser(applicationContext, null, offlineMode = true, remembered = true)
                     app.setActiveUser(user)
                 }
                 Intent(this, MainMenuActivity::class.java).apply {

@@ -197,7 +197,7 @@ class GameVersusViewActivity : AppCompatActivity() {
         gpsPositionUpdater = GPSPositionUpdater(this, gpsPositionManager)
 
         val clickSoundPlayer = if (PreferenceManager.getDefaultSharedPreferences(this)
-                .getBoolean(SFX_SETTINGS_SWITCH, true)
+                .getBoolean(getString(R.string.sfx), true)
         )
             MediaPlayer.create(this, R.raw.zapsplat_sound_design_hit_punchy_bright_71725)
         else null
@@ -264,7 +264,7 @@ class GameVersusViewActivity : AppCompatActivity() {
         musicPlayer.setLooping(true)
 
         if (PreferenceManager.getDefaultSharedPreferences(this)
-                .getBoolean(MUSIC_SETTINGS_SWITCH, true)
+                .getBoolean(getString(R.string.music), true)
         ) {
             musicPlayer.start()
         }
@@ -321,7 +321,7 @@ class GameVersusViewActivity : AppCompatActivity() {
             )
         }
         if (PreferenceManager.getDefaultSharedPreferences(this)
-                .getBoolean(SFX_SETTINGS_SWITCH, true)
+                .getBoolean(getString(R.string.sfx), true)
         ) {
             endPlayer.start()
         }
@@ -390,7 +390,7 @@ class GameVersusViewActivity : AppCompatActivity() {
 
     override fun onResume() {
         if (PreferenceManager.getDefaultSharedPreferences(this)
-                .getBoolean(MUSIC_SETTINGS_SWITCH, true)
+                .getBoolean(getString(R.string.music), true)
         ) {
             musicPlayer.start()
         }
@@ -399,7 +399,7 @@ class GameVersusViewActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         if (PreferenceManager.getDefaultSharedPreferences(this)
-                .getBoolean(MUSIC_SETTINGS_SWITCH, true)
+                .getBoolean(getString(R.string.music), true)
         ) {
             musicPlayer.stop()
         }
@@ -432,7 +432,7 @@ class GameVersusViewActivity : AppCompatActivity() {
         chat.removeListener()
 
         if (PreferenceManager.getDefaultSharedPreferences(this)
-                .getBoolean(MUSIC_SETTINGS_SWITCH, true)
+                .getBoolean(getString(R.string.music), true)
         ) {
             musicPlayer.pause()
         }
