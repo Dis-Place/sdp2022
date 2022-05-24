@@ -35,27 +35,8 @@ class MessageHandler(private val activePartialUser : PartialUser, app : MyApplic
         checkForNewMessages()
     }
 
-    /**
-     * Listens for messages and sends a notification if anything new has been received
-     */
 
-    private val messageListener = Listener<ArrayList<HashMap<String,Any>>?>{ ls ->
-        val tempList : ArrayList<Message>
-        if(ls != null){
-            tempList = getListOfMessages(ls)
-            if(msgLs.isEmpty()){
-                //setup of the listener for the first time : no notification must be sent
-                msgLs = tempList
-            }else if(tempList != msgLs){
-                //notification of the new messages
-                val diff = tempList.filter { it !in msgLs }
-                for(msg in diff){
-                    messageNotification(msg.sender.username,msg.message)
-                }
-                msgLs = tempList
-            }
-        }
-    }
+
 
     /**
      * Send a notification
@@ -108,11 +89,27 @@ class MessageHandler(private val activePartialUser : PartialUser, app : MyApplic
     }
 
     /**
-     * adds the listener for the messages for the user : used to receive notifications
-     * use a single event to check at the start and end of any activity
+     * Checks if any new messages have arrived
+     * Send notifications for all the new messages
      */
     fun checkForNewMessages(){
-        db.addListener("CompleteUsers/" + activePartialUser.uid + "/MessageHistory",messageListener)
+        db.getThenCall<ArrayList<HashMap<String,Any>>>("CompleteUsers/" + activePartialUser.uid + "/MessageHistory"){ ls ->
+            val tempList : ArrayList<Message>
+            if(ls != null){
+                tempList = getListOfMessages(ls)
+                if(msgLs.isEmpty()){
+                    //setup of the listener for the first time : no notification must be sent
+                    msgLs = tempList
+                }else if(tempList != msgLs){
+                    //notification of the new messages
+                    val diff = tempList.filter { it !in msgLs }
+                    for(msg in diff){
+                        messageNotification(msg.sender.username,msg.message)
+                    }
+                    msgLs = tempList
+                }
+            }
+        }
     }
 
     /**
