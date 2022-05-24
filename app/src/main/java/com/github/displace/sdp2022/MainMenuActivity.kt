@@ -29,7 +29,7 @@ class MainMenuActivity : AppCompatActivity() {
         updateUI()
 
         val app = applicationContext as MyApplication
-        val handler = MessageHandler(app.getActiveUser()!!.getPartialUser(), app)
+        val handler = MessageHandler(app.getActiveUser()!!.getPartialUser(), app,intent)
         app.setMessageHandler(handler)
         app.getMessageHandler().checkForNewMessages()
     }

@@ -13,16 +13,21 @@ import com.github.displace.sdp2022.MainMenuActivity
 import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.R
 import com.github.displace.sdp2022.RealTimeDatabase
+import com.github.displace.sdp2022.database.DatabaseFactory
 import com.github.displace.sdp2022.profile.ProfileActivity
 import com.github.displace.sdp2022.users.PartialUser
+import com.github.displace.sdp2022.util.listeners.Listener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 
-class MessageHandler(private val activePartialUser : PartialUser, app : MyApplication) {
+class MessageHandler(private val activePartialUser : PartialUser, app : MyApplication , intent : Intent ) {
 
     private var msgLs : ArrayList<Message> = app.getActiveUser()!!.getMessageHistory()
-    private val db : RealTimeDatabase = RealTimeDatabase().instantiate("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",false) as RealTimeDatabase
+ //   private val db : RealTimeDatabase = RealTimeDatabase().instantiate("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",false) as RealTimeDatabase
+
+    private val db = DatabaseFactory.getDB(intent)
+
     private val context = app
 
 
@@ -33,29 +38,23 @@ class MessageHandler(private val activePartialUser : PartialUser, app : MyApplic
     /**
      * Listens for messages and sends a notification if anything new has been received
      */
-    private fun messageListener() = object : ValueEventListener {
-        override fun onDataChange(snapshot: DataSnapshot) {
-            val ls = snapshot.value as ArrayList<HashMap<String,Any>>?
-            val tempList : ArrayList<Message>
-            if(ls != null){
-                tempList = getListOfMessages(ls)
-                if(msgLs.isEmpty()){
-                    //setup of the listener for the first time : no notification must be sent
-                    msgLs = tempList
-                }else if(tempList != msgLs){
-                    //notification of the new messages
-                    val diff = tempList.filter { it !in msgLs }
-                    for(msg in diff){
-                        messageNotification(msg.sender.username,msg.message)
-                    }
-                    msgLs = tempList
+
+    private val messageListener = Listener<ArrayList<HashMap<String,Any>>?>{ ls ->
+        val tempList : ArrayList<Message>
+        if(ls != null){
+            tempList = getListOfMessages(ls)
+            if(msgLs.isEmpty()){
+                //setup of the listener for the first time : no notification must be sent
+                msgLs = tempList
+            }else if(tempList != msgLs){
+                //notification of the new messages
+                val diff = tempList.filter { it !in msgLs }
+                for(msg in diff){
+                    messageNotification(msg.sender.username,msg.message)
                 }
+                msgLs = tempList
             }
         }
-
-        override fun onCancelled(error: DatabaseError) {
-        }
-
     }
 
     /**
@@ -113,7 +112,7 @@ class MessageHandler(private val activePartialUser : PartialUser, app : MyApplic
      * use a single event to check at the start and end of any activity
      */
     fun checkForNewMessages(){
-        db.getDbReference("CompleteUsers/" + activePartialUser.uid + "/MessageHistory").addListenerForSingleValueEvent(messageListener())
+        db.addListener("CompleteUsers/" + activePartialUser.uid + "/MessageHistory",messageListener)
     }
 
     /**
