@@ -15,7 +15,7 @@ import com.github.displace.sdp2022.database.DatabaseFactory
 import com.github.displace.sdp2022.database.GoodDB
 import com.github.displace.sdp2022.profile.messageUpdater
 import com.github.displace.sdp2022.users.PartialUser
-import com.github.displace.sdp2022.util.CheckConnection.checkForInternet
+import com.github.displace.sdp2022.util.CheckConnectionUtil.checkForInternet
 
 class SendMessageActivity : AppCompatActivity() {
 

@@ -11,6 +11,8 @@ import com.firebase.ui.auth.AuthUI
 import com.github.displace.sdp2022.news.NewsActivity
 import com.github.displace.sdp2022.profile.ProfileActivity
 import com.github.displace.sdp2022.profile.messages.MessageHandler
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 
 
 class MainMenuActivity : AppCompatActivity() {
@@ -105,12 +107,20 @@ class MainMenuActivity : AppCompatActivity() {
      */
     @Suppress("UNUSED_PARAMETER")
     fun signOut(view: View) {
+        val app = applicationContext as MyApplication
         AuthUI.getInstance().signOut(this).addOnCompleteListener {
             Toast.makeText(this, "Logging Out", Toast.LENGTH_SHORT).show()
+            app.getMessageHandler().removeListener()
             getSharedPreferences("login", MODE_PRIVATE).edit().putBoolean("remembered", false).apply()
 
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
+        }
+
+        if(app.getActiveUser() != null) {
+            if (app.getActiveUser()!!.guestBoolean) {
+                app.getActiveUser()!!.removeUserFromDatabase()
+            }
         }
     }
 
@@ -158,7 +168,23 @@ class MainMenuActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-
+    /**
+     * Update the User Interface with the correct username
+     */
+    private fun updateUI() {
+        //load the username from the application
+        val app = applicationContext as MyApplication
+        val activeUser = app.getActiveUser()
+        val message = if (activeUser == null) {
+            "defaultNotLoggedIn"
+        } else {
+            activeUser.getPartialUser().username
+        }
+        findViewById<TextView>(R.id.welcomeText).apply {
+            text =
+                "Welcome $message!"
+        }
+    }
 
 
 }

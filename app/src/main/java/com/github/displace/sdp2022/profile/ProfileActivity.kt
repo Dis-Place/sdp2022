@@ -16,7 +16,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.github.displace.sdp2022.MainMenuActivity
 import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.R
-import com.github.displace.sdp2022.RealTimeDatabase
 import com.github.displace.sdp2022.database.DatabaseFactory
 import com.github.displace.sdp2022.database.GoodDB
 import com.github.displace.sdp2022.profile.achievements.AchViewAdapter
@@ -37,7 +36,7 @@ import com.github.displace.sdp2022.profile.statistics.StatViewAdapter
 import com.github.displace.sdp2022.profile.statistics.Statistic
 import com.github.displace.sdp2022.users.CompleteUser
 import com.github.displace.sdp2022.users.PartialUser
-import com.github.displace.sdp2022.util.CheckConnection.checkForInternet
+import com.github.displace.sdp2022.util.CheckConnectionUtil.checkForInternet
 import com.github.displace.sdp2022.util.listeners.Listener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -302,8 +301,8 @@ class ProfileActivity : AppCompatActivity() {
             startActivity(Intent(this, AddFriendActivity::class.java))
         } else {
             setStatus(false)
-
             Toast.makeText(this, "You're offline ! Please connect to the internet", Toast.LENGTH_LONG).show()
+
         }
     }
 
