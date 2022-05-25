@@ -78,8 +78,10 @@ class CompleteUser(
         db.update(dbReference,"gameHistory", gameHistory)
         db.update(dbReference,"partialUser", partialUser)
         if(guestBoolean) {
-            CleanUpGuests.updateGuestIndexesAndCleanUpDatabase(db, "guest_${firebaseUser!!.uid}")
-            db.update(dbReference, "guestIndex", guestIndex)
+            if(firebaseUser != null) {
+                CleanUpGuests.updateGuestIndexesAndCleanUpDatabase(db, "guest_${firebaseUser.uid}")
+                db.update(dbReference, "guestIndex", guestIndex)
+            }
         }
     }
 
