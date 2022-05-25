@@ -8,7 +8,7 @@ import com.github.displace.sdp2022.RealTimeDatabase
  */
 object CleanUpGuests {
 
-    private val GUEST_THRESHOLD = 6
+    private val GUEST_THRESHOLD = 50
 
     /**
      * Method that updates the guest indexes of all guests in the database, then removes the guests that are above a certain threshold GUEST_THRESHOLD.
@@ -24,7 +24,7 @@ object CleanUpGuests {
             for (id in usrsDB.keys) {
                 if(id.contains("guest") && id != guestId) {
                     val guestDB = usrsDB[id] as HashMap<String, *>
-                    val guestCompleteUserDB = guestDB["CompleteUser"] as HashMap<String, *>
+                    val guestCompleteUserDB = guestDB["CompleteUser"] as HashMap<String, *>? ?: continue
                     val newIndex = (guestCompleteUserDB["guestIndex"] as Long) + 1
                     if(newIndex >= GUEST_THRESHOLD) {
                         db.delete("CompleteUsers", id)
