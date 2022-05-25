@@ -7,11 +7,9 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.github.displace.sdp2022.MyApplication
-import com.github.displace.sdp2022.RealTimeDatabase
 import com.github.displace.sdp2022.profile.messages.Message
 import com.github.displace.sdp2022.profile.messages.MsgViewAdapter
 import com.github.displace.sdp2022.users.PartialUser
-import com.google.firebase.database.*
 import com.github.displace.sdp2022.R
 import com.github.displace.sdp2022.database.GoodDB
 import com.github.displace.sdp2022.database.TransactionSpecification

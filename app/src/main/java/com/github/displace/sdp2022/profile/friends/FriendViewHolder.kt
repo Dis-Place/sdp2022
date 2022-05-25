@@ -12,7 +12,6 @@ import com.github.displace.sdp2022.RealTimeDatabase
 import com.github.displace.sdp2022.database.DatabaseFactory
 import com.github.displace.sdp2022.database.GoodDB
 import com.github.displace.sdp2022.profile.FriendDeleter
-import com.github.displace.sdp2022.profile.RequestAcceptor
 import com.github.displace.sdp2022.profile.messageUpdater
 import com.github.displace.sdp2022.profile.messages.SendMessageActivity
 import com.github.displace.sdp2022.users.PartialUser
@@ -41,8 +40,7 @@ class FriendViewHolder(itemview: View) : RecyclerView.ViewHolder(itemview) {
             val lobbyID = app.getLobbyID()
             val message: String = lobbyID
 
-          //  val db : RealTimeDatabase = RealTimeDatabase().noCacheInstantiate("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",false) as RealTimeDatabase
-            val intent : Intent = Intent()
+            val intent : Intent = Intent() //TODO()
             val db : GoodDB = DatabaseFactory.getDB(intent)
             val activeUser = app.getActiveUser()
             var activePartialUser = PartialUser("defaultName","dummy_id")

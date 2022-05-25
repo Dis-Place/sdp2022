@@ -1,13 +1,10 @@
 package com.github.displace.sdp2022.profile.qrcode
 
-import android.content.DialogInterface
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.test.core.app.ApplicationProvider
 import com.budiyev.android.codescanner.AutoFocusMode
 import com.budiyev.android.codescanner.CodeScanner
 import com.budiyev.android.codescanner.CodeScannerView
@@ -16,7 +13,6 @@ import com.budiyev.android.codescanner.ErrorCallback
 import com.budiyev.android.codescanner.ScanMode
 import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.R
-import com.github.displace.sdp2022.RealTimeDatabase
 import com.github.displace.sdp2022.profile.FriendRequest
 import com.github.displace.sdp2022.profile.ProfileActivity
 import com.github.displace.sdp2022.users.PartialUser

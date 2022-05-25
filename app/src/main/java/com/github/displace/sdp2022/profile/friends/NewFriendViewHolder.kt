@@ -8,12 +8,10 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.R
-import com.github.displace.sdp2022.RealTimeDatabase
 import com.github.displace.sdp2022.profile.FriendRequest
 import com.github.displace.sdp2022.profile.messages.SendMessageActivity
 import com.github.displace.sdp2022.users.PartialUser
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.ktx.Firebase
 
 class NewFriendViewHolder(itemview: View, context: Context) : RecyclerView.ViewHolder(itemview) {
 

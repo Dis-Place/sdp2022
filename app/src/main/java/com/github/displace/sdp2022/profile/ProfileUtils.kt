@@ -5,7 +5,6 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import android.widget.Toast
 
-import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.database.TransactionSpecification
 import com.github.displace.sdp2022.profile.friendInvites.Invite
 import com.github.displace.sdp2022.profile.friendInvites.InviteWithId
@@ -13,7 +12,6 @@ import com.github.displace.sdp2022.profile.messages.Message
 import com.github.displace.sdp2022.users.PartialUser
 import com.github.displace.sdp2022.util.DateTimeUtil
 import com.google.firebase.database.*
-import java.net.ConnectException
 
 /**
  * A class that represent the transaction done while sending a message

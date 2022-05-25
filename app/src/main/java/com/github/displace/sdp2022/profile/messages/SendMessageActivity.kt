@@ -1,7 +1,6 @@
 package com.github.displace.sdp2022.profile.messages
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -12,16 +11,11 @@ import androidx.appcompat.app.AppCompatActivity
 import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.profile.ProfileActivity
 import com.github.displace.sdp2022.R
-import com.github.displace.sdp2022.RealTimeDatabase
 import com.github.displace.sdp2022.database.DatabaseFactory
 import com.github.displace.sdp2022.database.GoodDB
 import com.github.displace.sdp2022.profile.messageUpdater
 import com.github.displace.sdp2022.users.PartialUser
 import com.github.displace.sdp2022.util.CheckConnection.checkForInternet
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.MutableData
-import com.google.firebase.database.Transaction
 
 class SendMessageActivity : AppCompatActivity() {
 
@@ -59,10 +53,6 @@ class SendMessageActivity : AppCompatActivity() {
             val message: String = findViewById<EditText>(R.id.messageToSend).text.toString()    //obtain the message from the view
             val app = applicationContext as MyApplication
 
-         /*   val db: RealTimeDatabase = RealTimeDatabase().noCacheInstantiate(
-                "https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",
-                false
-            ) as RealTimeDatabase*/
             val db : GoodDB = DatabaseFactory.getDB(intent)
             val activeUser = app.getActiveUser()
             var activePartialUser = PartialUser("defaultName", "dummy_id")
