@@ -19,7 +19,7 @@ object CleanUpGuests {
     fun updateGuestIndexesAndCleanUpDatabase(db: RealTimeDatabase, guestId: String) {
 
         db.referenceGet("CompleteUsers", "").addOnSuccessListener{ usrs ->
-            val usrsDB = usrs.value as HashMap<String, *>
+            val usrsDB = usrs.value as HashMap<String, *>? ?: return@addOnSuccessListener
 
             for (id in usrsDB.keys) {
                 if(id.contains("guest") && id != guestId) {
