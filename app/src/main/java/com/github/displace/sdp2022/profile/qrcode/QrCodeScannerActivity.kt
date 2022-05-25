@@ -18,7 +18,6 @@ import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.R
 import com.github.displace.sdp2022.RealTimeDatabase
 import com.github.displace.sdp2022.profile.FriendRequest
-import com.github.displace.sdp2022.profile.MessageUpdater
 import com.github.displace.sdp2022.profile.ProfileActivity
 import com.github.displace.sdp2022.users.PartialUser
 import com.google.firebase.database.FirebaseDatabase
