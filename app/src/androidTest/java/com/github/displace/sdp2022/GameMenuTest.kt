@@ -182,7 +182,7 @@ class GameMenuTest {
     companion object {
         val MOCK_GPS_POSITION = MapViewManager.DEFAULT_CENTER
     }
-
+/*
     @Test
     fun testChatButton() {
 
@@ -205,6 +205,6 @@ class GameMenuTest {
         app.getActiveUser()!!.removeUserFromDatabase()
     }
     
-
+*/
 
 }
