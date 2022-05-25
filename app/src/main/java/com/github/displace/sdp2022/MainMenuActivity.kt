@@ -74,11 +74,12 @@ class MainMenuActivity : AppCompatActivity() {
         val activeUser = app.getActiveUser()
         val message = activeUser?.getPartialUser()?.username ?: "defaultNotLoggedIn"
 
-        findViewById<TextView>(R.id.WelcomeText).apply {
+        findViewById<TextView>(R.id.welcomeText).apply {
             text =
                 "Welcome $message!"
         }
     }
+
 
     /**
      * Function used by a button on the view.
@@ -110,7 +111,6 @@ class MainMenuActivity : AppCompatActivity() {
         val app = applicationContext as MyApplication
         AuthUI.getInstance().signOut(this).addOnCompleteListener {
             Toast.makeText(this, "Logging Out", Toast.LENGTH_SHORT).show()
-            app.getMessageHandler().removeListener()
             getSharedPreferences("login", MODE_PRIVATE).edit().putBoolean("remembered", false).apply()
 
             val intent = Intent(this, MainActivity::class.java)
@@ -168,23 +168,7 @@ class MainMenuActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    /**
-     * Update the User Interface with the correct username
-     */
-    private fun updateUI() {
-        //load the username from the application
-        val app = applicationContext as MyApplication
-        val activeUser = app.getActiveUser()
-        val message = if (activeUser == null) {
-            "defaultNotLoggedIn"
-        } else {
-            activeUser.getPartialUser().username
-        }
-        findViewById<TextView>(R.id.welcomeText).apply {
-            text =
-                "Welcome $message!"
-        }
-    }
+
 
 
 }
