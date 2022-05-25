@@ -75,7 +75,7 @@ class MatchMakingActivity : MMView() {
      /*   val dialogBuilder = AlertDialog.Builder(this)
         dialogBuilder.setView(view)
         progressDialog = dialogBuilder.create()*/
-
+        ProgressDialogsUtil.showProgressDialog(this)
 
 
         setFriendList(model.activeUser)
