@@ -8,13 +8,15 @@
 
     <Button
         android:id="@+id/button2"
-        android:layout_width="210dp"
-        android:layout_height="123dp"
+        android:layout_width="115dp"
+        android:layout_height="70dp"
         android:onClick="addToChat"
-        android:text="Button"
+        android:text="Send"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/chatEditText"
+        app:layout_constraintTop_toBottomOf="@+id/recyclerView" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
@@ -31,13 +33,16 @@
 
     <EditText
         android:id="@+id/chatEditText"
-        android:layout_width="308dp"
-        android:layout_height="79dp"
+        android:layout_width="251dp"
+        android:layout_height="102dp"
+        android:layout_marginTop="603dp"
+        android:layout_marginBottom="26dp"
         android:ems="10"
         android:hint="message"
         android:inputType="textPersonName"
-        app:layout_constraintBottom_toTopOf="@+id/button2"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.502"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/button2"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
