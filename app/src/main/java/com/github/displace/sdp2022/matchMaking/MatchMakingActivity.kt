@@ -72,9 +72,9 @@ class MatchMakingActivity : MMView() {
 
         val view = LayoutInflater.from(this).inflate(R.layout.progress_dialog, null)
 
-        val dialogBuilder = AlertDialog.Builder(this)
+     /*   val dialogBuilder = AlertDialog.Builder(this)
         dialogBuilder.setView(view)
-        progressDialog = dialogBuilder.create()
+        progressDialog = dialogBuilder.create()*/
 
 
 
@@ -82,11 +82,11 @@ class MatchMakingActivity : MMView() {
         uiToSetup()
 
         findViewById<Button>(R.id.privateLobbyCreate).setOnClickListener {
-            ProgressDialogsUtil.showProgressDialog(applicationContext)
+            ProgressDialogsUtil.showProgressDialog(this)
             model.createPrivateLobby()
         }
         findViewById<Button>(R.id.privateLobbyJoin).setOnClickListener {
-            ProgressDialogsUtil.showProgressDialog(applicationContext)
+            ProgressDialogsUtil.showProgressDialog(this)
             model.joinPrivateLobby()
         }
 
@@ -183,7 +183,7 @@ class MatchMakingActivity : MMView() {
      * When the user cancels the search, leave the current lobby and return to the setup screen
      */
     fun onCancelButton(v: View) { //UI
-        ProgressDialogsUtil.showProgressDialog(applicationContext)
+        ProgressDialogsUtil.showProgressDialog(this)
         model.leaveMM(false)
         uiToSetup()
     }
@@ -192,7 +192,7 @@ class MatchMakingActivity : MMView() {
      * When the user starts the search
      */
     fun onPublicLobbySearchButton(v: View) {
-        ProgressDialogsUtil.showProgressDialog(applicationContext)
+        ProgressDialogsUtil.showProgressDialog(this)
         model.lobbyType = "public"
         model.publicSearch()
     }

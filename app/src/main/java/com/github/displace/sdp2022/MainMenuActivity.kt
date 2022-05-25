@@ -168,7 +168,12 @@ class MainMenuActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-
+    /**
+     * When back is pressed in the main menu : log out
+     */
+    override fun onBackPressed() {
+        signOut(findViewById(R.id.mainMenuLogOutButton))
+    }
 
 
 }
