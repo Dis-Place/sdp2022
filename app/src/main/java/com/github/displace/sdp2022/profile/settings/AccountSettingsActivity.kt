@@ -24,6 +24,7 @@ import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.R
 import com.github.displace.sdp2022.users.CompleteUser
 import com.github.displace.sdp2022.users.PartialUser
+import com.github.displace.sdp2022.util.ProgressDialogsUtil
 import com.google.firebase.auth.*
 import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.google.firebase.database.*
@@ -65,20 +66,16 @@ class AccountSettingsActivity : AppCompatActivity() {
     private lateinit var username: TextView
     private lateinit var profilePic: ImageView
     private var imageUri: Uri = Uri.EMPTY
-    //private var processingAlert: AlertDialog? = null
 
     private val storageReference = Firebase.storage.reference
 
     private lateinit var activeUser: CompleteUser
 
     private lateinit var imgDBReference: StorageReference
-    private var profilePicBitmap: Bitmap? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_account_settings)
-
-        //val passwordUpdate = findViewById<TextView>(R.id.passwordUpdate)
 
         username = findViewById(R.id.username)
         profilePic = findViewById(R.id.profilePic)
@@ -98,23 +95,18 @@ class AccountSettingsActivity : AppCompatActivity() {
                 val localFile = File.createTempFile("profilePic", "jpg")
 
                 // Gets profile pic from database
-                val view = LayoutInflater.from(this).inflate(R.layout.progress_dialog, null)
-
-                val dialogBuilder = AlertDialog.Builder(this)
-                dialogBuilder.setView(view)
-                val progressDialog = dialogBuilder.create()
-                progressDialog.show()
+                ProgressDialogsUtil.showProgressDialog(this)
                 imgDBReference.getFile(localFile).addOnSuccessListener {
                     // keep a copy of the profile pic in the case connection lost, and more efficient
                     val pic = BitmapFactory.decodeFile(localFile.absolutePath)
                     if(pic != null) {
                         activeUser.setProfilePic(pic)
-                        progressDialog.dismiss()
+                        ProgressDialogsUtil.dismissProgressDialog()
                     }
                     profilePic.setImageBitmap(activeUser.getProfilePic())
                 }.addOnFailureListener{
                     showToastText("Failed to load profile pic")
-                    progressDialog.dismiss()
+                    ProgressDialogsUtil.dismissProgressDialog()
                 }
             } else {
                 profilePic.setImageBitmap(activeUser.getProfilePic())
@@ -124,9 +116,6 @@ class AccountSettingsActivity : AppCompatActivity() {
 
         username.text = activeUser.getPartialUser().username
 
-        /*passwordUpdate.setOnClickListener {
-            showChangePasswordDialog()
-        }*/
     }
 
     @Suppress("UNUSED_PARAMETER")
@@ -234,69 +223,6 @@ class AccountSettingsActivity : AppCompatActivity() {
         }
     }
 
-    // Old code for a change password that may be reused
-
-    /*private fun showChangePasswordDialog() {
-        val view = LayoutInflater.from(this).inflate(R.layout.password_update_dialog, null)
-        val oldPassword = view.findViewById<EditText>(R.id.oldPasswordLog)
-        val newPassword = view.findViewById<EditText>(R.id.newPasswordLog)
-        val editPassword = view.findViewById<Button>(R.id.passwordUpdateButton)
-
-        val dialogBuilder = AlertDialog.Builder(this)
-        dialogBuilder.setView(view)
-        val dialogPassword = dialogBuilder.create()
-        dialogPassword.show()
-
-        editPassword.setOnClickListener {
-            val oldP = oldPassword.text.toString().trim()
-            val newP = newPassword.text.toString().trim()
-
-            dialogPassword.dismiss()
-            when {
-                checkIfEmpty(oldP) -> {
-                    showToastText("Current Password can't be empty")
-                    return@setOnClickListener
-                }
-                checkIfEmpty(newP) -> {
-                    showToastText("New Password can't be empty")
-                    return@setOnClickListener
-                }
-            }
-            dialogPassword.dismiss()
-            updatePassword(oldP, newP)
-        }
-    }*/
-
-    // Old code for a change password that may be reused
-
-    /*private fun updatePassword(oldP: String, newP: String) {
-        val authCredential: AuthCredential? =
-            firebaseUser?.email?.let { EmailAuthProvider.getCredential(it, oldP) }
-
-        if (authCredential != null) {
-            firebaseUser?.reauthenticate(authCredential)?.addOnSuccessListener {
-                actualPassword.text = newP
-                if (firebaseUser != null) {
-                    firebaseUser!!.updatePassword(newP).addOnCompleteListener { task ->
-                        if (task.isSuccessful) {
-                            showToastText("Password changed")
-                        } else {
-                            showToastText("Password change failed")
-                        }
-                    }
-                }
-            }?.addOnFailureListener {
-                showToastText("Incorrect password")
-            }
-        } else {
-            if (oldP != actualPassword.text) {
-                showToastText("Incorrect password")
-            } else {
-                actualPassword.text = newP
-            }
-        }
-    }*/
-
     @Suppress("UNUSED_PARAMETER")
     fun changeUsername(view: View) {
         val newView = LayoutInflater.from(this).inflate(R.layout.username_update_dialog, null)
@@ -321,58 +247,6 @@ class AccountSettingsActivity : AppCompatActivity() {
             }
         }
     }
-
-    // Unused code for a progress dialog that may be useful later
-    /* fun setProgressDialog(progressMessage: String) {
-         // Creating a Linear Layout
-         val llPadding = 30
-         val ll = LinearLayout(this)
-         ll.orientation = LinearLayout.HORIZONTAL
-         ll.setPadding(llPadding, llPadding, llPadding, llPadding)
-         ll.gravity = Gravity.CENTER
-         var llParam = LinearLayout.LayoutParams(
-             LinearLayout.LayoutParams.WRAP_CONTENT,
-             LinearLayout.LayoutParams.WRAP_CONTENT
-         )
-         llParam.gravity = Gravity.CENTER
-         ll.layoutParams = llParam
-         // Creating a ProgressBar inside the layout
-         val progressBar = ProgressBar(this)
-         progressBar.isIndeterminate = true
-         progressBar.setPadding(0, 0, llPadding, 0)
-         progressBar.layoutParams = llParam
-         llParam = LinearLayout.LayoutParams(
-             ViewGroup.LayoutParams.WRAP_CONTENT,
-             ViewGroup.LayoutParams.WRAP_CONTENT
-         )
-         llParam.gravity = Gravity.CENTER
-         // Creating a TextView inside the layout
-         val tvText = TextView(this)
-         tvText.text = progressMessage
-         tvText.setTextColor(Color.BLACK)
-         tvText.textSize = 20f
-         tvText.layoutParams = llParam
-         ll.addView(progressBar)
-         ll.addView(tvText)
-         // Setting the AlertDialog Builder view
-         // as the Linear layout created above
-         val builder: AlertDialog.Builder = AlertDialog.Builder(this)
-         builder.setCancelable(true)
-         builder.setView(ll)
-         // Displaying the dialog
-         processingAlert = builder.create()
-         processingAlert?.show()
-         val window: Window? = processingAlert?.window
-         if (window != null) {
-             val layoutParams = WindowManager.LayoutParams()
-             layoutParams.copyFrom(processingAlert?.window?.attributes)
-             layoutParams.width = LinearLayout.LayoutParams.WRAP_CONTENT
-             layoutParams.height = LinearLayout.LayoutParams.WRAP_CONTENT
-             processingAlert?.window?.attributes = layoutParams
-             // Disabling screen touch to avoid exiting the Dialog
-             window.setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
-         }
-     }*/
 
     private fun checkIfEmpty(string: String): Boolean {
         return TextUtils.isEmpty(string)

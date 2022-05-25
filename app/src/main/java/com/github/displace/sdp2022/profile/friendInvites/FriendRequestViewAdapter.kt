@@ -9,11 +9,10 @@ import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
-import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.R
 import com.github.displace.sdp2022.RealTimeDatabase
 import com.github.displace.sdp2022.profile.*
-import com.github.displace.sdp2022.util.CheckConnection.checkForInternet
+import com.github.displace.sdp2022.util.CheckConnectionUtil.checkForInternet
 
 
 class FriendRequestViewAdapter(private var dataSet: MutableList<InviteWithId>, private val context: ProfileActivity?) :

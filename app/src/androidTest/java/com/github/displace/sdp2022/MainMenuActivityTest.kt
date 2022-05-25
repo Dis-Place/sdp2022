@@ -52,7 +52,7 @@ class MainMenuActivityTest {
         val scenario = ActivityScenario.launch<MainMenuActivity>(intent)
 
         scenario.use {
-            Espresso.onView(withId(R.id.WelcomeText))
+            Espresso.onView(withId(R.id.welcomeText))
                 .check(matches(withText("Welcome defaultName!")))
         }
     }
