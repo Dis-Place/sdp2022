@@ -14,7 +14,7 @@ import com.github.displace.sdp2022.R
 import com.github.displace.sdp2022.RealTimeDatabase
 import com.github.displace.sdp2022.profile.MessageUpdater
 import com.github.displace.sdp2022.users.PartialUser
-import com.github.displace.sdp2022.util.CheckConnection.checkForInternet
+import com.github.displace.sdp2022.util.CheckConnectionUtil.checkForInternet
 
 class SendMessageActivity : AppCompatActivity() {
 
