@@ -19,12 +19,12 @@ object CleanUpGuests {
     fun updateGuestIndexesAndCleanUpDatabase(db: RealTimeDatabase, guestId: String) {
 
         db.referenceGet("CompleteUsers", "").addOnSuccessListener{ usrs ->
-            val usrsDB = usrs.value as HashMap<String, *>? ?: return@addOnSuccessListener
+            val usrsDB = usrs.value as HashMap<String, *>
 
             for (id in usrsDB.keys) {
                 if(id.contains("guest") && id != guestId) {
                     val guestDB = usrsDB[id] as HashMap<String, *>
-                    val guestCompleteUserDB = guestDB["CompleteUser"] as HashMap<String, *>
+                    val guestCompleteUserDB = guestDB["CompleteUser"] as HashMap<String, *>? ?: continue
                     val newIndex = (guestCompleteUserDB["guestIndex"] as Long) + 1
                     if(newIndex >= GUEST_THRESHOLD) {
                         db.delete("CompleteUsers", id)
