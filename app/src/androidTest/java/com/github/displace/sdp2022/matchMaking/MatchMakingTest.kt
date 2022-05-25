@@ -61,7 +61,7 @@ class MatchMakingTest {
             Thread.sleep(1000)
 
             db.delete("MM","")
-            Espresso.onView(ViewMatchers.withId(R.id.textView6)).check(ViewAssertions.matches(
+            Espresso.onView(ViewMatchers.withId(R.id.textView11)).check(ViewAssertions.matches(
                 ViewMatchers.isDisplayed()
             ))
         }
@@ -97,7 +97,7 @@ class MatchMakingTest {
 
             db.delete("MM","")
 
-            Espresso.onView(ViewMatchers.withId(R.id.textView6)).check(ViewAssertions.matches(
+            Espresso.onView(ViewMatchers.withId(R.id.textView11)).check(ViewAssertions.matches(
                 ViewMatchers.isDisplayed()
             ))
 
@@ -169,7 +169,7 @@ class MatchMakingTest {
             )
 
             db.delete("MM","")
-            Espresso.onView(ViewMatchers.withId(R.id.textView14)).check(ViewAssertions.matches(
+            Espresso.onView(ViewMatchers.withId(R.id.textView10)).check(ViewAssertions.matches(
                 ViewMatchers.isDisplayed()
             ))
 
@@ -206,7 +206,7 @@ class MatchMakingTest {
             db.delete("MM","")
 
 
-            Espresso.onView(ViewMatchers.withId(R.id.textView14)).check(ViewAssertions.matches(
+            Espresso.onView(ViewMatchers.withId(R.id.textView10)).check(ViewAssertions.matches(
                 ViewMatchers.isDisplayed()
             ))
 
