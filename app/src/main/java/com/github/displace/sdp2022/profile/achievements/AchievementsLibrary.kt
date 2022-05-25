@@ -58,18 +58,6 @@ object AchievementsLibrary {
     )
 
     /**
-     * These are checked when the settings are changed
-     * The value used for the condition is the pair of : name of the setting and if it has been enabled/disabled
-     */
-    val settingsLib = listOf(
-
-        AchievementCheck( { i : Pair<String,String> -> i.first=="Dark mode" && i.second == " enabled" } ,"The Batman" , "enable dark mode"),
-        AchievementCheck( { i : Pair<String,String> -> i.first=="Sound effects" && i.second == " disabled"} ,"Peace and calm" , "disable SFX"),
-        AchievementCheck( { i : Pair<String,String> -> i.first=="Music" && i.second == " disabled"} ,"The sound of silence" , "disable music")
-
-    )
-
-    /**
      * These are checked when a game is completed
      * The value used for the condition is the distance moved during the last game
      */
