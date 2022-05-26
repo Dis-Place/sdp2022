@@ -448,6 +448,9 @@ class GameVersusViewActivity : AppCompatActivity() {
         chat.hideChat()
     }
 
+    override fun onBackPressed() {
+    }
+
     override fun onPause() {
         //CHAT
         chat.removeListener()
