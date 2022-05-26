@@ -18,7 +18,7 @@
         android:defaultValue="purple"
         android:entries="@array/theme_entries"
         android:entryValues="@array/theme_entry_values"
-        android:key="@string/theme"
+        android:key="themeKey"
         android:summary="Choose your theme"
         android:title="Select theme" />
 

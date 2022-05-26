@@ -11,8 +11,7 @@ import com.firebase.ui.auth.AuthUI
 import com.github.displace.sdp2022.news.NewsActivity
 import com.github.displace.sdp2022.profile.ProfileActivity
 import com.github.displace.sdp2022.profile.messages.MessageHandler
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
+import com.github.displace.sdp2022.settings.SettingsActivity
 
 
 class MainMenuActivity : AppCompatActivity() {
@@ -31,7 +30,7 @@ class MainMenuActivity : AppCompatActivity() {
         updateUI()
 
         val app = applicationContext as MyApplication
-        val handler = MessageHandler(app.getActiveUser()!!.getPartialUser(), app,intent)
+        val handler = MessageHandler(app.getActiveUser()!!.getPartialUser(), app, intent)
         app.setMessageHandler(handler)
         app.getMessageHandler().checkForNewMessages()
     }
@@ -61,7 +60,6 @@ class MainMenuActivity : AppCompatActivity() {
         }
         super.onDestroy()
     }
-
 
 
     /**
@@ -100,6 +98,7 @@ class MainMenuActivity : AppCompatActivity() {
         }
 
     }
+
     /**
      * Function used by a button on the view.
      * Sends the user to the Login Menu and notifies that the user has to be logged out.
@@ -111,13 +110,14 @@ class MainMenuActivity : AppCompatActivity() {
         val app = applicationContext as MyApplication
         AuthUI.getInstance().signOut(this).addOnCompleteListener {
             Toast.makeText(this, "Logging Out", Toast.LENGTH_SHORT).show()
-            getSharedPreferences("login", MODE_PRIVATE).edit().putBoolean("remembered", false).apply()
+            getSharedPreferences("login", MODE_PRIVATE).edit().putBoolean("remembered", false)
+                .apply()
 
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
         }
 
-        if(app.getActiveUser() != null) {
+        if (app.getActiveUser() != null) {
             if (app.getActiveUser()!!.guestBoolean) {
                 app.getActiveUser()!!.removeUserFromDatabase()
             }
