@@ -24,7 +24,6 @@ import kotlin.random.Random
 class MatchMakingModel( val activity: MMView ){
 
     //Database
-    // private lateinit var db: RealTimeDatabase
     var db : GoodDB = DatabaseFactory.getDB(activity.intent)
     var currentLobbyId = ""
 
@@ -95,14 +94,27 @@ class MatchMakingModel( val activity: MMView ){
             return@Listener
         lobbyMap = lobby
         activity.updateUI()
-        if(lobbyMap["lobbyCount"] as Long == lobbyMap["lobbyMax"] as Long  ){
+        /*
+         * The leader notifies all players that the lobby is launching
+         */
+        if(lobbyMap["lobbyCount"] as Long == lobbyMap["lobbyMax"] as Long && lobbyMap["lobbyLeader"] as String == activePartialUser.uid && lobbyMap["lobbyLaunch"] == false   ) {
             lobbyMap["lobbyLaunch"] = true
+            db.update(
+                "MM/$gamemode/$map/$lobbyType/freeLobbies/$currentLobbyId",
+                lobbyMap
+            )
+            return@Listener
+        }
+        /*
+         * The lobby is launching : the leader will remove the lobby as a "free" lobby
+         */
+        if( lobbyMap["lobbyLaunch"] == true) {
             setupLaunchListener()
-
             //UI
             activity.findViewById<Button>(R.id.MMCancelButton).visibility = View.INVISIBLE
 
             if (lobbyMap["lobbyLeader"] as String == activePartialUser.uid) {    //This client is the leader : perform the checks and launch if needed
+
                 db.getThenCall<ArrayList<String>?>("MM/$gamemode/$map/$lobbyType/freeList") { ls ->
 
                     if (ls != null) {
@@ -228,6 +240,7 @@ class MatchMakingModel( val activity: MMView ){
                             currentLobbyId = toSearchId
                             app.setLobbyID(currentLobbyId)
                             setupLobbyListener()
+
                             activity.uiToSearch() //UI
 
                             positionCheckOnTimer()
@@ -374,8 +387,7 @@ class MatchMakingModel( val activity: MMView ){
                 val lobbyState = lobbyTypeLevel!![path] as MutableMap<String, Any>? ?: return@Builder lobbyTypeLevel
                 var lobby = lobbyState[currentLobbyId] as MutableMap<String, Any>? ?: return@Builder lobbyTypeLevel
 
-           //     lobby = removePlayerFromList(lobby)
-           //     lobbyState[currentLobbyId] = lobby
+
                 val leader = lobby["lobbyLeader"] as String
                 val count = lobby["lobbyCount"] as Long
                 if(leader == activePartialUser.uid){
