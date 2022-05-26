@@ -67,7 +67,7 @@ class ProfileActivityTest {
                 .check(ViewAssertions.matches(isDisplayed()))
         }
     }
-
+/*
     @Test
     fun testMessageInInboxButton() {
 
@@ -90,7 +90,7 @@ class ProfileActivityTest {
                 )
             )
         }
-    }
+    }*/
 
     @Test
     fun testProfileButton() {
