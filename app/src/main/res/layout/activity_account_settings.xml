@@ -33,33 +33,6 @@
         app:layout_constraintVertical_bias="0.112" />
 
     <TextView
-        android:id="@+id/passwordUpdate"
-        android:layout_width="281dp"
-        android:layout_height="47dp"
-        android:text="Change Password"
-        android:textAlignment="center"
-        android:textSize="20sp"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/usernameUpdate"
-        app:layout_constraintVertical_bias="0.131" />
-
-    <TextView
-        android:id="@+id/actualPassword"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="password"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/passwordText"
-        app:layout_constraintVertical_bias="0.15" />
-
-    <TextView
         android:id="@+id/usernameUpdate"
         android:layout_width="281dp"
         android:layout_height="46dp"
@@ -89,19 +62,6 @@
         app:layout_constraintVertical_bias="0.19" />
 
     <TextView
-        android:id="@+id/passwordText"
-        android:layout_width="203dp"
-        android:layout_height="20dp"
-        android:text="psst... Your password is"
-        android:textAlignment="center"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/passwordUpdate"
-        app:layout_constraintVertical_bias="0.137" />
-
-    <TextView
         android:id="@+id/username"
         android:layout_width="416dp"
         android:layout_height="30dp"
@@ -114,19 +74,5 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/profilePic"
         app:layout_constraintVertical_bias="0.035" />
-
-    <ProgressBar
-        android:id="@+id/unusedProgressBar"
-        style="?android:attr/progressBarStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:indeterminate="true"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.044"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.023" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
