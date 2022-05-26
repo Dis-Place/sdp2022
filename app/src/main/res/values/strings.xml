@@ -4,4 +4,7 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="webclient_id">234574558506-suoe41h1bshkkc9ir6u167hbnp77jnl3.apps.googleusercontent.com</string>
+    <string name="sfx">toggleSfx</string>
+    <string name="music">toggleMusic</string>
+    <string name="theme">selectTheme</string>
 </resources>

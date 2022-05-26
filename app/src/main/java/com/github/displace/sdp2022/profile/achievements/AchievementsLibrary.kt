@@ -41,15 +41,6 @@ object AchievementsLibrary {
             )   //DONE
 
     /**
-     * These are checked when the settings are changed
-     */
-    val settingsLib = listOf< (Pair<String,String>) -> Triple<Boolean,String,String> >(
-        { s ->  Triple(s.first=="Dark mode" && s.second == " enabled","The Batman" , "enable dark mode") },
-        { s ->  Triple(s.first=="Sound effects" && s.second == " disabled","Peace and calm" , "disable SFX") },
-        { s ->  Triple(s.first=="Music" && s.second == " disabled","The sound of silence" , "disable music") }
-    )   //DONE
-
-    /**
      * These are checked when a game is completed
      */
     val gameDistLib = listOf< (Long) -> Triple<Boolean,String,String> >(
