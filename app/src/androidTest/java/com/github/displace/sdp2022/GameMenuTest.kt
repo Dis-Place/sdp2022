@@ -76,7 +76,7 @@ class GameMenuTest {
         }
     }
 
-    /*@Test
+    @Test
     fun testMap() {
         intent.putExtra("gid","GameVersusTest")
         intent.putExtra("uid","hCkhhJ0dkINs0BIpx8eqhLWzXw43")
@@ -86,7 +86,7 @@ class GameMenuTest {
         ActivityScenario.launch<GameVersusViewActivity>(intent).use {
             onView(withId(R.id.map)).check(matches(ViewMatchers.isDisplayed()))
         }
-    }*/
+    }
 
     @Test
     fun testEndButton() {
