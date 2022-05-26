@@ -4,10 +4,7 @@ import android.Manifest
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.ImageView
-import android.widget.ScrollView
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -16,15 +13,19 @@ import androidx.lifecycle.Observer
 
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.github.displace.sdp2022.MainMenuActivity
 import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.R
-import com.github.displace.sdp2022.RealTimeDatabase
+import com.github.displace.sdp2022.database.DatabaseFactory
+import com.github.displace.sdp2022.database.GoodDB
 import com.github.displace.sdp2022.profile.achievements.AchViewAdapter
+import com.github.displace.sdp2022.profile.achievements.Achievement
 import com.github.displace.sdp2022.profile.achievements.AchievementsLibrary
 import com.github.displace.sdp2022.profile.friendInvites.AddFriendActivity
 import com.github.displace.sdp2022.profile.friendInvites.FriendRequestViewAdapter
 import com.github.displace.sdp2022.profile.friendInvites.InviteWithId
 import com.github.displace.sdp2022.profile.friends.FriendViewAdapter
+import com.github.displace.sdp2022.profile.history.History
 import com.github.displace.sdp2022.profile.history.HistoryViewAdapter
 import com.github.displace.sdp2022.profile.messages.Message
 import com.github.displace.sdp2022.profile.messages.MsgViewAdapter
@@ -32,8 +33,11 @@ import com.github.displace.sdp2022.profile.qrcode.QrCodeScannerActivity
 import com.github.displace.sdp2022.profile.qrcode.QrCodeUtils
 import com.github.displace.sdp2022.profile.settings.AccountSettingsActivity
 import com.github.displace.sdp2022.profile.statistics.StatViewAdapter
+import com.github.displace.sdp2022.profile.statistics.Statistic
+import com.github.displace.sdp2022.users.CompleteUser
 import com.github.displace.sdp2022.users.PartialUser
-import com.github.displace.sdp2022.util.CheckConnection.checkForInternet
+import com.github.displace.sdp2022.util.CheckConnectionUtil.checkForInternet
+import com.github.displace.sdp2022.util.listeners.Listener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -42,86 +46,43 @@ import com.google.firebase.database.ValueEventListener
 
 class ProfileActivity : AppCompatActivity() {
 
-    private val db: RealTimeDatabase = RealTimeDatabase().instantiate(
-        "https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",
-        false
-    ) as RealTimeDatabase
+
+    private lateinit var db : GoodDB
 
     private lateinit var msgLs: ArrayList<HashMap<String, Any>>
 
     private lateinit var activePartialUser: PartialUser
+    private lateinit var activeUser: CompleteUser
+    private lateinit var app: MyApplication
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile)
 
+        db = DatabaseFactory.getDB(intent)
+
         /* Active user Information */
-        val app = applicationContext as MyApplication
-        val activeUser = app.getActiveUser()
-        findViewById<TextView>(R.id.profileUsername).text =
-            activeUser?.getPartialUser()?.username ?: "defaultNotLoggedIn"
-        var activePartialUser = PartialUser("defaultName","dummy_id")
-        if(activeUser != null){
-            activePartialUser = activeUser.getPartialUser()
-        }
+        setUserInfo()
 
 
         /* Show status */
-        setStatus(activeUser != null && !activeUser.offlineMode)
+        setStatus(activeUser != null && !activeUser!!.offlineMode)
 
-        /* Achievements */ //Should add a listener to it
-        val achRecyclerView = findViewById<RecyclerView>(R.id.recyclerAch)
-        val achs = activeUser?.getAchievements() ?: mutableListOf()
-
-        val achAdapter =
-            AchViewAdapter(applicationContext, achs.reversed())
-        achRecyclerView.adapter = achAdapter
-        achRecyclerView.layoutManager = LinearLayoutManager(applicationContext)
-
-        /* Statistics */ //Should add a listener to it
-        val statRecyclerView = findViewById<RecyclerView>(R.id.recyclerStats)
-
-        val stats = activeUser?.getStats() ?: mutableListOf()
-
-        val statAdapter =
-            StatViewAdapter(applicationContext, stats)
-        statRecyclerView.adapter = statAdapter
-        statRecyclerView.layoutManager = LinearLayoutManager(applicationContext)
-
-        /* Games History */ //Should add a listener to it
-        val historyRecyclerView = findViewById<RecyclerView>(R.id.recyclerHist)
-
-        val hist = activeUser?.getGameHistory() ?: mutableListOf()
-
-        val historyAdapter =
-            HistoryViewAdapter(applicationContext, hist.reversed())
-        historyRecyclerView.adapter = historyAdapter
-        historyRecyclerView.layoutManager = LinearLayoutManager(applicationContext)
+        /* Achievements, Statistics and Game History */
+        setDefaultRecycler<Achievement,AchViewAdapter>(R.id.recyclerAch,activeUser!!.getAchievements().reversed() )
+        setDefaultRecycler<Statistic,StatViewAdapter>(R.id.recyclerStats,activeUser!!.getStats().reversed() )
+        setDefaultRecycler<History,HistoryViewAdapter>(R.id.recyclerHist,activeUser!!.getGameHistory().reversed() )
 
         /* Friends */
-        updateFriendListView()
-
-        db.getDbReference("CompleteUsers/" + activePartialUser.uid + "/friendsList").addValueEventListener(friendListListener())
+        setFriends()
 
         /* Messages */
+        setMessages()
 
-
-        if(activeUser != null && activeUser.offlineMode) {
-            updateMessageListView(activeUser.getMessageHistory())
-        } else {
-
-            db.referenceGet("CompleteUsers/" + activePartialUser.uid, "MessageHistory")
-                .addOnSuccessListener { msg ->
-                    val ls = msg.value as ArrayList<HashMap<String, Any>>?
-                    updateMessageListView(fromDBToMsgList(ls))
-                }
-            db.getDbReference("CompleteUsers/" + activePartialUser.uid + "/MessageHistory").addValueEventListener(messageListener())
-        }
-
-        /*Set the default at the start*/
+        /*Set the default UI at the start */
         activityStart()
 
-
+        /* Friend requests */
         val rootRef = FirebaseDatabase.
         getInstance("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app").reference
         val currentUser = activePartialUser // activeUser?.getPartialUser() ?: PartialUser("dummy", "dummy")
@@ -143,6 +104,57 @@ class ProfileActivity : AppCompatActivity() {
 
     }
 
+    /**
+     * Sets the user info for the rest activity to use
+     */
+    private fun setUserInfo() {
+        app = applicationContext as MyApplication
+        activeUser = app.getActiveUser()!!
+        activePartialUser = activeUser.getPartialUser()
+        findViewById<TextView>(R.id.profileUsername).text = activePartialUser.username
+    }
+
+    /**
+     * Sets the correct messages of the view
+     */
+    private fun setMessages() {
+
+        app.getMessageHandler().checkForNewMessages()
+
+        if(activeUser.offlineMode) {
+            updateMessageListView(activeUser.getMessageHistory())
+        } else {
+            updateMessageListView(activeUser.getMessageHistory())
+            db.addListener<ArrayList<HashMap<String, Any>>?>("CompleteUsers/" + activePartialUser.uid + "/MessageHistory",messageListener)
+        }
+    }
+
+    /**
+     * Sets the correct friends of the view : using a listener
+     */
+    private fun setFriends() {
+        updateFriendListView()
+        db.addListener("CompleteUsers/" + activePartialUser.uid + "/friendsList",friendListListener)
+    }
+
+    /**
+     * Sets up the recycler view of type U with data of type T
+     * @param UiId : the ui element to update
+     * @param data : the data used to update that ui element
+     */
+    private inline fun <T,reified U : RecyclerView.Adapter<*>> setDefaultRecycler(UiId : Int, data : List<T> ) {
+        val recyclerView = findViewById<RecyclerView>(UiId)
+
+        val adapter =
+            U::class.constructors.first().call(applicationContext, data)
+
+        recyclerView.adapter = adapter
+        recyclerView.layoutManager = LinearLayoutManager(applicationContext)
+    }
+
+    /**
+     * Sets the status of the user, online or offline
+     */
     fun setStatus(online: Boolean) {
         val onlineLight = findViewById<ImageView>(R.id.onlineStatus)
         val offlineLight = findViewById<ImageView>(R.id.offlineStatus)
@@ -155,72 +167,63 @@ class ProfileActivity : AppCompatActivity() {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        val app = applicationContext as MyApplication
-        val activeUser = app.getActiveUser()
-        findViewById<TextView>(R.id.profileUsername).text =
-            activeUser?.getPartialUser()?.username ?: "defaultNotLoggedIn"
-    }
 
+    /**
+     * How the UI must be at the beginning of the activity
+     */
     private fun activityStart() {
-        findViewById<ScrollView>(R.id.ProfileScroll).visibility = View.VISIBLE
-        findViewById<ScrollView>(R.id.InboxScroll).visibility = View.GONE
-        findViewById<ScrollView>(R.id.FriendsScroll).visibility = View.GONE
+        changeUi(R.id.ProfileScroll)
+
+        findViewById<Button>(R.id.innerProfileButton).setOnClickListener {
+            changeUi(R.id.ProfileScroll)
+        }
+        findViewById<Button>(R.id.inboxButton).setOnClickListener {
+            changeUi(R.id.InboxScroll)
+        }
+        findViewById<Button>(R.id.friendsButton).setOnClickListener {
+            changeUi(R.id.FriendsScroll)
+        }
+
     }
 
-    @Suppress("UNUSED_PARAMETER")
-    fun profileButton(view: View) {
-        activityStart()
+    /**
+     * Only make the view with the given id visible
+     * @param toView : the id of the view that has to be visible
+     */
+    private fun changeUi(toView : Int){
+        val ids = arrayOf(R.id.ProfileScroll,R.id.InboxScroll,R.id.FriendsScroll)
+
+        ids.map{ id ->
+            if(id == toView) {
+                findViewById<ScrollView>(id).visibility = View.VISIBLE
+            }else{
+                findViewById<ScrollView>(id).visibility = View.GONE
+            }
+        }
+
     }
 
-    @Suppress("UNUSED_PARAMETER")
-    fun inboxButton(view: View) {
-        findViewById<ScrollView>(R.id.ProfileScroll).visibility = View.GONE
-        findViewById<ScrollView>(R.id.InboxScroll).visibility = View.VISIBLE
-        findViewById<ScrollView>(R.id.FriendsScroll).visibility = View.GONE
-    }
-
-    @Suppress("UNUSED_PARAMETER")
-    fun friendsButton(view: View) {
-        findViewById<ScrollView>(R.id.ProfileScroll).visibility = View.GONE
-        findViewById<ScrollView>(R.id.InboxScroll).visibility = View.GONE
-        findViewById<ScrollView>(R.id.FriendsScroll).visibility = View.VISIBLE
-    }
-
+    /**
+     * Launch the account settings activity
+     */
     @Suppress("UNUSED_PARAMETER")
     fun settingsButton(view: View) {
-        val app = applicationContext as MyApplication
-        val activeUser = app.getActiveUser()
-
-        if(activeUser != null) {
-            if(activeUser.offlineMode || !checkForInternet(this)) {
-                Toast.makeText(this, "You're offline ! Please connect to the internet", Toast.LENGTH_LONG).show()
-            } else if(activeUser.guestBoolean) {
-                Toast.makeText(this, "You're in guest mode !", Toast.LENGTH_LONG).show()
-            } else {
-
-                val intent = Intent(this, AccountSettingsActivity::class.java)
-                startActivity(intent)
-            }
+        if(activeUser.offlineMode || !checkForInternet(this)) {
+            Toast.makeText(this, "You're offline ! Please connect to the internet", Toast.LENGTH_LONG).show()
+        } else if(activeUser.guestBoolean) {
+            Toast.makeText(this, "You're in guest mode !", Toast.LENGTH_LONG).show()
         } else {
-            Toast.makeText(this, "huh", Toast.LENGTH_LONG).show()
+            val intent = Intent(this, AccountSettingsActivity::class.java)
+            startActivity(intent)
         }
 
     }
 
-    private fun messageListener() = object : ValueEventListener {
 
-        override fun onDataChange(snapshot: DataSnapshot) {
-            val ls = snapshot.value as ArrayList<HashMap<String,Any>>?
-            updateMessageListView(fromDBToMsgList(ls))
-        }
 
-        override fun onCancelled(error: DatabaseError) {
-        }
-
-    }
-
+    /**
+     * Transform teh data of the database into a list of messages
+     */
     private fun fromDBToMsgList(ls : ArrayList<HashMap<String,Any>>?): ArrayList<Message> {
         var list = arrayListOf<Message>()
         if(ls != null){
@@ -230,6 +233,9 @@ class ProfileActivity : AppCompatActivity() {
         return list
     }
 
+    /**
+     * Use a list of messages to update the UI
+     */
     private fun updateMessageListView(list: ArrayList<Message>){
         val messageRecyclerView = findViewById<RecyclerView>(R.id.recyclerMsg)
 
@@ -247,20 +253,26 @@ class ProfileActivity : AppCompatActivity() {
         val app = applicationContext as MyApplication
         val user = app.getActiveUser()!!
 
-        AchievementsLibrary.achievementCheck(app,user,list.size.toLong(),AchievementsLibrary.messageLib)
+        AchievementsLibrary.achievementCheck(user,list.size.toLong(),AchievementsLibrary.messageLib)
 
     }
 
-    //if the adding friend uses the local list
-    private fun friendListListener() = object : ValueEventListener{
-        override fun onDataChange(snapshot: DataSnapshot) {
-            updateFriendListView()
-        }
+    /**
+     * The listener for when a new friend is added to the user
+     */
+    private val friendListListener = Listener<Unit?>{ updateFriendListView() }
 
-        override fun onCancelled(error: DatabaseError) {
-        }
+    /**
+     * Listener for when a new message is received
+     */
+    private val messageListener = Listener<ArrayList<HashMap<String, Any>>?> { value -> updateMessageListView(fromDBToMsgList(value)) }
 
-    }
+
+
+
+    /**
+     * Updates the UI with the new list of friends
+     */
     private fun updateFriendListView(){
         val friendRecyclerView = findViewById<RecyclerView>(R.id.recyclerFriend)
         val app = applicationContext as MyApplication
@@ -276,19 +288,21 @@ class ProfileActivity : AppCompatActivity() {
         friendRecyclerView.layoutManager = LinearLayoutManager(applicationContext)
 
         //Check for achievements
-        AchievementsLibrary.achievementCheck(app,activeUser!!,friends.size.toLong(),AchievementsLibrary.friendLib)
+        AchievementsLibrary.achievementCheck(activeUser!!,friends.size.toLong(),AchievementsLibrary.friendLib)
 
     }
 
-
+    /**
+     * Launch the activity to add friends
+     */
     @Suppress("UNUSED_PARAMETER")
     fun addFriendButton(view: View) {
         if(checkForInternet(this)) {
             startActivity(Intent(this, AddFriendActivity::class.java))
         } else {
             setStatus(false)
-
             Toast.makeText(this, "You're offline ! Please connect to the internet", Toast.LENGTH_LONG).show()
+
         }
     }
 
@@ -302,11 +316,15 @@ class ProfileActivity : AppCompatActivity() {
         if(bmp != null){
             QrCodeUtils.createImagePopup(bmp,this)
         }else{
-            TODO("There was an error while creating the bitmap, no idea what we can do here")
+            Toast.makeText(this, "The QR code could not be created, try again later",
+                Toast.LENGTH_LONG).show()
         }
 
     }
 
+    /**
+     * Transition to the QR scanner activity : allows to scan another users' code and send them a friend invite
+     */
     private fun launchQRScanner(){
         val intent = Intent(this, QrCodeScannerActivity::class.java)
         startActivity(intent)
@@ -314,7 +332,7 @@ class ProfileActivity : AppCompatActivity() {
 
 
     /**
-     * Transition to the scanning activity
+     * Checks if the permissions are correct before making the transition to the scanner
      */
     @Suppress("UNUSED_PARAMETER")
     fun useScannerQR(view : View){
@@ -325,6 +343,12 @@ class ProfileActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Check if the permissions have been correctly granted. If not do not transition to the scanner
+     * @param requestCode
+     * @param permissions
+     * @param grantResults
+     */
     @Override
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
@@ -344,5 +368,29 @@ class ProfileActivity : AppCompatActivity() {
         const val QR_CAMERA_REQUEST_CODE = 1256
     }
 
+    /**
+     * When the activity is resumed, check if new messages have arrived, to be able to send a notification if needed
+     */
+    override fun onResume() {
+        super.onResume()
+        findViewById<TextView>(R.id.profileUsername).text = activeUser.getPartialUser().username
+
+        app.getMessageHandler().checkForNewMessages()
+    }
+
+    override fun onBackPressed() {
+        val intent = Intent(applicationContext, MainMenuActivity::class.java)
+        startActivity(intent)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        db.removeListener("CompleteUsers/" + activePartialUser.uid + "/friendsList",friendListListener)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        db.removeListener("CompleteUsers/" + activePartialUser.uid + "/friendsList",friendListListener)
+    }
 
 }

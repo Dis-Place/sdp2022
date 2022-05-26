@@ -7,6 +7,8 @@ import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.PreferenceManager
+import com.github.displace.sdp2022.database.DatabaseFactory
+import com.github.displace.sdp2022.database.GoodDB
 import com.github.displace.sdp2022.gameComponents.GameEvent
 import com.github.displace.sdp2022.gameComponents.Point
 import com.github.displace.sdp2022.gameVersus.Chat
@@ -41,6 +43,7 @@ class GameVersusViewActivity : AppCompatActivity() {
     val statsList: ArrayList<String> = arrayListOf()
 
     private lateinit var db: RealTimeDatabase
+    private lateinit var dbGood: GoodDB
 
     private lateinit var game: GameVersusViewModel
     private val extras: Bundle = Bundle()
@@ -184,6 +187,7 @@ class GameVersusViewActivity : AppCompatActivity() {
             "https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",
             false
         ) as RealTimeDatabase
+        dbGood = DatabaseFactory.getDB(intent)
         order = Random.nextDouble(0.0, 1000000000000000000000000.0)
         clientServerLink = ClientServerLink(db, order)
         game = GameVersusViewModel(clientServerLink)
@@ -199,7 +203,7 @@ class GameVersusViewActivity : AppCompatActivity() {
         gpsPositionUpdater = GPSPositionUpdater(this, gpsPositionManager)
 
         val clickSoundPlayer = if (PreferenceManager.getDefaultSharedPreferences(this)
-                .getBoolean(SFX_SETTINGS_SWITCH, true)
+                .getBoolean(getString(R.string.sfx), true)
         )
             MediaPlayer.create(this, R.raw.zapsplat_sound_design_hit_punchy_bright_71725)
         else null
@@ -256,7 +260,7 @@ class GameVersusViewActivity : AppCompatActivity() {
         val chatPath = "/GameInstance/Game" + intent.getStringExtra("gid")!! + "/Chat"
         chat = Chat(
             chatPath,
-            db,
+            dbGood,
             findViewById<View?>(android.R.id.content).rootView,
             applicationContext
         )
@@ -266,7 +270,7 @@ class GameVersusViewActivity : AppCompatActivity() {
         musicPlayer.setLooping(true)
 
         if (PreferenceManager.getDefaultSharedPreferences(this)
-                .getBoolean(MUSIC_SETTINGS_SWITCH, true)
+                .getBoolean(getString(R.string.music), true)
         ) {
             musicPlayer.start()
         }
@@ -323,7 +327,7 @@ class GameVersusViewActivity : AppCompatActivity() {
             )
         }
         if (PreferenceManager.getDefaultSharedPreferences(this)
-                .getBoolean(SFX_SETTINGS_SWITCH, true)
+                .getBoolean(getString(R.string.sfx), true)
         ) {
             endPlayer.start()
         }
@@ -392,7 +396,7 @@ class GameVersusViewActivity : AppCompatActivity() {
 
     override fun onResume() {
         if (PreferenceManager.getDefaultSharedPreferences(this)
-                .getBoolean(MUSIC_SETTINGS_SWITCH, true)
+                .getBoolean(getString(R.string.music), true)
         ) {
             musicPlayer.start()
         }
@@ -401,7 +405,7 @@ class GameVersusViewActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         if (PreferenceManager.getDefaultSharedPreferences(this)
-                .getBoolean(MUSIC_SETTINGS_SWITCH, true)
+                .getBoolean(getString(R.string.music), true)
         ) {
             musicPlayer.stop()
         }
@@ -434,7 +438,7 @@ class GameVersusViewActivity : AppCompatActivity() {
         chat.removeListener()
 
         if (PreferenceManager.getDefaultSharedPreferences(this)
-                .getBoolean(MUSIC_SETTINGS_SWITCH, true)
+                .getBoolean(getString(R.string.music), true)
         ) {
             musicPlayer.pause()
         }

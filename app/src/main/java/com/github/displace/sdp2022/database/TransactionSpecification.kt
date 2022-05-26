@@ -49,6 +49,22 @@ class TransactionSpecification<T> private constructor(
         var preCheck: (T?) -> Boolean = { _ -> true }
 
         /**
+         * Set the preCheck to a new one
+         */
+        fun preCheckChange ( newPreCheck : (T?) -> Boolean ) : Builder<T>{
+            preCheck = newPreCheck
+            return this
+        }
+
+        /**
+         * Set the onCompleteCallback to a new one
+         */
+        fun onCompleteChange ( newOnComplete : (Boolean) -> Unit ) : Builder<T>{
+            onCompleteCallback = newOnComplete
+            return this
+        }
+
+        /**
          * @return corresponding TransactionSpecification
          */
         fun build(): TransactionSpecification<T> {
@@ -56,5 +72,7 @@ class TransactionSpecification<T> private constructor(
                 preCheck, computeUpdatedData, onCompleteCallback
             )
         }
+
+
     }
 }
