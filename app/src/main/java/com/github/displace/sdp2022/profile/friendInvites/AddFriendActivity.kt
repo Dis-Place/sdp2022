@@ -14,14 +14,22 @@ import com.github.displace.sdp2022.users.PartialUser
 import com.google.firebase.database.*
 
 
-private const val TAG = "AddFriendActivity"
+private const val TAG = "AddFriendActivity"  // tag for debugging
 
+/**
+ * Activity to be to send friend requests manually
+ */
 class AddFriendActivity : AppCompatActivity() {
 
 
     private lateinit var rootRef: DatabaseReference
     private lateinit var currentUser : PartialUser
 
+    /**
+     * Gets the root reference to the database
+     * As well as the partial user of the current user if there is one
+     * @param savedInstanceState : the saved instance
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(TAG, "Entering Activity")
         super.onCreate(savedInstanceState)
@@ -37,23 +45,28 @@ class AddFriendActivity : AppCompatActivity() {
         currentUser = activeUser?.getPartialUser() ?: PartialUser("dummy", "dummy")
     }
 
+    /**
+     * Reads the user input from the text view
+     * checks if the input is valid
+     * And sends a friend request
+     * @param view : the view of the activity, will not be used
+     */
+    @Suppress("UNUSED_PARAMETER")
     fun sendFriendRequest(view: View) {
         closeKeyBoard()
         val editText = findViewById<View>(R.id.friendRequestEditText) as EditText
-        val friendId = editText.text.toString()
-//        Toast.makeText(this , friendId, Toast.LENGTH_LONG).show()
-
         val target = editText.text.toString()
 
         FriendRequest.sendFriendRequest(this, target, rootRef, currentUser)
-
-
 
         editText.text.clear()
         editText.hint = "Enter Another Friend"
 
     }
 
+    /**
+     * Quick method to close the keyboard
+     */
     fun closeKeyBoard() {
         val view = this.currentFocus
         if (view != null) {
