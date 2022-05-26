@@ -234,6 +234,7 @@ class AccountSettingsActivity : AppCompatActivity() {
     @Suppress("DEPRECATION")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (resultCode == Activity.RESULT_OK) {
+            profilePic.setTag(R.id.profilePic, "modifiedTag")   // Changes the tag so that the automatic tests know that the picture changed
             if (requestCode == IMAGE_CAMERA_REQUEST) {      // If the picture comes from the camera
                 uploadProfilePhoto(imageUri)               // imageUri will contain the picture (see selectPicFromCamera() )
             } else if (requestCode == IMAGE_GALLERY_REQUEST) {  // If the picture comes from the gallery
@@ -255,7 +256,6 @@ class AccountSettingsActivity : AppCompatActivity() {
         } else {
             imgDBReference.putFile(imageUri).addOnSuccessListener {
                 profilePic.setImageURI(imageUri)
-                profilePic.setTag(R.id.profilePic, "modifiedTag")   // Changes the tag so that the automatic tests know that the picture changed
                 showToastText("Profile pic uploaded")
             }.addOnFailureListener {
                 showToastText("Fail to upload profile pic")
