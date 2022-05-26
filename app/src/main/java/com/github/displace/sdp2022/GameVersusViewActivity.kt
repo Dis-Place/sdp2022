@@ -15,8 +15,6 @@ import com.github.displace.sdp2022.gameVersus.Chat
 import com.github.displace.sdp2022.gameVersus.ClientServerLink
 import com.github.displace.sdp2022.gameVersus.GameVersusViewModel
 import com.github.displace.sdp2022.map.*
-import com.github.displace.sdp2022.settings.MUSIC_SETTINGS_SWITCH
-import com.github.displace.sdp2022.settings.SFX_SETTINGS_SWITCH
 import com.github.displace.sdp2022.util.DateTimeUtil
 import com.github.displace.sdp2022.util.PreferencesUtil
 import com.github.displace.sdp2022.util.gps.GPSPositionManager
