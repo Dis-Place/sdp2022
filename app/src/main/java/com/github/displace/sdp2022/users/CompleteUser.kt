@@ -14,7 +14,6 @@ import com.github.displace.sdp2022.profile.statistics.Statistic
 import com.github.displace.sdp2022.util.DateTimeUtil
 import com.google.firebase.auth.FirebaseUser
 import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
 import kotlin.random.Random
 import kotlin.random.nextUInt
 
