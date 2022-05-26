@@ -41,22 +41,6 @@ class MainMenuActivityTest {
             ?.removeUserFromDatabase()
     }
 
-    /*
-     Test if the input of the main screen is correctly shown in the main menu
-     */
-    @Test
-    fun testingInput() {
-
-        val intent =
-            Intent(ApplicationProvider.getApplicationContext(), MainMenuActivity::class.java)
-        val scenario = ActivityScenario.launch<MainMenuActivity>(intent)
-
-        scenario.use {
-            Espresso.onView(withId(R.id.WelcomeText))
-                .check(matches(withText("Welcome defaultName!")))
-        }
-    }
-
     @Test
     fun testProfileButton() {
         Intents.init()

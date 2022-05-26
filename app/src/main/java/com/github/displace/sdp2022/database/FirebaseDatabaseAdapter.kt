@@ -42,6 +42,7 @@ class FirebaseDatabaseAdapter(referenceUrl: String, isDebug: Boolean) : GoodDB {
         get(reference).removeValue()
     }
 
+    @Suppress("UNCHECKED_CAST")
     override fun <T> getThenCall(reference: String, callback: (T?) -> Unit) {
         get(reference).get().addOnSuccessListener {
             callback(it.value as T?)
@@ -52,6 +53,7 @@ class FirebaseDatabaseAdapter(referenceUrl: String, isDebug: Boolean) : GoodDB {
         get(reference).runTransaction(transactionHandler(specification))
     }
 
+    @Suppress("UNCHECKED_CAST")
     override fun <T> addListener(reference: String, listener: Listener<T?>) {
         val listenerFireDB = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -74,10 +76,11 @@ class FirebaseDatabaseAdapter(referenceUrl: String, isDebug: Boolean) : GoodDB {
         }
     }
 
+    @Suppress("UNCHECKED_CAST")
     private fun <T> transactionHandler(specification: TransactionSpecification<T>): Transaction.Handler {
         return object : Transaction.Handler {
             override fun doTransaction(currentData: MutableData): Transaction.Result {
-                val old = currentData.value as T?
+                val old = currentData.value as T? ?: return Transaction.success(currentData)
                 if(specification.preCheck(old)) {
                     currentData.value = specification.computeUpdatedData(old)
                     return Transaction.success(currentData)

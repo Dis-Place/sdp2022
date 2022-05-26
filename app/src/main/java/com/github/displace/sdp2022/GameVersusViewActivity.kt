@@ -7,6 +7,8 @@ import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.PreferenceManager
+import com.github.displace.sdp2022.database.DatabaseFactory
+import com.github.displace.sdp2022.database.GoodDB
 import com.github.displace.sdp2022.gameComponents.GameEvent
 import com.github.displace.sdp2022.gameComponents.Point
 import com.github.displace.sdp2022.gameVersus.Chat
@@ -39,6 +41,7 @@ class GameVersusViewActivity : AppCompatActivity() {
     val statsList: ArrayList<String> = arrayListOf()
 
     private lateinit var db: RealTimeDatabase
+    private lateinit var dbGood: GoodDB
 
     private lateinit var game: GameVersusViewModel
     private val extras: Bundle = Bundle()
@@ -63,7 +66,7 @@ class GameVersusViewActivity : AppCompatActivity() {
     private var gid = ""
     private var uid = ""
 
-    private var oldPos = GeoPoint(0.0,0.0)
+    private var oldPos = GeoPoint(0.0, 0.0)
     private var totalDist = 0.0
     private var totalTime = 0
 
@@ -182,6 +185,7 @@ class GameVersusViewActivity : AppCompatActivity() {
             "https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",
             false
         ) as RealTimeDatabase
+        dbGood = DatabaseFactory.getDB(intent)
         order = Random.nextDouble(0.0, 1000000000000000000000000.0)
         clientServerLink = ClientServerLink(db, order)
         game = GameVersusViewModel(clientServerLink)
@@ -197,13 +201,13 @@ class GameVersusViewActivity : AppCompatActivity() {
         gpsPositionUpdater = GPSPositionUpdater(this, gpsPositionManager)
 
         val clickSoundPlayer = if (PreferenceManager.getDefaultSharedPreferences(this)
-                .getBoolean(SFX_SETTINGS_SWITCH, true)
+                .getBoolean(getString(R.string.sfx), true)
         )
             MediaPlayer.create(this, R.raw.zapsplat_sound_design_hit_punchy_bright_71725)
         else null
 
         pinpointsManager = PinpointsManager(mapView, clickSoundPlayer)
-        for(i in nbPlayer downTo 0){
+        for (i in nbPlayer downTo 0) {
 
             otherPlayersPinpoints = otherPlayersPinpoints.plus(pinpointsManager.PinpointsRef())
         }
@@ -254,7 +258,7 @@ class GameVersusViewActivity : AppCompatActivity() {
         val chatPath = "/GameInstance/Game" + intent.getStringExtra("gid")!! + "/Chat"
         chat = Chat(
             chatPath,
-            db,
+            dbGood,
             findViewById<View?>(android.R.id.content).rootView,
             applicationContext
         )
@@ -264,7 +268,7 @@ class GameVersusViewActivity : AppCompatActivity() {
         musicPlayer.setLooping(true)
 
         if (PreferenceManager.getDefaultSharedPreferences(this)
-                .getBoolean(MUSIC_SETTINGS_SWITCH, true)
+                .getBoolean(getString(R.string.music), true)
         ) {
             musicPlayer.start()
         }
@@ -276,11 +280,11 @@ class GameVersusViewActivity : AppCompatActivity() {
         musicPlayer.isLooping = false
     }
 
-    private fun addTotals(point : GeoPoint){
-        if(point.latitude != 0.0 && point.longitude != 0.0 && oldPos.longitude == 0.0 && oldPos.latitude == 0.0){
+    private fun addTotals(point: GeoPoint) {
+        if (point.latitude != 0.0 && point.longitude != 0.0 && oldPos.longitude == 0.0 && oldPos.latitude == 0.0) {
             oldPos = point
         }
-        totalDist += CoordinatesUtil.distance(oldPos,point)
+        totalDist += CoordinatesUtil.distance(oldPos, point)
         oldPos = point
         totalTime += 5
     }
@@ -321,7 +325,7 @@ class GameVersusViewActivity : AppCompatActivity() {
             )
         }
         if (PreferenceManager.getDefaultSharedPreferences(this)
-                .getBoolean(SFX_SETTINGS_SWITCH, true)
+                .getBoolean(getString(R.string.sfx), true)
         ) {
             endPlayer.start()
         }
@@ -330,9 +334,9 @@ class GameVersusViewActivity : AppCompatActivity() {
         extras.putString(EXTRA_MODE, gameMode)
         intent.putExtras(extras)
 
-        intent.putExtra("others",others as Serializable)
-        intent.putExtra("totalDist",totalDist)
-        intent.putExtra("totalTime",totalTime)
+        intent.putExtra("others", others as Serializable)
+        intent.putExtra("totalDist", totalDist)
+        intent.putExtra("totalTime", totalTime)
 
         startActivity(intent)
     }
@@ -354,7 +358,7 @@ class GameVersusViewActivity : AppCompatActivity() {
                 endListener
             )
 
-            if(!intent.getStringExtra("uid")!!.contains("guest")) {
+            if (!intent.getStringExtra("uid")!!.contains("guest")) {
                 db.referenceGet(
                     "CompleteUsers/${otherPlayerId}/CompleteUser/partialUser",
                     "username"
@@ -368,12 +372,14 @@ class GameVersusViewActivity : AppCompatActivity() {
                 }
             }
 
-            try{
-            pinpointsDBHandler.enableAutoupdateLocalPinpoints(
-                otherPlayerId,
-                otherPlayersPinpoints[i]
-            )
-            }catch(e: Exception){ throw error(otherPlayerId + " i = $i")}
+            try {
+                pinpointsDBHandler.enableAutoupdateLocalPinpoints(
+                    otherPlayerId,
+                    otherPlayersPinpoints[i]
+                )
+            } catch (e: Exception) {
+                throw error(otherPlayerId + " i = $i")
+            }
 
             game.handleEvent(
                 GameEvent.OnStart(
@@ -390,7 +396,7 @@ class GameVersusViewActivity : AppCompatActivity() {
 
     override fun onResume() {
         if (PreferenceManager.getDefaultSharedPreferences(this)
-                .getBoolean(MUSIC_SETTINGS_SWITCH, true)
+                .getBoolean(getString(R.string.music), true)
         ) {
             musicPlayer.start()
         }
@@ -399,7 +405,7 @@ class GameVersusViewActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         if (PreferenceManager.getDefaultSharedPreferences(this)
-                .getBoolean(MUSIC_SETTINGS_SWITCH, true)
+                .getBoolean(getString(R.string.music), true)
         ) {
             musicPlayer.stop()
         }
@@ -432,7 +438,7 @@ class GameVersusViewActivity : AppCompatActivity() {
         chat.removeListener()
 
         if (PreferenceManager.getDefaultSharedPreferences(this)
-                .getBoolean(MUSIC_SETTINGS_SWITCH, true)
+                .getBoolean(getString(R.string.music), true)
         ) {
             musicPlayer.pause()
         }

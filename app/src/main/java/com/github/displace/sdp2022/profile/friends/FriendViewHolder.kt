@@ -9,8 +9,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.R
 import com.github.displace.sdp2022.RealTimeDatabase
+import com.github.displace.sdp2022.database.DatabaseFactory
+import com.github.displace.sdp2022.database.GoodDB
 import com.github.displace.sdp2022.profile.FriendDeleter
-import com.github.displace.sdp2022.profile.MessageUpdater
+import com.github.displace.sdp2022.profile.messageUpdater
 import com.github.displace.sdp2022.profile.messages.SendMessageActivity
 import com.github.displace.sdp2022.users.PartialUser
 
@@ -38,16 +40,14 @@ class FriendViewHolder(itemview: View) : RecyclerView.ViewHolder(itemview) {
             val lobbyID = app.getLobbyID()
             val message: String = lobbyID
 
-            val db : RealTimeDatabase = RealTimeDatabase().noCacheInstantiate("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",false) as RealTimeDatabase
+            val intent : Intent = Intent() //TODO()
+            val db : GoodDB = DatabaseFactory.getDB(intent)
             val activeUser = app.getActiveUser()
             var activePartialUser = PartialUser("defaultName","dummy_id")
             if(activeUser != null){
                 activePartialUser = activeUser.getPartialUser()
             }
-
-            db.getDbReference("CompleteUsers/" + friend.uid + "/MessageHistory").runTransaction(
-                MessageUpdater(v.context.applicationContext,message,activePartialUser)
-            )
+            db.runTransaction("CompleteUsers/" + friend.uid + "/MessageHistory",messageUpdater(message,activePartialUser))
         }
 
         itemview.setOnClickListener { v ->

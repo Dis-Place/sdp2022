@@ -5,58 +5,35 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import android.widget.Toast
 
-import com.github.displace.sdp2022.MyApplication
+import com.github.displace.sdp2022.database.TransactionSpecification
 import com.github.displace.sdp2022.profile.friendInvites.Invite
 import com.github.displace.sdp2022.profile.friendInvites.InviteWithId
 import com.github.displace.sdp2022.profile.messages.Message
 import com.github.displace.sdp2022.users.PartialUser
+import com.github.displace.sdp2022.util.DateTimeUtil
 import com.google.firebase.database.*
-import java.net.ConnectException
 
-class MessageUpdater(val applicationContext : Context, val message : String, private val activePartialUser : PartialUser ) : Transaction.Handler {
-    val app = applicationContext as MyApplication
-    override fun doTransaction(currentData: MutableData): Transaction.Result {
-        val ls = currentData.value as ArrayList<MutableMap<String,Any>>?
-        val msg = Message(message,app.getCurrentDate(), activePartialUser)
-        if(ls == null){
-            return Transaction.success(currentData)
-        }else{
+/**
+ * A class that represent the transaction done while sending a message
+ * It is used in the SendMessageActivity and to create invitations for private lobbies in MatchMaking
+ *
+ * @param message : the message content
+ * @param activePartialUser : the current user, which is the sender of the message
+ */
+fun messageUpdater(message : String, activePartialUser : PartialUser) : TransactionSpecification<ArrayList<MutableMap<String,Any>>> =
+    TransactionSpecification.Builder<ArrayList<MutableMap<String,Any>>> { ls ->
+
+        val msg = Message(message, DateTimeUtil.currentDate(), activePartialUser)
+        if(ls != null){
             val msgMap = HashMap<String,Any>()
             msgMap["message"] = msg.message
-            msgMap["date"] = app.getCurrentDate()
+            msgMap["date"] = DateTimeUtil.currentDate()
             msgMap["sender"] = msg.sender
             ls.add(0,msgMap)
         }
-        currentData.value = ls
-        return Transaction.success(currentData)
-    }
+        return@Builder ls!!
 
-    override fun onComplete(
-        error: DatabaseError?,
-        committed: Boolean,
-        currentData: DataSnapshot?
-    ) {
-    }
-
-}
-
-/*
-class MessageReceiver{
-
-    fun getListOfMessages(maps: ArrayList<HashMap<String,Any>>) : ArrayList<Message> {
-        val arr : ArrayList<Message> = arrayListOf()
-        for( map in maps ){
-            val sender = map["sender"] as HashMap<String,Any>
-            val m = Message(map["message"] as String,map["date"] as String, PartialUser(sender["username"] as String,sender["uid"] as String) )
-            arr.add(m)
-        }
-        return arr
-    }
-
-}*/
-
-
-
+    }.build()
 
 class FriendRequest {
     companion object {

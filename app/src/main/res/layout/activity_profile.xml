@@ -276,7 +276,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:onClick="profileButton"
             android:text="PROFILE" />
 
         <Button
@@ -284,7 +283,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:onClick="inboxButton"
             android:text="INBOX" />
 
         <Button
@@ -292,7 +290,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:onClick="friendsButton"
             android:text="FRIENDS" />
 
     </LinearLayout>
