@@ -1,13 +1,10 @@
 package com.github.displace.sdp2022.profile.qrcode
 
-import android.content.DialogInterface
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.test.core.app.ApplicationProvider
 import com.budiyev.android.codescanner.AutoFocusMode
 import com.budiyev.android.codescanner.CodeScanner
 import com.budiyev.android.codescanner.CodeScannerView
@@ -16,9 +13,7 @@ import com.budiyev.android.codescanner.ErrorCallback
 import com.budiyev.android.codescanner.ScanMode
 import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.R
-import com.github.displace.sdp2022.RealTimeDatabase
 import com.github.displace.sdp2022.profile.FriendRequest
-import com.github.displace.sdp2022.profile.MessageUpdater
 import com.github.displace.sdp2022.profile.ProfileActivity
 import com.github.displace.sdp2022.users.PartialUser
 import com.google.firebase.database.FirebaseDatabase
@@ -54,8 +49,9 @@ class QrCodeScannerActivity : AppCompatActivity() {
         codeScanner.isFlashEnabled = false // Whether to enable flash or not
 
         /**
-         * setup callbacks
+         * setup QR code callbacks
          */
+        //The scanner has found a QR code and has decoded it
         codeScanner.decodeCallback = DecodeCallback {
             runOnUiThread {
                 val scanned = it.text
@@ -67,12 +63,14 @@ class QrCodeScannerActivity : AppCompatActivity() {
                 }
             }
         }
+        //The scanner has encountered an error
         codeScanner.errorCallback = ErrorCallback { // or ErrorCallback.SUPPRESS
             runOnUiThread {
                 Toast.makeText(this, "Camera initialization error: ${it.message}",
                     Toast.LENGTH_LONG).show()
             }
         }
+        //The user clicks on the scanner
         scannerView.setOnClickListener {
             codeScanner.startPreview()
         }
@@ -88,7 +86,7 @@ class QrCodeScannerActivity : AppCompatActivity() {
      *  - create the friend invitation
      *  - return to the previous activity (which is QrCodeTemp for now : use a simple intent)
      */
-    fun showScanPrompt(partialUser : PartialUser){
+    private fun showScanPrompt(partialUser : PartialUser){
         val alertDialogBuilder = AlertDialog.Builder(this)
 
         // setting the alert that will ask the user to confirm to send the request..
@@ -130,6 +128,9 @@ class QrCodeScannerActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         codeScanner.startPreview()
+
+        val app = applicationContext as MyApplication
+        app.getMessageHandler().checkForNewMessages()
     }
 
     /**

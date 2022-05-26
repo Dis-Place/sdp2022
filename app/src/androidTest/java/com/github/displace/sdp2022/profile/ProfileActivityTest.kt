@@ -17,6 +17,7 @@ import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.R
+import com.github.displace.sdp2022.database.MockDatabaseUtils
 import com.github.displace.sdp2022.profile.friendInvites.AddFriendActivity
 import com.github.displace.sdp2022.profile.friends.FriendViewHolder
 import com.github.displace.sdp2022.profile.messages.MessageHandler
@@ -33,13 +34,19 @@ class ProfileActivityTest {
 
     lateinit var completeUser: CompleteUser
 
+    val intent =
+        Intent(ApplicationProvider.getApplicationContext(), ProfileActivity::class.java)
+
+
     @Before
     fun before(){
+        MockDatabaseUtils.mockIntent(intent)
         val app = ApplicationProvider.getApplicationContext() as MyApplication
         completeUser = CompleteUser(app,null)
         app.setActiveUser(completeUser)
-        Thread.sleep(500)
-        app.setMessageHandler(MessageHandler(completeUser.getPartialUser(), app))
+        Thread.sleep(100)
+        app.setMessageHandler(MessageHandler(completeUser.getPartialUser(),app,intent))
+        Thread.sleep(100)
     }
 
     @After
@@ -51,8 +58,6 @@ class ProfileActivityTest {
     @Test
     fun testInboxButton() {
 
-        val intent =
-            Intent(ApplicationProvider.getApplicationContext(), ProfileActivity::class.java)
         val scenario = ActivityScenario.launch<ProfileActivity>(intent)
 
         scenario.use {
@@ -62,17 +67,11 @@ class ProfileActivityTest {
                 .check(ViewAssertions.matches(isDisplayed()))
         }
     }
+/*
+    @Test
+    fun testMessageInInboxButton() {
 
-    /**
-     * TODO: Commented to pass the tests because it has a really weird behaviour with cirrus
-     * Should be fixed when we fully utilize the MockDB
-     */
 
-    //@Test
-    /*fun testMessageInInboxButton() {
-
-        val intent =
-            Intent(ApplicationProvider.getApplicationContext(), ProfileActivity::class.java)
         val scenario = ActivityScenario.launch<ProfileActivity>(intent)
         scenario.use { _ ->
             Espresso.onView(ViewMatchers.withId(R.id.inboxButton)).perform(click())
@@ -96,8 +95,7 @@ class ProfileActivityTest {
     @Test
     fun testProfileButton() {
 
-        val intent =
-            Intent(ApplicationProvider.getApplicationContext(), ProfileActivity::class.java)
+        MockDatabaseUtils.mockIntent(intent)
         val scenario = ActivityScenario.launch<ProfileActivity>(intent)
 
         scenario.use {
@@ -111,8 +109,7 @@ class ProfileActivityTest {
     @Test
     fun testFriendsButton() {
 
-        val intent =
-            Intent(ApplicationProvider.getApplicationContext(), ProfileActivity::class.java)
+        MockDatabaseUtils.mockIntent(intent)
         val scenario = ActivityScenario.launch<ProfileActivity>(intent)
 
         scenario.use {
@@ -126,8 +123,7 @@ class ProfileActivityTest {
     @Test
     fun testSettingsButton() {
 
-        val intent =
-            Intent(ApplicationProvider.getApplicationContext(), ProfileActivity::class.java)
+        MockDatabaseUtils.mockIntent(intent)
         val scenario = ActivityScenario.launch<ProfileActivity>(intent)
 
         scenario.use {
@@ -145,8 +141,6 @@ class ProfileActivityTest {
         app.setActiveUser(completeUser)
         Thread.sleep(100)
 
-        val intent =
-            Intent(ApplicationProvider.getApplicationContext(), ProfileActivity::class.java)
         val scenario = ActivityScenario.launch<ProfileActivity>(intent)
 
         scenario.use {
@@ -163,10 +157,9 @@ class ProfileActivityTest {
         completeUser = CompleteUser(app,null, guestBoolean = true)
         app.setActiveUser(completeUser)
         Thread.sleep(100)
-        app.setMessageHandler(MessageHandler(completeUser.getPartialUser(),app))
+        app.setMessageHandler(MessageHandler(completeUser.getPartialUser(),app,intent))
 
-        val intent =
-            Intent(ApplicationProvider.getApplicationContext(), ProfileActivity::class.java)
+        MockDatabaseUtils.mockIntent(intent)
         val scenario = ActivityScenario.launch<ProfileActivity>(intent)
 
         scenario.use {
@@ -179,9 +172,7 @@ class ProfileActivityTest {
 
     @Test
     fun testMessageInFriendsButton() {
-
-        val intent =
-            Intent(ApplicationProvider.getApplicationContext(), ProfileActivity::class.java)
+        MockDatabaseUtils.mockIntent(intent)
         val scenario = ActivityScenario.launch<ProfileActivity>(intent)
         scenario.use {
             Espresso.onView(ViewMatchers.withId(R.id.friendsButton)).perform(click())
@@ -206,8 +197,6 @@ class ProfileActivityTest {
     @Test
     fun testFriendProfile() {
 
-        val intent =
-            Intent(ApplicationProvider.getApplicationContext(), ProfileActivity::class.java)
         val scenario = ActivityScenario.launch<ProfileActivity>(intent)
 
         scenario.use {

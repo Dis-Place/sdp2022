@@ -66,5 +66,14 @@ class FriendProfile : AppCompatActivity() {
             historyRecyclerView.layoutManager = LinearLayoutManager(applicationContext)
         }
 
+        app.getMessageHandler().checkForNewMessages()
+
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        val app = applicationContext as MyApplication
+        app.getMessageHandler().checkForNewMessages()
     }
 }

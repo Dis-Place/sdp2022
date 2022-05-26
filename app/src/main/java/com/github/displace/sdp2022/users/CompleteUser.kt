@@ -104,7 +104,7 @@ class CompleteUser(
         if (offlineMode)
             return
 
-        if(!achievements.contains(ach)){
+        if(!achievements.map{ ach -> ach.name}.contains(ach.name)){
 
             /**
              * This part should also send a notification
@@ -218,9 +218,9 @@ class CompleteUser(
             friendsList = mutableListOf(
                 PartialUser("THE SYSTEM", "dummy_friend_id")
             )
-            gameHistory = mutableListOf(
+       /*     gameHistory = mutableListOf(
                 History("dummy_map", getCurrentDate(), "VICTORY")
-            )
+            )*/
             gameHistory = mutableListOf()
             createFirstMessageList()
 
@@ -290,7 +290,7 @@ class CompleteUser(
                 if(gameHistoryHash != null) {
                     gameHistory = gameHistoryHash.map { g ->
                         History(
-                            g["map"]!!,
+                            g["gameMode"]!!,
                             g["date"]!!,
                             g["result"]!!
                         )

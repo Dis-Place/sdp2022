@@ -7,6 +7,8 @@ import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.PreferenceManager
+import com.github.displace.sdp2022.database.DatabaseFactory
+import com.github.displace.sdp2022.database.GoodDB
 import com.github.displace.sdp2022.gameComponents.GameEvent
 import com.github.displace.sdp2022.gameComponents.Point
 import com.github.displace.sdp2022.gameVersus.Chat
@@ -39,6 +41,7 @@ class GameVersusViewActivity : AppCompatActivity() {
     val statsList: ArrayList<String> = arrayListOf()
 
     private lateinit var db: RealTimeDatabase
+    private lateinit var dbGood: GoodDB
 
     private lateinit var game: GameVersusViewModel
     private val extras: Bundle = Bundle()
@@ -182,6 +185,7 @@ class GameVersusViewActivity : AppCompatActivity() {
             "https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",
             false
         ) as RealTimeDatabase
+        dbGood = DatabaseFactory.getDB(intent)
         order = Random.nextDouble(0.0, 1000000000000000000000000.0)
         clientServerLink = ClientServerLink(db, order)
         game = GameVersusViewModel(clientServerLink)
@@ -254,7 +258,7 @@ class GameVersusViewActivity : AppCompatActivity() {
         val chatPath = "/GameInstance/Game" + intent.getStringExtra("gid")!! + "/Chat"
         chat = Chat(
             chatPath,
-            db,
+            dbGood,
             findViewById<View?>(android.R.id.content).rootView,
             applicationContext
         )

@@ -88,7 +88,7 @@ dependencies {
     testImplementation 'org.mockito:mockito-core:3.8.0'
     androidTestImplementation 'org.mockito:mockito-android:3.8.0'
     testImplementation 'org.mockito:mockito-inline:2.8.47'
-
+    implementation "org.jetbrains.kotlin:kotlin-reflect:1.6.20-RC"
 
 
 }

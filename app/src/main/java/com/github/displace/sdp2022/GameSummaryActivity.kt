@@ -16,6 +16,7 @@ import com.github.displace.sdp2022.profile.statistics.Statistic
 import com.github.displace.sdp2022.users.CompleteUser
 import com.github.displace.sdp2022.users.PartialUser
 import com.github.displace.sdp2022.profile.achievements.AchievementsLibrary
+import com.github.displace.sdp2022.util.DateTimeUtil
 import java.lang.Exception
 
 class GameSummaryActivity : AppCompatActivity() {
@@ -87,6 +88,8 @@ class GameSummaryActivity : AppCompatActivity() {
         friendRecyclerView.adapter = friendAdapter
         friendRecyclerView.layoutManager = LinearLayoutManager(applicationContext)
 
+        app.getMessageHandler().checkForNewMessages()
+
     }
 
     fun addRoundStat(info: String) {
@@ -127,7 +130,7 @@ class GameSummaryActivity : AppCompatActivity() {
      */
     private fun gameHistoryUpdate(result : String) {
         if( mode != null) {
-            app.getActiveUser()!!.addGameInHistory(mode!!, app.getCurrentDate(), result)
+            app.getActiveUser()!!.addGameInHistory(mode!!, DateTimeUtil.currentDate(), result)
         }
         statsUpdate(result)
     }
@@ -146,11 +149,11 @@ class GameSummaryActivity : AppCompatActivity() {
 
         user.updateStats("Games Played" , played.value+1)
         //Check for achievements
-        AchievementsLibrary.achievementCheck(app,user,played.value+1,AchievementsLibrary.gamesLib)
+        AchievementsLibrary.achievementCheck(user,played.value+1,AchievementsLibrary.gamesLib)
         if(result == "VICTORY") {
             user.updateStats("Games Won", won.value + 1)
-            AchievementsLibrary.achievementCheck(app,user,won.value+1,AchievementsLibrary.victoryLib)
-            AchievementsLibrary.achievementCheck(app,user,distThisGame,AchievementsLibrary.gameDistLib)
+            AchievementsLibrary.achievementCheck(user,won.value+1,AchievementsLibrary.victoryLib)
+            AchievementsLibrary.achievementCheck(user,distThisGame,AchievementsLibrary.gameDistLib)
 
         }
 
@@ -169,5 +172,12 @@ class GameSummaryActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         backToGameList()
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        val app = applicationContext as MyApplication
+        app.getMessageHandler().checkForNewMessages()
     }
 }
