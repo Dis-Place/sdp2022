@@ -41,7 +41,9 @@ class GameVersusViewActivity : AppCompatActivity() {
 
     val statsList: ArrayList<String> = arrayListOf()
 
+
     private lateinit var db: GoodDB
+
 
     private lateinit var game: GameVersusViewModel
     private val extras: Bundle = Bundle()
@@ -172,8 +174,10 @@ class GameVersusViewActivity : AppCompatActivity() {
         gid = intent.getStringExtra("gid")!!
         gameMode = intent.getStringExtra("gameMode")!!
         clickableArea = intent.getIntExtra("dist", Constants.CLICKABLE_AREA_RADIUS)
+
         db = DatabaseFactory.getDB(Intent())
         order = Random.nextLong(-10000000000L, 10000000000L) // find a unique id for you and for this instance of the game
+
         clientServerLink = ClientServerLink(db, order)
         game = GameVersusViewModel(clientServerLink)
         nbPlayer = intent.getLongExtra("nbPlayer", 1)

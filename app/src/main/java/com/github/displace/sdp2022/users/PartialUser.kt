@@ -14,5 +14,12 @@ data class PartialUser(var username: String, val uid: String) { // profile pictu
         return uid.hashCode()
     }
 
+    fun asMap(): MutableMap<String, Any> {
+        val userMap = HashMap<String,Any>()
+        userMap["username"] = username
+        userMap["uid"] = uid
+        return userMap
+    }
+
 
 }

@@ -18,6 +18,7 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.GrantPermissionRule
 import com.github.displace.sdp2022.MyApplication
+import com.github.displace.sdp2022.database.MockDatabaseUtils
 import com.github.displace.sdp2022.profile.messages.MessageHandler
 import com.github.displace.sdp2022.profile.qrcode.QrCodeScannerActivity
 import com.github.displace.sdp2022.users.CompleteUser
@@ -35,14 +36,18 @@ class QrCodeScannerTest {
 
     @Before
     fun setup() {
+        Intents.init()
+        intent = Intent(ApplicationProvider.getApplicationContext(),ProfileActivity::class.java)
+
+        MockDatabaseUtils.mockIntent(intent)
+
         val app = ApplicationProvider.getApplicationContext() as MyApplication
         app.setActiveUser(CompleteUser(app,null, false))
         Thread.sleep(3000)
-        app.setMessageHandler(MessageHandler(app.getActiveUser()!!.getPartialUser(),app))
+        app.setMessageHandler(MessageHandler(app.getActiveUser()!!.getPartialUser(),app,intent))
         Thread.sleep(1000)
 
-        Intents.init()
-        intent = Intent(ApplicationProvider.getApplicationContext(),ProfileActivity::class.java)
+
     }
 
     @After

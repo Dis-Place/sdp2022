@@ -29,4 +29,13 @@ class SettingsActivity : AppCompatActivity() {
             startActivity(this.intent)
         }
     }
+
+
+    override fun onResume() {
+        super.onResume()
+
+        val app = applicationContext as MyApplication
+        app.getMessageHandler().checkForNewMessages()
+    }
+
 }
