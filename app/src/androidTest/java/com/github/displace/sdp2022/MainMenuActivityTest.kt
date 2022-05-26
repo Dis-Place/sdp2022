@@ -30,6 +30,7 @@ class MainMenuActivityTest {
 
     @Before
     fun before() {
+        DatabaseFactory.clearMockDB()
         val app = ApplicationProvider.getApplicationContext() as MyApplication
         app.setActiveUser(CompleteUser(app, null, DatabaseFactory.MOCK_DB))
 

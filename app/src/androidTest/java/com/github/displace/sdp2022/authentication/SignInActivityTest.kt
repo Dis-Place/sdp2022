@@ -53,11 +53,6 @@ class SignInActivityTest {
         ActivityScenarioRule<SignInActivity>(intent)
     }
 
-    /*@After
-    fun after() {
-        app.getActiveUser()?.removeUserFromDatabase()
-    }*/
-
     @Test
     fun signInAsGuestWorks() {
         init()

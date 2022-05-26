@@ -41,7 +41,7 @@ class CompleteUser(
     // Reference of the CompleteUser in the database
     private val dbReference: String = if (firebaseUser != null) {
         if(guestBoolean) {
-            "CompleteUsers/guest_${firebaseUser.uid}/CompleteUser"  // We add "guest-" to retain this information in the database
+            "CompleteUsers/guest_${firebaseUser.uid}/CompleteUser"  // We add "guest-" to retain the fact it is a guest in the database
         } else {
             "CompleteUsers/${firebaseUser.uid}/CompleteUser"    // Basic reference
         }
@@ -60,7 +60,7 @@ class CompleteUser(
     private val offlineUserFetcher: OfflineUserFetcher = OfflineUserFetcher(context)    // The offlineUserFetcher contains all the methods to get cached information
 
     // Contains very basic information about the user
-    private var partialUser: PartialUser = PartialUser("this cannot be a user", "still cannot be a user")
+    private lateinit var partialUser: PartialUser // = PartialUser("this cannot be a user", "still cannot be a user")
 
     // Profile informations
     private lateinit var achievements: MutableList<Achievement>
@@ -228,12 +228,12 @@ class CompleteUser(
     private fun initializePartialUser() {
         if (firebaseUser != null) {
             if (firebaseUser.displayName == null || firebaseUser.displayName == "") {   // A firebaseUser without a name is an anonymous user (a guest)
-                partialUser = PartialUser("Guest$guestNumber", "guest_${firebaseUser?.uid}")
+                partialUser = PartialUser("Guest$guestNumber", "guest_${firebaseUser.uid}")
             } else {        // We use the display name of the google user as the default name, and the firebaseUser id as an id
                 partialUser = PartialUser(firebaseUser.displayName!!, firebaseUser.uid)
             }
         } else {    // For testing
-            PartialUser("defaultName", "dummy_id")
+            partialUser = PartialUser("defaultName", "dummy_id")
         }
 
         if(!guestBoolean && firebaseUser != null) {     // if firebaseUser is null, it's either an error or a automatic test

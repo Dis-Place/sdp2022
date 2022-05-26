@@ -7,6 +7,7 @@ import com.github.displace.sdp2022.profile.history.History
 import com.github.displace.sdp2022.profile.statistics.Statistic
 import com.github.displace.sdp2022.users.OfflineUserFetcher
 import com.github.displace.sdp2022.users.PartialUser
+import com.github.displace.sdp2022.util.DateTimeUtil
 import org.junit.Before
 import org.junit.Test
 import java.text.SimpleDateFormat
@@ -116,7 +117,7 @@ class OfflineUserFetcherTest {
                 Achievement(
                     "Welcome home!",
                     "Create your account",
-                    SimpleDateFormat("dd-MM-yyyy").format(Date())
+                    DateTimeUtil.currentDate()
                 )
             )
         )
@@ -142,7 +143,7 @@ class OfflineUserFetcherTest {
             offlineUserFetcher.getOfflineGameHistory() == mutableListOf(
                 History(
                     "dummy_map",
-                    SimpleDateFormat("dd-MM-yyyy").format(Date()),
+                    DateTimeUtil.currentDate(),
                     "VICTORY"
                 )
             )

@@ -19,6 +19,18 @@ class CompleteUserTest {
         DatabaseFactory.clearMockDB()
     }
 
+    @Test
+    fun completeUserOfflineModeWorks() {
+        DatabaseFactory.clearMockDB()
+        val completeUser = CompleteUser(ApplicationProvider.getApplicationContext() as MyApplication, null, DatabaseFactory.MOCK_DB, offlineMode = true)
+        checkThatUserIsReadOnly(completeUser)
+    }
+
+    /**
+     * Checks that the user can't update any of its info
+     * In offline mode, user shouldn't be able to update anything
+     * @param completeUser: The user
+     */
     private fun checkThatUserIsReadOnly(completeUser: CompleteUser) {
         val achievementsSizeBefore = completeUser.getAchievements().size
         completeUser.addAchievement(Achievement("aaa", date = "2020-01-01"))
@@ -49,18 +61,9 @@ class CompleteUserTest {
     }
 
     @Test
-    fun completeUserOfflineModeWorks() {
-        DatabaseFactory.clearMockDB()
-        val completeUser = CompleteUser(ApplicationProvider.getApplicationContext() as MyApplication, null, DatabaseFactory.MOCK_DB, offlineMode = true)
-        //Thread.sleep(3_000)
-        checkThatUserIsReadOnly(completeUser)
-    }
-
-    @Test
     fun partialUserEqualsWorksWhenTrue() {
         val partialUser1 = PartialUser("dummy_name", "dummy_id")
         val partialUser2 = PartialUser("dummy_name", "dummy_id")
-        //Thread.sleep(3000)
         assertTrue(partialUser1 == partialUser2)
     }
 
@@ -68,7 +71,6 @@ class CompleteUserTest {
     fun partialUserEqualsWorksWhenFalse() {
         val partialUser1 = PartialUser("dummy_name", "dummy_id")
         val partialUser2 = PartialUser("dummy_name", "other_id")
-        //Thread.sleep(3000)
         assertFalse(partialUser1 == partialUser2)
     }
 
@@ -76,27 +78,22 @@ class CompleteUserTest {
     fun completeUserEqualsWorksWhenTrue() {
         val completeUser1 = CompleteUser(ApplicationProvider.getApplicationContext() as MyApplication, null, DatabaseFactory.MOCK_DB)
         val completeUser2 = CompleteUser(ApplicationProvider.getApplicationContext() as MyApplication, null, DatabaseFactory.MOCK_DB)
-        //Thread.sleep(6_000)
         assertTrue(completeUser1 == completeUser2)
-        //completeUser1.removeUserFromDatabase()
     }
 
     @Test
     fun achievementUpdates() {
         val completeUser = CompleteUser(ApplicationProvider.getApplicationContext() as MyApplication, null, DatabaseFactory.MOCK_DB)
-        //Thread.sleep(3000)
         val achSize = completeUser.getAchievements().size
         val ach = Achievement("AchievementTest1", date = "28-03-2022")
         completeUser.addAchievement(ach)
         val userAchievements = completeUser.getAchievements()[achSize]
         assertTrue(userAchievements.name == ach.name && userAchievements.date == ach.date)
-        //completeUser.removeUserFromDatabase()
     }
 
     @Test
     fun statisticsAreInitializedCorrectly() {
         val completeUser = CompleteUser(ApplicationProvider.getApplicationContext() as MyApplication, null, DatabaseFactory.MOCK_DB)
-        //Thread.sleep(3000)
         val dummyStats = completeUser.getStats()
         assertTrue(
             dummyStats[0].name == "Games Played" &&
@@ -104,59 +101,49 @@ class CompleteUserTest {
                     0L == dummyStats[0].value &&
                     0L == dummyStats[1].value
         )
-        //completeUser.removeUserFromDatabase()
     }
 
     @Test
     fun statisticsUpdates() {
         val completeUser = CompleteUser(ApplicationProvider.getApplicationContext() as MyApplication, null, DatabaseFactory.MOCK_DB)
-        //Thread.sleep(3000)
         completeUser.updateStats("Games Played", 10)
         assertTrue(completeUser.getStats()[0].value == 10L)
-        //completeUser.removeUserFromDatabase()
     }
 
     @Test
     fun addingAndRemovingFriendWorksCorrectly() {
         val completeUser = CompleteUser(ApplicationProvider.getApplicationContext() as MyApplication, null, DatabaseFactory.MOCK_DB)
-        //Thread.sleep(3000)
         val friendsSize = completeUser.getFriendsList().size
         val partialUser = PartialUser("dummy_name", "dummy_other_id")
         completeUser.addFriend(partialUser)
         assertEquals(partialUser, completeUser.getFriendsList()[friendsSize])
         completeUser.removeFriend(partialUser)
         assertEquals(friendsSize, completeUser.getFriendsList().size)
-        //completeUser.removeUserFromDatabase()
     }
 
     @Test
     fun addExistingFriendDoesNothing() {
         val completeUser = CompleteUser(ApplicationProvider.getApplicationContext() as MyApplication, null, DatabaseFactory.MOCK_DB)
-        //Thread.sleep(3000)
         val partialUser = PartialUser("dummy_username", "dummy_id")
         completeUser.addFriend(partialUser)
         val friendsSize = completeUser.getFriendsList().size
         completeUser.addFriend(partialUser)
 
         assertEquals(friendsSize, completeUser.getFriendsList().size)
-        //completeUser.removeUserFromDatabase()
     }
 
     @Test
     fun removeNonExistingFriendDoesNothing() {
         val completeUser = CompleteUser(ApplicationProvider.getApplicationContext() as MyApplication, null, DatabaseFactory.MOCK_DB)
-        //Thread.sleep(3000)
         val friendsSize = completeUser.getFriendsList().size
         val partialUser = PartialUser("dummy_name", "dummy_other_id")
         completeUser.removeFriend(partialUser)
         assertEquals(friendsSize, completeUser.getFriendsList().size)
-        //completeUser.removeUserFromDatabase()
     }
 
     @Test
     fun updateGameHistoryWorks() {
         val completeUser = CompleteUser(ApplicationProvider.getApplicationContext() as MyApplication, null, DatabaseFactory.MOCK_DB)
-        //Thread.sleep(3000)
         val historySize = completeUser.getGameHistory().size
         val gameHistory = History("dummyMap", "28-03-2022", "VICTORY")
         completeUser.addGameInHistory("dummyMap", "28-03-2022", "VICTORY")
@@ -166,13 +153,11 @@ class CompleteUserTest {
                     && completeHistory.date == gameHistory.date
                     && completeHistory.result == gameHistory.result
         )
-        //completeUser.removeUserFromDatabase()
     }
 
     @Test
     fun hashCodeWorks() {
         val completeUser = CompleteUser(ApplicationProvider.getApplicationContext() as MyApplication,null, DatabaseFactory.MOCK_DB)
-        //Thread.sleep(3000)
         val hashCode = completeUser.hashCode()
         assertTrue(hashCode != 0)
     }
