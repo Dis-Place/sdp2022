@@ -19,13 +19,14 @@ import com.github.displace.sdp2022.R
 import com.github.displace.sdp2022.database.DatabaseFactory
 import com.github.displace.sdp2022.database.GoodDB
 import com.github.displace.sdp2022.database.MockDatabaseUtils
+import com.github.displace.sdp2022.matchMaking.Lobby
+import com.github.displace.sdp2022.matchMaking.MatchMakingActivity
 import com.github.displace.sdp2022.profile.TestingUtils
 import com.github.displace.sdp2022.profile.messages.MessageHandler
 import com.github.displace.sdp2022.profile.messages.MsgViewHolder
 import com.github.displace.sdp2022.users.CompleteUser
 import com.github.displace.sdp2022.users.PartialUser
 import com.github.displace.sdp2022.util.gps.MockGPS
-import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -45,12 +46,13 @@ class MatchMakingTest {
     fun before() {
         MockDatabaseUtils.mockIntent(intent)
         val app = ApplicationProvider.getApplicationContext() as MyApplication
-        app.setActiveUser(CompleteUser(app, null, false))
-        Thread.sleep(3000)
-        app.setMessageHandler(MessageHandler(app.getActiveUser()!!.getPartialUser(), app, intent))
+        
+        DatabaseFactory.clearMockDB()
+        app.setActiveUser(CompleteUser(app,null, DatabaseFactory.MOCK_DB))
+
+        app.setMessageHandler(MessageHandler(app.getActiveUser()!!.getPartialUser(),app,intent))
         Thread.sleep(1000)
 
-        Thread.sleep(1000)
 
 
         db.update("MM/Versus/Map2/private/freeList", listOf("head"))
@@ -76,11 +78,11 @@ class MatchMakingTest {
 
     }
 
-    @After
+    /*@After
     fun releaseIntents() {
         val app = ApplicationProvider.getApplicationContext() as MyApplication
         app.getActiveUser()?.removeUserFromDatabase()
-    }
+    }*/
 
     @Test
     fun testPublicLobbyCreation() {
@@ -93,8 +95,7 @@ class MatchMakingTest {
             }
         val scenario = ActivityScenario.launch<MatchMakingActivity>(intent)
 
-        //  val db : RealTimeDatabase = RealTimeDatabase().noCacheInstantiate("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",true) as RealTimeDatabase
-        Thread.sleep(1000)
+      //  val db : RealTimeDatabase = RealTimeDatabase().noCacheInstantiate("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",true) as RealTimeDatabase
 
         scenario.use {
 
@@ -133,10 +134,10 @@ class MatchMakingTest {
         scenario.use {
             MockGPS.specifyMock(intent, MOCK_GPS_POSITION)
 
-            db.update("MM/Versus/Map2/public/freeList", listOf("head", "test"))
-            db.update(
-                "MM/Versus/Map2/public/freeLobbies/test",
-                Lobby("test", 3, PartialUser("FREE", "FREE"), GeoPoint(0.00001, 0.00001))
+            db.update("MM/Versus/Map2/public/freeList",listOf("head","test"))
+            db.update("MM/Versus/Map2/public/freeLobbies/test",
+                Lobby("test", 3, PartialUser("FREE", "FREE"), GeoPoint(0.00001,0.00001))
+
             )
 
             Thread.sleep(1000)
@@ -260,10 +261,10 @@ class MatchMakingTest {
         scenario.use {
             MockGPS.specifyMock(intent, MOCK_GPS_POSITION)
 
-            db.update("MM/Versus/Map2/private/freeList", listOf("head", "test"))
-            db.update(
-                "MM/Versus/Map2/private/freeLobbies/test",
-                Lobby("test", 3, PartialUser("FREE", "FREE"), GeoPoint(0.00001, 0.00001))
+            db.update("MM/Versus/Map2/private/freeList",listOf("head","test"))
+            db.update("MM/Versus/Map2/private/freeLobbies/test",
+                Lobby("test", 3, PartialUser("FREE", "FREE"),GeoPoint(0.00001,0.00001))
+
             )
 
             Thread.sleep(1000)

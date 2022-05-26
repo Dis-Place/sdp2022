@@ -7,6 +7,7 @@ import android.widget.Toast.*
 import androidx.appcompat.app.AppCompatActivity
 import com.github.displace.sdp2022.authentication.SignInActivity
 import com.github.displace.sdp2022.database.CleanUpGuests
+import com.github.displace.sdp2022.database.DatabaseFactory
 import com.github.displace.sdp2022.users.CompleteUser
 import com.github.displace.sdp2022.util.CheckConnectionUtil.checkForInternet
 import kotlin.random.Random
@@ -37,6 +38,7 @@ class MainActivity : AppCompatActivity() {
         if (isRemembered) {
             val user = CompleteUser(app,
                 null,
+                DatabaseFactory.getDB(intent),
                 offlineMode = !checkForInternet(this), // we check if we're offline
                 remembered = true   // We are remembered
             )
