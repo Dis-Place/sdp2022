@@ -68,7 +68,7 @@ class GameVersusViewActivity : AppCompatActivity() {
     private var gid = ""
     private var uid = ""
 
-    private var oldPos = GeoPoint(0.0,0.0)
+    private var oldPos = GeoPoint(0.0, 0.0)
     private var totalDist = 0.0
 
     //CHAT
@@ -305,7 +305,7 @@ class GameVersusViewActivity : AppCompatActivity() {
         if(point.latitude != 0.0 && point.longitude != 0.0 && oldPos.longitude == 0.0 && oldPos.latitude == 0.0){
             oldPos = point
         }
-        totalDist += CoordinatesUtil.distance(oldPos,point)
+        totalDist += CoordinatesUtil.distance(oldPos, point)
         oldPos = point
     }
 
