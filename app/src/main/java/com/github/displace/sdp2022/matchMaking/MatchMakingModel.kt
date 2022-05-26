@@ -106,7 +106,8 @@ class MatchMakingModel( val activity: MMView ){
             return@Listener
         }
         /*
-         * The lobby is launching : the leader will remove the lobby as a "free" lobby
+         * The lobby is launching : the leader will remove the lobby as a "free" lobby and add it as a launching one
+         * All the other players will wait until the launching lobby is present and they turn to leave has come
          */
         if( lobbyMap["lobbyLaunch"] == true) {
             setupLaunchListener()
