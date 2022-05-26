@@ -1,12 +1,10 @@
-package com.github.displace.sdp2022.settings
+package com.github.displace.sdp2022
 
 import android.content.Intent
 import androidx.lifecycle.Lifecycle
-import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
-import androidx.test.core.app.ApplicationProvider.*
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
@@ -15,8 +13,6 @@ import androidx.test.espresso.matcher.RootMatchers.withDecorView
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.github.displace.sdp2022.MyApplication
-import com.github.displace.sdp2022.R
 import com.github.displace.sdp2022.profile.messages.MessageHandler
 import com.github.displace.sdp2022.users.CompleteUser
 import org.hamcrest.Matchers.*
@@ -34,20 +30,21 @@ class SettingsActivityTest {
 //
 //    @Before
 //    fun setUp() {
-//        val app = getApplicationContext() as MyApplication
+    //        val intent = Intent(ApplicationProvider.getApplicationContext(), SettingsActivity::class.java)
+ //   MockDatabaseUtils.mockIntent(intent)
+//        ActivityScenario.launch<SettingsActivity>(intent)
+//        val app = ApplicationProvider.getApplicationContext() as MyApplication
 //        app.setActiveUser(CompleteUser(app, null))
 //        Thread.sleep(3000)
-//        app.setMessageHandler(MessageHandler(app.getActiveUser()!!.getPartialUser(), app))
+//        app.setMessageHandler(MessageHandler(app.getActiveUser()!!.getPartialUser(), app,intent))
 //        Thread.sleep(1000)
 //
-//        val intent =
-//            Intent(getApplicationContext(), SettingsActivity::class.java)
-//        ActivityScenario.launch<SettingsActivity>(intent)
+
 //    }
 //
 //    @After
 //    fun setDown() {
-//        val app = getApplicationContext() as MyApplication
+//        val app = ApplicationProvider.getApplicationContext() as MyApplication
 //        app.getActiveUser()?.removeUserFromDatabase()
 //    }
 //
@@ -85,16 +82,16 @@ class SettingsActivityTest {
 //        } else {
 //            assert(true)
 //        }
-//    }
-//
-//
-//    @Test
-//    fun themeSelectionWorksProperly() {
-//        val app = getApplicationContext() as MyApplication
+ //   }
+
+
+    //@Test
+    //fun themeSelectionWorksProperly() {
+//        val app = ApplicationProvider.getApplicationContext() as MyApplication
 //        val preference = PreferenceManager.getDefaultSharedPreferences(app)
 //        val savedPreference: String = preference.getString("themeKey", "")!!
 //        val themes = arrayOf("purple", "green")
-//        val themeNameToThemeMap = mapOf("purple" to R.style.Theme_DisPlace1, "green" to R.style.Theme_DisPlace2)
+//        val themeNameToThemeMap = mapOf("purple" to Theme_DisPlace1, "green" to Theme_DisPlace2)
 //        for (theme in themes) {
 //            preference.edit().putString("themeKey", theme).apply()
 //            Thread.sleep(500)
@@ -103,6 +100,6 @@ class SettingsActivityTest {
 //
 //        preference.edit().putString("themeKey", savedPreference).apply()
 //    }
-//
+
 
 }

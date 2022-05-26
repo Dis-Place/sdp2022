@@ -17,16 +17,18 @@ import kotlinx.serialization.json.Json
 object QrCodeUtils {
 
     /**
+     * Width and height of the QR code
+     */
+    private const val width = 800
+    private const val height = 800
+
+    /**
      * Generate a bitmap to be used by a QR code and put its information in the corresponding field
      * If we want to use this function somewhere else : place it in some Utils
      * @param partialUser : the partial user for which to create the bitmap
+     * @return the bitmap of the partialUser or null if there was an error
      */
     fun generateQrCodeBitmap(partialUser: PartialUser): Bitmap? {
-        /**
-         * These should be constants
-         */
-        val width = 800
-        val height = 800
 
         try {
             val qrCodeContent: String = Json.encodeToString(partialUser)
@@ -39,12 +41,13 @@ object QrCodeUtils {
     }
 
     /**
-     * Create the dialog view which will show the QR code
+     * Create and show the dialog view which will show the QR code
      * @param bmp image to show (qr code)
      * @param context (activity)
      */
     fun createImagePopup(bmp: Bitmap, context: Context) {
 
+        //create the support for the QR code
         val imageDialog: AlertDialog.Builder = AlertDialog.Builder(context)
         val inflater =
             context.getSystemService(AppCompatActivity.LAYOUT_INFLATER_SERVICE) as LayoutInflater

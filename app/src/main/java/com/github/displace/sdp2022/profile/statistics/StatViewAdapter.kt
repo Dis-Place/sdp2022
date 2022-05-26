@@ -7,12 +7,19 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.github.displace.sdp2022.R
 
+/**
+ * Adapts the recycler view to accommodate statistics
+ */
 class StatViewAdapter(val context: Context, private val data: List<Statistic>) :
     RecyclerView.Adapter<StatViewHolder>() {
 
-
+    /**
+     * Sets up the holder view with the needed values (the view itself, UI)
+     *
+     * @param parent : the parent of the holder
+     * @param viewType : the type of the holder
+     */
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StatViewHolder {
-        //  TODO("Not yet implemented")
         val parentContext = parent.context
         val inflater = LayoutInflater.from(parentContext)
 
@@ -20,15 +27,23 @@ class StatViewAdapter(val context: Context, private val data: List<Statistic>) :
         return StatViewHolder(photoView)
     }
 
+    /**
+     * Sets up the holder view at the given position with the correct data
+     *
+     * @param holder : the view (one element of the list) that is part of the recycler view
+     * @param position : the position of the specific holder
+     */
     override fun onBindViewHolder(holder: StatViewHolder, position: Int) {
-        //    TODO("Not yet implemented")
         val index = holder.adapterPosition
         holder.name.text = data[index].name
         holder.value.text = data[index].value.toString()
     }
 
+    /**
+     * Returns the number of items in the recycler view list
+     * @return : number of items in the recycler view
+     */
     override fun getItemCount(): Int {
-        //   TODO("Not yet implemented")
         return data.size
     }
 }
