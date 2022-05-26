@@ -18,7 +18,7 @@ import org.mockito.Mockito.doNothing
 //https://semaphoreci.com/community/tutorials/stubbing-and-mocking-with-mockito-2-and-junit
 @RunWith(AndroidJUnit4::class)
 class FriendRequestTest {
-    
+
 
     @Test
     fun checkUserExistsCheck(){
