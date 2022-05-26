@@ -241,7 +241,6 @@ class MatchMakingTest {
             )
 
             Thread.sleep(1000)
-
         }
     }
 
