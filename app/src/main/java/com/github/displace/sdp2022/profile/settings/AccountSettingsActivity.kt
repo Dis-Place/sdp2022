@@ -35,8 +35,12 @@ import com.google.firebase.storage.ktx.storage
 import java.io.ByteArrayOutputStream
 import java.io.File
 
+/**
+ * Activity for editing the profile settings
+ */
 class AccountSettingsActivity : AppCompatActivity() {
 
+    // Request codes when searching for images, used for the profile picture
     companion object {
         const val IMAGE_GALLERY_REQUEST = 300
         const val IMAGE_CAMERA_REQUEST = 400
@@ -63,15 +67,14 @@ class AccountSettingsActivity : AppCompatActivity() {
             }
         }
 
-    private lateinit var username: TextView
-    private lateinit var profilePic: ImageView
-    private var imageUri: Uri = Uri.EMPTY
+    private lateinit var username: TextView     // Username in a view in the activity
+    private lateinit var profilePic: ImageView  // Profile picture in a view in the activity
 
-    private val storageReference = Firebase.storage.reference
+    private var imageUri: Uri = Uri.EMPTY       // Uri to store the profile picture
 
-    private lateinit var activeUser: CompleteUser
+    private lateinit var activeUser: CompleteUser   // Active user in the application
 
-    private lateinit var imgDBReference: StorageReference
+    private lateinit var imgDBReference: StorageReference   // Reference for the profile picture in the Firebase Storage
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -80,22 +83,23 @@ class AccountSettingsActivity : AppCompatActivity() {
         username = findViewById(R.id.username)
         profilePic = findViewById(R.id.profilePic)
 
-        profilePic.setTag(R.id.profilePic, "defaultPicTag") // For testing
+        profilePic.setTag(R.id.profilePic, "defaultPicTag") // Sets a tag on the default picture for testing
 
 
         val app = applicationContext as MyApplication
         activeUser = app.getActiveUser()!!
 
         // Reference to the profile pic in Firebase Storage
-        imgDBReference = storageReference.child("images/profilePictures/${activeUser.getPartialUser().uid}")
+        imgDBReference = Firebase.storage.reference
+                            .child("images/profilePictures/${activeUser.getPartialUser().uid}")
 
-        if(!activeUser.getPartialUser().equals(PartialUser("defaultName", "dummy_id"))) {
-            if(activeUser.getProfilePic() == null) {
-                // Temp file for the profile pic
+        if(activeUser.getPartialUser() != PartialUser("defaultName", "dummy_id")) { // That case is only when testing, and we don't search the image from the DB
+            if(activeUser.getProfilePic() == null) {    // Prevents the app from searching the image from the database everytime
+                // Temporary local file for the profile pic
                 val localFile = File.createTempFile("profilePic", "jpg")
 
                 // Gets profile pic from database
-                ProgressDialogsUtil.showProgressDialog(this)
+                ProgressDialogsUtil.showProgressDialog(this)    // Shows progress dialog to prevent the user from uploading twice
                 imgDBReference.getFile(localFile).addOnSuccessListener {
                     // keep a copy of the profile pic in the case connection lost, and more efficient
                     val pic = BitmapFactory.decodeFile(localFile.absolutePath)
