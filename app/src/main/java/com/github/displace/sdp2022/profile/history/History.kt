@@ -8,4 +8,8 @@ import kotlinx.serialization.Serializable
  * It contains a game mode, a date and a result ( victory or defeat ).
  */
 @Serializable
-data class History(val gameMode: String, val date: String, val result: String)
+data class History(val gameMode: String, val date: String, val result: String)     {
+    fun toMap(): Map<String, *> {
+        return mapOf(Pair("map", gameMode), Pair("date", date), Pair("result", result))
+    }
+}

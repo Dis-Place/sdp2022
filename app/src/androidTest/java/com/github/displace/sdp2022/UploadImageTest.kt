@@ -11,6 +11,7 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.displace.sdp2022.R
+import com.github.displace.sdp2022.database.DatabaseFactory
 import com.github.displace.sdp2022.database.MockDatabaseUtils
 import com.github.displace.sdp2022.profile.messages.MessageHandler
 import com.github.displace.sdp2022.users.CompleteUser
@@ -35,18 +36,17 @@ class UploadImageTest {
         MockDatabaseUtils.mockIntent(intent)
 
         val app = ApplicationProvider.getApplicationContext() as MyApplication
-        app.setActiveUser(CompleteUser(app,null, false))
+        app.setActiveUser(CompleteUser(app,null, DatabaseFactory.MOCK_DB))
 
-        Thread.sleep(3000)
         app.setMessageHandler(MessageHandler(app.getActiveUser()!!.getPartialUser(),app,intent))
         Thread.sleep(1000)
     }
 
-    @After
+    /*@After
     fun releaseIntents() {
         val app = ApplicationProvider.getApplicationContext() as MyApplication
-        app.getActiveUser()?.removeUserFromDatabase()
-    }
+        //app.getActiveUser()?.removeUserFromDatabase()
+    }*/
 
     @Test
     fun canSearchImage() {

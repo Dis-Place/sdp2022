@@ -20,6 +20,7 @@ import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.R
 import com.github.displace.sdp2022.database.MockDatabaseUtils
 import com.github.displace.sdp2022.profile.messages.MessageHandler
+import com.github.displace.sdp2022.database.DatabaseFactory
 import com.github.displace.sdp2022.profile.settings.AccountSettingsActivity
 import com.github.displace.sdp2022.users.CompleteUser
 import org.hamcrest.CoreMatchers.*
@@ -40,18 +41,18 @@ class AccountSettingsActivityNoPermsTest {
     fun before(){
 
         val app = ApplicationProvider.getApplicationContext() as MyApplication
-        completeUser = CompleteUser(app,null)
+        DatabaseFactory.clearMockDB()
+        completeUser = CompleteUser(app,null, DatabaseFactory.MOCK_DB)
         app.setActiveUser(completeUser)
-        Thread.sleep(1000)
         MockDatabaseUtils.mockIntent(intent)
         app.setMessageHandler(MessageHandler(app.getActiveUser()!!.getPartialUser(),app,intent))
         Thread.sleep(100)
     }
 
-    @After
+    /*@After
     fun after() {
         completeUser.removeUserFromDatabase()
-    }
+    }*/
 
     @Test
     fun pictureDoesntUpdateWithoutCameraPermissions() {
@@ -74,6 +75,7 @@ class AccountSettingsActivityNoPermsTest {
     fun pictureDoesntUpdateWithoutStoragePermissions() {
 
         val scenario: ActivityScenario<AccountSettingsActivity> = ActivityScenario.launch(intent)
+
         scenario.use {
             // Only clicks on the correct button but doesn't check if the picture changes or not
             onView(withId(R.id.profilePicUpdate)).perform(click())

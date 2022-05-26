@@ -17,7 +17,7 @@ class Message(val message: String, val date: String, val sender: PartialUser){
     override fun equals(other: Any?): Boolean {
         val otherUser = other as Message?
 
-        return otherUser?.message == message && otherUser?.date == date && otherUser?.sender == sender
+        return otherUser?.message == message && otherUser.date == date && otherUser.sender == sender
     }
 
     /**
@@ -26,5 +26,9 @@ class Message(val message: String, val date: String, val sender: PartialUser){
      */
     override fun hashCode(): Int {
         return message.hashCode()
+    }
+
+    fun toMap(): Map<String, *> {
+        return mapOf(Pair("message", message), Pair("date", date), Pair("sender", sender.toMap()))
     }
 }
