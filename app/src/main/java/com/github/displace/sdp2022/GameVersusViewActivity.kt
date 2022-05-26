@@ -51,7 +51,7 @@ class GameVersusViewActivity : AppCompatActivity() {
     private lateinit var gpsPositionManager: GPSPositionManager
     private lateinit var other: Map<String, Any>
     private var others = listOf<List<String>>()
-    private lateinit var pinpointsDBHandler: PinpointsDBHandler
+    private lateinit var pinpointsDBHandler: GoodPinpointsDBHandler
     private lateinit var pinpointsManager: PinpointsManager
     private var otherPlayersPinpoints = listOf<PinpointsManager.PinpointsRef>()
     private lateinit var conditionalGoalPlacer: ConditionalGoalPlacer
@@ -185,7 +185,7 @@ class GameVersusViewActivity : AppCompatActivity() {
     private fun initMap(){
         mapView = findViewById(R.id.map)
         mapViewManager = MapViewManager(mapView)
-        pinpointsDBHandler = PinpointsDBHandler(db, "Game" + intent.getStringExtra("gid")!!, this)
+        pinpointsDBHandler = GoodPinpointsDBHandler(db, "Game" + intent.getStringExtra("gid")!!, this)
         pinpointsDBHandler.initializePinpoints(intent.getStringExtra("uid")!!)
         gpsPositionManager = GPSPositionManager(this)
         gpsPositionManager.listenersManager.addCall(initGoalPlacer)
