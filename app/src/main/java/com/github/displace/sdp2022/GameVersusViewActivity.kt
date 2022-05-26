@@ -254,6 +254,7 @@ class GameVersusViewActivity : AppCompatActivity() {
             }
         }
 
+
         //initialise the chat
         val chatPath = "/GameInstance/Game" + intent.getStringExtra("gid")!! + "/Chat"
         chat = Chat(
