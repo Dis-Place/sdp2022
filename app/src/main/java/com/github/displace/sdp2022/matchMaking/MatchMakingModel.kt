@@ -371,20 +371,32 @@ class MatchMakingModel( val activity: MMView ){
             TransactionSpecification.Builder<MutableMap<String, Any>> { lobbyTypeLevel ->
 
                 val path = getPath(toGame)
-                val lobbyState = lobbyTypeLevel!![path] as MutableMap<String, Any>
-                var lobby = lobbyState[currentLobbyId] as MutableMap<String, Any>
+                val lobbyState = lobbyTypeLevel!![path] as MutableMap<String, Any>? ?: return@Builder lobbyTypeLevel
+                var lobby = lobbyState[currentLobbyId] as MutableMap<String, Any>? ?: return@Builder lobbyTypeLevel
 
                 lobby = removePlayerFromList(lobby)
                 lobbyState[currentLobbyId] = lobby
-
-                if (lobby["lobbyLeader"] as String == activePartialUser.uid && lobby["lobbyCount"] as Long == 1L) { //leader and alone?
-
-                    val ls = lobbyTypeLevel["freeList"] as ArrayList<String>
-                    ls.remove(currentLobbyId)
-                    lobbyTypeLevel["freeList"] = ls
-                    lobbyState.remove(currentLobbyId)
-
+                val leader = lobby["lobbyLeader"] as String
+                val count = lobby["lobbyCount"] as Long
+                if(leader == activePartialUser.uid){
+                    if(count == 1L){
+                        if(!toGame){
+                            val ls = lobbyTypeLevel["freeList"] as ArrayList<String>? ?:  return@Builder lobbyTypeLevel
+                            ls.remove(currentLobbyId)
+                            lobbyTypeLevel["freeList"] = ls
+                        }
+                        lobbyState.remove(currentLobbyId)
+                    }else{
+                        lobby = removePlayerFromList(lobby)
+                        val players = lobby["lobbyPlayers"] as ArrayList<MutableMap<String, Any>>? ?:  return@Builder lobbyTypeLevel
+                        lobby["lobbyLeader"] = players[0]["uid"] as String //use the next player as the new leader
+                        lobbyState[currentLobbyId] = lobby
+                    }
+                }else{
+                    lobby = removePlayerFromList(lobby)
+                    lobbyState[currentLobbyId] = lobby
                 }
+
                 lobbyTypeLevel[path] = lobbyState
 
                 return@Builder lobbyTypeLevel
@@ -414,17 +426,17 @@ class MatchMakingModel( val activity: MMView ){
      */
     private fun removePlayerFromList(lobby: MutableMap<String, Any>): MutableMap<String, Any> {
 
-        if(lobby["lobbyCount"] as Long == 1L){
+     /*   if(lobby["lobbyCount"] as Long == 1L){
             return lobby
-        }
+        }*/
         lobby["lobbyCount"] = lobby["lobbyCount"] as Long - 1
         val userMap = activePartialUser.asMap()
         val players = lobby["lobbyPlayers"] as ArrayList<MutableMap<String, Any>>
         (players).remove(userMap)
         lobby["lobbyPlayers"] = players
-        if (lobby["lobbyLeader"] as String == activePartialUser.uid) { //leader?
+     /*   if (lobby["lobbyLeader"] as String == activePartialUser.uid) { //leader?
             lobby["lobbyLeader"] = (players)[0]["uid"] as String //use the next player as the new leader
-        }
+        }*/
         return lobby
 
     }
