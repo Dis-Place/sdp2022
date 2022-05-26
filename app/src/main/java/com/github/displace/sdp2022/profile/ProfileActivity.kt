@@ -3,6 +3,7 @@ package com.github.displace.sdp2022.profile
 import android.Manifest
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
@@ -38,10 +39,7 @@ import com.github.displace.sdp2022.users.CompleteUser
 import com.github.displace.sdp2022.users.PartialUser
 import com.github.displace.sdp2022.util.CheckConnectionUtil.checkForInternet
 import com.github.displace.sdp2022.util.listeners.Listener
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.*
 
 
 class ProfileActivity : AppCompatActivity() {
@@ -92,14 +90,9 @@ class ProfileActivity : AppCompatActivity() {
         recyclerview.layoutManager = LinearLayoutManager(this)
         recyclerview.adapter = FriendRequestViewAdapter( mutableListOf<InviteWithId>(), this)
 
-        ReceiveFriendRequests.receiveRequests(rootRef, currentUser)
-            .observe(this,  Observer{
-                val adapter = FriendRequestViewAdapter(it, this)
+        Log.d("inbox", "curent partial $activePartialUser")
+        observeInbox()
 
-                // Setting the Adapter with the recyclerview
-                recyclerview.adapter = adapter
-
-            })
 
 
     }
@@ -178,12 +171,35 @@ class ProfileActivity : AppCompatActivity() {
             changeUi(R.id.ProfileScroll)
         }
         findViewById<Button>(R.id.inboxButton).setOnClickListener {
+            observeInbox()
             changeUi(R.id.InboxScroll)
         }
         findViewById<Button>(R.id.friendsButton).setOnClickListener {
             changeUi(R.id.FriendsScroll)
         }
 
+
+//    @Suppress("UNUSED_PARAMETER")
+//    fun inboxButton(view: View) {
+//        val app = applicationContext as MyApplication
+//        val activeUser = app.getActiveUser()
+//        var partialUser = PartialUser("defaultName","dummy_id")
+//        if(activeUser != null){
+//            partialUser = activeUser.getPartialUser()
+//        }
+//        observeInbox(partialUser)
+//        findViewById<ScrollView>(R.id.ProfileScroll).visibility = View.GONE
+//        findViewById<ScrollView>(R.id.InboxScroll).visibility = View.VISIBLE
+//        findViewById<ScrollView>(R.id.FriendsScroll).visibility = View.GONE
+//    }
+//
+//    @Suppress("UNUSED_PARAMETER")
+//    fun friendsButton(view: View) {
+//        updateFriendListView()
+//        findViewById<ScrollView>(R.id.ProfileScroll).visibility = View.GONE
+//        findViewById<ScrollView>(R.id.InboxScroll).visibility = View.GONE
+//        findViewById<ScrollView>(R.id.FriendsScroll).visibility = View.VISIBLE
+//=======
     }
 
     /**
@@ -279,6 +295,7 @@ class ProfileActivity : AppCompatActivity() {
         val activeUser = app.getActiveUser()
 
         val friends = activeUser?.getFriendsList() ?: mutableListOf()
+        Log.d("UpdateFriendList", "current friends $friends")
         val friendAdapter = FriendViewAdapter(
             applicationContext,
             friends.reversed(),
@@ -362,6 +379,27 @@ class ProfileActivity : AppCompatActivity() {
         }
 
 
+    }
+
+    fun observeInbox(){
+
+        val app = applicationContext as MyApplication
+        val activeUser = app.getActiveUser()
+        var currentUser = PartialUser("defaultName","dummy_id")
+        if(activeUser != null){
+            currentUser = activeUser.getPartialUser()
+        }
+        val rootRef = FirebaseDatabase.
+        getInstance("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app").reference
+        val recyclerview = findViewById<RecyclerView>(R.id.friendRequestRecyclerView)
+        ReceiveFriendRequests.receiveRequests(rootRef, currentUser)
+            .observe(this,  Observer{
+                val adapter = FriendRequestViewAdapter(it, this)
+
+                // Setting the Adapter with the recyclerview
+                recyclerview.adapter = adapter
+
+            })
     }
 
     companion object {

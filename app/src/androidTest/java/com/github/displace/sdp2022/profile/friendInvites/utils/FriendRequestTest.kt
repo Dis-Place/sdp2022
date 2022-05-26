@@ -19,18 +19,6 @@ import org.mockito.Mockito.doNothing
 @RunWith(AndroidJUnit4::class)
 class FriendRequestTest {
 
-    @Test
-    fun sendFriendRequestTest(){
-        val partialUser = PartialUser("test","testUid")
-        val target = "dummy"
-        val mockContext = Mockito.mock(Context::class.java)
-        val mockDatabaseReference = Mockito.mock(DatabaseReference::class.java)
-        val mockInviteReference = Mockito.mock(DatabaseReference::class.java)
-        `when`(mockDatabaseReference.child("CompleteUsers")).thenReturn(mockInviteReference)
-        `when`(mockInviteReference.push()).thenReturn(mockInviteReference)
-       sendFriendRequest(mockContext, target, mockDatabaseReference, partialUser)
-
-    }
 
     @Test
     fun checkUserExistsCheck(){
