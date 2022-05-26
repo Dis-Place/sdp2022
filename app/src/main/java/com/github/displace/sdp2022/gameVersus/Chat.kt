@@ -7,16 +7,15 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.github.displace.sdp2022.MyApplication
-import com.github.displace.sdp2022.RealTimeDatabase
 import com.github.displace.sdp2022.profile.messages.Message
 import com.github.displace.sdp2022.profile.messages.MsgViewAdapter
 import com.github.displace.sdp2022.users.PartialUser
-import com.google.firebase.database.*
 import com.github.displace.sdp2022.R
 import com.github.displace.sdp2022.database.GoodDB
 import com.github.displace.sdp2022.database.TransactionSpecification
 import com.github.displace.sdp2022.util.DateTimeUtil
 import com.github.displace.sdp2022.util.listeners.Listener
+
 
 /**
  * The under-the-hood functionalities of the chat integrated into the game view
@@ -42,20 +41,20 @@ class Chat(private val chatPath : String, val db : GoodDB, val view : View, val 
         chatUiUpdate(list)
 
     }
-    
+
     /**
      * Send the message that is written in  the UI to the chat
      */
     fun addToChat(){
         val msg : String = view.findViewById<EditText>(R.id.chatEditText).text.toString()
         val partialUser : PartialUser = (applicationContext as MyApplication).getActiveUser()?.getPartialUser()!!
-        val date : String = DateTimeUtil.currentDate()
+        val date : String = DateTimeUtil.currentTime()
         if(msg.isEmpty()){ //do not send an empty message
             return
         }
 
-        val chatAdditionTransaction : TransactionSpecification<ArrayList<HashMap<String,Any>>> =
-            TransactionSpecification.Builder<ArrayList<HashMap<String,Any>>> { ls ->
+
+        val temp = TransactionSpecification.Builder<ArrayList<HashMap<String,Any>>> { ls ->
                 val map = HashMap<String,Any>()
                 map["message"] = msg
                 map["date"] = date
@@ -70,11 +69,15 @@ class Chat(private val chatPath : String, val db : GoodDB, val view : View, val 
                 }else {
                     return@Builder msgLs
                 }
-            }.onCompleteChange { committed ->
-                if(committed) {
-                    view.findViewById<EditText>(R.id.chatEditText).text.clear()
-                }
-            }.build()
+            }
+
+        temp.onCompleteCallback = { committed ->
+            if(committed) {
+                view.findViewById<EditText>(R.id.chatEditText).text.clear()
+            }
+        }
+
+        val chatAdditionTransaction : TransactionSpecification<ArrayList<HashMap<String,Any>>> = temp.build()
 
         db.runTransaction(chatPath,chatAdditionTransaction)
         /*  db.getDbReference(chatPath)

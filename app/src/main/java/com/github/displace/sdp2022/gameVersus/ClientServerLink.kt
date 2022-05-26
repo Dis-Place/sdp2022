@@ -16,7 +16,7 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.DatabaseError
 import java.lang.reflect.TypeVariable
 
-class ClientServerLink(private val db : GoodDB, private val order: Double) {
+class ClientServerLink(private val db : GoodDB, private val order: Long) {
 
     val listenerManager: GameVersusListenerManager = GameVersusListenerManager()
 
@@ -30,9 +30,9 @@ class ClientServerLink(private val db : GoodDB, private val order: Double) {
     private var orderToOrder = mapOf<Double,Int>()
 
     //listener that update the position of the goal.
-    private val posListener = Listener<DataSnapshot?>{ dataSnapshot ->
-            if (dataSnapshot?.value!=null) {
-                val coordsList = (dataSnapshot.value as List<Double>)
+    private val posListener = Listener<List<Double>?>{ dataSnapshot ->
+            if (dataSnapshot != null) {
+                val coordsList = dataSnapshot
                 if(coordsList.size >= 2) {
                     val coords = Point(coordsList[0],coordsList[1])
                     set(coords, coordsList[2])

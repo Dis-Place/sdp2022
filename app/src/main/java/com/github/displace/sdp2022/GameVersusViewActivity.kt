@@ -21,6 +21,7 @@ import com.github.displace.sdp2022.util.gps.GPSPositionManager
 import com.github.displace.sdp2022.util.gps.GPSPositionUpdater
 import com.github.displace.sdp2022.util.gps.GeoPointListener
 import com.github.displace.sdp2022.util.gps.MockGPS
+import com.github.displace.sdp2022.util.listeners.Listener
 import com.github.displace.sdp2022.util.math.Constants
 import com.github.displace.sdp2022.util.math.CoordinatesUtil
 import com.google.firebase.database.DataSnapshot
@@ -60,7 +61,7 @@ class GameVersusViewActivity : AppCompatActivity() {
 
     private var nbPlayer = 1L
     private lateinit var gameMode: String
-    private var order = 0.0
+    private var order = 0L
 
     private var gid = ""
     private var uid = ""
@@ -137,9 +138,8 @@ class GameVersusViewActivity : AppCompatActivity() {
     }
 
     //verify if the other has already finish by : winnig, losing or leaving
-    private val endListener = object : ValueEventListener {
-        override fun onDataChange(dataSnapshot: DataSnapshot) {
-            val x = dataSnapshot.value
+    private val endListener = Listener<Long?> { dataSnapshot ->
+            val x = dataSnapshot
 
             if (x == GameVersusViewModel.LOSE) { // if someone lose, the total number of player goes down by one.
                 nbPlayer -= 1
@@ -167,16 +167,13 @@ class GameVersusViewActivity : AppCompatActivity() {
             }
         }
 
-        override fun onCancelled(databaseError: DatabaseError) {}
-    }
-
     private fun initStart(){
         uid = intent.getStringExtra("uid")!!
         gid = intent.getStringExtra("gid")!!
         gameMode = intent.getStringExtra("gameMode")!!
         clickableArea = intent.getIntExtra("dist", Constants.CLICKABLE_AREA_RADIUS)
-        db = DatabaseFactory.getDB(Intent().putExtra("DEBUG",false))
-        order = Random.nextDouble(0.0, 1000000000000000000000000.0) // find a unique id for you and for this instance of the game
+        db = DatabaseFactory.getDB(Intent())
+        order = Random.nextLong(-10000000000L, 10000000000L) // find a unique id for you and for this instance of the game
         clientServerLink = ClientServerLink(db, order)
         game = GameVersusViewModel(clientServerLink)
         nbPlayer = intent.getLongExtra("nbPlayer", 1)
@@ -278,7 +275,7 @@ class GameVersusViewActivity : AppCompatActivity() {
 
         listenerOnMap()
 
-        db.getThenCall<DataSnapshot>("GameInstance/Game${intent.getStringExtra("gid")!!}"){  gi -> initGame(gi!!) } // initialise the game
+        db.getThenCall<HashMap<String,Any>>("GameInstance/Game${intent.getStringExtra("gid")!!}"){  gi -> initGame(gi!!) } // initialise the game
 
         findViewById<TextView>(R.id.TryText).apply {
             text =
@@ -338,9 +335,8 @@ class GameVersusViewActivity : AppCompatActivity() {
 
         // clean all the listener and then launch the new activity
         others.forEach { x ->
-            db.removeList(
-                "GameInstance/Game${intent.getStringExtra("gid")!!}/id:${x[1]}",
-                "finish",
+            db.removeListener(
+                "GameInstance/Game${intent.getStringExtra("gid")!!}/id:${x[1]}/finish",
                 endListener
             )
         }
@@ -361,8 +357,8 @@ class GameVersusViewActivity : AppCompatActivity() {
     }
 
     //initialise the game
-    private fun initGame(gi: DataSnapshot): Unit {
-        other = (gi.value as MutableMap<String, Any>).filter { id -> // get the other player of the game (not you nor the chat).
+    private fun initGame(gi: HashMap<String,Any>): Unit {
+        other = (gi as MutableMap<String, Any>).filter { id -> // get the other player of the game (not you nor the chat).
             id.key != "id:${
                 intent.getStringExtra("uid")!!
             }" && id.key != "Chat"
@@ -377,12 +373,11 @@ class GameVersusViewActivity : AppCompatActivity() {
             )
 
             if(!intent.getStringExtra("uid")!!.contains("guest")) {
-                db.referenceGet(
-                    "CompleteUsers/${otherPlayerId}/CompleteUser/partialUser",
-                    "username"
-                ).addOnSuccessListener { snapshot ->
+                db.getThenCall<String?>(
+                    "CompleteUsers/${otherPlayerId}/CompleteUser/partialUser/username"
+                ){ snapshot ->
                     try {
-                        val name = snapshot.value as String
+                        val name = snapshot!!
                         val list = listOf(listOf(name, otherPlayerId))
                         others = others.plus(list)
                     } catch (e: Exception) {
@@ -395,7 +390,7 @@ class GameVersusViewActivity : AppCompatActivity() {
                 otherPlayerId,
                 otherPlayersPinpoints[i]
             )
-            }catch(e: Exception){ throw error(otherPlayerId + " i = $i")}
+            }catch(e: Exception){ throw error(otherPlayerId + " i = $i" + other.toList())}
 
             game.handleEvent(
                 GameEvent.OnStart(
