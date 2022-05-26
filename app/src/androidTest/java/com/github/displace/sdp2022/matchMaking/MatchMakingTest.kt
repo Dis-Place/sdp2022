@@ -11,8 +11,11 @@ import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.github.displace.sdp2022.*
+import com.github.displace.sdp2022.GameListActivity
 import com.github.displace.sdp2022.GameMenuTest.Companion.MOCK_GPS_POSITION
+import com.github.displace.sdp2022.GameVersusViewActivity
+import com.github.displace.sdp2022.MyApplication
+import com.github.displace.sdp2022.R
 import com.github.displace.sdp2022.database.DatabaseFactory
 import com.github.displace.sdp2022.database.GoodDB
 import com.github.displace.sdp2022.database.MockDatabaseUtils
@@ -36,15 +39,15 @@ class MatchMakingTest {
             putExtra("DEBUG", true)
         }
 
-    val db : GoodDB = DatabaseFactory.getDB(intent)
+    val db: GoodDB = DatabaseFactory.getDB(intent)
 
     @Before
-    fun before(){
+    fun before() {
         MockDatabaseUtils.mockIntent(intent)
         val app = ApplicationProvider.getApplicationContext() as MyApplication
-        app.setActiveUser(CompleteUser(app,null, false))
+        app.setActiveUser(CompleteUser(app, null, false))
         Thread.sleep(3000)
-        app.setMessageHandler(MessageHandler(app.getActiveUser()!!.getPartialUser(),app,intent))
+        app.setMessageHandler(MessageHandler(app.getActiveUser()!!.getPartialUser(), app, intent))
         Thread.sleep(1000)
 
         Thread.sleep(1000)
@@ -53,20 +56,20 @@ class MatchMakingTest {
         db.update("MM/Versus/Map2/private/freeList", listOf("head"))
         db.update(
             "MM/Versus/Map2/private/freeLobbies/freeHead",
-            Lobby("freeHead", 0, PartialUser("FREE", "FREE") , GeoPoint(0.0,0.0))
+            Lobby("freeHead", 0, PartialUser("FREE", "FREE"), GeoPoint(0.0, 0.0))
         )
         db.update(
             "MM/Versus/Map2/private/launchLobbies/launchHead",
-            Lobby("launchHead", 0, PartialUser("FREE", "FREE"),GeoPoint(0.0,0.0))
+            Lobby("launchHead", 0, PartialUser("FREE", "FREE"), GeoPoint(0.0, 0.0))
         )
         db.update("MM/Versus/Map2/public/freeList", listOf("head"))
         db.update(
             "MM/Versus/Map2/public/freeLobbies/freeHead",
-            Lobby("freeHead", 0, PartialUser("FREE", "FREE"),GeoPoint(0.0,0.0))
+            Lobby("freeHead", 0, PartialUser("FREE", "FREE"), GeoPoint(0.0, 0.0))
         )
         db.update(
             "MM/Versus/Map2/public/launchLobbies/launchHead",
-            Lobby("launchHead", 0, PartialUser("FREE", "FREE"),GeoPoint(0.0,0.0))
+            Lobby("launchHead", 0, PartialUser("FREE", "FREE"), GeoPoint(0.0, 0.0))
         )
 
         Thread.sleep(3000)
@@ -80,25 +83,31 @@ class MatchMakingTest {
     }
 
     @Test
-    fun testPublicLobbyCreation(){
+    fun testPublicLobbyCreation() {
         val intent =
-            Intent(ApplicationProvider.getApplicationContext(), MatchMakingActivity::class.java).apply {
+            Intent(
+                ApplicationProvider.getApplicationContext(),
+                MatchMakingActivity::class.java
+            ).apply {
                 putExtra("DEBUG", true)
             }
         val scenario = ActivityScenario.launch<MatchMakingActivity>(intent)
 
-      //  val db : RealTimeDatabase = RealTimeDatabase().noCacheInstantiate("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",true) as RealTimeDatabase
+        //  val db : RealTimeDatabase = RealTimeDatabase().noCacheInstantiate("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",true) as RealTimeDatabase
         Thread.sleep(1000)
 
         scenario.use {
 
-            Espresso.onView(ViewMatchers.withId(R.id.RandomLobbySearch)).perform(ViewActions.click())
+            Espresso.onView(ViewMatchers.withId(R.id.RandomLobbySearch))
+                .perform(ViewActions.click())
             Thread.sleep(1000)
 
             db.delete("MM")
-            Espresso.onView(ViewMatchers.withId(R.id.textView6)).check(ViewAssertions.matches(
-                ViewMatchers.isDisplayed()
-            ))
+            Espresso.onView(ViewMatchers.withId(R.id.textView11)).check(
+                ViewAssertions.matches(
+                    ViewMatchers.isDisplayed()
+                )
+            )
         }
 
 
@@ -107,34 +116,43 @@ class MatchMakingTest {
     }
 
     @Test
-    fun testPublicLobbySearch(){
+    fun testPublicLobbySearch() {
         val intent =
-            Intent(ApplicationProvider.getApplicationContext(), MatchMakingActivity::class.java).apply {
+            Intent(
+                ApplicationProvider.getApplicationContext(),
+                MatchMakingActivity::class.java
+            ).apply {
                 putExtra("DEBUG", true)
             }
         val scenario = ActivityScenario.launch<MatchMakingActivity>(intent)
 
-     //   val db : RealTimeDatabase = RealTimeDatabase().noCacheInstantiate("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",true) as RealTimeDatabase
+        //   val db : RealTimeDatabase = RealTimeDatabase().noCacheInstantiate("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",true) as RealTimeDatabase
         Thread.sleep(1000)
 
 
         scenario.use {
             MockGPS.specifyMock(intent, MOCK_GPS_POSITION)
 
-            db.update("MM/Versus/Map2/public/freeList",listOf("head","test"))
-            db.update("MM/Versus/Map2/public/freeLobbies/test",Lobby("test", 3, PartialUser("FREE", "FREE"), GeoPoint(0.00001,0.00001)))
+            db.update("MM/Versus/Map2/public/freeList", listOf("head", "test"))
+            db.update(
+                "MM/Versus/Map2/public/freeLobbies/test",
+                Lobby("test", 3, PartialUser("FREE", "FREE"), GeoPoint(0.00001, 0.00001))
+            )
 
             Thread.sleep(1000)
 
 
-            Espresso.onView(ViewMatchers.withId(R.id.RandomLobbySearch)).perform(ViewActions.click())
+            Espresso.onView(ViewMatchers.withId(R.id.RandomLobbySearch))
+                .perform(ViewActions.click())
             Thread.sleep(1000) //wait for the info to arrive
 
             db.delete("MM")
 
-            Espresso.onView(ViewMatchers.withId(R.id.textView6)).check(ViewAssertions.matches(
-                ViewMatchers.isDisplayed()
-            ))
+            Espresso.onView(ViewMatchers.withId(R.id.textView11)).check(
+                ViewAssertions.matches(
+                    ViewMatchers.isDisplayed()
+                )
+            )
 
             Thread.sleep(1000)
 
@@ -143,26 +161,30 @@ class MatchMakingTest {
     }
 
     @Test
-    fun testPublicLobbyGameLaunch(){
+    fun testPublicLobbyGameLaunch() {
         Intents.init()
         val intent =
-            Intent(ApplicationProvider.getApplicationContext(), MatchMakingActivity::class.java).apply {
+            Intent(
+                ApplicationProvider.getApplicationContext(),
+                MatchMakingActivity::class.java
+            ).apply {
                 putExtra("DEBUG", true)
             }
         val scenario = ActivityScenario.launch<MatchMakingActivity>(intent)
 
-    //    val db : RealTimeDatabase = RealTimeDatabase().noCacheInstantiate("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",true) as RealTimeDatabase
+        //    val db : RealTimeDatabase = RealTimeDatabase().noCacheInstantiate("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",true) as RealTimeDatabase
 
         Thread.sleep(1000)
         scenario.use {
             MockGPS.specifyMock(intent, MOCK_GPS_POSITION)
 
-            Espresso.onView(ViewMatchers.withId(R.id.RandomLobbySearch)).perform(ViewActions.click())
+            Espresso.onView(ViewMatchers.withId(R.id.RandomLobbySearch))
+                .perform(ViewActions.click())
             Thread.sleep(1000) //wait for the info to arrive
 
-            db.getThenCall<ArrayList<String>>("MM/Versus/Map2/public/freeList"){ lobbies ->
+            db.getThenCall<ArrayList<String>>("MM/Versus/Map2/public/freeList") { lobbies ->
                 val lobby = lobbies?.get(1)
-                db.update("MM/Versus/Map2/public/freeLobbies/$lobby/lobbyCount",2)
+                db.update("MM/Versus/Map2/public/freeLobbies/$lobby/lobbyCount", 2)
             }
 
 
@@ -172,21 +194,23 @@ class MatchMakingTest {
             Intents.intended(IntentMatchers.hasComponent(GameVersusViewActivity::class.java.name))
 
 
-
         }
         Intents.release()
     }
 
 
     @Test
-    fun testPrivateLobbyCreation(){
+    fun testPrivateLobbyCreation() {
         val intent =
-            Intent(ApplicationProvider.getApplicationContext(), MatchMakingActivity::class.java).apply {
+            Intent(
+                ApplicationProvider.getApplicationContext(),
+                MatchMakingActivity::class.java
+            ).apply {
                 putExtra("DEBUG", true)
             }
         val scenario = ActivityScenario.launch<MatchMakingActivity>(intent)
 
-   //     val db : RealTimeDatabase = RealTimeDatabase().noCacheInstantiate("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",true) as RealTimeDatabase
+        //     val db : RealTimeDatabase = RealTimeDatabase().noCacheInstantiate("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",true) as RealTimeDatabase
 
         Thread.sleep(1000)
 
@@ -198,7 +222,8 @@ class MatchMakingTest {
                     ViewActions.closeSoftKeyboard()
                 )
 
-            Espresso.onView(ViewMatchers.withId(R.id.privateLobbyCreate)).perform(ViewActions.click())
+            Espresso.onView(ViewMatchers.withId(R.id.privateLobbyCreate))
+                .perform(ViewActions.click())
             Thread.sleep(1000)
 
             Espresso.onView(ViewMatchers.withId(R.id.friendsMMRecycler)).perform(
@@ -209,9 +234,11 @@ class MatchMakingTest {
             )
 
             db.delete("MM")
-            Espresso.onView(ViewMatchers.withId(R.id.textView14)).check(ViewAssertions.matches(
-                ViewMatchers.isDisplayed()
-            ))
+            Espresso.onView(ViewMatchers.withId(R.id.textView10)).check(
+                ViewAssertions.matches(
+                    ViewMatchers.isDisplayed()
+                )
+            )
 
             Thread.sleep(1000)
 
@@ -219,20 +246,26 @@ class MatchMakingTest {
     }
 
     @Test
-    fun testPrivateLobbySearch(){
-        val intent = Intent(ApplicationProvider.getApplicationContext(), MatchMakingActivity::class.java).apply {
+    fun testPrivateLobbySearch() {
+        val intent = Intent(
+            ApplicationProvider.getApplicationContext(),
+            MatchMakingActivity::class.java
+        ).apply {
             putExtra("DEBUG", true)
         }
         val scenario = ActivityScenario.launch<MatchMakingActivity>(intent)
 
-   //     val db : RealTimeDatabase = RealTimeDatabase().noCacheInstantiate("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",true) as RealTimeDatabase
+        //     val db : RealTimeDatabase = RealTimeDatabase().noCacheInstantiate("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",true) as RealTimeDatabase
         Thread.sleep(1000)
 
         scenario.use {
             MockGPS.specifyMock(intent, MOCK_GPS_POSITION)
 
-            db.update("MM/Versus/Map2/private/freeList",listOf("head","test"))
-            db.update("MM/Versus/Map2/private/freeLobbies/test",Lobby("test", 3, PartialUser("FREE", "FREE"),GeoPoint(0.00001,0.00001)))
+            db.update("MM/Versus/Map2/private/freeList", listOf("head", "test"))
+            db.update(
+                "MM/Versus/Map2/private/freeLobbies/test",
+                Lobby("test", 3, PartialUser("FREE", "FREE"), GeoPoint(0.00001, 0.00001))
+            )
 
             Thread.sleep(1000)
 
@@ -246,9 +279,11 @@ class MatchMakingTest {
             db.delete("MM")
 
 
-            Espresso.onView(ViewMatchers.withId(R.id.textView14)).check(ViewAssertions.matches(
-                ViewMatchers.isDisplayed()
-            ))
+            Espresso.onView(ViewMatchers.withId(R.id.textView10)).check(
+                ViewAssertions.matches(
+                    ViewMatchers.isDisplayed()
+                )
+            )
 
             Thread.sleep(1000)
 
@@ -256,8 +291,9 @@ class MatchMakingTest {
     }
 
     @Test
-    fun testGameListToMM(){
-        val intent = Intent(ApplicationProvider.getApplicationContext(), GameListActivity::class.java)
+    fun testGameListToMM() {
+        val intent =
+            Intent(ApplicationProvider.getApplicationContext(), GameListActivity::class.java)
         val scenario = ActivityScenario.launch<MatchMakingActivity>(intent)
 
 
