@@ -32,7 +32,7 @@ class OfflineUserFetcher(private val context: Context?) {
      * Gets the cached Partial User
      */
     fun getOfflinePartialUser(): PartialUser {
-        val partialUser: PartialUser? = readPreferences(PARTIAL_USER_PATH) as PartialUser?
+        val partialUser: PartialUser? = readPreferences(PARTIAL_USER_PATH)
         return partialUser ?: PartialUser("defaultName", "dummy_id")
     }
 
@@ -41,7 +41,7 @@ class OfflineUserFetcher(private val context: Context?) {
      */
     fun getOfflineAchievements(): MutableList<Achievement> {
         val offlineAchievements: MutableList<Achievement>? =
-            readPreferences(ACHIEVEMENT_PATH) as MutableList<Achievement>?
+            readPreferences(ACHIEVEMENT_PATH)
         Log.e("debug", "offlineAchievements: $offlineAchievements")
         return offlineAchievements ?: mutableListOf(
             Achievement(
@@ -57,7 +57,7 @@ class OfflineUserFetcher(private val context: Context?) {
      */
     fun getOfflineStats(): MutableList<Statistic> {
         val offlineStats: MutableList<Statistic>? =
-            readPreferences(STATS_PATH) as MutableList<Statistic>?
+            readPreferences(STATS_PATH)
         return offlineStats ?: mutableListOf(
             Statistic(
                 "stat1",
@@ -75,7 +75,7 @@ class OfflineUserFetcher(private val context: Context?) {
      */
     fun getOfflineFriendsList(): MutableList<PartialUser> {
         val offlineFriendsList: MutableList<PartialUser>? =
-            readPreferences(FRIEND_LIST_PATH) as MutableList<PartialUser>?
+            readPreferences(FRIEND_LIST_PATH)
         return offlineFriendsList ?: mutableListOf(
             PartialUser(
                 "dummy_friend_username",
@@ -89,7 +89,7 @@ class OfflineUserFetcher(private val context: Context?) {
      */
     fun getOfflineGameHistory(): MutableList<History> {
         val offlineGameHistory: MutableList<History>? =
-            readPreferences(GAME_HISTORY_PATH) as MutableList<History>?
+            readPreferences(GAME_HISTORY_PATH)
         return offlineGameHistory ?: mutableListOf(
             History(
                 "dummy_map", DateTimeUtil.currentDate(), "VICTORY"
@@ -102,7 +102,7 @@ class OfflineUserFetcher(private val context: Context?) {
      */
     fun getOfflineMessageHistory(): ArrayList<Message> {
         val offlineMessageHistory: ArrayList<Message>? =
-            readPreferences(MESSAGE_HISTORY_PATH) as ArrayList<Message>?
+            readPreferences(MESSAGE_HISTORY_PATH)
         return offlineMessageHistory ?: arrayListOf()
     }
 

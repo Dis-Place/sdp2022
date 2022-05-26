@@ -11,9 +11,8 @@ import com.github.displace.sdp2022.profile.achievements.Achievement
 import com.github.displace.sdp2022.profile.history.History
 import com.github.displace.sdp2022.profile.messages.Message
 import com.github.displace.sdp2022.profile.statistics.Statistic
+import com.github.displace.sdp2022.util.DateTimeUtil
 import com.google.firebase.auth.FirebaseUser
-import java.text.SimpleDateFormat
-import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 import kotlin.random.Random
@@ -70,123 +69,14 @@ class CompleteUser(
 
     private var profilePic: Bitmap? = null      // Stores the profile picture bitmap to prevent going to the database every time
 
-
     init {
-        initializeUser()
-    }
-
-    /**
-     * Initializes the user
-     */
-    private fun initializeUser() {
-        // Initialization of a guest user
         if (guestBoolean) {
-
-            // Basic initialization of a user
-            initializePartialUser()
-
-            initializeAchievements()
-            initializeStats()
-            friendsList = mutableListOf(
-                PartialUser("THE SYSTEM", "dummy_friend_id")
-            )
-            gameHistory = mutableListOf(
-                History("dummy_map", getCurrentDate(), "VICTORY")
-            )
-            gameHistory = mutableListOf()
-            createFirstMessageList()
-
-            addUserToDatabase()
-
-            activity?.launchMainMenuActivity()  // If the user have been created in the login, we have to launch the main menu now that the user is initialized
-            return
+            initializeNewUser()
+        } else if (offlineMode || remembered) { // Initialization if the user is offline, or if the user is cached
+            initializeUserWithLocalMemory()
+        } else {    // Initialization if the user is online and not cached, we have to search the infos in the database
+            initializeUserFromDB()
         }
-
-
-        // Initialization if the user is offline, or if the user is cached
-        if (offlineMode || remembered) {
-            achievements = offlineUserFetcher.getOfflineAchievements()
-            stats = offlineUserFetcher.getOfflineStats()
-            friendsList = offlineUserFetcher.getOfflineFriendsList()
-            gameHistory = offlineUserFetcher.getOfflineGameHistory()
-            partialUser = offlineUserFetcher.getOfflinePartialUser()
-            activity?.launchMainMenuActivity()  // If the user have been created in the login, we have to launch the main menu now that the user is initialized
-            return
-        }
-
-
-        // Initialization if the user is online and not cached, we have to search the infos in the database
-
-        db.getThenCall<HashMap<String, *>>(dbReference){completeUser ->
-            if(completeUser != null) {
-                // Get statistics from the database
-                val statsDB = completeUser["stats"] as List<HashMap<String, String>>
-                stats = statsDB.map { s ->
-                    Statistic(
-                        s["name"]!!,
-                        s["value"] as Long
-                    )
-                } as MutableList<Statistic>
-
-
-                // Get achievements from the database
-                val achievementsDB =
-                    completeUser["achievements"] as List<HashMap<String, String>>
-
-                achievements = achievementsDB.map { ach ->
-                    Achievement(
-                        ach["name"]!!,
-                        ach["description"]!!,
-                        ach["date"]!!
-                    )
-                } as MutableList<Achievement>
-
-                // Get friends list from the database
-                val friendsListHash =
-                    completeUser["friendsList"] as List<HashMap<String, String>>
-
-                friendsList = friendsListHash.map { f ->
-                    PartialUser(
-                        f["username"]!!,
-                        f["uid"]!!
-                    )
-                } as MutableList<PartialUser>
-
-                // Get game history from the database
-                val gameHistoryHash =
-                    completeUser["gameHistory"] as List<HashMap<String, String>>?
-                if(gameHistoryHash != null) {
-                    gameHistory = gameHistoryHash.map { g ->
-                        History(
-                            g["gameMode"]!!,
-                            g["date"]!!,
-                            g["result"]!!
-                        )
-                    } as MutableList<History>
-                }
-
-                // Get Partial User from the database
-                val partialUserMap = completeUser["partialUser"] as Map<String, String>
-                partialUser =
-                    PartialUser(partialUserMap["username"]!!, partialUserMap["uid"]!!)
-
-                // Save the user in the cache
-                offlineUserFetcher.setCompleteUser(this)
-            } else {    // if the user doesn't exist in database, initialize it and add it to database
-
-                initializePartialUser()
-                initializeAchievements()
-                initializeStats()
-                friendsList = mutableListOf(
-                    PartialUser("THE SYSTEM", "dummy_friend_id")
-                )
-                gameHistory = mutableListOf()
-                addUserToDatabase()
-                createFirstMessageList()
-            }
-            activity?.launchMainMenuActivity()  // If the user have been created in the login, we have to launch the main menu now that the user is initialized
-        }
-
     }
 
     /**
@@ -194,12 +84,120 @@ class CompleteUser(
      */
 
     /**
+     * Initializes a user that isn't in the database
+     * Either a new user or a guest user
+     */
+    private fun initializeNewUser() {
+        // Basic initialization of a user
+        initializePartialUser()
+
+        initializeAchievements()
+        initializeStats()
+        friendsList = mutableListOf(
+            PartialUser("THE SYSTEM", "dummy_friend_id")
+        )
+        gameHistory = mutableListOf()
+        createFirstMessageList()
+
+        addUserToDatabase()
+
+        activity?.launchMainMenuActivity()  // If the user have been created in the login, we have to launch the main menu now that the user is initialized
+    }
+
+    /**
+     * Initializes the user by using the Offline User Fetcher to get the informations from local memory
+     */
+    private fun initializeUserWithLocalMemory() {
+        achievements = offlineUserFetcher.getOfflineAchievements()
+        stats = offlineUserFetcher.getOfflineStats()
+        friendsList = offlineUserFetcher.getOfflineFriendsList()
+        gameHistory = offlineUserFetcher.getOfflineGameHistory()
+        partialUser = offlineUserFetcher.getOfflinePartialUser()
+        activity?.launchMainMenuActivity()  // If the user have been created in the login, we have to launch the main menu now that the user is initialized
+    }
+
+    /**
+     * Initializes the user by reading the database to get the informations
+     */
+    private fun initializeUserFromDB() {
+        db.getThenCall<HashMap<String, *>>(dbReference){completeUser ->
+            if(completeUser != null) {
+                initializeUserFromDBInfo(completeUser)
+            } else {    // if the user doesn't exist in database, it's a new user
+                initializeNewUser()
+            }
+        }
+    }
+
+    /**
+     * Initializes the user given the database informations
+     * @param completeUserInfos: User informations from the database
+     */
+    private fun initializeUserFromDBInfo(completeUserInfos: HashMap<String, *>) {
+        // Get statistics from the database
+        val statsDB = completeUserInfos["stats"] as List<HashMap<String, String>>
+        stats = statsDB.map { s ->
+            Statistic(
+                s["name"]!!,
+                s["value"] as Long
+            )
+        } as MutableList<Statistic>
+
+
+        // Get achievements from the database
+        val achievementsDB =
+            completeUserInfos["achievements"] as List<HashMap<String, String>>
+
+        achievements = achievementsDB.map { ach ->
+            Achievement(
+                ach["name"]!!,
+                ach["description"]!!,
+                ach["date"]!!
+            )
+        } as MutableList<Achievement>
+
+        // Get friends list from the database
+        val friendsListHash =
+            completeUserInfos["friendsList"] as List<HashMap<String, String>>
+
+        friendsList = friendsListHash.map { f ->
+            PartialUser(
+                f["username"]!!,
+                f["uid"]!!
+            )
+        } as MutableList<PartialUser>
+
+        // Get game history from the database
+        val gameHistoryHash =
+            completeUserInfos["gameHistory"] as List<HashMap<String, String>>?
+        if(gameHistoryHash != null) {
+            gameHistory = gameHistoryHash.map { g ->
+                History(
+                    g["gameMode"]!!,
+                    g["date"]!!,
+                    g["result"]!!
+                )
+            } as MutableList<History>
+        }
+
+        // Get Partial User from the database
+        val partialUserMap = completeUserInfos["partialUser"] as Map<String, String>
+        partialUser =
+            PartialUser(partialUserMap["username"]!!, partialUserMap["uid"]!!)
+
+        // Save the user in the cache
+        offlineUserFetcher.setCompleteUser(this)
+
+        activity?.launchMainMenuActivity()  // If the user have been created in the login, we have to launch the main menu now that the user is initialized
+    }
+
+    /**
      * Creates the first achievements' list of a new user
      */
     @SuppressLint("SimpleDateFormat")
     private fun initializeAchievements() {
         achievements = mutableListOf(
-            Achievement("Welcome home!","Create your account", getCurrentDate())
+            Achievement("Welcome home!","Create your account", DateTimeUtil.currentDate())
         )
 
         if(!guestBoolean && firebaseUser != null) {     // if firebaseUser is null, it's either an error or a automatic test
@@ -249,7 +247,7 @@ class CompleteUser(
             listOf(
                 Message(
                     "Welcome to DisPlace",
-                    getCurrentDate(),
+                    DateTimeUtil.currentDate(),
                     PartialUser("THE SYSTEM", "dummy_id")
                 ).toMap()
             )
@@ -303,7 +301,7 @@ class CompleteUser(
 
         if(!achievements.contains(ach)){
             /**
-             * TODO: This part should also send a notification
+             * This part also sends a notification
              */
             app.getMessageHandler().messageNotification(ach.description,ach.name)
 
@@ -435,15 +433,6 @@ class CompleteUser(
             }
         }
         return false
-    }
-
-    /**
-     * Gets the current date
-     */
-    @SuppressLint("SimpleDateFormat")
-    private fun getCurrentDate(): String {
-        val simpleDate = SimpleDateFormat("dd-MM-yyyy")
-        return simpleDate.format(Date())
     }
 
     /**
