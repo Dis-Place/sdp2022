@@ -1,4 +1,4 @@
-package com.github.displace.sdp2022.MatchMaking
+package com.github.displace.sdp2022.matchMaking
 
 import android.content.Intent
 import androidx.test.core.app.ActivityScenario
