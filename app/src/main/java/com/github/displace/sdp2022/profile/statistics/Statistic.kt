@@ -8,4 +8,8 @@ import kotlinx.serialization.Serializable
  * It contains a name and a value
  */
 @Serializable
-data class Statistic(@Serializable val name: String, @Serializable var value: Long)
+data class Statistic(@Serializable val name: String, @Serializable var value: Long) {
+    fun toMap(): Map<String, *> {
+        return mapOf( Pair("name", name), Pair("value", value))
+    }
+}

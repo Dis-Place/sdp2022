@@ -224,8 +224,8 @@ class MatchMakingModel( val activity: MMView ){
                     TransactionSpecification.Builder<MutableMap<String, Any>> { lobby ->
 
                         lobby!!["lobbyCount"] = lobby["lobbyCount"] as Long + 1
-                        val ls = lobby["lobbyPlayers"] as ArrayList<MutableMap<String, Any>>
-                        val userMap = activePartialUser.asMap()
+                        val ls = lobby["lobbyPlayers"] as ArrayList<Map<String, *>>
+                        val userMap = activePartialUser.toMap()
 
                         ls.add(userMap)
                         lobby["lobbyPlayers"] = ls
@@ -443,7 +443,7 @@ class MatchMakingModel( val activity: MMView ){
             return lobby
         }*/
         lobby["lobbyCount"] = lobby["lobbyCount"] as Long - 1
-        val userMap = activePartialUser.asMap()
+        val userMap = activePartialUser.toMap()
         (lobby["lobbyPlayers"] as ArrayList<MutableMap<String, Any>>).remove(userMap)
      /*   if (lobby["lobbyLeader"] as String == activePartialUser.uid) { //leader?
             lobby["lobbyLeader"] = (players)[0]["uid"] as String //use the next player as the new leader

@@ -1,5 +1,6 @@
 package com.github.displace.sdp2022.news
 
+import android.content.Intent
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions
@@ -12,6 +13,8 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.R
 import com.github.displace.sdp2022.authentication.SignInActivity
+import com.github.displace.sdp2022.database.DatabaseFactory
+import com.github.displace.sdp2022.database.MockDatabaseUtils
 import com.github.displace.sdp2022.map.GoodPinpointsDBHandlerTest.Companion.DB_DELAY
 import org.junit.After
 import org.junit.Rule
@@ -22,18 +25,27 @@ import org.junit.runner.RunWith
 class NewsActivityTest {
 
     @get:Rule
-    val testRule = ActivityScenarioRule(SignInActivity::class.java)
+    val testRule = run {
+        val intent =
+            Intent(ApplicationProvider.getApplicationContext(), SignInActivity::class.java)
 
-    @After
+        DatabaseFactory.clearMockDB()
+
+        MockDatabaseUtils.mockIntent(intent)
+
+        ActivityScenarioRule<SignInActivity>(intent)
+    }
+
+    /*@After
     fun removeAnonymousUserFromDB() {
         (ApplicationProvider.getApplicationContext() as MyApplication).getActiveUser()
             ?.removeUserFromDatabase()
-    }
+    }*/
 
     @Test
     fun startToNewsTest() {
         onView(withId(R.id.signInActivityGuestModeButton)).perform(click())
-        Thread.sleep(DB_DELAY)
+        Thread.sleep(1000)
         onView(withId(R.id.newsButton)).perform(click())
         onView(withId(R.id.textView)).check(
             ViewAssertions.matches(
