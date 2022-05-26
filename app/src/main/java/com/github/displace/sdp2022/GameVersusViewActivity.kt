@@ -66,7 +66,7 @@ class GameVersusViewActivity : AppCompatActivity() {
     private var gid = ""
     private var uid = ""
 
-    private var oldPos = GeoPoint(0.0,0.0)
+    private var oldPos = GeoPoint(0.0, 0.0)
     private var totalDist = 0.0
     private var totalTime = 0
 
@@ -207,7 +207,7 @@ class GameVersusViewActivity : AppCompatActivity() {
         else null
 
         pinpointsManager = PinpointsManager(mapView, clickSoundPlayer)
-        for(i in nbPlayer downTo 0){
+        for (i in nbPlayer downTo 0) {
 
             otherPlayersPinpoints = otherPlayersPinpoints.plus(pinpointsManager.PinpointsRef())
         }
@@ -280,11 +280,11 @@ class GameVersusViewActivity : AppCompatActivity() {
         musicPlayer.isLooping = false
     }
 
-    private fun addTotals(point : GeoPoint){
-        if(point.latitude != 0.0 && point.longitude != 0.0 && oldPos.longitude == 0.0 && oldPos.latitude == 0.0){
+    private fun addTotals(point: GeoPoint) {
+        if (point.latitude != 0.0 && point.longitude != 0.0 && oldPos.longitude == 0.0 && oldPos.latitude == 0.0) {
             oldPos = point
         }
-        totalDist += CoordinatesUtil.distance(oldPos,point)
+        totalDist += CoordinatesUtil.distance(oldPos, point)
         oldPos = point
         totalTime += 5
     }
@@ -334,9 +334,9 @@ class GameVersusViewActivity : AppCompatActivity() {
         extras.putString(EXTRA_MODE, gameMode)
         intent.putExtras(extras)
 
-        intent.putExtra("others",others as Serializable)
-        intent.putExtra("totalDist",totalDist)
-        intent.putExtra("totalTime",totalTime)
+        intent.putExtra("others", others as Serializable)
+        intent.putExtra("totalDist", totalDist)
+        intent.putExtra("totalTime", totalTime)
 
         startActivity(intent)
     }
@@ -358,7 +358,7 @@ class GameVersusViewActivity : AppCompatActivity() {
                 endListener
             )
 
-            if(!intent.getStringExtra("uid")!!.contains("guest")) {
+            if (!intent.getStringExtra("uid")!!.contains("guest")) {
                 db.referenceGet(
                     "CompleteUsers/${otherPlayerId}/CompleteUser/partialUser",
                     "username"
@@ -372,12 +372,14 @@ class GameVersusViewActivity : AppCompatActivity() {
                 }
             }
 
-            try{
-            pinpointsDBHandler.enableAutoupdateLocalPinpoints(
-                otherPlayerId,
-                otherPlayersPinpoints[i]
-            )
-            }catch(e: Exception){ throw error(otherPlayerId + " i = $i")}
+            try {
+                pinpointsDBHandler.enableAutoupdateLocalPinpoints(
+                    otherPlayerId,
+                    otherPlayersPinpoints[i]
+                )
+            } catch (e: Exception) {
+                throw error(otherPlayerId + " i = $i")
+            }
 
             game.handleEvent(
                 GameEvent.OnStart(

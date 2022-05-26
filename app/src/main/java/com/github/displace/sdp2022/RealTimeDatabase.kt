@@ -1,5 +1,6 @@
 package com.github.displace.sdp2022
 
+import com.github.displace.sdp2022.database.Database
 import com.google.android.gms.tasks.Task
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseReference
