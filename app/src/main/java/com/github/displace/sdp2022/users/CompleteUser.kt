@@ -120,7 +120,7 @@ class CompleteUser(
      * Initializes the user by reading the database to get the informations
      */
     private fun initializeUserFromDB() {
-        db.getThenCall<HashMap<String, *>>(dbReference){completeUser ->
+        db.getThenCall<Map<String, *>>(dbReference){completeUser ->
             if(completeUser != null) {
                 initializeUserFromDBInfo(completeUser)
             } else {    // if the user doesn't exist in database, it's a new user
@@ -133,9 +133,9 @@ class CompleteUser(
      * Initializes the user given the database informations
      * @param completeUserInfos: User informations from the database
      */
-    private fun initializeUserFromDBInfo(completeUserInfos: HashMap<String, *>) {
+    private fun initializeUserFromDBInfo(completeUserInfos: Map<String, *>) {
         // Get statistics from the database
-        val statsDB = completeUserInfos["stats"] as List<HashMap<String, String>>
+        val statsDB = completeUserInfos["stats"] as List<Map<String, String>>
         stats = statsDB.map { s ->
             Statistic(
                 s["name"]!!,
@@ -146,7 +146,7 @@ class CompleteUser(
 
         // Get achievements from the database
         val achievementsDB =
-            completeUserInfos["achievements"] as List<HashMap<String, String>>
+            completeUserInfos["achievements"] as List<Map<String, String>>
 
         achievements = achievementsDB.map { ach ->
             Achievement(
@@ -158,7 +158,7 @@ class CompleteUser(
 
         // Get friends list from the database
         val friendsListHash =
-            completeUserInfos["friendsList"] as List<HashMap<String, String>>
+            completeUserInfos["friendsList"] as List<Map<String, String>>
 
         friendsList = friendsListHash.map { f ->
             PartialUser(
@@ -169,7 +169,7 @@ class CompleteUser(
 
         // Get game history from the database
         val gameHistoryHash =
-            completeUserInfos["gameHistory"] as List<HashMap<String, String>>?
+            completeUserInfos["gameHistory"] as List<Map<String, String>>?
         if(gameHistoryHash != null) {
             gameHistory = gameHistoryHash.map { g ->
                 History(
