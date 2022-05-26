@@ -21,6 +21,8 @@ import androidx.test.rule.GrantPermissionRule
 import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.R
 import com.github.displace.sdp2022.database.DatabaseFactory
+import com.github.displace.sdp2022.database.MockDatabaseUtils
+import com.github.displace.sdp2022.profile.messages.MessageHandler
 import com.github.displace.sdp2022.profile.settings.AccountSettingsActivity
 import com.github.displace.sdp2022.users.CompleteUser
 import org.hamcrest.CoreMatchers
@@ -171,6 +173,10 @@ class AccountSettingsActivityPermsTest {
                     ApplicationProvider.getApplicationContext(),
                     AccountSettingsActivity::class.java
                 )
+            val app = ApplicationProvider.getApplicationContext() as MyApplication
+            MockDatabaseUtils.mockIntent(intent)
+            app.setMessageHandler(MessageHandler(app.getActiveUser()!!.getPartialUser(),app,intent))
+            Thread.sleep(100)
             val scenario = ActivityScenario.launch<AccountSettingsActivity>(intent)
             scenario.use {
                 val expectedIntent = IntentMatchers.hasAction(Intent.ACTION_PICK)

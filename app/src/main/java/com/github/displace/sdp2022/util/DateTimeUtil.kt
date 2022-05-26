@@ -26,4 +26,6 @@ object DateTimeUtil {
     fun currentDate(): String {
         return SimpleDateFormat(DATE_PATTERN).format(Date())
     }
+
+
 }

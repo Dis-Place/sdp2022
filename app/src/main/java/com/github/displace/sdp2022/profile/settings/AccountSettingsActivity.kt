@@ -116,6 +116,11 @@ class AccountSettingsActivity : AppCompatActivity() {
 
         username.text = activeUser.getPartialUser().username
 
+        /*passwordUpdate.setOnClickListener {
+            showChangePasswordDialog()
+        }*/
+
+        app.getMessageHandler().checkForNewMessages()
     }
 
     @Suppress("UNUSED_PARAMETER")

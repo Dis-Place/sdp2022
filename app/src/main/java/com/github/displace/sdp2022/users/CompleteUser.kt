@@ -158,7 +158,7 @@ class CompleteUser(
                 if(gameHistoryHash != null) {
                     gameHistory = gameHistoryHash.map { g ->
                         History(
-                            g["map"]!!,
+                            g["gameMode"]!!,
                             g["date"]!!,
                             g["result"]!!
                         )

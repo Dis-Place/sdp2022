@@ -149,7 +149,7 @@ class CompleteUserTest {
         completeUser.addGameInHistory("dummyMap", "28-03-2022", "VICTORY")
         val completeHistory = completeUser.getGameHistory()[historySize]
         assertTrue(
-            completeHistory.map == gameHistory.map
+            completeHistory.gameMode == gameHistory.gameMode
                     && completeHistory.date == gameHistory.date
                     && completeHistory.result == gameHistory.result
         )

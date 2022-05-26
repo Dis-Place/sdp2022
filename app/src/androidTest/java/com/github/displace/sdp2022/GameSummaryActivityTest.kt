@@ -13,6 +13,7 @@ import androidx.test.espresso.intent.Intents.intended
 import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.github.displace.sdp2022.database.MockDatabaseUtils
 import com.github.displace.sdp2022.database.DatabaseFactory
 import com.github.displace.sdp2022.profile.friendInvites.Invite
 import com.github.displace.sdp2022.profile.messages.MessageHandler
@@ -37,10 +38,13 @@ class GameSummaryActivityTest {
         bundle = Bundle()
         intent = Intent(getApplicationContext(),GameSummaryActivity::class.java)
 
+        DatabaseFactory.clearMockDB()
+
         val app = getApplicationContext() as MyApplication
         app.setActiveUser(CompleteUser(app,null, DatabaseFactory.MOCK_DB))
-        //Thread.sleep(3000)
-        app.setMessageHandler(MessageHandler(app.getActiveUser()!!.getPartialUser(),app))
+
+        MockDatabaseUtils.mockIntent(intent)
+        app.setMessageHandler(MessageHandler(app.getActiveUser()!!.getPartialUser(),app,intent))
         Thread.sleep(1000)
 
     }

@@ -19,6 +19,7 @@ import com.github.displace.sdp2022.profile.messages.MessageHandler
 import com.github.displace.sdp2022.users.CompleteUser
 import androidx.test.rule.GrantPermissionRule
 import com.github.displace.sdp2022.database.DatabaseFactory
+import com.github.displace.sdp2022.database.MockDatabaseUtils
 import com.github.displace.sdp2022.map.MapViewManager
 import com.github.displace.sdp2022.util.gps.MockGPS
 import org.junit.After
@@ -32,19 +33,19 @@ import org.junit.runner.RunWith
 class GameMenuTest {
 
     lateinit var intent: Intent
-    val db = RealTimeDatabase().noCacheInstantiate("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",false) as com.github.displace.sdp2022.RealTimeDatabase
 
     @Before
     fun setup() {
         val app = ApplicationProvider.getApplicationContext() as MyApplication
         app.setActiveUser(CompleteUser(app,null, DatabaseFactory.MOCK_DB))
-        //Thread.sleep(3000)
-        app.setMessageHandler(MessageHandler(app.getActiveUser()!!.getPartialUser(),app))
-        Thread.sleep(1000)
 
         Intents.init()
         intent = Intent(ApplicationProvider.getApplicationContext(),GameVersusViewActivity::class.java)
         MockGPS.specifyMock(intent, MOCK_GPS_POSITION)
+        MockDatabaseUtils.mockIntent(intent)
+
+        app.setMessageHandler(MessageHandler(app.getActiveUser()!!.getPartialUser(),app,intent))
+        Thread.sleep(1000)
     }
 
     @After
@@ -73,7 +74,7 @@ class GameMenuTest {
                 .check(matches(withText("remaining tries : 4")))
         }
     }
-
+//TODO
     @Test
     fun testMap() {
         intent.putExtra("gid","GameVersusTest")
@@ -163,7 +164,7 @@ class GameMenuTest {
     companion object {
         val MOCK_GPS_POSITION = MapViewManager.DEFAULT_CENTER
     }
-    /*
+/*
     @Test
     fun testChatButton() {
 
@@ -184,6 +185,6 @@ class GameMenuTest {
         }
     }
     
-     */
+*/
 
 }
