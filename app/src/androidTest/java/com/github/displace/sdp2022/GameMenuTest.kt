@@ -18,6 +18,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.displace.sdp2022.profile.messages.MessageHandler
 import com.github.displace.sdp2022.users.CompleteUser
 import androidx.test.rule.GrantPermissionRule
+import com.github.displace.sdp2022.database.DatabaseFactory
 import com.github.displace.sdp2022.database.MockDatabaseUtils
 import com.github.displace.sdp2022.map.MapViewManager
 import com.github.displace.sdp2022.util.gps.MockGPS
@@ -32,14 +33,12 @@ import org.junit.runner.RunWith
 class GameMenuTest {
 
     lateinit var intent: Intent
-    val db = RealTimeDatabase().noCacheInstantiate("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",false) as com.github.displace.sdp2022.RealTimeDatabase
 
     @Before
     fun setup() {
+        DatabaseFactory.clearMockDB()
         val app = ApplicationProvider.getApplicationContext() as MyApplication
-        app.setActiveUser(CompleteUser(app,null))
-        Thread.sleep(3000)
-
+        app.setActiveUser(CompleteUser(app,null, DatabaseFactory.MOCK_DB))
 
         Intents.init()
         intent = Intent(ApplicationProvider.getApplicationContext(),GameVersusViewActivity::class.java)
@@ -53,8 +52,8 @@ class GameMenuTest {
     @After
     fun releaseIntents() {
         Intents.release()
-        val app = ApplicationProvider.getApplicationContext() as MyApplication
-        app.getActiveUser()?.removeUserFromDatabase()
+        /*val app = ApplicationProvider.getApplicationContext() as MyApplication
+        app.getActiveUser()?.removeUserFromDatabase()*/
     }
 
 
@@ -75,9 +74,6 @@ class GameMenuTest {
             onView(withId(R.id.TryText))
                 .check(matches(withText("remaining tries : 4")))
         }
-
-        val app = ApplicationProvider.getApplicationContext() as MyApplication
-        app.getActiveUser()!!.removeUserFromDatabase()
     }
 
     @Test
@@ -90,9 +86,6 @@ class GameMenuTest {
         ActivityScenario.launch<GameVersusViewActivity>(intent).use {
             onView(withId(R.id.map)).check(matches(ViewMatchers.isDisplayed()))
         }
-        val app = ApplicationProvider.getApplicationContext() as MyApplication
-        app.getActiveUser()!!.removeUserFromDatabase()
-
     }
 
     @Test
@@ -117,8 +110,6 @@ class GameMenuTest {
             Intents.intended(IntentMatchers.hasComponent(GameSummaryActivity::class.java.name))
 
         }
-        val app = ApplicationProvider.getApplicationContext() as MyApplication
-        app.getActiveUser()!!.removeUserFromDatabase()
     }
 
     @Test
@@ -136,9 +127,6 @@ class GameMenuTest {
                 .check(matches(withText("wrong guess, remaining tries : 3")))
 
         }
-        val app = ApplicationProvider.getApplicationContext() as MyApplication
-        app.getActiveUser()!!.removeUserFromDatabase()
-
     }
 
     @Test
@@ -152,9 +140,6 @@ class GameMenuTest {
             onView(withId(R.id.map)).perform(ViewActions.longClick())
             //Intents.intended(IntentMatchers.hasComponent(GameSummaryActivity::class.java.name))
         }
-        val app = ApplicationProvider.getApplicationContext() as MyApplication
-        app.getActiveUser()!!.removeUserFromDatabase()
-
     }
 
     @Test
@@ -168,8 +153,6 @@ class GameMenuTest {
             onView(withId(R.id.closeButton)).perform(click())
             Intents.intended(IntentMatchers.hasComponent(GameListActivity::class.java.name))
         }
-        val app = ApplicationProvider.getApplicationContext() as MyApplication
-        app.getActiveUser()!!.removeUserFromDatabase()
     }
 
     private fun swipeUp(): ViewAction? {
@@ -201,8 +184,6 @@ class GameMenuTest {
             onView(withId(R.id.button4)).perform(click())
 
         }
-        val app = ApplicationProvider.getApplicationContext() as MyApplication
-        app.getActiveUser()!!.removeUserFromDatabase()
     }
     
 */

@@ -58,7 +58,7 @@ class DemoMapActivityTest {
     }
 
 
-    @Test
+   @Test
     fun longClickClickDoesNotCauseException() {
         testRule.scenario.use {
             onView(withId(R.id.map)).perform(longClick()).perform(longClick())
@@ -157,6 +157,5 @@ class DemoMapActivityTest {
             .perform(click())
             .perform(click())
     }
-
 
 }
