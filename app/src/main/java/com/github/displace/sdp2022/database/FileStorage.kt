@@ -14,7 +14,7 @@ interface FileStorage {
      *
      * @param uri
      */
-    fun put(uri: Uri)
+    fun put(uri: Uri, onSuccess: () -> Unit, onFailure: () -> Unit)
 
     /**
      * retrieve the file

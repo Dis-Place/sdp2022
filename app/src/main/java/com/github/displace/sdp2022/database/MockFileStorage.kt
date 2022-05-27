@@ -13,7 +13,9 @@ class MockFileStorage(private val file: File): FileStorage {
     /*
     content never changes, so nothing happens
     */
-    override fun put(uri: Uri) {}
+    override fun put(uri: Uri, onSuccess: () -> Unit, onFailure: () -> Unit) {
+        onSuccess()
+    }
 
     override fun getThenCall(destination: File, onSuccess: () -> Unit, onFailure: () -> Unit) {
         try {

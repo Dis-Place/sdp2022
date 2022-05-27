@@ -11,7 +11,6 @@ import java.lang.UnsupportedOperationException
  */
 object FileStorageFactory {
     const val MOCK_FILE_STORAGE_EXTRA_ID = "MOCK_FS"
-    const val FIRE_STORAGE_BASE_URL: String = "TODO()"
 
     lateinit var mockFileStorage: FileStorage
         private set
@@ -33,7 +32,7 @@ object FileStorageFactory {
             }
             return mockFileStorage
         } else {
-            return FireStorageReferenceAdapter(FIRE_STORAGE_BASE_URL,fileUrl)
+            return FireStorageReferenceAdapter(fileUrl)
         }
     }
 

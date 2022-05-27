@@ -15,19 +15,26 @@ import java.io.File
  *
  * @param baseUrl
  */
-class FireStorageReferenceAdapter(baseUrl: String, private val fileUrl: String) : FileStorage {
-    private val storageReference = Firebase.storage(baseUrl).reference
+class FireStorageReferenceAdapter(private val fileUrl: String) : FileStorage {
+    private val storageReference = Firebase.storage.reference
 
-    override fun put(uri: Uri) {
+    override fun put(uri: Uri, onSuccess: () -> Unit, onFailure: () -> Unit) {
         storageReference.child(fileUrl).putFile(uri)
+            .addOnSuccessListener {
+                onSuccess()
+            }
+            .addOnFailureListener{
+                onFailure()
+            }
     }
 
     override fun getThenCall(destination: File, onSuccess: () -> Unit, onFailure: () -> Unit) {
-        storageReference.child(fileUrl).getFile(destination).addOnSuccessListener {
-            onSuccess()
-        }.addOnFailureListener {
-            onFailure()
-        }
+        storageReference.child(fileUrl).getFile(destination)
+            .addOnSuccessListener {
+                onSuccess()
+            }.addOnFailureListener {
+                onFailure()
+            }
     }
 
     override fun clear() {
