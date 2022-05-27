@@ -48,7 +48,7 @@ class MockFileStorageTest {
         var failureCallBackCalled = false
 
         val destination = File(destPath)
-        destination.setReadOnly()
+        destination.setWritable(false)
         FileStorageFactory.mockFileStorage.getThenCall(destination,
             onSuccess = {
                 successCallBackCalled = true
