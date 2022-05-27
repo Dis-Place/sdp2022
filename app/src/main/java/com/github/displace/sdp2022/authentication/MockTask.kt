@@ -10,7 +10,10 @@ import java.util.concurrent.Executor
  * of which the result is known.
  *
  * It never fails and is never cancelled
+ *
  * @param TResult task result
+ *
+ * @author LeoLgdr
  */
 class MockTask<TResult>(private val result: TResult?): Task<TResult>() {
 
@@ -40,13 +43,17 @@ class MockTask<TResult>(private val result: TResult?): Task<TResult>() {
         return this
     }
 
-    // task is never cancelled, it never fails and is already complete
-    // following methods implementations trivially follow from this assumption
-    // or are direct calls of above methods
-
     override fun addOnCanceledListener(p0: OnCanceledListener): Task<TResult> {
         return this
     }
+
+    override fun addOnFailureListener(p0: OnFailureListener): Task<TResult> {
+        return this
+    }
+
+    // task is synchronous and never cancelled, it never fails and is already complete
+    // following methods implementations trivially follow from this assumption
+    // or are direct calls of above methods
 
     override fun addOnCanceledListener(p0: Activity, p1: OnCanceledListener): Task<TResult> {
         return addOnCanceledListener(p1)
@@ -54,10 +61,6 @@ class MockTask<TResult>(private val result: TResult?): Task<TResult>() {
 
     override fun addOnCanceledListener(p0: Executor, p1: OnCanceledListener): Task<TResult> {
         return addOnCanceledListener(p1)
-    }
-
-    override fun addOnFailureListener(p0: OnFailureListener): Task<TResult> {
-        return this
     }
 
     override fun addOnFailureListener(p0: Activity, p1: OnFailureListener): Task<TResult> {
@@ -86,7 +89,5 @@ class MockTask<TResult>(private val result: TResult?): Task<TResult>() {
         return null
     }
 
-    override fun <X : Throwable?> getResult(p0: Class<X>): TResult? {
-        return getResult()
-    }
+    override fun <X : Throwable?> getResult(p0: Class<X>): TResult? = getResult()
 }

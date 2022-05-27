@@ -9,8 +9,9 @@ import com.google.firebase.auth.FirebaseUser
 import java.lang.UnsupportedOperationException
 
 /**
- * Mock AuthResult to comply
+ * Mock AuthResult to comply with Firebase's API
  *
+ * @author LeoLgdr
  */
 class MockAuthResult : AuthResult {
 

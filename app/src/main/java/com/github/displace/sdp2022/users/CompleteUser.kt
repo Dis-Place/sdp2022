@@ -7,6 +7,7 @@ import android.graphics.Bitmap
 import android.util.Log
 import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.RealTimeDatabase
+import com.github.displace.sdp2022.authentication.AuthenticatedUser
 import com.github.displace.sdp2022.authentication.SignInActivity
 import com.github.displace.sdp2022.database.CleanUpGuests
 import com.github.displace.sdp2022.profile.achievements.Achievement
@@ -22,7 +23,7 @@ import kotlin.random.nextUInt
 
 class CompleteUser(
     context: Context?,
-    private val firebaseUser: FirebaseUser?,
+    private val authenticatedUser: AuthenticatedUser?,
     val guestBoolean: Boolean = false,
     var offlineMode: Boolean = false,
     val remembered: Boolean = false,
@@ -37,11 +38,11 @@ class CompleteUser(
 
     private val guestNumber = Random.nextUInt()
 
-    private val dbReference: String = if (firebaseUser != null) {
+    private val dbReference: String = if (authenticatedUser != null) {
         if(guestBoolean) {
-            "CompleteUsers/guest_${firebaseUser.uid}/CompleteUser"
+            "CompleteUsers/guest_${authenticatedUser.uid()}/CompleteUser"
         } else {
-            "CompleteUsers/${firebaseUser.uid}/CompleteUser"
+            "CompleteUsers/${authenticatedUser.uid()}/CompleteUser"
         }
     } else {
         if(offlineMode) {
@@ -78,8 +79,8 @@ class CompleteUser(
         db.update(dbReference,"gameHistory", gameHistory)
         db.update(dbReference,"partialUser", partialUser)
         if(guestBoolean) {
-            if(firebaseUser != null) {
-                CleanUpGuests.updateGuestIndexesAndCleanUpDatabase(db, "guest_${firebaseUser.uid}")
+            if(authenticatedUser != null) {
+                CleanUpGuests.updateGuestIndexesAndCleanUpDatabase(db, "guest_${authenticatedUser.uid()}")
                 db.update(dbReference, "guestIndex", guestIndex)
             }
         }
@@ -341,7 +342,7 @@ class CompleteUser(
 
     fun removeUserFromDatabase() {
         db.delete("CompleteUsers", partialUser.uid)
-        firebaseUser?.delete()
+        authenticatedUser?.delete()
     }
 
     @SuppressLint("SimpleDateFormat")
@@ -350,7 +351,7 @@ class CompleteUser(
             Achievement("Welcome home!","Create your account", getCurrentDate())
         )
 
-        if(!guestBoolean && firebaseUser != null) {
+        if(!guestBoolean && authenticatedUser != null) {
             offlineUserFetcher.setOfflineAchievements(achievements)
         }
     }
@@ -368,25 +369,25 @@ class CompleteUser(
             Statistic("Distance Moved", 0)
         )      // It's a dummy list for now, will be replaced with a list of all the possible statistics initialized to 0
 
-        if(!guestBoolean && firebaseUser != null) {
+        if(!guestBoolean && authenticatedUser != null) {
             offlineUserFetcher.setOfflineStats(stats)
         }
     }
 
     private fun initializePartialUser() {
         googleName = "defaultName"
-        if (firebaseUser != null) {
-            if (firebaseUser.displayName == null || firebaseUser.displayName == "") {
+        if (authenticatedUser != null) {
+            if (authenticatedUser.displayName() == null || authenticatedUser.displayName() == "") {
                 setupDefaultOrGuestPartialUser()
             } else {
-                partialUser = PartialUser(firebaseUser.displayName!!, firebaseUser.uid)
-                googleName = firebaseUser.displayName!!
+                partialUser = PartialUser(authenticatedUser.displayName()!!, authenticatedUser.uid())
+                googleName = authenticatedUser.displayName()!!
             }
         } else {
             setupDefaultOrGuestPartialUser()
         }
 
-        if(!guestBoolean && firebaseUser != null) {
+        if(!guestBoolean && authenticatedUser != null) {
             offlineUserFetcher.setOfflinePartialUser(partialUser)
         }
     }
@@ -431,7 +432,7 @@ class CompleteUser(
 
     private fun setupDefaultOrGuestPartialUser() {
         partialUser = if (guestBoolean) {
-            PartialUser("Guest$guestNumber", "guest_${firebaseUser?.uid}")
+            PartialUser("Guest$guestNumber", "guest_${authenticatedUser?.uid()}")
         } else {
             PartialUser("defaultName", "dummy_id")
         }
