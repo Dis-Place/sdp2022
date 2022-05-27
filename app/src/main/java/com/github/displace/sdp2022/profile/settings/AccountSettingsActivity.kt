@@ -22,6 +22,8 @@ import androidx.core.content.ContextCompat
 import com.github.displace.sdp2022.ImageDatabase
 import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.R
+import com.github.displace.sdp2022.database.FileStorage
+import com.github.displace.sdp2022.database.FileStorageFactory
 import com.github.displace.sdp2022.users.CompleteUser
 import com.github.displace.sdp2022.users.PartialUser
 import com.github.displace.sdp2022.util.ProgressDialogsUtil
@@ -53,7 +55,8 @@ class AccountSettingsActivity : AppCompatActivity() {
 
     private lateinit var activeUser: CompleteUser   // Active user in the application
 
-    private lateinit var imgDBReference: StorageReference   // Reference for the profile picture in the Firebase Storage
+    // Reference for the profile picture in the database storage
+    private lateinit var fileStorage: FileStorage
 
     /**
      * Launchers for the permissions
@@ -95,9 +98,8 @@ class AccountSettingsActivity : AppCompatActivity() {
         val app = applicationContext as MyApplication
         activeUser = app.getActiveUser()!!
 
-        // Reference to the profile pic in Firebase Storage
-        imgDBReference = Firebase.storage.reference
-                            .child("images/profilePictures/${activeUser.getPartialUser().uid}")
+        // Reference to the profile pic in the database storage
+        fileStorage = FileStorageFactory.getFileStorage(intent,"images/profilePictures/${activeUser.getPartialUser().uid}")
 
         if(activeUser.getPartialUser() != PartialUser("defaultName", "dummy_id")) { // That case is only when testing, and we don't search the image from the DB, should change with mock image DB
             if(activeUser.getProfilePic() == null) {    // Prevents the app from searching the image from the database everytime
@@ -121,17 +123,18 @@ class AccountSettingsActivity : AppCompatActivity() {
 
         // Gets profile pic from database
         ProgressDialogsUtil.showProgressDialog(this)    // Shows progress dialog to prevent the user from uploading twice
-        imgDBReference.getFile(localFile).addOnSuccessListener {
 
-            // keep a copy of the profile pic in the case connection lost, and more efficient
-            val pic = BitmapFactory.decodeFile(localFile.absolutePath)
-            activeUser.setProfilePic(pic)
-            profilePic.setImageBitmap(pic)
-            ProgressDialogsUtil.dismissProgressDialog()
-        }.addOnFailureListener{
-            showToastText("Failed to load profile pic")
-            ProgressDialogsUtil.dismissProgressDialog()
-        }
+        fileStorage.getThenCall(localFile,
+            onSuccess = {
+                val pic = BitmapFactory.decodeFile(localFile.absolutePath)
+                activeUser.setProfilePic(pic)
+                profilePic.setImageBitmap(pic)
+                ProgressDialogsUtil.dismissProgressDialog()
+            },
+            onFailure = {
+                showToastText("Failed to load profile pic")
+                ProgressDialogsUtil.dismissProgressDialog()
+            })
     }
 
     /**
@@ -254,13 +257,14 @@ class AccountSettingsActivity : AppCompatActivity() {
         if (imageUri == null) {
             showToastText("Unable to upload profile photo")
         } else {
-            imgDBReference.putFile(imageUri).addOnSuccessListener {
-                profilePic.setImageURI(imageUri)
-                showToastText("Profile pic uploaded")
-            }.addOnFailureListener {
-                showToastText("Fail to upload profile pic")
-            }
-
+            fileStorage.put(imageUri,
+                onSuccess = {
+                    profilePic.setImageURI(imageUri)
+                    showToastText("Profile pic uploaded")
+                },
+                onFailure = {
+                    showToastText("Fail to upload profile pic")
+                })
         }
     }
 
