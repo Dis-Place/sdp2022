@@ -22,48 +22,40 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class MainActivityTest {
-    private lateinit var copyCompleteUser: CompleteUser
-  //  private val context = InstrumentationRegistry.getInstrumentation().context
-    private val context : Context = ApplicationProvider.getApplicationContext()
+     private lateinit var copyCompleteUser: CompleteUser
+   //  private val context = InstrumentationRegistry.getInstrumentation().context
+     private val context : Context = ApplicationProvider.getApplicationContext()
 
-    @get:Rule
-    val activityScenarioRule = ActivityScenarioRule(MainActivity::class.java)
+     @get:Rule
+     val activityScenarioRule = ActivityScenarioRule(MainActivity::class.java)
 
-    @Before
-    fun setup() {
-        copyCompleteUser = OfflineUserFetcher(context).getCompleteUser()
-    }
-
-    @After
-    fun unSetup() {
-        OfflineUserFetcher(context).setCompleteUser(copyCompleteUser)
-    }
+    //TODO: May have to re-do these tests because I'm not sure it really tests the functionalities
 
     @Test
-    fun logInConnectionRemember() {
-        val bool =
-            context.getSharedPreferences("login", MODE_PRIVATE).getBoolean("remembered", false)
-        context.getSharedPreferences("login", MODE_PRIVATE).edit().putBoolean("remembered", true)
-            .apply()
-        Intents.init()
-        onView(withId(R.id.mainActivityLogInButton)).perform(click())
-        IntentMatchers.hasComponent(SignInActivity::class.java.name)
-        Intents.release()
-        context.getSharedPreferences("login", MODE_PRIVATE).edit().putBoolean("remembered", bool)
-            .apply()
-    }
+     fun logInConnectionRemember() {
+         val bool =
+             context.getSharedPreferences("login", MODE_PRIVATE).getBoolean("remembered", false)
+         context.getSharedPreferences("login", MODE_PRIVATE).edit().putBoolean("remembered", true)
+             .apply()
+         Intents.init()
+         onView(withId(R.id.mainActivityLogInButton)).perform(click())
+         IntentMatchers.hasComponent(SignInActivity::class.java.name)
+         Intents.release()
+         context.getSharedPreferences("login", MODE_PRIVATE).edit().putBoolean("remembered", bool)
+             .apply()
+     }
 
-    @Test
-    fun logInConnectionNotRemember() {
-        val bool =
-            context.getSharedPreferences("login", MODE_PRIVATE).getBoolean("remembered", false)
-        context.getSharedPreferences("login", MODE_PRIVATE).edit().putBoolean("remembered", false)
-            .apply()
-        Intents.init()
-        onView(withId(R.id.mainActivityLogInButton)).perform(click())
-        IntentMatchers.hasComponent(SignInActivity::class.java.name)
-        Intents.release()
-        context.getSharedPreferences("login", MODE_PRIVATE).edit().putBoolean("remembered", bool)
-            .apply()
-    }
+     @Test
+     fun logInConnectionNotRemember() {
+         val bool =
+             context.getSharedPreferences("login", MODE_PRIVATE).getBoolean("remembered", false)
+         context.getSharedPreferences("login", MODE_PRIVATE).edit().putBoolean("remembered", false)
+             .apply()
+         Intents.init()
+         onView(withId(R.id.mainActivityLogInButton)).perform(click())
+         IntentMatchers.hasComponent(SignInActivity::class.java.name)
+         Intents.release()
+         context.getSharedPreferences("login", MODE_PRIVATE).edit().putBoolean("remembered", bool)
+             .apply()
+     }
 }

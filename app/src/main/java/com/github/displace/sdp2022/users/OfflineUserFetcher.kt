@@ -1,19 +1,20 @@
 package com.github.displace.sdp2022.users
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
 import com.github.displace.sdp2022.profile.achievements.Achievement
 import com.github.displace.sdp2022.profile.history.History
 import com.github.displace.sdp2022.profile.messages.Message
 import com.github.displace.sdp2022.profile.statistics.Statistic
+import com.github.displace.sdp2022.util.DateTimeUtil
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import java.text.SimpleDateFormat
-import java.util.*
 import kotlin.collections.ArrayList
 
+/**
+ * Paths to the user informations in the local memory
+ */
 private const val PARTIAL_USER_PATH = "partial"
 private const val ACHIEVEMENT_PATH = "achievements"
 private const val STATS_PATH = "stats"
@@ -21,32 +22,42 @@ private const val FRIEND_LIST_PATH = "friends"
 private const val GAME_HISTORY_PATH = "game_history"
 private const val MESSAGE_HISTORY_PATH = "message_history"
 
+/**
+ * Class that can fetch all the user informations from the local cache
+ * @param context Application context to
+ */
 class OfflineUserFetcher(private val context: Context?) {
 
-    /*
-     * Private methods to initialize the User
+    /**
+     * Gets the cached Partial User
      */
     fun getOfflinePartialUser(): PartialUser {
-        val partialUser: PartialUser? = readPreferences(PARTIAL_USER_PATH) as PartialUser?
+        val partialUser: PartialUser? = readPreferences(PARTIAL_USER_PATH)
         return partialUser ?: PartialUser("defaultName", "dummy_id")
     }
 
+    /**
+     * Gets the cached achievements
+     */
     fun getOfflineAchievements(): MutableList<Achievement> {
-        var offlineAchievements: MutableList<Achievement>? =
-            readPreferences(ACHIEVEMENT_PATH) as MutableList<Achievement>?
+        val offlineAchievements: MutableList<Achievement>? =
+            readPreferences(ACHIEVEMENT_PATH)
         Log.e("debug", "offlineAchievements: $offlineAchievements")
         return offlineAchievements ?: mutableListOf(
             Achievement(
                 "Welcome home!",
                 "Create your account",
-                getCurrentDate()
+                DateTimeUtil.currentDate()
             )
         )
     }
 
+    /**
+     * Gets the cached statistics
+     */
     fun getOfflineStats(): MutableList<Statistic> {
-        var offlineStats: MutableList<Statistic>? =
-            readPreferences(STATS_PATH) as MutableList<Statistic>?
+        val offlineStats: MutableList<Statistic>? =
+            readPreferences(STATS_PATH)
         return offlineStats ?: mutableListOf(
             Statistic(
                 "stat1",
@@ -59,9 +70,12 @@ class OfflineUserFetcher(private val context: Context?) {
         )
     }
 
+    /**
+     * Gets the cached friends' list
+     */
     fun getOfflineFriendsList(): MutableList<PartialUser> {
-        var offlineFriendsList: MutableList<PartialUser>? =
-            readPreferences(FRIEND_LIST_PATH) as MutableList<PartialUser>?
+        val offlineFriendsList: MutableList<PartialUser>? =
+            readPreferences(FRIEND_LIST_PATH)
         return offlineFriendsList ?: mutableListOf(
             PartialUser(
                 "dummy_friend_username",
@@ -70,46 +84,80 @@ class OfflineUserFetcher(private val context: Context?) {
         )
     }
 
+    /**
+     * Gets the cached game history
+     */
     fun getOfflineGameHistory(): MutableList<History> {
-        var offlineGameHistory: MutableList<History>? =
-            readPreferences(GAME_HISTORY_PATH) as MutableList<History>?
+        val offlineGameHistory: MutableList<History>? =
+            readPreferences(GAME_HISTORY_PATH)
         return offlineGameHistory ?: mutableListOf(
             History(
-                "dummy_map", getCurrentDate(), "VICTORY"
+                "dummy_map", DateTimeUtil.currentDate(), "VICTORY"
             )
         )
     }
 
+    /**
+     * Gets the cached message history
+     */
     fun getOfflineMessageHistory(): ArrayList<Message> {
-        var offlineMessageHistory: ArrayList<Message>? =
-            readPreferences(MESSAGE_HISTORY_PATH) as ArrayList<Message>?
+        val offlineMessageHistory: ArrayList<Message>? =
+            readPreferences(MESSAGE_HISTORY_PATH)
         return offlineMessageHistory ?: arrayListOf()
     }
 
+    /**
+     * Saves a partial user locally
+     * @param partialUser: Partial user to save locally
+     */
     fun setOfflinePartialUser(partialUser: PartialUser?) {
         writeReference(PARTIAL_USER_PATH, partialUser)
     }
 
+    /**
+     * Saves a achievements' list locally
+     * @param achievements: Achievements' list to save locally
+     */
     fun setOfflineAchievements(achievements: MutableList<Achievement>?) {
         writeReference(ACHIEVEMENT_PATH, achievements ?: mutableListOf())
     }
 
+    /**
+     * Saves a list of statistics locally
+     * @param stats: Statistics to save locally
+     */
     fun setOfflineStats(stats: List<Statistic>?) {
         writeReference(STATS_PATH, stats ?: mutableListOf())
     }
 
+    /**
+     * Saves a friends' list locally
+     * @param friendsList: Friends' list to save locally
+     */
     fun setOfflineFriendsList(friendsList: MutableList<PartialUser>?) {
         writeReference(FRIEND_LIST_PATH, friendsList ?: mutableListOf())
     }
 
+    /**
+     * Saves a game history locally
+     * @param gameHistory: Game history to save locally
+     */
     fun setOfflineGameHistory(gameHistory: MutableList<History>?) {
         writeReference(GAME_HISTORY_PATH, gameHistory ?: mutableListOf())
     }
 
+    /**
+     * Saves a message history locally
+     * @param messageHistory: Message history to save locally
+     */
     fun setOfflineMessageHistory(messageHistory: ArrayList<Message>?) {
         writeReference(MESSAGE_HISTORY_PATH, messageHistory ?: arrayListOf())
     }
 
+    /**
+     * Saves an entire user locally
+     * @param completeUser: User to save locally
+     */
     fun setCompleteUser(completeUser: CompleteUser) {
         setOfflineAchievements(completeUser.getAchievements())
         setOfflineStats(completeUser.getStats())
@@ -118,22 +166,11 @@ class OfflineUserFetcher(private val context: Context?) {
         setOfflinePartialUser(completeUser.getPartialUser())
     }
 
-    fun getCompleteUser(): CompleteUser {
-        val completeUser = CompleteUser(context, null, offlineMode = true)
-        completeUser.setCompleteUser(
-            getOfflinePartialUser(),
-            getOfflineAchievements(),
-            getOfflineStats(),
-            getOfflineFriendsList(),
-            getOfflineGameHistory()
-        )
-        return completeUser
-    }
-
-    /*
-    * Utility functions for this class
-    */
-
+    /**
+     * Writes a serializable object to the local memory
+     * @param path: Path to the local content
+     * @param serializable: Objet to write to the local memory
+     */
     private inline fun <reified T> writeReference(path: String, serializable: T?) {
         if (serializable == null)
             return
@@ -141,30 +178,28 @@ class OfflineUserFetcher(private val context: Context?) {
         //Get the cached preference content reference
         val sharedPreferences =
             context?.getSharedPreferences("cached-user", Context.MODE_PRIVATE)
-        //Write to the reference the serialized object
 
+        //Write to the reference the serialized object
         sharedPreferences?.edit()?.putString(path, Json.encodeToString(serializable))?.apply()
     }
 
+    /**
+     * Reads a serializable object from the local memory
+     * @param path: Path to the local conten
+     */
     private inline fun <reified T> readPreferences(path: String): T? {
-        Log.e("debug", "Reading from $path")
         //Get the cached preference content reference
         val sharedPreferences =
             context?.getSharedPreferences("cached-user", Context.MODE_PRIVATE)
-        //Read it
+
+        //Read the content
         val jsonFormatObject = sharedPreferences?.getString(path, null)
-        Log.e("debug", "Read from $path: $jsonFormatObject")
+
         //Deserialize the object
         return if (jsonFormatObject == null || jsonFormatObject.isEmpty())
             null
         else
             Json.decodeFromString<T>(jsonFormatObject)
 
-    }
-
-    @SuppressLint("SimpleDateFormat")
-    private fun getCurrentDate(): String {
-        val simpleDate = SimpleDateFormat("dd-MM-yyyy")
-        return simpleDate.format(Date())
     }
 }

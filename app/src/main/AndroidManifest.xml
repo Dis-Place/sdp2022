@@ -40,7 +40,7 @@
             android:name=".profile.friendInvites.AddFriendActivity"
             android:exported="false" />
         <activity
-            android:name=".SettingsActivity"
+            android:name=".settings.SettingsActivity"
             android:exported="false"
             android:parentActivityName=".MainMenuActivity" />
         <activity
@@ -50,7 +50,7 @@
         <activity
             android:name=".matchMaking.MatchMakingActivity"
             android:exported="false"
-            android:parentActivityName=".GameListActivity"/>
+            android:parentActivityName=".GameListActivity" />
         <activity
             android:name=".GameSummaryActivity"
             android:exported="false" />

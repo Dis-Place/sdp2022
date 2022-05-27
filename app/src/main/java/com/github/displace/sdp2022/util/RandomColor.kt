@@ -1,6 +1,5 @@
 package com.github.displace.sdp2022.util
 
-import android.graphics.Color
 import android.graphics.Paint
 import kotlin.random.Random
 
@@ -11,15 +10,25 @@ import kotlin.random.Random
 object RandomColor {
 
     /**
-     * get a random Paint
+     * Get a random Paint color
      */
     fun next(): Int {
         val paint = Paint()
-        paint.setARGB(paint.alpha,nextComponentRGB(),nextComponentRGB(),nextComponentRGB())
+
+        // generate random component values
+        val random_R = nextComponentRGB()
+        val random_G = nextComponentRGB()
+        val random_B = nextComponentRGB()
+
+        // set the color
+        paint.setARGB(paint.alpha, random_R, random_G, random_B)
         return paint.color
     }
 
-    private fun nextComponentRGB() : Int {
+    /**
+     * Will return a random RGB value between 0 and 255
+     */
+    private fun nextComponentRGB(): Int {
         return Random.nextInt(UPPER_BOUND_RGB_COMPONENT_VALUE)
     }
 

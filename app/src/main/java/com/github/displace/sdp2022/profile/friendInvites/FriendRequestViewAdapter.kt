@@ -9,6 +9,7 @@ import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
+import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.R
 import com.github.displace.sdp2022.RealTimeDatabase
 import com.github.displace.sdp2022.profile.*
@@ -67,10 +68,13 @@ class FriendRequestViewAdapter(private var dataSet: MutableList<InviteWithId>, p
                         .runTransaction(
                             RequestAcceptor(invite.invite.target)
                         )
-                    db.getDbReference("CompleteUsers/${invite.invite.target.uid}/CompleteUser/friendsList")
-                        .runTransaction(
-                            RequestAcceptor(invite.invite.source)
-                        )
+//                    db.getDbReference("CompleteUsers/${invite.invite.target.uid}/CompleteUser/friendsList")
+//                        .runTransaction(
+//                            RequestAcceptor(invite.invite.source)
+//                        )
+                    val app = acceptButton.context.applicationContext as MyApplication
+                    val user = app.getActiveUser()!!
+                    user.addFriend(invite.invite.source)
 
                     DeleteInvite.deleteInvite(invite.id)
                 }

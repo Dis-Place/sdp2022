@@ -17,9 +17,12 @@ import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
+import com.github.displace.sdp2022.DemoMapActivity
 import com.github.displace.sdp2022.MainMenuActivity
 import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.R
+import com.github.displace.sdp2022.database.DatabaseFactory
+import com.github.displace.sdp2022.database.MockDatabaseUtils
 import com.github.displace.sdp2022.users.CompleteUser
 import com.github.displace.sdp2022.users.OfflineUserFetcher
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -27,19 +30,30 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import org.hamcrest.CoreMatchers.allOf
 import org.hamcrest.core.StringContains.containsString
 import org.junit.After
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class SignInActivityTest {
-
-    private val context = InstrumentationRegistry.getInstrumentation().context
     val app = ApplicationProvider.getApplicationContext() as MyApplication
-    private val context2 : Context = ApplicationProvider.getApplicationContext()
 
     @get:Rule
-    val activityScenarioRule = ActivityScenarioRule(SignInActivity::class.java)
+    val activityScenarioRule = run {
+        init()
+        AuthFactory.setupMock("anything")
+        val intent =
+            Intent(ApplicationProvider.getApplicationContext(), SignInActivity::class.java)
+        MockAuthUtils.mockIntent(intent)
+
+        DatabaseFactory.clearMockDB()
+
+        MockDatabaseUtils.mockIntent(intent)
+
+        ActivityScenarioRule<SignInActivity>(intent)
+    }
+
 
     @After
     fun after() {
@@ -48,9 +62,7 @@ class SignInActivityTest {
 
     @Test
     fun signInAsGuestWorks() {
-        init()
         onView(withId(R.id.signInActivityGuestModeButton)).perform(click())
-        Thread.sleep( 1000)      // Test fails once every 3 times for some unknown reason without this and my heart can't take it
         intended(hasComponent(MainMenuActivity::class.java.name))
         onView(withId(R.id.welcomeText)).check(matches(withText(containsString("Guest"))))
         onView(withId(R.id.mainMenuLogOutButton)).perform(click())
@@ -59,7 +71,6 @@ class SignInActivityTest {
 
     @Test
     fun signInWithGoogleWorks() {
-        init()
         onView(withId(R.id.signInActivitySignInButton)).perform(click())
         intended(toPackage("com.google.android.gms"))
         release()
