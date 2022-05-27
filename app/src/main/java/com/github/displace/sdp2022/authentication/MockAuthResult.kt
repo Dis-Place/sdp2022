@@ -24,12 +24,12 @@ class MockAuthResult : AuthResult {
     /* to comply with parcelability of AuthResult
     note : should not be used */
     companion object CREATOR : Parcelable.Creator<MockAuthResult> {
-        override fun createFromParcel(parcel: Parcel): Nothing = throw UnsupportedOperationException()
+        override fun createFromParcel(parcel: Parcel?): Nothing = throw UnsupportedOperationException()
 
         override fun newArray(size: Int): Nothing = throw UnsupportedOperationException()
     }
 
-    override fun writeToParcel(parcel: Parcel, flags: Int) : Nothing = throw UnsupportedOperationException()
+    override fun writeToParcel(parcel: Parcel?, flags: Int) : Nothing = throw UnsupportedOperationException()
 
     override fun describeContents(): Nothing = throw UnsupportedOperationException()
 

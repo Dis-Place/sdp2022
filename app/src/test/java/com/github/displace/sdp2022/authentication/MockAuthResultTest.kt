@@ -34,7 +34,7 @@ class MockAuthResultTest {
     @Test
     fun writeToParcelFailsWithUOE() {
         assertThrows(UnsupportedOperationException::class.java) {
-            mockAuthResult.writeToParcel(Parcel.obtain(),0)
+            mockAuthResult.writeToParcel(null,0)
         }
     }
 
@@ -48,7 +48,7 @@ class MockAuthResultTest {
     @Test
     fun createFromParcelFailsWithUOE() {
         assertThrows(UnsupportedOperationException::class.java) {
-            MockAuthResult.CREATOR.createFromParcel(Parcel.obtain())
+            MockAuthResult.CREATOR.createFromParcel(null)
         }
     }
 
