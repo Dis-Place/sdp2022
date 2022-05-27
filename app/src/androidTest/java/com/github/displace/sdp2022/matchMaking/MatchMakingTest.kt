@@ -39,11 +39,11 @@ class MatchMakingTest {
     @Before
     fun before(){
         intent =
-        Intent(ApplicationProvider.getApplicationContext(), MatchMakingActivity::class.java).apply {
-            putExtra("DEBUG", true)
-        }
-        DatabaseFactory.clearMockDB()
-        MockDatabaseUtils.mockIntent(intent)
+            Intent(ApplicationProvider.getApplicationContext(), MatchMakingActivity::class.java).apply {
+                putExtra("DEBUG", true)
+            }
+     //   DatabaseFactory.clearMockDB()
+     //   MockDatabaseUtils.mockIntent(intent)
         val app = ApplicationProvider.getApplicationContext() as MyApplication
         DatabaseFactory.clearMockDB()
         app.setActiveUser(CompleteUser(app,null, DatabaseFactory.MOCK_DB))
@@ -84,13 +84,9 @@ class MatchMakingTest {
 
     @Test
     fun testPublicLobbyCreation(){
-   /*     val intent =
-            Intent(ApplicationProvider.getApplicationContext(), MatchMakingActivity::class.java).apply {
-                putExtra("DEBUG", true)
-            }*/
+
         val scenario = ActivityScenario.launch<MatchMakingActivity>(intent)
 
-      //  val db : RealTimeDatabase = RealTimeDatabase().noCacheInstantiate("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",true) as RealTimeDatabase
 
         scenario.use {
 
@@ -108,14 +104,10 @@ class MatchMakingTest {
 
     @Test
     fun testPublicLobbySearch(){
-      /*  val intent =
-            Intent(ApplicationProvider.getApplicationContext(), MatchMakingActivity::class.java).apply {
-                putExtra("DEBUG", true)
-            }*/
+
         val scenario = ActivityScenario.launch<MatchMakingActivity>(intent)
 
-     //   val db : RealTimeDatabase = RealTimeDatabase().noCacheInstantiate("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",true) as RealTimeDatabase
-        Thread.sleep(1000)
+         Thread.sleep(1000)
 
 
         scenario.use {
@@ -146,13 +138,9 @@ class MatchMakingTest {
     @Test
     fun testPublicLobbyGameLaunch(){
         Intents.init()
-     /*   val intent =
-            Intent(ApplicationProvider.getApplicationContext(), MatchMakingActivity::class.java).apply {
-                putExtra("DEBUG", true)
-            }*/
+
         val scenario = ActivityScenario.launch<MatchMakingActivity>(intent)
 
-    //    val db : RealTimeDatabase = RealTimeDatabase().noCacheInstantiate("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",true) as RealTimeDatabase
 
         Thread.sleep(1000)
         scenario.use {
@@ -161,9 +149,14 @@ class MatchMakingTest {
             Espresso.onView(ViewMatchers.withId(R.id.RandomLobbySearch)).perform(ViewActions.click())
             Thread.sleep(1000) //wait for the info to arrive
 
-            db.getThenCall<ArrayList<String>>("MM/Versus/Map2/public/freeList"){ lobbies ->
+            db.getThenCall<List<String>>("MM/Versus/Map2/public/freeList"){ lobbies ->
                 val lobby = lobbies?.get(1)
-                db.update("MM/Versus/Map2/public/freeLobbies/$lobby/lobbyCount",2L)
+                db.getThenCall<List<Map<String,Any>>>("MM/Versus/Map2/public/freeLobbies/$lobby/lobbyPlayers") { players ->
+                    db.update("MM/Versus/Map2/public/freeLobbies/$lobby/lobbyPlayers",players!! + PartialUser("test","test").toMap())
+                    db.update("MM/Versus/Map2/public/freeLobbies/$lobby/lobbyCount",2L)
+
+                }
+
             }
 
 
@@ -179,13 +172,9 @@ class MatchMakingTest {
 
     @Test
     fun testPrivateLobbyCreation(){
-        /*val intent =
-            Intent(ApplicationProvider.getApplicationContext(), MatchMakingActivity::class.java).apply {
-                putExtra("DEBUG", true)
-            }*/
+
         val scenario = ActivityScenario.launch<MatchMakingActivity>(intent)
 
-   //     val db : RealTimeDatabase = RealTimeDatabase().noCacheInstantiate("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",true) as RealTimeDatabase
 
         Thread.sleep(1000)
 
@@ -219,12 +208,8 @@ class MatchMakingTest {
 
     @Test
     fun testPrivateLobbySearch(){
-     /*   val intent = Intent(ApplicationProvider.getApplicationContext(), MatchMakingActivity::class.java).apply {
-            putExtra("DEBUG", true)
-        }*/
         val scenario = ActivityScenario.launch<MatchMakingActivity>(intent)
 
-   //     val db : RealTimeDatabase = RealTimeDatabase().noCacheInstantiate("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",true) as RealTimeDatabase
         Thread.sleep(1000)
 
         scenario.use {

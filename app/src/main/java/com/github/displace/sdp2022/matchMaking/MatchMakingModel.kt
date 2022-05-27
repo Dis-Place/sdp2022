@@ -98,12 +98,13 @@ class MatchMakingModel( val activity: MMView ){
          * The leader notifies all players that the lobby is launching
          */
         if(lobbyMap["lobbyCount"] as Long == lobbyMap["lobbyMax"] as Long && lobbyMap["lobbyLeader"] as String == activePartialUser.uid && lobbyMap["lobbyLaunch"] == false   ) {
-       //     lobbyMap["lobbyLaunch"] = true
+            //     lobbyMap["lobbyLaunch"] = true
             lobbyMap = lobbyMap + mapOf<String,Any>(Pair("lobbyLaunch",true))
             db.update(
                 "MM/$gamemode/$map/$lobbyType/freeLobbies/$currentLobbyId",
                 lobbyMap
             )
+
             return@Listener
         }
         /*
@@ -123,6 +124,7 @@ class MatchMakingModel( val activity: MMView ){
                         db.update("MM/$gamemode/$map/$lobbyType/freeList", ls-currentLobbyId)
                     }
                     db.delete("MM/$gamemode/$map/$lobbyType/freeLobbies/$currentLobbyId")
+
                     db.update(
                         "MM/$gamemode/$map/$lobbyType/launchLobbies/$currentLobbyId",
                         lobbyMap
@@ -130,6 +132,8 @@ class MatchMakingModel( val activity: MMView ){
                 }
 
             }
+
+
         }
     }
 
@@ -225,11 +229,11 @@ class MatchMakingModel( val activity: MMView ){
                         var newLobby = lobby!!
                         newLobby = newLobby + mapOf<String,Any>( Pair("lobbyCount", lobby["lobbyCount"] as Long + 1 ) )
 
-                      //  lobby!!["lobbyCount"] = lobby["lobbyCount"] as Long + 1
+                        //  lobby!!["lobbyCount"] = lobby["lobbyCount"] as Long + 1
                         val ls = newLobby["lobbyPlayers"] as List<Map<String, *>>
                         val userMap = activePartialUser.toMap()
 
-                    //    lobby["lobbyPlayers"] = ls + userMap
+                        //    lobby["lobbyPlayers"] = ls + userMap
                         newLobby = newLobby + mapOf<String,Any>( Pair("lobbyPlayers", ls + userMap ) )
 
                         return@Builder newLobby
@@ -397,8 +401,8 @@ class MatchMakingModel( val activity: MMView ){
                     if(count == 1L){
                         if(!toGame){
                             val ls = lobbyTypeLevel["freeList"] as List<String>? ?:  return@Builder lobbyTypeLevel
-                        //    ls.remove(currentLobbyId)
-                         //   lobbyTypeLevel["freeList"] = ls - currentLobbyId
+                            //    ls.remove(currentLobbyId)
+                            //   lobbyTypeLevel["freeList"] = ls - currentLobbyId
                             newLobbyTypeLevel = newLobbyTypeLevel + mapOf<String,Any>( Pair("freeList", ls-currentLobbyId) )
                         }
                         lobbyState = lobbyState - currentLobbyId
@@ -406,17 +410,17 @@ class MatchMakingModel( val activity: MMView ){
                         lobby = removePlayerFromList(lobby)
                         val players = lobby["lobbyPlayers"] as List<Map<String, Any>>? ?:  return@Builder lobbyTypeLevel
                         lobby = lobby + mapOf<String,Any>( Pair("lobbyLeader",players[0]["uid"] as String) )
-                  //      lobby["lobbyLeader"] = players[0]["uid"] as String //use the next player as the new leader
+                        //      lobby["lobbyLeader"] = players[0]["uid"] as String //use the next player as the new leader
                         lobbyState = lobbyState + mapOf(Pair(currentLobbyId,lobby))
-                    //    lobbyState[currentLobbyId] = lobby
+                        //    lobbyState[currentLobbyId] = lobby
                     }
                 }else{
                     lobby = removePlayerFromList(lobby)
-                  //  lobbyState[currentLobbyId] = lobby
+                    //  lobbyState[currentLobbyId] = lobby
                     lobbyState = lobbyState + mapOf(Pair(currentLobbyId,lobby))
                 }
 
-              //  lobbyTypeLevel[path] = lobbyState
+                //  lobbyTypeLevel[path] = lobbyState
                 newLobbyTypeLevel = newLobbyTypeLevel + mapOf(Pair(path,lobbyState))
 
                 return@Builder newLobbyTypeLevel
@@ -436,7 +440,6 @@ class MatchMakingModel( val activity: MMView ){
 
         db.runTransaction("MM/$gamemode/$map/$lobbyType",leaveMMTransaction)
 
-
     }
 
     /**
@@ -447,7 +450,7 @@ class MatchMakingModel( val activity: MMView ){
     private fun removePlayerFromList(lobby: Map<String, Any>): Map<String, Any> {
         var newLobby = lobby
         newLobby = newLobby + mapOf<String,Any>(Pair("lobbyCount",newLobby["lobbyCount"] as Long - 1))
-      //  lobby["lobbyCount"] = lobby["lobbyCount"] as Long - 1
+        //  lobby["lobbyCount"] = lobby["lobbyCount"] as Long - 1
         val userMap = activePartialUser.toMap()
         newLobby = newLobby + mapOf<String,Any>(Pair("lobbyPlayers", (newLobby["lobbyPlayers"] as List<Map<String, Any>>) - userMap ))
         return newLobby

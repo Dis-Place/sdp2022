@@ -302,7 +302,7 @@ class CompleteUser(
         if (offlineMode)        // Can't win a achievement when offline
             return
 
-        if(!achievements.contains(ach)){
+        if(!achievements.map{ i -> i.name}.contains(ach.name)){
 
             achievements.add(ach)
 
