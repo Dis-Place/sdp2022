@@ -1,11 +1,11 @@
-package com.github.displace.sdp2022
+package com.github.displace.sdp2022.settings
 
-import SettingsFragment
-import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.PreferenceManager
+import com.github.displace.sdp2022.MyApplication
+import com.github.displace.sdp2022.R
 import com.github.displace.sdp2022.util.ThemeManager
 
 class SettingsActivity : AppCompatActivity() {
@@ -25,7 +25,7 @@ class SettingsActivity : AppCompatActivity() {
     private fun handleChanges(prefs: SharedPreferences, key: String) {
         /* if the theme has been changed, we need to restart the activity
         to apply the new theme */
-        if(key == getString(R.string.theme)) {
+        if (key == getString(R.string.theme)) {
             startActivity(this.intent)
         }
     }

@@ -20,6 +20,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.GrantPermissionRule
 import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.R
+import com.github.displace.sdp2022.database.DatabaseFactory
 import com.github.displace.sdp2022.database.MockDatabaseUtils
 import com.github.displace.sdp2022.profile.messages.MessageHandler
 import com.github.displace.sdp2022.profile.settings.AccountSettingsActivity
@@ -34,114 +35,12 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class AccountSettingsActivityPermsTest {
-    //@get:Rule
-    //val testRule = ActivityScenarioRule(AccountSettingsActivity::class.java)
-
-    /*@get:Rule
-    val testRule = ActivityScenarioRule(TempLoginActivity::class.java)*/
-
     @Before
     fun login() {
         val app = ApplicationProvider.getApplicationContext() as MyApplication
-        app.setActiveUser(CompleteUser(app, null))
-        Thread.sleep(1000)
-
-        /*val intent =
-            Intent(ApplicationProvider.getApplicationContext(), TempLoginActivity::class.java)
-        val scenario: ActivityScenario<AccountSettingsActivity> = ActivityScenario.launch(intent)
-        scenario.use {
-            onView(withId(R.id.guestSignInButton)).perform(click())
-            Thread.sleep(DB_DELAY)
-            onView(withId(R.id.goToAppOnlineButton)).perform(click())
-            onView(withId(R.id.profileButton)).perform(click())
-            onView(withId(R.id.profileSettingsButton)).perform(click())
-        }*/
+        DatabaseFactory.clearMockDB()
+        app.setActiveUser(CompleteUser(app, null, DatabaseFactory.MOCK_DB))
     }
-
-    @After
-    fun logout() {
-        //pressBack()
-        //pressBack()
-        (ApplicationProvider.getApplicationContext() as MyApplication).getActiveUser()
-            ?.removeUserFromDatabase()
-    }
-
-    /*@Test
-    fun passwordIsUpdated() {
-        onView(withId(R.id.passwordUpdate)).perform(click())
-        onView(withId(R.id.oldPasswordLog)).perform(
-            replaceText("password"),
-            closeSoftKeyboard()
-        )
-        onView(withId(R.id.newPasswordLog)).perform(
-            replaceText("wordpass"),
-            closeSoftKeyboard()
-        )
-        onView(withId(R.id.passwordUpdateButton)).perform(click())
-        Thread.sleep(2000)
-        onView(withId(R.id.actualPassword)).check(ViewAssertions.matches(ViewMatchers.withText("wordpass")))
-
-        onView(withId(R.id.passwordUpdate)).perform(click())
-        onView(withId(R.id.oldPasswordLog)).perform(
-            replaceText("wordpass"),
-            closeSoftKeyboard()
-        )
-        onView(withId(R.id.newPasswordLog)).perform(
-            replaceText("password"),
-            closeSoftKeyboard()
-        )
-        onView(withId(R.id.passwordUpdateButton)).perform(click())
-    }
-
-    @Test
-    fun passwordNotUpdatedIfOldPasswordIncorrect() {
-        onView(withId(R.id.passwordUpdate)).perform(click())
-        onView(withId(R.id.oldPasswordLog)).perform(
-            replaceText("pass"),
-            closeSoftKeyboard()
-        )
-        onView(withId(R.id.newPasswordLog)).perform(
-            replaceText("word"),
-            closeSoftKeyboard()
-        )
-        onView(withId(R.id.passwordUpdateButton)).perform(click())
-        onView(withId(R.id.actualPassword)).check(ViewAssertions.matches(ViewMatchers.withText("password")))
-        // needs a Toast.maketext check
-        //onView(withText("Incorrect password")).inRoot(withDecorView(not(getActivity(getApplicationContext())?.window?.decorView))).check(matches(isDisplayed()))
-    }
-
-
-    @Test
-    fun passwordNotUpdateIfOldPasswordEmpty() {
-        onView(withId(R.id.passwordUpdate)).perform(click())
-        onView(withId(R.id.oldPasswordLog)).perform(
-            replaceText(""),
-            closeSoftKeyboard()
-        )
-        onView(withId(R.id.newPasswordLog)).perform(
-            replaceText("word"),
-            closeSoftKeyboard()
-        )
-        onView(withId(R.id.passwordUpdateButton)).perform(click())
-        onView(withId(R.id.actualPassword)).check(ViewAssertions.matches(ViewMatchers.withText("password")))
-        // needs a Toast.maketext check
-    }
-
-    @Test
-    fun passwordNotUpdateIfNewPasswordEmpty() {
-        onView(withId(R.id.passwordUpdate)).perform(click())
-        onView(withId(R.id.oldPasswordLog)).perform(
-            replaceText("password"),
-            closeSoftKeyboard()
-        )
-        onView(withId(R.id.newPasswordLog)).perform(
-            replaceText(""),
-            closeSoftKeyboard()
-        )
-        onView(withId(R.id.passwordUpdateButton)).perform(click())
-        onView(withId(R.id.actualPassword)).check(ViewAssertions.matches(ViewMatchers.withText("password")))
-        // needs a Toast.maketext check
-    }*/
 
     @get:Rule
     val permissionRule: GrantPermissionRule = GrantPermissionRule.grant(

@@ -14,20 +14,22 @@ import org.osmdroid.views.overlay.Marker
  */
 class GoalPositionMarker(private val mapView: MapView, private val pos: GeoPoint) {
 
-    private val marker : Marker = Marker(mapView)
+    private val marker : Marker? = try {Marker(mapView)} catch (e: Exception) {null}
 
     init {
-        marker.icon = AppCompatResources.getDrawable(mapView.context, R.drawable.goal_position_icon)
-        marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER)
-        marker.setOnMarkerClickListener { _, _ -> false }
-        marker.position = pos
+        if(marker!=null) {
+            marker.icon = AppCompatResources.getDrawable(mapView.context, R.drawable.goal_position_icon)
+            marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER)
+            marker.setOnMarkerClickListener { _, _ -> false }
+            marker.position = pos
+        }
     }
 
     /**
      * place the marker on the mapView
      */
     fun add() {
-        if(!mapView.overlays.contains(marker)) {
+        if(marker!=null && !mapView.overlays.contains(marker)) {
             mapView.overlayManager.add(marker)
             mapView.invalidate()
         }
@@ -38,14 +40,18 @@ class GoalPositionMarker(private val mapView: MapView, private val pos: GeoPoint
      * @param position new marker position
      */
     fun set(position: GeoPoint) {
-        marker.position = position
+        if(marker!= null) {
+            marker.position = position
+        }
     }
 
     /**
      * remove marker from mapView
      */
     fun remove() {
-        mapView.overlayManager.remove(marker)
-        mapView.invalidate()
+        if(marker!= null) {
+            mapView.overlayManager.remove(marker)
+            mapView.invalidate()
+        }
     }
 }

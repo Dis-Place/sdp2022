@@ -17,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.github.displace.sdp2022.MainMenuActivity
 import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.R
+import com.github.displace.sdp2022.database.DatabaseFactory
 import com.github.displace.sdp2022.users.CompleteUser
 import com.github.displace.sdp2022.util.ProgressDialogsUtil
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -151,7 +152,7 @@ class SignInActivity : AppCompatActivity() {
             ).show()
 
             // Set the user accordingly
-            val user = CompleteUser(app, currentUser, guestBoolean = isGuest, activity = this@SignInActivity)      // needs SignInActivity to launch main menu asynchronously
+            val user = CompleteUser(app, currentUser, DatabaseFactory.getDB(intent), guestBoolean = isGuest, activity = this@SignInActivity)      // needs SignInActivity to launch main menu asynchronously
             app.setActiveUser(user)
         }
     }

@@ -1,8 +1,5 @@
 package com.github.displace.sdp2022.database
 
-import android.content.Intent
-import com.github.displace.sdp2022.RealTimeDatabase
-
 /**
  * Used to remove the guest users from the database, since they become useless when we leave the application
  */
@@ -16,39 +13,23 @@ object CleanUpGuests {
      * @param db database
      * @param guestId ID of the active guest
      */
-    fun updateGuestIndexesAndCleanUpDatabase(db: RealTimeDatabase, guestId: String) {
+    fun updateGuestIndexesAndCleanUpDatabase(db: GoodDB, guestId: String) {
 
-        db.referenceGet("CompleteUsers", "").addOnSuccessListener{ usrs ->
-            val usrsDB = usrs.value as HashMap<String, *>
-
-            for (id in usrsDB.keys) {
-                if(id.contains("guest") && id != guestId) {
-                    val guestDB = usrsDB[id] as HashMap<String, *>
-                    val guestCompleteUserDB = guestDB["CompleteUser"] as HashMap<String, *>? ?: continue
-                    val newIndex = (guestCompleteUserDB["guestIndex"] as Long) + 1
-                    if(newIndex >= GUEST_THRESHOLD) {
-                        db.delete("CompleteUsers", id)
-                    } else {
-                        db.update("CompleteUsers/$id/CompleteUser/guestIndex", "", newIndex)
+        db.getThenCall<Map<String, *>>("CompleteUsers") { usrs ->
+            if(usrs != null) {
+                for (id in usrs.keys) {
+                    if(id.contains("guest") && id != guestId) {     // For each guest in the db, increment the id
+                        val guestDB = usrs[id] as Map<String, *>
+                        val guestCompleteUserDB = guestDB["CompleteUser"] as Map<String, *>
+                        val newIndex = (guestCompleteUserDB["guestIndex"] as Long) + 1
+                        if(newIndex >= GUEST_THRESHOLD) {                   // If the id is above a certain threshold, we delete the guest
+                            db.delete("CompleteUsers/$id")
+                        } else {
+                            db.update("CompleteUsers/$id/CompleteUser/guestIndex", newIndex)
+                        }
                     }
                 }
             }
-
         }
-        // Code for the GoodDB
-        /*db.getThenCall<HashMap<String, *>>("CompleteUsers") { usrs ->
-            for (id in usrs?.keys!!) {
-                if(id.contains("guest") && id != guestId) {
-                    val guestDB = usrs[id] as HashMap<String, *>
-                    val guestCompleteUserDB = guestDB["CompleteUser"] as HashMap<String, *>
-                    val newIndex = (guestCompleteUserDB["guestIndex"] as Long) + 1
-                    if(newIndex >= GUEST_THRESHOLD) {
-                        db.delete("CompleteUsers/$id")
-                    } else {
-                        db.update("CompleteUsers/$id/CompleteUser/guestIndex", newIndex)
-                    }
-                }
-            }
-        }*/
     }
 }

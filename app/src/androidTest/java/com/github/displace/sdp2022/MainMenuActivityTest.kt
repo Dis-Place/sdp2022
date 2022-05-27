@@ -16,6 +16,7 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
+import com.github.displace.sdp2022.database.DatabaseFactory
 import com.github.displace.sdp2022.news.NewsActivity
 import com.github.displace.sdp2022.profile.ProfileActivity
 import com.github.displace.sdp2022.users.CompleteUser
@@ -29,33 +30,18 @@ class MainMenuActivityTest {
 
     @Before
     fun before() {
+        DatabaseFactory.clearMockDB()
         val app = ApplicationProvider.getApplicationContext() as MyApplication
-        app.setActiveUser(CompleteUser(app, null))
+        app.setActiveUser(CompleteUser(app, null, DatabaseFactory.MOCK_DB))
 
-        Thread.sleep(3000)
+        //Thread.sleep(3000)
     }
 
-    @After
+    /*@After
     fun after() {
         (ApplicationProvider.getApplicationContext() as MyApplication).getActiveUser()
             ?.removeUserFromDatabase()
-    }
-
-    /*
-     Test if the input of the main screen is correctly shown in the main menu
-     */
-    @Test
-    fun testingInput() {
-
-        val intent =
-            Intent(ApplicationProvider.getApplicationContext(), MainMenuActivity::class.java)
-        val scenario = ActivityScenario.launch<MainMenuActivity>(intent)
-
-        scenario.use {
-            Espresso.onView(withId(R.id.welcomeText))
-                .check(matches(withText("Welcome defaultName!")))
-        }
-    }
+    }*/
 
     @Test
     fun testProfileButton() {
@@ -124,7 +110,7 @@ class MainMenuActivityTest {
     @Test
     fun playButtonDontWorkWhenOffline() {
         val app = ApplicationProvider.getApplicationContext() as MyApplication
-        app.setActiveUser(CompleteUser(app, null, offlineMode = true))
+        app.setActiveUser(CompleteUser(app, null, DatabaseFactory.MOCK_DB, offlineMode = true))
         Intents.init()
         val intent =
             Intent(ApplicationProvider.getApplicationContext(), MainMenuActivity::class.java)
@@ -144,7 +130,7 @@ class MainMenuActivityTest {
         getInstrumentation().uiAutomation.executeShellCommand(
             "pm grant " + getTargetContext().packageName
                     + " android.permission.ACCESS_FINE_LOCATION"
-        );
+        )
         val intent =
             Intent(ApplicationProvider.getApplicationContext(), MainMenuActivity::class.java)
         val scenario = ActivityScenario.launch<MainMenuActivity>(intent)
@@ -152,7 +138,7 @@ class MainMenuActivityTest {
         scenario.use {
             Espresso.onView(withId(R.id.mapButton)).perform(click())
             Espresso.onView(withId(R.id.map))
-                .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
+                .check(matches(ViewMatchers.isDisplayed()))
         }
     }
 
