@@ -41,14 +41,14 @@ const val REQUEST_CODE_SIGN_IN = 0
 class SignInActivity : AppCompatActivity() {
 
     private lateinit var signInClient: GoogleSignInClient
-    private lateinit var auth: FirebaseAuth
+    private lateinit var auth: Auth
     private lateinit var rememberMeButton: CheckBox
     private lateinit var app: MyApplication
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sign_in)
-        auth = Firebase.auth
+        auth = AuthFactory.getAuth(intent)
         app = applicationContext as MyApplication
 
         val signInButton = findViewById<Button>(R.id.signInActivitySignInButton)
@@ -138,9 +138,9 @@ class SignInActivity : AppCompatActivity() {
      * @param isGuest did the user sign in as a guest
      */
     private fun handleNewUser(isGuest: Boolean) {
-        val currentUser = auth.currentUser
+        val currentUser = auth.currentUser()
 
-        val name: String? = if (isGuest) "guest" else currentUser?.displayName
+        val name: String? = if (isGuest) "guest" else currentUser?.displayName()
         if (name.isNullOrEmpty()) {      // If there's no name, it means the current user is null, so the sign in failed
             ProgressDialogsUtil.dismissProgressDialog()     // Removes the progress dialog if there is one shown
             showFailedSignInMessage()
