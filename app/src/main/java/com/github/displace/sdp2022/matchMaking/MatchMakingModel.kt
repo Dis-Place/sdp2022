@@ -35,7 +35,7 @@ class MatchMakingModel( val activity: MMView ){
     //indicates if the lobby is public or private
     var lobbyType: String = "private"
     //keeps a map of the lobby : just how the DB stores it
-    var lobbyMap : MutableMap<String,Any> = HashMap()
+    var lobbyMap : Map<String,Any> = mapOf()
     var app : MyApplication
     private var nbPlayer = 2L
 
@@ -43,7 +43,7 @@ class MatchMakingModel( val activity: MMView ){
     private var gpsPositionUpdater : GPSPositionUpdater =
         GPSPositionUpdater(activity,gpsPositionManager)
 
-    private var debug: Boolean = false
+    var debug: Boolean = false
     var activeUser : CompleteUser
 
 
@@ -89,7 +89,7 @@ class MatchMakingModel( val activity: MMView ){
      * - maintaining the lobbyMap variable
      * - check if the lobby is ready to be launched (only by the leader)
      */
-    private val lobbyListener = Listener<MutableMap<String, Any>?>{ lobby ->
+    private val lobbyListener = Listener<Map<String, Any>?>{ lobby ->
         if(lobby == null)
             return@Listener
         lobbyMap = lobby
@@ -98,7 +98,8 @@ class MatchMakingModel( val activity: MMView ){
          * The leader notifies all players that the lobby is launching
          */
         if(lobbyMap["lobbyCount"] as Long == lobbyMap["lobbyMax"] as Long && lobbyMap["lobbyLeader"] as String == activePartialUser.uid && lobbyMap["lobbyLaunch"] == false   ) {
-            lobbyMap["lobbyLaunch"] = true
+       //     lobbyMap["lobbyLaunch"] = true
+            lobbyMap = lobbyMap + mapOf<String,Any>(Pair("lobbyLaunch",true))
             db.update(
                 "MM/$gamemode/$map/$lobbyType/freeLobbies/$currentLobbyId",
                 lobbyMap
@@ -116,11 +117,10 @@ class MatchMakingModel( val activity: MMView ){
 
             if (lobbyMap["lobbyLeader"] as String == activePartialUser.uid) {    //This client is the leader : perform the checks and launch if needed
 
-                db.getThenCall<ArrayList<String>?>("MM/$gamemode/$map/$lobbyType/freeList") { ls ->
+                db.getThenCall<List<String>?>("MM/$gamemode/$map/$lobbyType/freeList") { ls ->
 
                     if (ls != null) {
-                        ls.remove(currentLobbyId) //remove this lobby from the free list
-                        db.update("MM/$gamemode/$map/$lobbyType/freeList", ls)
+                        db.update("MM/$gamemode/$map/$lobbyType/freeList", ls-currentLobbyId)
                     }
                     db.delete("MM/$gamemode/$map/$lobbyType/freeLobbies/$currentLobbyId")
                     db.update(
@@ -140,7 +140,7 @@ class MatchMakingModel( val activity: MMView ){
      * - Maintaining the lobbyMap variable
      * - Making the transition to the game screen
      */
-    private val launchLobbyListener = Listener<MutableMap<String, Any>?>{ lobby ->
+    private val launchLobbyListener = Listener<Map<String, Any>?>{ lobby ->
         if(lobby == null)
             return@Listener
 
@@ -163,18 +163,18 @@ class MatchMakingModel( val activity: MMView ){
         var toCreateId = ""
         var toSearchId = ""
 
-        val publicSearchTransaction : TransactionSpecification<ArrayList<String>> =
-            TransactionSpecification.Builder<ArrayList<String>> { ls ->
+        val publicSearchTransaction : TransactionSpecification<List<String>> =
+            TransactionSpecification.Builder<List<String>> { ls ->
                 toCreateId = ""
                 toSearchId = ""
-
+                var newList = ls
                 val idx : Int = ls!!.indexOf(lastId)+1
                 if (idx == ls.size) {
                     //only the head exists : add a new ID to the list and create a new lobby with that ID
                     //we reached the end of the list, create a new lobby
                     val nextId = Random.nextLong().toString()
 
-                    ls.add(nextId)
+                    newList = ls + (nextId)
 
                     toCreateId = nextId
                 } else {
@@ -182,7 +182,7 @@ class MatchMakingModel( val activity: MMView ){
                     toSearchId = ls[idx]
                 }
 
-                return@Builder ls
+                return@Builder newList!!
             }.preCheckChange { ls ->
                 val idx : Int = ls!!.indexOf(lastId)+1
                 idx != 0
@@ -220,20 +220,22 @@ class MatchMakingModel( val activity: MMView ){
             override fun invoke(geoPoint: GeoPoint) {
                 gpsPositionManager.listenersManager.removeCall(this)
 
-                val checkOutTransaction : TransactionSpecification<MutableMap<String, Any>> =
-                    TransactionSpecification.Builder<MutableMap<String, Any>> { lobby ->
+                val checkOutTransaction : TransactionSpecification<Map<String, Any>> =
+                    TransactionSpecification.Builder<Map<String, Any>> { lobby ->
+                        var newLobby = lobby!!
+                        newLobby = newLobby + mapOf<String,Any>( Pair("lobbyCount", lobby["lobbyCount"] as Long + 1 ) )
 
-                        lobby!!["lobbyCount"] = lobby["lobbyCount"] as Long + 1
-                        val ls = lobby["lobbyPlayers"] as ArrayList<Map<String, *>>
+                      //  lobby!!["lobbyCount"] = lobby["lobbyCount"] as Long + 1
+                        val ls = newLobby["lobbyPlayers"] as List<Map<String, *>>
                         val userMap = activePartialUser.toMap()
 
-                        ls.add(userMap)
-                        lobby["lobbyPlayers"] = ls
+                    //    lobby["lobbyPlayers"] = ls + userMap
+                        newLobby = newLobby + mapOf<String,Any>( Pair("lobbyPlayers", ls + userMap ) )
 
-                        return@Builder lobby
+                        return@Builder newLobby
                     }.preCheckChange { lobby ->
 
-                        val positionMap = lobby!!["lobbyPosition"] as HashMap<String,Any>
+                        val positionMap = lobby!!["lobbyPosition"] as Map<String,Any>
                         positionCondition(geoPoint,positionMap)
 
                     }.onCompleteChange { committed ->
@@ -278,7 +280,7 @@ class MatchMakingModel( val activity: MMView ){
 
                 val lobby = Lobby(id, nbPlayer, activePartialUser,geoPoint)
                 currentLobbyId = id
-                db.update("MM/$gamemode/$map/$lobbyType/freeLobbies/$id", lobby)
+                db.update("MM/$gamemode/$map/$lobbyType/freeLobbies/$id", lobby.toMap())
                 setupLobbyListener()
                 activity.uiToSearch() //UI
 
@@ -310,16 +312,15 @@ class MatchMakingModel( val activity: MMView ){
                 gpsPositionManager.listenersManager.removeCall(this)
                 val lobby = Lobby(currentLobbyId, nbPlayer, activePartialUser, geoPoint)
 
-                db.getThenCall<MutableList<String>>("MM/$gamemode/$map/$lobbyType/freeList"
+                db.getThenCall<List<String>>("MM/$gamemode/$map/$lobbyType/freeList"
                 ) { ls ->
                     if (ls!!.contains(id)) {
                         activity.changeVisibility<TextView>(R.id.errorIdExists, View.VISIBLE)
                     } else {
                         currentLobbyId = id
                         app.setLobbyID(currentLobbyId)
-                        ls.add(currentLobbyId)
-                        db.update("MM/$gamemode/$map/$lobbyType/freeList", ls)
-                        db.update("MM/$gamemode/$map/$lobbyType/freeLobbies/$currentLobbyId", lobby)
+                        db.update("MM/$gamemode/$map/$lobbyType/freeList", ls + currentLobbyId )
+                        db.update("MM/$gamemode/$map/$lobbyType/freeLobbies/$currentLobbyId", lobby.toMap())
                         setupLobbyListener()
                         activity.uiToSearch() //UI
 
@@ -351,7 +352,7 @@ class MatchMakingModel( val activity: MMView ){
             override fun invoke(geoPoint: GeoPoint) {
                 gpsPositionManager.listenersManager.removeCall(this)
 
-                db.getThenCall<MutableList<String>>("MM/$gamemode/$map/$lobbyType/freeList") { ls ->
+                db.getThenCall<List<String>>("MM/$gamemode/$map/$lobbyType/freeList") { ls ->
                     if (ls!!.contains(id)) { //the lobby has to be searchable
                         checkOutLobby(id, true)
                     } else {
@@ -381,38 +382,44 @@ class MatchMakingModel( val activity: MMView ){
             return
         } //UI
 
-        val leaveMMTransaction : TransactionSpecification<MutableMap<String, Any>> =
-            TransactionSpecification.Builder<MutableMap<String, Any>> { lobbyTypeLevel ->
+        val leaveMMTransaction : TransactionSpecification<Map<String, Any>> =
+            TransactionSpecification.Builder<Map<String, Any>> { lobbyTypeLevel ->
+
+                var newLobbyTypeLevel = lobbyTypeLevel!!
 
                 val path = getPath(toGame)
-                val lobbyState = lobbyTypeLevel!![path] as MutableMap<String, Any>? ?: return@Builder lobbyTypeLevel
-                var lobby = lobbyState[currentLobbyId] as MutableMap<String, Any>? ?: return@Builder lobbyTypeLevel
+                var lobbyState = newLobbyTypeLevel[path] as Map<String, Any>? ?: return@Builder lobbyTypeLevel
+                var lobby = lobbyState[currentLobbyId] as Map<String, Any>? ?: return@Builder lobbyTypeLevel
 
-
-                val leader = lobby["lobbyLeader"] as String
                 val count = lobby["lobbyCount"] as Long
+                val leader = lobby["lobbyLeader"] as String
                 if(leader == activePartialUser.uid){
                     if(count == 1L){
                         if(!toGame){
-                            val ls = lobbyTypeLevel["freeList"] as ArrayList<String>? ?:  return@Builder lobbyTypeLevel
-                            ls.remove(currentLobbyId)
-                            lobbyTypeLevel["freeList"] = ls
+                            val ls = lobbyTypeLevel["freeList"] as List<String>? ?:  return@Builder lobbyTypeLevel
+                        //    ls.remove(currentLobbyId)
+                         //   lobbyTypeLevel["freeList"] = ls - currentLobbyId
+                            newLobbyTypeLevel = newLobbyTypeLevel + mapOf<String,Any>( Pair("freeList", ls-currentLobbyId) )
                         }
-                        lobbyState.remove(currentLobbyId)
+                        lobbyState = lobbyState - currentLobbyId
                     }else{
                         lobby = removePlayerFromList(lobby)
-                        val players = lobby["lobbyPlayers"] as ArrayList<MutableMap<String, Any>>? ?:  return@Builder lobbyTypeLevel
-                        lobby["lobbyLeader"] = players[0]["uid"] as String //use the next player as the new leader
-                        lobbyState[currentLobbyId] = lobby
+                        val players = lobby["lobbyPlayers"] as List<Map<String, Any>>? ?:  return@Builder lobbyTypeLevel
+                        lobby = lobby + mapOf<String,Any>( Pair("lobbyLeader",players[0]["uid"] as String) )
+                  //      lobby["lobbyLeader"] = players[0]["uid"] as String //use the next player as the new leader
+                        lobbyState = lobbyState + mapOf(Pair(currentLobbyId,lobby))
+                    //    lobbyState[currentLobbyId] = lobby
                     }
                 }else{
                     lobby = removePlayerFromList(lobby)
-                    lobbyState[currentLobbyId] = lobby
+                  //  lobbyState[currentLobbyId] = lobby
+                    lobbyState = lobbyState + mapOf(Pair(currentLobbyId,lobby))
                 }
 
-                lobbyTypeLevel[path] = lobbyState
+              //  lobbyTypeLevel[path] = lobbyState
+                newLobbyTypeLevel = newLobbyTypeLevel + mapOf(Pair(path,lobbyState))
 
-                return@Builder lobbyTypeLevel
+                return@Builder newLobbyTypeLevel
             }.onCompleteChange { committed ->
                 if(committed) {
                     gpsPositionUpdater.stopUpdates()
@@ -437,18 +444,13 @@ class MatchMakingModel( val activity: MMView ){
      * @param lobby : the lobby to modify, in the form of a map so that it can be used by the database
      * @return the modified lobby
      */
-    private fun removePlayerFromList(lobby: MutableMap<String, Any>): MutableMap<String, Any> {
-
-     /*   if(lobby["lobbyCount"] as Long == 1L){
-            return lobby
-        }*/
-        lobby["lobbyCount"] = lobby["lobbyCount"] as Long - 1
+    private fun removePlayerFromList(lobby: Map<String, Any>): Map<String, Any> {
+        var newLobby = lobby
+        newLobby = newLobby + mapOf<String,Any>(Pair("lobbyCount",newLobby["lobbyCount"] as Long - 1))
+      //  lobby["lobbyCount"] = lobby["lobbyCount"] as Long - 1
         val userMap = activePartialUser.toMap()
-        (lobby["lobbyPlayers"] as ArrayList<MutableMap<String, Any>>).remove(userMap)
-     /*   if (lobby["lobbyLeader"] as String == activePartialUser.uid) { //leader?
-            lobby["lobbyLeader"] = (players)[0]["uid"] as String //use the next player as the new leader
-        }*/
-        return lobby
+        newLobby = newLobby + mapOf<String,Any>(Pair("lobbyPlayers", (newLobby["lobbyPlayers"] as List<Map<String, Any>>) - userMap ))
+        return newLobby
 
     }
 
@@ -473,7 +475,7 @@ class MatchMakingModel( val activity: MMView ){
     private fun positionCheckOnTimer(){
         gpsPositionUpdater.initTimer()
         gpsPositionManager.listenersManager.addCall( { gp ->
-            val positionMap = lobbyMap["lobbyPosition"] as MutableMap<String,Any>
+            val positionMap = lobbyMap["lobbyPosition"] as Map<String,Any>
             if( !positionCondition(gp,positionMap) ){
                 leaveMM(false)
             }
@@ -488,7 +490,7 @@ class MatchMakingModel( val activity: MMView ){
      * @param positionMap : position fo the lobby as given by the database
      * @return true if the position of the player is close enough to the lobby
      */
-    private fun positionCondition(gp : GeoPoint , positionMap : MutableMap<String,Any> ) : Boolean{
+    private fun positionCondition(gp : GeoPoint , positionMap : Map<String,Any> ) : Boolean{
         return CoordinatesUtil.distance(gp, GeoPoint((positionMap["latitude"] as Double)  , (positionMap["longitude"] as Double) ) ) <= Constants.GAME_AREA_RADIUS
     }
 

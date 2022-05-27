@@ -14,9 +14,29 @@ import org.osmdroid.util.GeoPoint
 class Lobby(id: String, max_p: Long, leader: PartialUser, gp : GeoPoint) {
     val lobbyId = id
     val lobbyMax = max_p
-    var lobbyCount = 1
+    var lobbyCount = 1L
     var lobbyLaunch = false
     var lobbyLeader = leader.uid
-    var lobbyPlayers = mutableListOf(leader)    //PARTIAL USER : should be a list of partial users
+    var lobbyPlayers = listOf(leader)
     var lobbyPosition : GeoPoint = gp
+
+
+    fun toMap() : Map<String,*>{
+        val gpMap  = HashMap<String,Any>()
+        gpMap["latitude"] = lobbyPosition.latitude
+        gpMap["longitude"] = lobbyPosition.longitude
+
+        val map = HashMap<String,Any>()
+        map["lobbyId"] = lobbyId
+        map["lobbyMax"] = lobbyMax
+        map["lobbyCount"] = lobbyCount
+        map["lobbyLaunch"] = lobbyLaunch
+        map["lobbyLeader"] = lobbyLeader
+        map["lobbyPlayers"] = lobbyPlayers.map{pu -> pu.toMap()}
+        map["lobbyPosition"] = gpMap.toMap()
+        return map.toMap()
+    }
+
+
+
 }

@@ -47,7 +47,7 @@ class ProfileActivity : AppCompatActivity() {
 
     private lateinit var db : GoodDB
 
-    private lateinit var msgLs: ArrayList<HashMap<String, Any>>
+    //private lateinit var msgLs: List<Map<String, Any>>
 
     private lateinit var activePartialUser: PartialUser
     private lateinit var activeUser: CompleteUser
@@ -64,12 +64,14 @@ class ProfileActivity : AppCompatActivity() {
 
 
         /* Show status */
-        setStatus(activeUser != null && !activeUser!!.offlineMode)
+        setStatus(!activeUser.offlineMode)
 
         /* Achievements, Statistics and Game History */
-        setDefaultRecycler<Achievement,AchViewAdapter>(R.id.recyclerAch,activeUser!!.getAchievements().reversed() )
-        setDefaultRecycler<Statistic,StatViewAdapter>(R.id.recyclerStats,activeUser!!.getStats().reversed() )
-        setDefaultRecycler<History,HistoryViewAdapter>(R.id.recyclerHist,activeUser!!.getGameHistory().reversed() )
+        setDefaultRecycler<Achievement,AchViewAdapter>(R.id.recyclerAch,
+            activeUser.getAchievements().reversed() )
+        setDefaultRecycler<Statistic,StatViewAdapter>(R.id.recyclerStats, activeUser.getStats().reversed() )
+        setDefaultRecycler<History,HistoryViewAdapter>(R.id.recyclerHist,
+            activeUser.getGameHistory().reversed() )
 
         /* Friends */
         setFriends()
@@ -118,7 +120,7 @@ class ProfileActivity : AppCompatActivity() {
             updateMessageListView(activeUser.getMessageHistory())
         } else {
             updateMessageListView(activeUser.getMessageHistory())
-            db.addListener<ArrayList<HashMap<String, Any>>?>("CompleteUsers/" + activePartialUser.uid + "/MessageHistory",messageListener)
+            db.addListener<List<Map<String, Any>>?>("CompleteUsers/" + activePartialUser.uid + "/MessageHistory",messageListener)
         }
     }
 
@@ -240,11 +242,11 @@ class ProfileActivity : AppCompatActivity() {
     /**
      * Transform teh data of the database into a list of messages
      */
-    private fun fromDBToMsgList(ls : ArrayList<HashMap<String,Any>>?): ArrayList<Message> {
-        var list = arrayListOf<Message>()
+    private fun fromDBToMsgList(ls : List<Map<String,Any>>?): List<Message> {
+        var list = listOf<Message>()
         if(ls != null){
             list = (applicationContext as MyApplication).getMessageHandler().getListOfMessages(ls)
-            (applicationContext as MyApplication).getActiveUser()?.cacheMessages(list)
+            (applicationContext as MyApplication).getActiveUser()?.cacheMessages(list as ArrayList<Message>)
         }
         return list
     }
@@ -252,7 +254,7 @@ class ProfileActivity : AppCompatActivity() {
     /**
      * Use a list of messages to update the UI
      */
-    private fun updateMessageListView(list: ArrayList<Message>){
+    private fun updateMessageListView(list: List<Message>){
         val messageRecyclerView = findViewById<RecyclerView>(R.id.recyclerMsg)
 
         val messageAdapter = MsgViewAdapter(
@@ -281,7 +283,7 @@ class ProfileActivity : AppCompatActivity() {
     /**
      * Listener for when a new message is received
      */
-    private val messageListener = Listener<ArrayList<HashMap<String, Any>>?> { value -> updateMessageListView(fromDBToMsgList(value)) }
+    private val messageListener = Listener<List<Map<String, Any>>?> { value -> updateMessageListView(fromDBToMsgList(value)) }
 
 
 
@@ -294,7 +296,7 @@ class ProfileActivity : AppCompatActivity() {
         val app = applicationContext as MyApplication
         val activeUser = app.getActiveUser()
 
-        val friends = activeUser?.getFriendsList() ?: mutableListOf()
+        val friends = activeUser?.getFriendsList() ?: listOf()
         Log.d("UpdateFriendList", "current friends $friends")
         val friendAdapter = FriendViewAdapter(
             applicationContext,

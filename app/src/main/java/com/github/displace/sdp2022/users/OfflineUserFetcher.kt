@@ -161,8 +161,8 @@ class OfflineUserFetcher(private val context: Context?) {
     fun setCompleteUser(completeUser: CompleteUser) {
         setOfflineAchievements(completeUser.getAchievements())
         setOfflineStats(completeUser.getStats())
-        setOfflineFriendsList(completeUser.getFriendsList())
-        setOfflineGameHistory(completeUser.getGameHistory())
+        setOfflineFriendsList(completeUser.getFriendsList().toMutableList())
+        setOfflineGameHistory(completeUser.getGameHistory().toMutableList())
         setOfflinePartialUser(completeUser.getPartialUser())
     }
 

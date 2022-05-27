@@ -31,8 +31,8 @@ class Chat(private val chatPath : String, val db : GoodDB, val view : View, val 
     /**
      * A listener for the messages in the chat, will be empty if there is an error
      */
-    private fun chatListener() = Listener<ArrayList<HashMap<String,Any>>?> { ls ->
-        var list = mutableListOf<Message>()
+    private fun chatListener() = Listener<List<Map<String,Any>>?> { ls ->
+        var list = listOf<Message>()
         if(ls != null){
             list = (applicationContext as MyApplication).getMessageHandler().getListOfMessages(ls)
         }
@@ -53,19 +53,21 @@ class Chat(private val chatPath : String, val db : GoodDB, val view : View, val 
             return
         }
 
-        val chatAdditionTransaction: TransactionSpecification<ArrayList<HashMap<String, Any>>> =
-            TransactionSpecification.Builder<ArrayList<HashMap<String, Any>>> { ls ->
-                val map = HashMap<String, Any>()
-                map["message"] = msg
-                map["date"] = date
-                map["sender"] = partialUser
-                val msgLs = arrayListOf(map)
-                if (ls != null) {
-                    ls.addAll(msgLs)
-                    if (ls.size >= 6) {
-                        return@Builder ls.takeLast(5) as ArrayList<HashMap<String, Any>> // we only show the last 5 messages
+        val chatAdditionTransaction: TransactionSpecification<List<Map<String, Any>>> =
+            TransactionSpecification.Builder<List<Map<String, Any>>> { ls ->
+                var newLs = ls
+                var map = mapOf<String,Any>()
+                map = map + mapOf<String,Any>(Pair("message",msg)) //map["message"] = msg
+                map = map + mapOf<String,Any>(Pair("date",date))//map["date"] = date
+                map = map + mapOf<String,Any>(Pair("sender",partialUser.toMap()))//map["sender"] = partialUser
+                val msgLs = listOf(map)
+                if (newLs != null) {
+               //     ls.addAll(msgLs)
+                    newLs = newLs + msgLs
+                    if (newLs.size >= 6) {
+                        return@Builder newLs.takeLast(5)  // we only show the last 5 messages
                     }
-                    return@Builder ls
+                    return@Builder newLs
                 } else {
                     return@Builder msgLs
                 }
