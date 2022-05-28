@@ -92,7 +92,7 @@ class MessageHandler(private val activePartialUser : PartialUser, app : MyApplic
      * Send notifications for all the new messages
      */
     fun checkForNewMessages(){
-        db.getThenCall<List<Map<String,Any>>>("CompleteUsers/" + activePartialUser.uid + "/MessageHistory"){ ls ->
+        db.getThenCall<List<Map<String,Any>>>("CompleteUsers/" + activePartialUser.uid + "CompleteUser/MessageHistory"){ ls ->
             val tempList : List<Message>
             if(ls != null){
                 tempList = getListOfMessages(ls)

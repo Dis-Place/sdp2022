@@ -61,7 +61,7 @@ class SendMessageActivity : AppCompatActivity() {
             }
 
             //send the message as a transaction
-            db.runTransaction("CompleteUsers/$receiverId/MessageHistory",
+            db.runTransaction("CompleteUsers/$receiverId/CompleteUser/MessageHistory",
                 messageUpdater( message, activePartialUser)
             )
         }

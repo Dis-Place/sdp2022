@@ -42,8 +42,7 @@ class MatchMakingTest {
             Intent(ApplicationProvider.getApplicationContext(), MatchMakingActivity::class.java).apply {
                 putExtra("DEBUG", true)
             }
-     //   DatabaseFactory.clearMockDB()
-     //   MockDatabaseUtils.mockIntent(intent)
+        db = DatabaseFactory.getDB(intent)
         val app = ApplicationProvider.getApplicationContext() as MyApplication
         DatabaseFactory.clearMockDB()
         app.setActiveUser(CompleteUser(app,null, DatabaseFactory.MOCK_DB))
@@ -51,7 +50,7 @@ class MatchMakingTest {
         app.setMessageHandler(MessageHandler(app.getActiveUser()!!.getPartialUser(),app,intent))
         Thread.sleep(1000)
 
-        db = DatabaseFactory.getDB(intent)
+
 
         db.update("MM/Versus/Map2/private/freeList", listOf("head"))
         db.update(
@@ -84,9 +83,11 @@ class MatchMakingTest {
 
     @Test
     fun testPublicLobbyCreation(){
-
+      //  DatabaseFactory.clearMockDB()
+     //   MockDatabaseUtils.mockIntent(intent)
         val scenario = ActivityScenario.launch<MatchMakingActivity>(intent)
 
+        Thread.sleep(1000)
 
         scenario.use {
 
@@ -104,7 +105,8 @@ class MatchMakingTest {
 
     @Test
     fun testPublicLobbySearch(){
-
+  //      DatabaseFactory.clearMockDB()
+//        MockDatabaseUtils.mockIntent(intent)
         val scenario = ActivityScenario.launch<MatchMakingActivity>(intent)
 
          Thread.sleep(1000)
@@ -162,7 +164,7 @@ class MatchMakingTest {
 
             Thread.sleep(1000)
             Intents.intended(IntentMatchers.hasComponent(GameVersusViewActivity::class.java.name))
-
+            db.delete("MM")
 
 
         }
@@ -172,7 +174,8 @@ class MatchMakingTest {
 
     @Test
     fun testPrivateLobbyCreation(){
-
+   //     DatabaseFactory.clearMockDB()
+  //      MockDatabaseUtils.mockIntent(intent)
         val scenario = ActivityScenario.launch<MatchMakingActivity>(intent)
 
 
@@ -208,6 +211,8 @@ class MatchMakingTest {
 
     @Test
     fun testPrivateLobbySearch(){
+    //    DatabaseFactory.clearMockDB()
+    //    MockDatabaseUtils.mockIntent(intent)
         val scenario = ActivityScenario.launch<MatchMakingActivity>(intent)
 
         Thread.sleep(1000)
@@ -241,6 +246,8 @@ class MatchMakingTest {
 
     @Test
     fun testGameListToMM(){
+     //   DatabaseFactory.clearMockDB()
+    //    MockDatabaseUtils.mockIntent(intent)
         val intent = Intent(ApplicationProvider.getApplicationContext(), GameListActivity::class.java)
         val scenario = ActivityScenario.launch<MatchMakingActivity>(intent)
 

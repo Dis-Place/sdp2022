@@ -114,13 +114,12 @@ class ProfileActivity : AppCompatActivity() {
      */
     private fun setMessages() {
 
-        app.getMessageHandler().checkForNewMessages()
-
         if(activeUser.offlineMode) {
             updateMessageListView(activeUser.getMessageHistory())
         } else {
+            app.getMessageHandler().checkForNewMessages()
             updateMessageListView(activeUser.getMessageHistory())
-            db.addListener<List<Map<String, Any>>?>("CompleteUsers/" + activePartialUser.uid + "/MessageHistory",messageListener)
+            db.addListener<List<Map<String, Any>>?>("CompleteUsers/" + activePartialUser.uid + "/CompleteUser/MessageHistory",messageListener)
         }
     }
 

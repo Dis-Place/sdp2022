@@ -250,11 +250,14 @@ class CompleteUser(
                 PartialUser("THE SYSTEM", "dummy_id")
             )
         )
+
+        cacheMessages(msgs)
+
         db.update("$dbReference/MessageHistory",
             msgs.map { msg -> msg.toMap() }.toList()
         )
 
-        cacheMessages(msgs)
+
     }
 
     /**

@@ -2,6 +2,7 @@ package com.github.displace.sdp2022.profile
 
 import android.content.Intent
 import android.view.View
+import android.widget.Button
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso
@@ -15,6 +16,7 @@ import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.github.displace.sdp2022.MainActivity
 import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.R
 import com.github.displace.sdp2022.database.DatabaseFactory
@@ -36,7 +38,9 @@ class ProfileActivityTest {
     lateinit var completeUser: CompleteUser
 
     val intent =
-        Intent(ApplicationProvider.getApplicationContext(), ProfileActivity::class.java)
+        Intent(ApplicationProvider.getApplicationContext(), ProfileActivity::class.java).apply {
+            putExtra("DEBUG", true)
+        }
 
 
     @Before
@@ -63,6 +67,7 @@ class ProfileActivityTest {
         val scenario = ActivityScenario.launch<ProfileActivity>(intent)
 
         scenario.use {
+
             Espresso.onView(ViewMatchers.withId(R.id.inboxButton)).perform(click())
             Thread.sleep(30)
             Espresso.onView(ViewMatchers.withId(R.id.InboxScroll))
@@ -75,12 +80,10 @@ class ProfileActivityTest {
      * Should be fixed when we fully utilize the MockDB
      */
 
-    //@Test
-    /*fun testMessageInInboxButton() {
+    @Test
+    fun testMessageInInboxButton() {
 
-        val intent =
-            Intent(ApplicationProvider.getApplicationContext(), ProfileActivity::class.java)
-        val scenario = ActivityScenario.launch<ProfileActivity>(intent)
+        val scenario = ActivityScenario.launch<MainActivity>(intent)
         scenario.use { _ ->
             Espresso.onView(ViewMatchers.withId(R.id.inboxButton)).perform(click())
             Espresso.onView(ViewMatchers.withId(R.id.recyclerMsg)).perform(
@@ -98,7 +101,7 @@ class ProfileActivityTest {
                 )
             )
         }
-    }*/
+    }
 
     @Test
     fun testProfileButton() {
