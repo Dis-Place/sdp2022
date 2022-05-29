@@ -169,10 +169,13 @@ class MatchMakingModel( val activity: MMView ){
 
         val publicSearchTransaction : TransactionSpecification<List<String>> =
             TransactionSpecification.Builder<List<String>> { ls ->
+                if(ls == null){
+                    return@Builder ls
+                }
                 toCreateId = ""
                 toSearchId = ""
                 var newList = ls
-                val idx : Int = ls!!.indexOf(lastId)+1
+                val idx : Int = newList.indexOf(lastId)+1
                 if (idx == ls.size) {
                     //only the head exists : add a new ID to the list and create a new lobby with that ID
                     //we reached the end of the list, create a new lobby
@@ -186,7 +189,7 @@ class MatchMakingModel( val activity: MMView ){
                     toSearchId = ls[idx]
                 }
 
-                return@Builder newList!!
+                return@Builder newList
             }.preCheckChange { ls ->
                 val idx : Int = ls!!.indexOf(lastId)+1
                 idx != 0
@@ -226,7 +229,10 @@ class MatchMakingModel( val activity: MMView ){
 
                 val checkOutTransaction : TransactionSpecification<Map<String, Any>> =
                     TransactionSpecification.Builder<Map<String, Any>> { lobby ->
-                        var newLobby = lobby!!
+                        if(lobby == null){
+                            return@Builder lobby
+                        }
+                        var newLobby = lobby
                         newLobby = newLobby + mapOf<String,Any>( Pair("lobbyCount", lobby["lobbyCount"] as Long + 1 ) )
 
                         //  lobby!!["lobbyCount"] = lobby["lobbyCount"] as Long + 1
@@ -388,8 +394,10 @@ class MatchMakingModel( val activity: MMView ){
 
         val leaveMMTransaction : TransactionSpecification<Map<String, Any>> =
             TransactionSpecification.Builder<Map<String, Any>> { lobbyTypeLevel ->
-
-                var newLobbyTypeLevel = lobbyTypeLevel!!
+                if(lobbyTypeLevel == null) {
+                    return@Builder lobbyTypeLevel
+                }
+                var newLobbyTypeLevel = lobbyTypeLevel
 
                 val path = getPath(toGame)
                 var lobbyState = newLobbyTypeLevel[path] as Map<String, Any>? ?: return@Builder lobbyTypeLevel

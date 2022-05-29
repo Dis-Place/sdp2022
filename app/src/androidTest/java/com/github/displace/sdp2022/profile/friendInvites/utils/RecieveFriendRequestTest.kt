@@ -19,8 +19,9 @@ import org.mockito.Mockito.`when`
 @RunWith(AndroidJUnit4::class)
 class ReceiveFriendRequestTest {
 
-//    @Test
-/*    fun receiveRequestsTest(){
+
+    @Test
+    fun receiveRequestsTest(){
         val mockDatabaseReference = Mockito.mock(DatabaseReference::class.java)
         val mockInviteReference = Mockito.mock(DatabaseReference::class.java)
         `when`(mockDatabaseReference.child("Invites")).thenReturn(mockInviteReference)
@@ -29,10 +30,11 @@ class ReceiveFriendRequestTest {
         val partialUser = PartialUser("dummy", "1'")
         val result = ReceiveFriendRequests.receiveRequests(mockDatabaseReference, partialUser)
 
-        var data = mutableListOf<InviteWithId>()
+        var data : List<InviteWithId>? = listOf<InviteWithId>()
+        data = null
         assertEquals( data , result.value)
     }
-*/
+
 
     @Test
     fun getUserInvitesTest() {

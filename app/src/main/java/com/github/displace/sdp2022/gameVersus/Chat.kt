@@ -24,6 +24,9 @@ class Chat(private val chatPath : String, val db : GoodDB, val view : View, val 
     private val chatGroup : ConstraintLayout
 
     init{
+        db.getThenCall<List<Map<String,Any>>>(chatPath){ msgs ->
+
+        }
         db.addListener(chatPath,chatListener())
         chatGroup = view.findViewById(R.id.chatLayout)
     }
@@ -43,26 +46,13 @@ class Chat(private val chatPath : String, val db : GoodDB, val view : View, val 
     /**
      * Send the message that is written in  the UI to the chat
      */
-    fun addToChat() {
-        val msg: String = view.findViewById<EditText>(R.id.chatEditText).text.toString()
-        val partialUser: PartialUser =
-            (applicationContext as MyApplication).getActiveUser()?.getPartialUser()!!
-
-        val date: String = DateTimeUtil.currentDate()
-        if (msg.isEmpty()) { //do not send an empty message
-            return
-        }
+    fun addToChat(msg : Message) {
 
         val chatAdditionTransaction: TransactionSpecification<List<Map<String, Any>>> =
             TransactionSpecification.Builder<List<Map<String, Any>>> { ls ->
                 var newLs = ls
-                var map = mapOf<String,Any>()
-                map = map + mapOf<String,Any>(Pair("message",msg)) //map["message"] = msg
-                map = map + mapOf<String,Any>(Pair("date",date))//map["date"] = date
-                map = map + mapOf<String,Any>(Pair("sender",partialUser.toMap()))//map["sender"] = partialUser
-                val msgLs = listOf(map)
+                val msgLs = listOf(msg.toMap())
                 if (newLs != null) {
-               //     ls.addAll(msgLs)
                     newLs = newLs + msgLs
                     if (newLs.size >= 6) {
                         return@Builder newLs.takeLast(5)  // we only show the last 5 messages

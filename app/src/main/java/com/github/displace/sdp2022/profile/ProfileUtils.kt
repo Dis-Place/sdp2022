@@ -31,7 +31,7 @@ fun messageUpdater(message : String, activePartialUser : PartialUser) : Transact
             msgMap["sender"] = msg.sender
             ls.add(0,msgMap)
         }
-        return@Builder ls!!
+        return@Builder ls
 
     }.build()
 
