@@ -12,13 +12,13 @@ import org.osmdroid.util.GeoPoint
  * @param gp : the gps position of the lobby
  */
 class Lobby(id: String, max_p: Long, leader: PartialUser, gp : GeoPoint) {
-    val lobbyId = id
-    val lobbyMax = max_p
-    var lobbyCount = 1L
-    var lobbyLaunch = false
-    var lobbyLeader = leader.uid
-    var lobbyPlayers = listOf(leader)
-    var lobbyPosition : GeoPoint = gp
+    private val lobbyId = id
+    private val lobbyMax = max_p
+    private val lobbyCount = 1L
+    private val lobbyLaunch = false
+    private val lobbyLeader = leader.uid
+    private val lobbyPlayers = listOf(leader)
+    private val lobbyPosition : GeoPoint = gp
 
 
     fun toMap() : Map<String,*>{

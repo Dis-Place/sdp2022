@@ -20,9 +20,11 @@ import com.github.displace.sdp2022.MainActivity
 import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.R
 import com.github.displace.sdp2022.database.DatabaseFactory
+import com.github.displace.sdp2022.database.GoodDB
 import com.github.displace.sdp2022.database.MockDatabaseUtils
 import com.github.displace.sdp2022.profile.friendInvites.AddFriendActivity
 import com.github.displace.sdp2022.profile.friends.FriendViewHolder
+import com.github.displace.sdp2022.profile.messages.Message
 import com.github.displace.sdp2022.profile.messages.MessageHandler
 import com.github.displace.sdp2022.profile.messages.MsgViewHolder
 import com.github.displace.sdp2022.users.CompleteUser
@@ -42,10 +44,13 @@ class ProfileActivityTest {
             putExtra("DEBUG", true)
         }
 
+    lateinit var db : GoodDB
 
     @Before
     fun before(){
+
         MockDatabaseUtils.mockIntent(intent)
+        db = DatabaseFactory.getDB(intent)
         val app = ApplicationProvider.getApplicationContext() as MyApplication
         DatabaseFactory.clearMockDB()
         completeUser = CompleteUser(app,null, DatabaseFactory.MOCK_DB)
@@ -204,6 +209,21 @@ class ProfileActivityTest {
                     ViewMatchers.withText("defaultName")
                 )
             )
+        }
+    }
+
+    @Test
+    fun testMessageReception() {
+        MockDatabaseUtils.mockIntent(intent)
+        val scenario = ActivityScenario.launch<ProfileActivity>(intent)
+        scenario.use {
+
+            db.update("CompleteUsers/${completeUser.getPartialUser().uid}/CompleteUser/MessageHistory",
+                listOf(Message("dwa","daws",completeUser.getPartialUser()).toMap())
+            )
+
+            Thread.sleep(50)
+
         }
     }
 

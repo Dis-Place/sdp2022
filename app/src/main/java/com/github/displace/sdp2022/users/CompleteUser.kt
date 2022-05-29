@@ -94,7 +94,7 @@ class CompleteUser(
         initializeAchievements()
         initializeStats()
         friendsList = mutableListOf(
-            PartialUser("THE SYSTEM", "dummy_friend_id")
+            PartialUser("THE SYSTEM", "aB34b77tSrdPwJ0pPCvoAdrMliC3")
         )
         gameHistory = mutableListOf()
         createFirstMessageList()
