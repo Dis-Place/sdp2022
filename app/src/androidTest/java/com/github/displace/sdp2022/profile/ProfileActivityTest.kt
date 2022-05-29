@@ -214,10 +214,15 @@ class ProfileActivityTest {
 
     @Test
     fun testMessageReception() {
-        MockDatabaseUtils.mockIntent(intent)
+        val intent = Intent(ApplicationProvider.getApplicationContext(), MainActivity::class.java)
         val scenario = ActivityScenario.launch<ProfileActivity>(intent)
         scenario.use {
-
+            Espresso.onView(ViewMatchers.withId(R.id.mainActivityLogInButton)).perform(click())
+            Thread.sleep(1000)
+            Espresso.onView(ViewMatchers.withId(R.id.signInActivityGuestModeButton)).perform(click())
+            Thread.sleep(1000)
+            Espresso.onView(ViewMatchers.withId(R.id.profileButton)).perform(click())
+            Thread.sleep(1000)
             Espresso.onView(ViewMatchers.withId(R.id.inboxButton)).perform(click())
             Thread.sleep(500)
             db.update("CompleteUsers/${completeUser.getPartialUser().uid}/CompleteUser/MessageHistory",
@@ -231,13 +236,22 @@ class ProfileActivityTest {
 
     @Test
     fun testFriendProfile() {
+        val intent = Intent(ApplicationProvider.getApplicationContext(), MainActivity::class.java)
 
         val scenario = ActivityScenario.launch<ProfileActivity>(intent)
 
         scenario.use {
+            Espresso.onView(ViewMatchers.withId(R.id.mainActivityLogInButton)).perform(click())
+            Thread.sleep(1000)
+            Espresso.onView(ViewMatchers.withId(R.id.signInActivityGuestModeButton)).perform(click())
+            Thread.sleep(1000)
+            Espresso.onView(ViewMatchers.withId(R.id.profileButton)).perform(click())
+            Thread.sleep(1000)
             Espresso.onView(ViewMatchers.withId(R.id.friendsButton)).perform(click())
+            Thread.sleep(1000)
             Espresso.onView(ViewMatchers.withId(R.id.recyclerFriend))
                 .perform(RecyclerViewActions.actionOnItemAtPosition<FriendViewHolder>(0, click()))
+            Thread.sleep(1000)
             Espresso.onView(ViewMatchers.withId(R.id.friendUsername))
                 .check(ViewAssertions.matches(isDisplayed()))
         }
