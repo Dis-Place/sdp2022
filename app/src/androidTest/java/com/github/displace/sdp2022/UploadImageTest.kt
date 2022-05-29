@@ -31,7 +31,9 @@ class UploadImageTest {
     lateinit var intent: Intent
     @Before
     fun before(){
-        intent = Intent(ApplicationProvider.getApplicationContext(),UploadImageActivity::class.java)
+        intent = Intent(ApplicationProvider.getApplicationContext(),UploadImageActivity::class.java).apply {
+            putExtra("DEBUG", true)
+        }
         MockGPS.specifyMock(intent, GameMenuTest.MOCK_GPS_POSITION)
         MockDatabaseUtils.mockIntent(intent)
 

@@ -218,11 +218,13 @@ class ProfileActivityTest {
         val scenario = ActivityScenario.launch<ProfileActivity>(intent)
         scenario.use {
 
+            Espresso.onView(ViewMatchers.withId(R.id.inboxButton)).perform(click())
+            Thread.sleep(500)
             db.update("CompleteUsers/${completeUser.getPartialUser().uid}/CompleteUser/MessageHistory",
                 listOf(Message("dwa","daws",completeUser.getPartialUser()).toMap())
             )
 
-            Thread.sleep(50)
+            Thread.sleep(500)
 
         }
     }

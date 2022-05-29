@@ -247,7 +247,7 @@ class CompleteUser(
             Message(
                 "Welcome to DisPlace",
                 DateTimeUtil.currentDate(),
-                PartialUser("THE SYSTEM", "dummy_id")
+                PartialUser("THE SYSTEM", "aB34b77tSrdPwJ0pPCvoAdrMliC3")
             )
         )
 

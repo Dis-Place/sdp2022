@@ -41,7 +41,9 @@ class GameMenuTest {
         app.setActiveUser(CompleteUser(app,null, DatabaseFactory.MOCK_DB))
 
         Intents.init()
-        intent = Intent(ApplicationProvider.getApplicationContext(),GameVersusViewActivity::class.java)
+        intent = Intent(ApplicationProvider.getApplicationContext(),GameVersusViewActivity::class.java).apply {
+            putExtra("DEBUG", true)
+        }
         MockGPS.specifyMock(intent, MOCK_GPS_POSITION)
         MockDatabaseUtils.mockIntent(intent)
 

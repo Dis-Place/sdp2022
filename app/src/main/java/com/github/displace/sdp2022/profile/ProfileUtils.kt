@@ -20,18 +20,14 @@ import com.google.firebase.database.*
  * @param message : the message content
  * @param activePartialUser : the current user, which is the sender of the message
  */
-fun messageUpdater(message : String, activePartialUser : PartialUser) : TransactionSpecification<ArrayList<MutableMap<String,Any>>> =
-    TransactionSpecification.Builder<ArrayList<MutableMap<String,Any>>> { ls ->
-
-        val msg = Message(message, DateTimeUtil.currentDate(), activePartialUser)
-        if(ls != null){
-            val msgMap = HashMap<String,Any>()
-            msgMap["message"] = msg.message
-            msgMap["date"] = DateTimeUtil.currentDate()
-            msgMap["sender"] = msg.sender
-            ls.add(0,msgMap)
+fun messageUpdater(message : String, activePartialUser : PartialUser) : TransactionSpecification<List<Map<String,Any>>> =
+    TransactionSpecification.Builder<List<Map<String,Any>>> { ls ->
+        var newLs = ls
+        if(newLs != null){
+            val msg = Message(message, DateTimeUtil.currentDate(), activePartialUser)
+            newLs = listOf(msg.toMap()) + newLs
         }
-        return@Builder ls
+        return@Builder newLs
 
     }.build()
 

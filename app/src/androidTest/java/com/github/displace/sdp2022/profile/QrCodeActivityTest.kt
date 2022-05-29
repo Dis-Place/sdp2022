@@ -37,9 +37,11 @@ class QrCodeActivityTest {
     fun setup() {
 
         Intents.init()
-        intent = Intent(ApplicationProvider.getApplicationContext(),ProfileActivity::class.java)
+        intent = Intent(ApplicationProvider.getApplicationContext(),ProfileActivity::class.java).apply {
+            putExtra("DEBUG", true)
+        }
 
-        MockDatabaseUtils.mockIntent(intent)
+            MockDatabaseUtils.mockIntent(intent)
 
         val app = ApplicationProvider.getApplicationContext() as MyApplication
         DatabaseFactory.clearMockDB()

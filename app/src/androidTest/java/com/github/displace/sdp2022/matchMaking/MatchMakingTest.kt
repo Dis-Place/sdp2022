@@ -87,7 +87,7 @@ class MatchMakingTest {
     @Test
     fun testPublicLobbyCreation(){
       //  DatabaseFactory.clearMockDB()
-     //   MockDatabaseUtils.mockIntent(intent)
+   //     MockDatabaseUtils.mockIntent(intent)
         val scenario = ActivityScenario.launch<MatchMakingActivity>(intent)
 
         Thread.sleep(1000)
@@ -252,7 +252,9 @@ class MatchMakingTest {
     fun testGameListToMM(){
      //   DatabaseFactory.clearMockDB()
     //    MockDatabaseUtils.mockIntent(intent)
-        val intent = Intent(ApplicationProvider.getApplicationContext(), GameListActivity::class.java)
+        val intent = Intent(ApplicationProvider.getApplicationContext(), GameListActivity::class.java).apply {
+            putExtra("DEBUG", true)
+        }
         val scenario = ActivityScenario.launch<MatchMakingActivity>(intent)
 
 
