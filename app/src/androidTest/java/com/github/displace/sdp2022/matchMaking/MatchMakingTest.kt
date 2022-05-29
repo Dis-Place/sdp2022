@@ -74,13 +74,12 @@ class MatchMakingTest {
 
         Thread.sleep(3000)
 
-        Intents.init()
+
     }
 
     @After
     fun releaseIntents() {
         db.delete("MM")
-        Intents.release()
         //val app = ApplicationProvider.getApplicationContext() as MyApplication
         //app.getActiveUser()?.removeUserFromDatabase()
     }
@@ -143,7 +142,7 @@ class MatchMakingTest {
 
     @Test
     fun testPublicLobbyGameLaunch(){
-
+        Intents.init()
 
         val scenario = ActivityScenario.launch<MatchMakingActivity>(intent)
 
@@ -172,6 +171,8 @@ class MatchMakingTest {
 
 
         }
+
+        Intents.release()
     }
 
 
