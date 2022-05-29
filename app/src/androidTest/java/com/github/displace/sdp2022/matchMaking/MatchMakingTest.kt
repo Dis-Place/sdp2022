@@ -24,6 +24,7 @@ import com.github.displace.sdp2022.profile.messages.MsgViewHolder
 import com.github.displace.sdp2022.users.CompleteUser
 import com.github.displace.sdp2022.users.PartialUser
 import com.github.displace.sdp2022.util.gps.MockGPS
+import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -73,13 +74,16 @@ class MatchMakingTest {
 
         Thread.sleep(3000)
 
+        Intents.init()
     }
 
-    /*@After
+    @After
     fun releaseIntents() {
-        val app = ApplicationProvider.getApplicationContext() as MyApplication
-        app.getActiveUser()?.removeUserFromDatabase()
-    }*/
+        db.delete("MM")
+        Intents.release()
+        //val app = ApplicationProvider.getApplicationContext() as MyApplication
+        //app.getActiveUser()?.removeUserFromDatabase()
+    }
 
     @Test
     fun testPublicLobbyCreation(){
@@ -139,7 +143,7 @@ class MatchMakingTest {
 
     @Test
     fun testPublicLobbyGameLaunch(){
-        Intents.init()
+
 
         val scenario = ActivityScenario.launch<MatchMakingActivity>(intent)
 
@@ -168,7 +172,6 @@ class MatchMakingTest {
 
 
         }
-        Intents.release()
     }
 
 
