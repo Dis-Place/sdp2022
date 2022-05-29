@@ -1,4 +1,4 @@
-import android.content.Context
+/*import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.content.Intent
 import androidx.test.core.app.ActivityScenario
@@ -54,7 +54,7 @@ class EndToEndTesting {
             //main menu
             onView(ViewMatchers.withId(R.id.settingsButton)).perform(click())
             Thread.sleep(1000)
-            //setttings
+            //settings
             pressBack()
             Thread.sleep(1000)
             //main menu
@@ -72,4 +72,4 @@ class EndToEndTesting {
             //main menu
         }
     }
-}
+}*/
