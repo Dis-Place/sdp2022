@@ -155,8 +155,9 @@ class ProfileActivityTest {
         val scenario = ActivityScenario.launch<ProfileActivity>(intent)
 
         scenario.use {
+            Thread.sleep(3000)
             Espresso.onView(ViewMatchers.withId(R.id.profileSettingsButton)).perform(click())
-            Thread.sleep(30)
+            Thread.sleep(3000)
             Espresso.onView(ViewMatchers.withId(R.id.profileUsername))
                 .check(ViewAssertions.matches(isDisplayed()))
         }

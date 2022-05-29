@@ -131,6 +131,7 @@ class GameMenuTest {
 
     @Test
     fun testWinButton() {
+
         intent.putExtra("gid","GameVersusTest")
         intent.putExtra("uid","hCkhhJ0dkINs0BIpx8eqhLWzXw43")
         intent.putExtra("nbPlayer",2)
@@ -144,6 +145,7 @@ class GameMenuTest {
 
     @Test
     fun testQuitButton() {
+        Thread.sleep(3000)
         intent.putExtra("gid","GameVersusTest")
         intent.putExtra("uid","hCkhhJ0dkINs0BIpx8eqhLWzXw43")
         intent.putExtra("nbPlayer",2)
