@@ -178,7 +178,7 @@ class GameVersusViewActivity : AppCompatActivity() {
         gameMode = intent.getStringExtra("gameMode")!!
         clickableArea = intent.getIntExtra("dist", Constants.CLICKABLE_AREA_RADIUS)
 
-        db = DatabaseFactory.getDB(Intent())
+        db = DatabaseFactory.getDB(intent)
         order = Random.nextLong(-10000000000L, 10000000000L) // find a unique id for you and for this instance of the game
 
         clientServerLink = ClientServerLink(db, order)

@@ -45,7 +45,7 @@ class GameMenuTest {
             putExtra("DEBUG", true)
         }
         MockGPS.specifyMock(intent, MOCK_GPS_POSITION)
-        MockDatabaseUtils.mockIntent(intent)
+   //     MockDatabaseUtils.mockIntent(intent)
 
         app.setMessageHandler(MessageHandler(app.getActiveUser()!!.getPartialUser(),app,intent))
         Thread.sleep(1000)
@@ -177,12 +177,15 @@ class GameMenuTest {
         intent.putExtra("uid","hCkhhJ0dkINs0BIpx8eqhLWzXw43")
         intent.putExtra("nbPlayer",2)
         intent.putExtra("gameMode","Versus")
-        ActivityScenario.launch<GameSummaryActivity>(intent).use {
+        ActivityScenario.launch<GameVersusViewActivity>(intent).use {
 
+            Thread.sleep(4000)
             onView(withId(R.id.chatButton)).perform(click())
+            Thread.sleep(4000)
             onView(withId(R.id.chatEditText)).perform(typeText("hh")).perform(closeSoftKeyboard())
             Thread.sleep(1000)
             onView(withId(R.id.sendChatMessage)).perform(click())
+            Thread.sleep(1000)
             onView(withId(R.id.button4)).perform(click())
 
         }

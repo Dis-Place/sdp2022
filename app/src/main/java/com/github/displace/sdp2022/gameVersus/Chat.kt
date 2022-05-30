@@ -23,24 +23,20 @@ class Chat(private val chatPath : String, val db : GoodDB, val view : View, val 
     //the group of View (UI elements) that compose the chat , used to hide them as needed
     private val chatGroup : ConstraintLayout
 
-    init{
-        db.getThenCall<List<Map<String,Any>>>(chatPath){ msgs ->
-
-        }
-        db.addListener(chatPath,chatListener())
-        chatGroup = view.findViewById(R.id.chatLayout)
-    }
-
     /**
      * A listener for the messages in the chat, will be empty if there is an error
      */
-    private fun chatListener() = Listener<List<Map<String,Any>>?> { ls ->
+    private val chatListener = Listener<List<Map<String,Any>>?> { ls ->
         var list = listOf<Message>()
         if(ls != null){
             list = (applicationContext as MyApplication).getMessageHandler().getListOfMessages(ls)
         }
         chatUiUpdate(list)
+    }
 
+    init{
+        db.addListener(chatPath,chatListener)
+        chatGroup = view.findViewById(R.id.chatLayout)
     }
 
     /**
@@ -89,7 +85,7 @@ class Chat(private val chatPath : String, val db : GoodDB, val view : View, val 
      * Used when quitting the game or the activity is paused
      */
     fun removeListener(){
-        db.removeListener(chatPath,chatListener())
+        db.removeListener(chatPath,chatListener)
     }
 
     /**

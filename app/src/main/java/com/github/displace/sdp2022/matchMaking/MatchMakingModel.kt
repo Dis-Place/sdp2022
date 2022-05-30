@@ -486,7 +486,7 @@ class MatchMakingModel( val activity: MMView ){
     private fun positionCheckOnTimer(){
         gpsPositionUpdater.initTimer()
         gpsPositionManager.listenersManager.addCall( { gp ->
-            val positionMap = lobbyMap["lobbyPosition"] as Map<String,Any>
+            val positionMap = lobbyMap["lobbyPosition"] as Map<String,Any>? ?: return@addCall
             if( !positionCondition(gp,positionMap) ){
                 leaveMM(false)
             }
