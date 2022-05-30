@@ -210,6 +210,12 @@ class MatchMakingTest {
 
             Thread.sleep(1000)
 
+            Espresso.onView(ViewMatchers.withId(R.id.MMCancelButton)).check(ViewAssertions.matches(
+                ViewMatchers.isDisplayed()
+            ))
+
+            Espresso.pressBack()
+
         }
     }
 
