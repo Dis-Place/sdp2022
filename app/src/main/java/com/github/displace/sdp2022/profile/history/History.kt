@@ -10,6 +10,6 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class History(val gameMode: String, val date: String, val result: String)     {
     fun toMap(): Map<String, *> {
-        return mapOf(Pair("map", gameMode), Pair("date", date), Pair("result", result))
+        return mapOf(Pair("gameMode", gameMode), Pair("date", date), Pair("result", result))
     }
 }
