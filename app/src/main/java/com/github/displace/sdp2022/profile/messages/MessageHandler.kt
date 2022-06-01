@@ -24,7 +24,6 @@ import com.google.firebase.database.ValueEventListener
 class MessageHandler(private val activePartialUser : PartialUser, app : MyApplication , intent : Intent ) {
 
     private var msgLs : ArrayList<Message> = app.getActiveUser()!!.getMessageHistory()
- //   private val db : RealTimeDatabase = RealTimeDatabase().instantiate("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",false) as RealTimeDatabase
 
     private val db = DatabaseFactory.getDB(intent)
 

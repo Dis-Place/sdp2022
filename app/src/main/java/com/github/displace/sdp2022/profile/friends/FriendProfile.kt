@@ -11,6 +11,7 @@ import com.github.displace.sdp2022.profile.history.HistoryViewAdapter
 import com.github.displace.sdp2022.profile.statistics.StatViewAdapter
 import com.github.displace.sdp2022.R
 import com.github.displace.sdp2022.RealTimeDatabase
+import com.github.displace.sdp2022.database.DatabaseConstants.DB_URL
 import com.github.displace.sdp2022.profile.achievements.Achievement
 import com.github.displace.sdp2022.profile.history.History
 import com.github.displace.sdp2022.profile.statistics.Statistic
@@ -27,7 +28,7 @@ class FriendProfile : AppCompatActivity() {
         val friendName = intent.getStringExtra("FriendUsername").toString()
 
         val app = applicationContext as MyApplication
-        val db = RealTimeDatabase().instantiate("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",false) as RealTimeDatabase
+        val db = RealTimeDatabase().instantiate(DB_URL,false) as RealTimeDatabase
         findViewById<TextView>(R.id.friendUsername).text = friendName
 
         db.referenceGet("CompleteUsers/$friendId","CompleteUser").addOnSuccessListener { CU ->

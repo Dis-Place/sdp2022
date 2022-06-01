@@ -11,6 +11,7 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.Group
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.github.displace.sdp2022.database.DatabaseConstants.DB_URL
 import com.github.displace.sdp2022.profile.friends.NewFriendViewAdapter
 import com.github.displace.sdp2022.profile.statistics.Statistic
 import com.github.displace.sdp2022.users.CompleteUser
@@ -22,7 +23,7 @@ import java.lang.Exception
 class GameSummaryActivity : AppCompatActivity() {
 
     lateinit var layout: LinearLayout
-    private val db : RealTimeDatabase = RealTimeDatabase().instantiate("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",false) as RealTimeDatabase
+    private val db : RealTimeDatabase = RealTimeDatabase().instantiate(DB_URL,false) as RealTimeDatabase
 
     private lateinit var activeUser: CompleteUser
     private lateinit var stats: List<Statistic>

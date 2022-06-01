@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.R
 import com.github.displace.sdp2022.RealTimeDatabase
+import com.github.displace.sdp2022.database.DatabaseConstants.DB_URL
 import com.github.displace.sdp2022.database.DatabaseFactory
 import com.github.displace.sdp2022.database.GoodDB
 import com.github.displace.sdp2022.profile.FriendDeleter
@@ -65,7 +66,7 @@ class FriendViewHolder(itemview: View) : RecyclerView.ViewHolder(itemview) {
             Toast.makeText(removeFriendButton.context,"REMOVE FRIEND ${friend.username}", Toast.LENGTH_LONG).show()
 
 
-            val db : RealTimeDatabase = RealTimeDatabase().noCacheInstantiate("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",false) as RealTimeDatabase
+            val db : RealTimeDatabase = RealTimeDatabase().noCacheInstantiate(DB_URL,false) as RealTimeDatabase
             val app = v.context.applicationContext as MyApplication
             val activeUser = app.getActiveUser()
             var activePartialUser = PartialUser("defaultName","dummy_id")

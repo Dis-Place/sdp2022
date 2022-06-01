@@ -95,8 +95,6 @@ class MatchMakingTest {
             }
         val scenario = ActivityScenario.launch<MatchMakingActivity>(intent)
 
-      //  val db : RealTimeDatabase = RealTimeDatabase().noCacheInstantiate("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",true) as RealTimeDatabase
-
         scenario.use {
 
             Espresso.onView(ViewMatchers.withId(R.id.RandomLobbySearch))
@@ -127,7 +125,6 @@ class MatchMakingTest {
             }
         val scenario = ActivityScenario.launch<MatchMakingActivity>(intent)
 
-        //   val db : RealTimeDatabase = RealTimeDatabase().noCacheInstantiate("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",true) as RealTimeDatabase
         Thread.sleep(1000)
 
 
@@ -173,8 +170,6 @@ class MatchMakingTest {
             }
         val scenario = ActivityScenario.launch<MatchMakingActivity>(intent)
 
-        //    val db : RealTimeDatabase = RealTimeDatabase().noCacheInstantiate("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",true) as RealTimeDatabase
-
         Thread.sleep(1000)
         scenario.use {
             MockGPS.specifyMock(intent, MOCK_GPS_POSITION)
@@ -210,9 +205,6 @@ class MatchMakingTest {
                 putExtra("DEBUG", true)
             }
         val scenario = ActivityScenario.launch<MatchMakingActivity>(intent)
-
-        //     val db : RealTimeDatabase = RealTimeDatabase().noCacheInstantiate("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",true) as RealTimeDatabase
-
         Thread.sleep(1000)
 
         scenario.use {
@@ -255,7 +247,6 @@ class MatchMakingTest {
         }
         val scenario = ActivityScenario.launch<MatchMakingActivity>(intent)
 
-        //     val db : RealTimeDatabase = RealTimeDatabase().noCacheInstantiate("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",true) as RealTimeDatabase
         Thread.sleep(1000)
 
         scenario.use {
