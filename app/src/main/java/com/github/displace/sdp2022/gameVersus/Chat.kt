@@ -20,7 +20,6 @@ import com.github.displace.sdp2022.util.listeners.Listener
  * The under-the-hood functionalities of the chat integrated into the game view
  */
 class Chat(private val chatPath : String, val db : GoodDB, val view : View, val applicationContext : Context) {
-
     //the group of View (UI elements) that compose the chat , used to hide them as needed
     private val chatGroup : ConstraintLayout
 
@@ -44,71 +43,40 @@ class Chat(private val chatPath : String, val db : GoodDB, val view : View, val 
     /**
      * Send the message that is written in  the UI to the chat
      */
-    fun addToChat(){
-        val msg : String = view.findViewById<EditText>(R.id.chatEditText).text.toString()
-        val partialUser : PartialUser = (applicationContext as MyApplication).getActiveUser()?.getPartialUser()!!
-        val date : String = DateTimeUtil.currentDate()
-        if(msg.isEmpty()){ //do not send an empty message
+    fun addToChat() {
+        val msg: String = view.findViewById<EditText>(R.id.chatEditText).text.toString()
+        val partialUser: PartialUser =
+            (applicationContext as MyApplication).getActiveUser()?.getPartialUser()!!
+
+        val date: String = DateTimeUtil.currentDate()
+        if (msg.isEmpty()) { //do not send an empty message
             return
         }
 
-        val chatAdditionTransaction : TransactionSpecification<ArrayList<HashMap<String,Any>>> =
-            TransactionSpecification.Builder<ArrayList<HashMap<String,Any>>> { ls ->
-                val map = HashMap<String,Any>()
+        val chatAdditionTransaction: TransactionSpecification<ArrayList<HashMap<String, Any>>> =
+            TransactionSpecification.Builder<ArrayList<HashMap<String, Any>>> { ls ->
+                val map = HashMap<String, Any>()
                 map["message"] = msg
                 map["date"] = date
                 map["sender"] = partialUser
                 val msgLs = arrayListOf(map)
-                if(ls != null) {
+                if (ls != null) {
                     ls.addAll(msgLs)
-                    if(ls.size >= 6){
+                    if (ls.size >= 6) {
                         return@Builder ls.takeLast(5) as ArrayList<HashMap<String, Any>> // we only show the last 5 messages
                     }
                     return@Builder ls
-                }else {
+                } else {
                     return@Builder msgLs
                 }
             }.onCompleteChange { committed ->
-                if(committed) {
+                if (committed) {
                     view.findViewById<EditText>(R.id.chatEditText).text.clear()
                 }
             }.build()
 
-        db.runTransaction(chatPath,chatAdditionTransaction)
-      /*  db.getDbReference(chatPath)
-            .runTransaction(object : Transaction.Handler {
-                override fun doTransaction(currentData: MutableData): Transaction.Result {
-                    var ls = currentData.value as ArrayList<HashMap<String,Any>>?
-                    val map = HashMap<String,Any>()
-                    map["message"] = msg
-                    map["date"] = date
-                    map["sender"] = partialUser
-                    val msgLs = arrayListOf(map)
-                    if(ls != null) {
-                        ls.addAll(msgLs)
-                        if(ls.size >= 6){
-                            ls = ls.takeLast(5) as ArrayList<HashMap<String, Any>> // we only show the last 5 messages
-                        }
-                        currentData.value = ls
-                    }else {
-                        currentData.value = msgLs
-                    }
-                    return Transaction.success(currentData)
-                }
-
-                override fun onComplete(
-                    error: DatabaseError?,
-                    committed: Boolean,
-                    currentData: DataSnapshot?
-                ) {
-                    if(committed) {
-                        view.findViewById<EditText>(R.id.chatEditText).text.clear()
-                    }
-                }
-
-            })*/
+        db.runTransaction(chatPath, chatAdditionTransaction)
     }
-
     /**
      * Update the user interface with the new messages
      * @param ls : list of messages to update

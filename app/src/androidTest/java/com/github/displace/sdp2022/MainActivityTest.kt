@@ -31,7 +31,7 @@ class MainActivityTest {
 
     //TODO: May have to re-do these tests because I'm not sure it really tests the functionalities
 
-     @Test
+    @Test
      fun logInConnectionRemember() {
          val bool =
              context.getSharedPreferences("login", MODE_PRIVATE).getBoolean("remembered", false)

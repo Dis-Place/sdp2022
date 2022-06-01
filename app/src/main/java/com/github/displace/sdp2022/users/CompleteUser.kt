@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
 import com.github.displace.sdp2022.MyApplication
+import com.github.displace.sdp2022.authentication.AuthenticatedUser
 import com.github.displace.sdp2022.authentication.SignInActivity
 import com.github.displace.sdp2022.database.CleanUpGuests
 import com.github.displace.sdp2022.database.GoodDB
@@ -14,7 +15,6 @@ import com.github.displace.sdp2022.profile.statistics.Statistic
 import com.github.displace.sdp2022.util.DateTimeUtil
 import com.google.firebase.auth.FirebaseUser
 import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
 import kotlin.random.Random
 import kotlin.random.nextUInt
 
@@ -29,7 +29,7 @@ import kotlin.random.nextUInt
  */
 class CompleteUser(
     context: Context?,
-    private val firebaseUser: FirebaseUser?,
+    private val authenticatedUser: AuthenticatedUser?,
     private val db: GoodDB,
     val guestBoolean: Boolean = false,
     var offlineMode: Boolean = false,
@@ -38,11 +38,11 @@ class CompleteUser(
 ) {
 
     // Reference of the CompleteUser in the database
-    private val dbReference: String = if (firebaseUser != null) {
+    private val dbReference: String = if (authenticatedUser != null) {
         if(guestBoolean) {
-            "CompleteUsers/guest_${firebaseUser.uid}/CompleteUser"  // We add "guest-" to retain the fact it is a guest in the database
+            "CompleteUsers/guest_${authenticatedUser.uid()}/CompleteUser"  // We add "guest-" to retain the fact it is a guest in the database
         } else {
-            "CompleteUsers/${firebaseUser.uid}/CompleteUser"    // Basic reference
+            "CompleteUsers/${authenticatedUser.uid()}/CompleteUser"    // Basic reference
         }
     } else {
         if(offlineMode) {
@@ -200,7 +200,7 @@ class CompleteUser(
             Achievement("Welcome home!","Create your account", DateTimeUtil.currentDate())
         )
 
-        if(!guestBoolean && firebaseUser != null) {     // if firebaseUser is null, it's either an error or a automatic test
+        if(!guestBoolean && authenticatedUser != null) {     // if firebaseUser is null, it's either an error or a automatic test
             offlineUserFetcher.setOfflineAchievements(achievements)
         }
     }
@@ -215,7 +215,7 @@ class CompleteUser(
             Statistic("Distance Moved", 0)
         )
 
-        if(!guestBoolean && firebaseUser != null) {     // if firebaseUser is null, it's either an error or a automatic test
+        if(!guestBoolean && authenticatedUser != null) {     // if firebaseUser is null, it's either an error or a automatic test
             offlineUserFetcher.setOfflineStats(stats)
         }
     }
@@ -224,17 +224,17 @@ class CompleteUser(
      * Creates the partial user of a new user, based on the fact that it is a guest or not, and on its firebase authentication
      */
     private fun initializePartialUser() {
-        if (firebaseUser != null) {
-            if (firebaseUser.displayName == null || firebaseUser.displayName == "") {   // A firebaseUser without a name is an anonymous user (a guest)
-                partialUser = PartialUser("Guest$guestNumber", "guest_${firebaseUser.uid}")
+        if (authenticatedUser != null) {
+            if (authenticatedUser.displayName() == null || authenticatedUser.displayName() == "") {   // A firebaseUser without a name is an anonymous user (a guest)
+                partialUser = PartialUser("Guest$guestNumber", "guest_${authenticatedUser.uid()}")
             } else {        // We use the display name of the google user as the default name, and the firebaseUser id as an id
-                partialUser = PartialUser(firebaseUser.displayName!!, firebaseUser.uid)
+                partialUser = PartialUser(authenticatedUser.displayName()!!, authenticatedUser.uid())
             }
         } else {    // For testing
             partialUser = PartialUser("defaultName", "dummy_id")
         }
 
-        if(!guestBoolean && firebaseUser != null) {     // if firebaseUser is null, it's either an error or a automatic test
+        if(!guestBoolean && authenticatedUser != null) {     // if firebaseUser is null, it's either an error or a automatic test
             offlineUserFetcher.setOfflinePartialUser(partialUser)
         }
     }
@@ -272,8 +272,8 @@ class CompleteUser(
         // If the user is a guest, we have to increment all the guest indexes of all guests in the database,
         // and remove those that are too old
         if(guestBoolean) {
-            if(firebaseUser != null) {
-                CleanUpGuests.updateGuestIndexesAndCleanUpDatabase(db, "guest_${firebaseUser.uid}")
+            if(authenticatedUser != null) {
+                CleanUpGuests.updateGuestIndexesAndCleanUpDatabase(db, "guest_${authenticatedUser.uid()}")
                 db.update("$dbReference/guestIndex", 0)    // Index for the guests in DB, useful for cleaning up the database from the unused guests
             }
         }
@@ -284,7 +284,7 @@ class CompleteUser(
      */
     fun removeUserFromDatabase() {
         db.delete("CompleteUsers/${partialUser.uid}")
-        firebaseUser?.delete()
+        authenticatedUser?.delete()
     }
 
     /**
