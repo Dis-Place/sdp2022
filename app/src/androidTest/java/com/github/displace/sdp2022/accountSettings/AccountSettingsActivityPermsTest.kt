@@ -148,7 +148,9 @@ class AccountSettingsActivityPermsTest {
     @Test
     fun usernameChangesCorrectly() {
         val intent =
-            Intent(ApplicationProvider.getApplicationContext(), AccountSettingsActivity::class.java)
+            Intent(ApplicationProvider.getApplicationContext(), AccountSettingsActivity::class.java).apply {
+                putExtra("DEBUG", true)
+            }
         val scenario = ActivityScenario.launch<AccountSettingsActivity>(intent)
         scenario.use {
             onView(withId(R.id.usernameUpdate)).perform(click())
@@ -164,7 +166,9 @@ class AccountSettingsActivityPermsTest {
     @Test
     fun usernameNotUpdateIfEmpty() {
         val intent =
-            Intent(ApplicationProvider.getApplicationContext(), AccountSettingsActivity::class.java)
+            Intent(ApplicationProvider.getApplicationContext(), AccountSettingsActivity::class.java).apply {
+                putExtra("DEBUG", true)
+            }
         val scenario = ActivityScenario.launch<AccountSettingsActivity>(intent)
         scenario.use {
             onView(withId(R.id.usernameUpdate)).perform(click())

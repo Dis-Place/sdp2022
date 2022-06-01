@@ -38,7 +38,9 @@ class QrCodeScannerTest {
     @Before
     fun setup() {
         Intents.init()
-        intent = Intent(ApplicationProvider.getApplicationContext(),ProfileActivity::class.java)
+        intent = Intent(ApplicationProvider.getApplicationContext(),ProfileActivity::class.java).apply {
+            putExtra("DEBUG", true)
+        }
 
         MockDatabaseUtils.mockIntent(intent)
 

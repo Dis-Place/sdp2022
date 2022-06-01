@@ -27,7 +27,9 @@ class NewsActivityTest {
     @get:Rule
     val testRule = run {
         val intent =
-            Intent(ApplicationProvider.getApplicationContext(), SignInActivity::class.java)
+            Intent(ApplicationProvider.getApplicationContext(), SignInActivity::class.java).apply {
+                putExtra("DEBUG", true)
+            }
 
         DatabaseFactory.clearMockDB()
 

@@ -2,6 +2,7 @@ package com.github.displace.sdp2022.profile
 
 import android.content.Intent
 import android.view.View
+import android.widget.Button
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso
@@ -15,12 +16,15 @@ import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.github.displace.sdp2022.MainActivity
 import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.R
 import com.github.displace.sdp2022.database.DatabaseFactory
+import com.github.displace.sdp2022.database.GoodDB
 import com.github.displace.sdp2022.database.MockDatabaseUtils
 import com.github.displace.sdp2022.profile.friendInvites.AddFriendActivity
 import com.github.displace.sdp2022.profile.friends.FriendViewHolder
+import com.github.displace.sdp2022.profile.messages.Message
 import com.github.displace.sdp2022.profile.messages.MessageHandler
 import com.github.displace.sdp2022.profile.messages.MsgViewHolder
 import com.github.displace.sdp2022.users.CompleteUser
@@ -36,12 +40,17 @@ class ProfileActivityTest {
     lateinit var completeUser: CompleteUser
 
     val intent =
-        Intent(ApplicationProvider.getApplicationContext(), ProfileActivity::class.java)
+        Intent(ApplicationProvider.getApplicationContext(), ProfileActivity::class.java).apply {
+            putExtra("DEBUG", true)
+        }
 
+    lateinit var db : GoodDB
 
     @Before
     fun before(){
+
         MockDatabaseUtils.mockIntent(intent)
+        db = DatabaseFactory.getDB(intent)
         val app = ApplicationProvider.getApplicationContext() as MyApplication
         DatabaseFactory.clearMockDB()
         completeUser = CompleteUser(app,null, DatabaseFactory.MOCK_DB)
@@ -63,6 +72,7 @@ class ProfileActivityTest {
         val scenario = ActivityScenario.launch<ProfileActivity>(intent)
 
         scenario.use {
+
             Espresso.onView(ViewMatchers.withId(R.id.inboxButton)).perform(click())
             Thread.sleep(30)
             Espresso.onView(ViewMatchers.withId(R.id.InboxScroll))
@@ -75,12 +85,10 @@ class ProfileActivityTest {
      * Should be fixed when we fully utilize the MockDB
      */
 
-    //@Test
-    /*fun testMessageInInboxButton() {
+    @Test
+    fun testMessageInInboxButton() {
 
-        val intent =
-            Intent(ApplicationProvider.getApplicationContext(), ProfileActivity::class.java)
-        val scenario = ActivityScenario.launch<ProfileActivity>(intent)
+        val scenario = ActivityScenario.launch<MainActivity>(intent)
         scenario.use { _ ->
             Espresso.onView(ViewMatchers.withId(R.id.inboxButton)).perform(click())
             Espresso.onView(ViewMatchers.withId(R.id.recyclerMsg)).perform(
@@ -98,7 +106,7 @@ class ProfileActivityTest {
                 )
             )
         }
-    }*/
+    }
 
     @Test
     fun testProfileButton() {
@@ -152,8 +160,9 @@ class ProfileActivityTest {
         val scenario = ActivityScenario.launch<ProfileActivity>(intent)
 
         scenario.use {
+            Thread.sleep(3000)
             Espresso.onView(ViewMatchers.withId(R.id.profileSettingsButton)).perform(click())
-            Thread.sleep(30)
+            Thread.sleep(3000)
             Espresso.onView(ViewMatchers.withId(R.id.profileUsername))
                 .check(ViewAssertions.matches(isDisplayed()))
         }
@@ -204,35 +213,66 @@ class ProfileActivityTest {
     }
 
     @Test
+    fun testMessageReception() {
+        val intent = Intent(ApplicationProvider.getApplicationContext(), MainActivity::class.java)
+        val scenario = ActivityScenario.launch<ProfileActivity>(intent)
+        scenario.use {
+            Espresso.onView(ViewMatchers.withId(R.id.mainActivityLogInButton)).perform(click())
+            Thread.sleep(1000)
+            Espresso.onView(ViewMatchers.withId(R.id.signInActivityGuestModeButton)).perform(click())
+            Thread.sleep(1000)
+            Espresso.onView(ViewMatchers.withId(R.id.profileButton)).perform(click())
+            Thread.sleep(1000)
+            Espresso.onView(ViewMatchers.withId(R.id.inboxButton)).perform(click())
+            Thread.sleep(500)
+            db.update("CompleteUsers/${completeUser.getPartialUser().uid}/CompleteUser/MessageHistory",
+                listOf(Message("dwa","daws",completeUser.getPartialUser()).toMap())
+            )
+
+            Thread.sleep(500)
+
+        }
+    }
+
+    @Test
     fun testFriendProfile() {
+        val intent = Intent(ApplicationProvider.getApplicationContext(), MainActivity::class.java)
 
         val scenario = ActivityScenario.launch<ProfileActivity>(intent)
 
         scenario.use {
+            Espresso.onView(ViewMatchers.withId(R.id.mainActivityLogInButton)).perform(click())
+            Thread.sleep(1000)
+            Espresso.onView(ViewMatchers.withId(R.id.signInActivityGuestModeButton)).perform(click())
+            Thread.sleep(1000)
+            Espresso.onView(ViewMatchers.withId(R.id.profileButton)).perform(click())
+            Thread.sleep(1000)
             Espresso.onView(ViewMatchers.withId(R.id.friendsButton)).perform(click())
+            Thread.sleep(1000)
             Espresso.onView(ViewMatchers.withId(R.id.recyclerFriend))
                 .perform(RecyclerViewActions.actionOnItemAtPosition<FriendViewHolder>(0, click()))
+            Thread.sleep(1000)
             Espresso.onView(ViewMatchers.withId(R.id.friendUsername))
                 .check(ViewAssertions.matches(isDisplayed()))
         }
     }
 
     //TODO NEeded to comment to merge this week
-//    @Test
-//    fun testingAddFriendButton() {
-////        Intents.init()
-//        val intent =
-//            Intent(ApplicationProvider.getApplicationContext(), ProfileActivity::class.java)
-//        val scenario = ActivityScenario.launch<ProfileActivity>(intent)
-//
-//        scenario.use {
-//            Espresso.onView(ViewMatchers.withId(R.id.friendsButton)).perform(click())
-//            Espresso.onView(ViewMatchers.withId(R.id.addFriendButton)).perform(click())
-//        }
-//
-//        Intents.intended(IntentMatchers.hasComponent(AddFriendActivity::class.java.name))
-////        Intents.release()
-//    }
+    @Test
+    fun testingAddFriendButton() {
+        Intents.init()
+        val intent =
+            Intent(ApplicationProvider.getApplicationContext(), ProfileActivity::class.java)
+        val scenario = ActivityScenario.launch<ProfileActivity>(intent)
+
+        scenario.use {
+            Espresso.onView(ViewMatchers.withId(R.id.friendsButton)).perform(click())
+            Espresso.onView(ViewMatchers.withId(R.id.addFriendButton)).perform(click())
+        }
+
+        Intents.intended(IntentMatchers.hasComponent(AddFriendActivity::class.java.name))
+        Intents.release()
+    }
 
 
 }

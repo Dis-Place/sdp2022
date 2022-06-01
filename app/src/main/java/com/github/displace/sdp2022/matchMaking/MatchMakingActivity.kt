@@ -55,7 +55,6 @@ class MatchMakingActivity : MMView() {
 
     private lateinit var model : MatchMakingModel
 
-    private lateinit var progressDialog : AlertDialog
 
     /**
      * On creation of the activity we must :
@@ -66,15 +65,8 @@ class MatchMakingActivity : MMView() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_match_making) //UI
 
-
         model = MatchMakingModel(this)
 
-
-        val view = LayoutInflater.from(this).inflate(R.layout.progress_dialog, null)
-
-     /*   val dialogBuilder = AlertDialog.Builder(this)
-        dialogBuilder.setView(view)
-        progressDialog = dialogBuilder.create()*/
         ProgressDialogsUtil.showProgressDialog(this)
 
 
@@ -129,11 +121,13 @@ class MatchMakingActivity : MMView() {
      * - updates the list of players in the lobby
      */
     override fun updateUI() {
-
+        if(model.debug){
+            return
+        }
         val friendRecyclerView = findViewById<RecyclerView>(R.id.playersRecycler)
         val friendAdapter = FriendViewAdapter(  //reuses the friend list format without any buttons
             applicationContext,
-            (model.lobbyMap["lobbyPlayers"] as ArrayList<MutableMap<String, Any>>).map { p ->
+            (model.lobbyMap["lobbyPlayers"] as List<Map<String, Any>>).map { p ->
                 PartialUser(p["username"] as String, p["uid"] as String)
             },
             2

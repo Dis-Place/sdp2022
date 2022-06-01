@@ -22,7 +22,7 @@ import java.lang.Exception
 class GameSummaryActivity : AppCompatActivity() {
 
     lateinit var layout: LinearLayout
-    private val db : RealTimeDatabase = RealTimeDatabase().instantiate("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",false) as RealTimeDatabase
+  //  private val db : RealTimeDatabase = RealTimeDatabase().instantiate("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",false) as RealTimeDatabase
 
     private lateinit var activeUser: CompleteUser
     private lateinit var stats: List<Statistic>
@@ -46,7 +46,7 @@ class GameSummaryActivity : AppCompatActivity() {
 
         if (extras != null) {
             val roundStats = extras.getStringArrayList(EXTRA_STATS)
-            victory = extras.getBoolean(EXTRA_RESULT)!!
+            victory = extras.getBoolean(EXTRA_RESULT)
 
             if (roundStats != null) {
                 for (s in roundStats) {
@@ -92,7 +92,7 @@ class GameSummaryActivity : AppCompatActivity() {
 
     }
 
-    fun addRoundStat(info: String) {
+    private fun addRoundStat(info: String) {
         val tv = TextView(applicationContext)
         tv.text = info
         tv.textSize = 25F
@@ -100,7 +100,7 @@ class GameSummaryActivity : AppCompatActivity() {
         layout.addView(tv)
     }
 
-    fun updateVictoryText(vict: Boolean) {
+    private fun updateVictoryText(vict: Boolean) {
         val victoryText = findViewById<TextView>(R.id.textViewResult)
         val resString = if (vict) "VICTORY" else "DEFEAT"
         victoryText.text = resString
