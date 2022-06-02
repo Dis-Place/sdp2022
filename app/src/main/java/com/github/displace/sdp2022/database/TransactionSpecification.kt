@@ -16,7 +16,7 @@ package com.github.displace.sdp2022.database
  */
 class TransactionSpecification<T> private constructor(
     val preCheck: (T?) -> Boolean,
-    val computeUpdatedData: (T?) -> T,
+    val computeUpdatedData: (T?) -> T?,
     val onCompleteCallback: (Boolean) -> Unit
 ) {
 
@@ -31,7 +31,7 @@ class TransactionSpecification<T> private constructor(
      * @see TransactionSpecification
      * @see GoodDB
      */
-    class Builder<T>(private val computeUpdatedData : (T?) -> T) {
+    class Builder<T>(private val computeUpdatedData : (T?) -> T?) {
 
         /**
          * called after Transaction completion

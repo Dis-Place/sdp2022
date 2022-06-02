@@ -26,7 +26,9 @@ class GoodPinpointsDBHandlerTest {
     @get:Rule
     val testRule = run {
         val intent =
-            Intent(ApplicationProvider.getApplicationContext(), DemoMapActivity::class.java)
+            Intent(ApplicationProvider.getApplicationContext(), DemoMapActivity::class.java).apply {
+                putExtra("DEBUG", true)
+            }
 
         // THIS IS YOU CLEAR THE MOCK DB
         DatabaseFactory.clearMockDB()

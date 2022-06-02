@@ -80,8 +80,8 @@ class FirebaseDatabaseAdapter(referenceUrl: String, isDebug: Boolean) : GoodDB {
     private fun <T> transactionHandler(specification: TransactionSpecification<T>): Transaction.Handler {
         return object : Transaction.Handler {
             override fun doTransaction(currentData: MutableData): Transaction.Result {
-                val old = currentData.value as T? ?: return Transaction.success(currentData)
-                if(specification.preCheck(old)) {
+                val old = currentData.value as T?// ?: return Transaction.success(currentData)
+                if(old == null || specification.preCheck(old)) {
                     currentData.value = specification.computeUpdatedData(old)
                     return Transaction.success(currentData)
                 }

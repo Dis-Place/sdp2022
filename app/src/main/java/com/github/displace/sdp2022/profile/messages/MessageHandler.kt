@@ -23,8 +23,7 @@ import com.google.firebase.database.ValueEventListener
 
 class MessageHandler(private val activePartialUser : PartialUser, app : MyApplication , intent : Intent ) {
 
-    private var msgLs : ArrayList<Message> = app.getActiveUser()!!.getMessageHistory()
- //   private val db : RealTimeDatabase = RealTimeDatabase().instantiate("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",false) as RealTimeDatabase
+    private var msgLs : List<Message> = app.getActiveUser()!!.getMessageHistory()
 
     private val db = DatabaseFactory.getDB(intent)
 
@@ -93,8 +92,8 @@ class MessageHandler(private val activePartialUser : PartialUser, app : MyApplic
      * Send notifications for all the new messages
      */
     fun checkForNewMessages(){
-        db.getThenCall<ArrayList<HashMap<String,Any>>>("CompleteUsers/" + activePartialUser.uid + "/MessageHistory"){ ls ->
-            val tempList : ArrayList<Message>
+        db.getThenCall<List<Map<String,Any>>>("CompleteUsers/" + activePartialUser.uid + "CompleteUser/MessageHistory"){ ls ->
+            val tempList : List<Message>
             if(ls != null){
                 tempList = getListOfMessages(ls)
                 if(msgLs.isEmpty()){
@@ -115,12 +114,12 @@ class MessageHandler(private val activePartialUser : PartialUser, app : MyApplic
     /**
      * Transforms the data of the database into a list of messages to
      */
-    fun getListOfMessages(maps: ArrayList<HashMap<String,Any>>) : ArrayList<Message> {
-        val arr : ArrayList<Message> = arrayListOf()
+    fun getListOfMessages(maps: List<Map<String,Any>>) : List<Message> {
+        var arr : List<Message> = arrayListOf()
         for( map in maps ){
-            val sender = map["sender"] as HashMap<String,Any>
+            val sender = map["sender"] as Map<String,Any>
             val m = Message(map["message"] as String,map["date"] as String, PartialUser(sender["username"] as String,sender["uid"] as String) )
-            arr.add(m)
+            arr = arr + m
         }
         return arr
     }

@@ -44,7 +44,9 @@ class SignInActivityTest {
         init()
         AuthFactory.setupMock("anything")
         val intent =
-            Intent(ApplicationProvider.getApplicationContext(), SignInActivity::class.java)
+            Intent(ApplicationProvider.getApplicationContext(), SignInActivity::class.java).apply {
+                putExtra("DEBUG", true)
+            }
         MockAuthUtils.mockIntent(intent)
 
         DatabaseFactory.clearMockDB()
