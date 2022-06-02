@@ -11,7 +11,7 @@ import com.github.displace.sdp2022.profile.history.HistoryViewAdapter
 import com.github.displace.sdp2022.profile.statistics.StatViewAdapter
 import com.github.displace.sdp2022.R
 import com.github.displace.sdp2022.RealTimeDatabase
-import com.github.displace.sdp2022.database.DatabaseConstants.DB_URL
+import com.github.displace.sdp2022.database.DatabaseFactory
 import com.github.displace.sdp2022.profile.achievements.Achievement
 import com.github.displace.sdp2022.profile.history.History
 import com.github.displace.sdp2022.profile.statistics.Statistic
@@ -28,25 +28,37 @@ class FriendProfile : AppCompatActivity() {
         val friendName = intent.getStringExtra("FriendUsername").toString()
 
         val app = applicationContext as MyApplication
-        val db = RealTimeDatabase().instantiate(DB_URL,false) as RealTimeDatabase
+        val db = DatabaseFactory.getDB(intent)
         findViewById<TextView>(R.id.friendUsername).text = friendName
 
-        db.referenceGet("CompleteUsers/$friendId","CompleteUser").addOnSuccessListener { CU ->
-            val cu = CU.value as MutableMap<String,Any>? ?: return@addOnSuccessListener
+        db.getThenCall<Map<String, Any>>("CompleteUsers/$friendId/CompleteUser") { cu ->
+            if (cu == null) {
+                return@getThenCall
+            }
 
             val achList = mutableListOf<Achievement>()
-            for( map in cu["achievements"] as ArrayList<MutableMap<String,Any>> ){
-                achList.add(Achievement(map["name"] as String, map["description"] as String, map["date"] as String))
+            if (cu["achievements"] != null) {
+                for (map in cu["achievements"] as ArrayList<MutableMap<String, Any>>) {
+                    achList.add(
+                        Achievement(
+                            map["name"] as String,
+                            map["description"] as String,
+                            map["date"] as String
+                        )
+                    )
+                }
             }
             /* Achievements */
             val achRecyclerView = findViewById<RecyclerView>(R.id.friendRecyclerAch)
-            val achAdapter = AchViewAdapter(applicationContext,achList )
+            val achAdapter = AchViewAdapter(applicationContext, achList)
             achRecyclerView.adapter = achAdapter
             achRecyclerView.layoutManager = LinearLayoutManager(applicationContext)
 
             val statList = mutableListOf<Statistic>()
-            for( map in cu["stats"] as ArrayList<MutableMap<String,Any>> ){
-                statList.add(Statistic(map["name"] as String, map["value"] as Long))
+            if (cu["stats"] != null){
+                for (map in cu["stats"] as List<Map<String, Any>>) {
+                    statList.add(Statistic(map["name"] as String, map["value"] as Long))
+                }
             }
             /* Statistics */
             val statRecyclerView = findViewById<RecyclerView>(R.id.friendRecyclerStats)
@@ -55,9 +67,18 @@ class FriendProfile : AppCompatActivity() {
             statRecyclerView.layoutManager = LinearLayoutManager(applicationContext)
 
 
-            val histList = mutableListOf<History>()
-            for( map in cu["gameHistory"] as ArrayList<MutableMap<String,Any>> ){
-                histList.add(History(map["date"] as String, map["map"] as String, map["result"] as String))
+            val histList = mutableListOf<History>(History("Unknown","Unknown","Unknown"))
+            if(cu["gameHistory"] != null) {
+                histList.clear()
+                for (map in cu["gameHistory"] as List<Map<String, Any>>) {
+                    histList.add(
+                        History(
+                            map["date"] as String,
+                            map["map"] as String,
+                            map["result"] as String
+                        )
+                    )
+                }
             }
             /* Games History */
             val historyRecyclerView = findViewById<RecyclerView>(R.id.friendRecyclerHist)

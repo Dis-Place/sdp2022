@@ -94,7 +94,7 @@ class CompleteUser(
         initializeAchievements()
         initializeStats()
         friendsList = mutableListOf(
-            PartialUser("THE SYSTEM", "dummy_friend_id")
+            PartialUser("THE SYSTEM", "aB34b77tSrdPwJ0pPCvoAdrMliC3")
         )
         gameHistory = mutableListOf()
         createFirstMessageList()
@@ -243,15 +243,21 @@ class CompleteUser(
      * Creates the first message of a new user (which is a single message with "the system")
      */
     private fun createFirstMessageList() {
-        db.update("$dbReference/MessageHistory",
-            listOf(
-                Message(
-                    "Welcome to DisPlace",
-                    DateTimeUtil.currentDate(),
-                    PartialUser("THE SYSTEM", "dummy_id")
-                ).toMap()
+        val msgs = arrayListOf(
+            Message(
+                "Welcome to DisPlace",
+                DateTimeUtil.currentDate(),
+                PartialUser("THE SYSTEM", "aB34b77tSrdPwJ0pPCvoAdrMliC3")
             )
         )
+
+        cacheMessages(msgs)
+
+        db.update("$dbReference/MessageHistory",
+            msgs.map { msg -> msg.toMap() }.toList()
+        )
+
+
     }
 
     /**
@@ -299,13 +305,15 @@ class CompleteUser(
         if (offlineMode)        // Can't win a achievement when offline
             return
 
-        if(!achievements.contains(ach)){
+        if(!achievements.map{ i -> i.name}.contains(ach.name)){
+
+            achievements.add(ach)
+
             /**
              * This part also sends a notification
              */
             app.getMessageHandler().messageNotification(ach.description,ach.name)
 
-            achievements.add(ach)
             db.update("$dbReference/achievements", achievements.map { a -> a.toMap() })  // We modify the entire list of stats because it's better practice when using the database
             if(!guestBoolean) {     // if the user is a guest, we do not cache the achievement since at the next use of the application it will be erased
                 offlineUserFetcher.setOfflineAchievements(achievements)
@@ -475,22 +483,22 @@ class CompleteUser(
     /**
      * Getter for the friends' list
      */
-    fun getFriendsList(): MutableList<PartialUser> {
+    fun getFriendsList(): List<PartialUser> {
         return friendsList
     }
 
     /**
      * Getter for the game history
      */
-    fun getGameHistory(): MutableList<History> {
+    fun getGameHistory(): List<History> {
         return gameHistory
     }
 
     /**
      * Getter for the message history
      */
-    fun getMessageHistory(): ArrayList<Message> {
-        return offlineUserFetcher.getOfflineMessageHistory()
+    fun getMessageHistory(): List<Message> {
+        return offlineUserFetcher.getOfflineMessageHistory().toList()
     }
 
     /**

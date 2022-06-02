@@ -35,7 +35,9 @@ class AccountSettingsActivityNoPermsTest {
 
     lateinit var completeUser: CompleteUser
     val intent =
-        Intent(ApplicationProvider.getApplicationContext(), AccountSettingsActivity::class.java)
+        Intent(ApplicationProvider.getApplicationContext(), AccountSettingsActivity::class.java).apply {
+            putExtra("DEBUG", true)
+        }
 
     @Before
     fun before(){

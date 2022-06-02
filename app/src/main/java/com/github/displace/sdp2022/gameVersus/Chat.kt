@@ -23,49 +23,37 @@ class Chat(private val chatPath : String, val db : GoodDB, val view : View, val 
     //the group of View (UI elements) that compose the chat , used to hide them as needed
     private val chatGroup : ConstraintLayout
 
-    init{
-        db.addListener(chatPath,chatListener())
-        chatGroup = view.findViewById(R.id.chatLayout)
-    }
-
     /**
      * A listener for the messages in the chat, will be empty if there is an error
      */
-    private fun chatListener() = Listener<ArrayList<HashMap<String,Any>>?> { ls ->
-        var list = mutableListOf<Message>()
+    private val chatListener = Listener<List<Map<String,Any>>?> { ls ->
+        var list = listOf<Message>()
         if(ls != null){
             list = (applicationContext as MyApplication).getMessageHandler().getListOfMessages(ls)
         }
         chatUiUpdate(list)
+    }
 
+    init{
+        db.addListener(chatPath,chatListener)
+        chatGroup = view.findViewById(R.id.chatLayout)
     }
 
     /**
      * Send the message that is written in  the UI to the chat
      */
-    fun addToChat() {
-        val msg: String = view.findViewById<EditText>(R.id.chatEditText).text.toString()
-        val partialUser: PartialUser =
-            (applicationContext as MyApplication).getActiveUser()?.getPartialUser()!!
+    fun addToChat(msg : Message) {
 
-        val date: String = DateTimeUtil.currentDate()
-        if (msg.isEmpty()) { //do not send an empty message
-            return
-        }
-
-        val chatAdditionTransaction: TransactionSpecification<ArrayList<HashMap<String, Any>>> =
-            TransactionSpecification.Builder<ArrayList<HashMap<String, Any>>> { ls ->
-                val map = HashMap<String, Any>()
-                map["message"] = msg
-                map["date"] = date
-                map["sender"] = partialUser
-                val msgLs = arrayListOf(map)
-                if (ls != null) {
-                    ls.addAll(msgLs)
-                    if (ls.size >= 6) {
-                        return@Builder ls.takeLast(5) as ArrayList<HashMap<String, Any>> // we only show the last 5 messages
+        val chatAdditionTransaction: TransactionSpecification<List<Map<String, Any>>> =
+            TransactionSpecification.Builder<List<Map<String, Any>>> { ls ->
+                var newLs = ls
+                val msgLs = listOf(msg.toMap())
+                if (newLs != null) {
+                    newLs = newLs + msgLs
+                    if (newLs.size >= 6) {
+                        return@Builder newLs.takeLast(5)  // we only show the last 5 messages
                     }
-                    return@Builder ls
+                    return@Builder newLs
                 } else {
                     return@Builder msgLs
                 }
@@ -97,7 +85,7 @@ class Chat(private val chatPath : String, val db : GoodDB, val view : View, val 
      * Used when quitting the game or the activity is paused
      */
     fun removeListener(){
-        db.removeListener(chatPath,chatListener())
+        db.removeListener(chatPath,chatListener)
     }
 
     /**

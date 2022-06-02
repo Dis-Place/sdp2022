@@ -28,7 +28,7 @@ class Message(val message: String, val date: String, val sender: PartialUser){
         return message.hashCode()
     }
 
-    fun toMap(): Map<String, *> {
+    fun toMap(): Map<String, Any> {
         return mapOf(Pair("message", message), Pair("date", date), Pair("sender", sender.toMap()))
     }
 }

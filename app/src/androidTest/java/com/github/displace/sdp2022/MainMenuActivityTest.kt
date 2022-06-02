@@ -48,7 +48,9 @@ class MainMenuActivityTest {
         Intents.init()
 
         val intent =
-            Intent(ApplicationProvider.getApplicationContext(), MainMenuActivity::class.java)
+            Intent(ApplicationProvider.getApplicationContext(), MainMenuActivity::class.java).apply {
+                putExtra("DEBUG", true)
+            }
         val scenario = ActivityScenario.launch<MainMenuActivity>(intent)
 
         scenario.use {
@@ -80,7 +82,9 @@ class MainMenuActivityTest {
         Intents.init()
 
         val intent =
-            Intent(ApplicationProvider.getApplicationContext(), MainMenuActivity::class.java)
+            Intent(ApplicationProvider.getApplicationContext(), MainMenuActivity::class.java).apply {
+                putExtra("DEBUG", true)
+            }
         val scenario = ActivityScenario.launch<MainMenuActivity>(intent)
 
         scenario.use {
@@ -96,7 +100,9 @@ class MainMenuActivityTest {
     fun testPlayButton() {
         Intents.init()
         val intent =
-            Intent(ApplicationProvider.getApplicationContext(), MainMenuActivity::class.java)
+            Intent(ApplicationProvider.getApplicationContext(), MainMenuActivity::class.java).apply {
+                putExtra("DEBUG", true)
+            }
         val scenario = ActivityScenario.launch<MainMenuActivity>(intent)
 
         scenario.use {
@@ -113,7 +119,9 @@ class MainMenuActivityTest {
         app.setActiveUser(CompleteUser(app, null, DatabaseFactory.MOCK_DB, offlineMode = true))
         Intents.init()
         val intent =
-            Intent(ApplicationProvider.getApplicationContext(), MainMenuActivity::class.java)
+            Intent(ApplicationProvider.getApplicationContext(), MainMenuActivity::class.java).apply {
+                putExtra("DEBUG", true)
+            }
         val scenario = ActivityScenario.launch<MainMenuActivity>(intent)
 
         scenario.use {
@@ -132,7 +140,9 @@ class MainMenuActivityTest {
                     + " android.permission.ACCESS_FINE_LOCATION"
         )
         val intent =
-            Intent(ApplicationProvider.getApplicationContext(), MainMenuActivity::class.java)
+            Intent(ApplicationProvider.getApplicationContext(), MainMenuActivity::class.java).apply {
+                putExtra("DEBUG", true)
+            }
         val scenario = ActivityScenario.launch<MainMenuActivity>(intent)
 
         scenario.use {

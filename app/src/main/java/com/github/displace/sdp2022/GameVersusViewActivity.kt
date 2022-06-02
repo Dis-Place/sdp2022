@@ -4,6 +4,7 @@ import android.content.Intent
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.view.View
+import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.PreferenceManager
@@ -15,6 +16,8 @@ import com.github.displace.sdp2022.gameVersus.Chat
 import com.github.displace.sdp2022.gameVersus.ClientServerLink
 import com.github.displace.sdp2022.gameVersus.GameVersusViewModel
 import com.github.displace.sdp2022.map.*
+import com.github.displace.sdp2022.profile.messages.Message
+import com.github.displace.sdp2022.users.PartialUser
 import com.github.displace.sdp2022.util.DateTimeUtil
 import com.github.displace.sdp2022.util.PreferencesUtil
 import com.github.displace.sdp2022.util.gps.GPSPositionManager
@@ -175,7 +178,7 @@ class GameVersusViewActivity : AppCompatActivity() {
         gameMode = intent.getStringExtra("gameMode")!!
         clickableArea = intent.getIntExtra("dist", Constants.CLICKABLE_AREA_RADIUS)
 
-        db = DatabaseFactory.getDB(Intent())
+        db = DatabaseFactory.getDB(intent)
         order = Random.nextLong(-10000000000L, 10000000000L) // find a unique id for you and for this instance of the game
 
         clientServerLink = ClientServerLink(db, order)
@@ -437,30 +440,39 @@ class GameVersusViewActivity : AppCompatActivity() {
      */
 
     fun addToChat(view: View) {
-        chat.addToChat()
+        val msg: String = findViewById<EditText>(R.id.chatEditText).text.toString()
+        if (msg.isEmpty()) { //do not send an empty message
+            return
+        }
+        val partialUser: PartialUser =
+            (applicationContext as MyApplication).getActiveUser()?.getPartialUser()!!
+
+        val date: String = DateTimeUtil.currentDate()
+
+        chat.addToChat(Message(msg,date,partialUser))
     }
 
     fun showChatButton(view: View) {
-        chat.showChat()
+       chat.showChat()
     }
 
     fun closeChatButton(view: View) {
-        chat.hideChat()
+       chat.hideChat()
     }
 
     override fun onBackPressed() {
     }
 
     override fun onPause() {
-        //CHAT
-        chat.removeListener()
+       //CHAT
+       chat.removeListener()
 
-        if (PreferenceManager.getDefaultSharedPreferences(this)
-                .getBoolean(getString(R.string.music), true)
-        ) {
-            musicPlayer.pause()
-        }
-        super.onPause()
+       if (PreferenceManager.getDefaultSharedPreferences(this)
+               .getBoolean(getString(R.string.music), true)
+       ) {
+           musicPlayer.pause()
+       }
+       super.onPause()
     }
 
 

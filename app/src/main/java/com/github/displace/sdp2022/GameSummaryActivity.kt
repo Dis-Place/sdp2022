@@ -11,7 +11,6 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.Group
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.github.displace.sdp2022.database.DatabaseConstants.DB_URL
 import com.github.displace.sdp2022.profile.friends.NewFriendViewAdapter
 import com.github.displace.sdp2022.profile.statistics.Statistic
 import com.github.displace.sdp2022.users.CompleteUser
@@ -23,7 +22,7 @@ import java.lang.Exception
 class GameSummaryActivity : AppCompatActivity() {
 
     lateinit var layout: LinearLayout
-    private val db : RealTimeDatabase = RealTimeDatabase().instantiate(DB_URL,false) as RealTimeDatabase
+  //  private val db : RealTimeDatabase = RealTimeDatabase().instantiate("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",false) as RealTimeDatabase
 
     private lateinit var activeUser: CompleteUser
     private lateinit var stats: List<Statistic>
@@ -47,7 +46,7 @@ class GameSummaryActivity : AppCompatActivity() {
 
         if (extras != null) {
             val roundStats = extras.getStringArrayList(EXTRA_STATS)
-            victory = extras.getBoolean(EXTRA_RESULT)!!
+            victory = extras.getBoolean(EXTRA_RESULT)
 
             if (roundStats != null) {
                 for (s in roundStats) {
@@ -93,7 +92,7 @@ class GameSummaryActivity : AppCompatActivity() {
 
     }
 
-    fun addRoundStat(info: String) {
+    private fun addRoundStat(info: String) {
         val tv = TextView(applicationContext)
         tv.text = info
         tv.textSize = 25F
@@ -101,7 +100,7 @@ class GameSummaryActivity : AppCompatActivity() {
         layout.addView(tv)
     }
 
-    fun updateVictoryText(vict: Boolean) {
+    private fun updateVictoryText(vict: Boolean) {
         val victoryText = findViewById<TextView>(R.id.textViewResult)
         val resString = if (vict) "VICTORY" else "DEFEAT"
         victoryText.text = resString
