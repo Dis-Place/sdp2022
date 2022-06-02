@@ -12,7 +12,7 @@ import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.displace.sdp2022.*
-import com.github.displace.sdp2022.GameMenuTest.Companion.MOCK_GPS_POSITION
+import com.github.displace.sdp2022.GameVersusTest.Companion.MOCK_GPS_POSITION
 import com.github.displace.sdp2022.database.DatabaseFactory
 import com.github.displace.sdp2022.database.GoodDB
 import com.github.displace.sdp2022.database.MockDatabaseUtils
