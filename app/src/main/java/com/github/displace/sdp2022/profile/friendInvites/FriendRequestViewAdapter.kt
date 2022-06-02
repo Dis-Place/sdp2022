@@ -74,7 +74,8 @@ class FriendRequestViewAdapter(private var dataSet: MutableList<InviteWithId>, p
 //                        )
                     val app = acceptButton.context.applicationContext as MyApplication
                     val user = app.getActiveUser()!!
-                    user.addFriend(invite.invite.source)
+                    Log.d("Friend", "add friend : ${invite.invite.source} ")
+                    user.addFriend(invite.invite.source, true)
 
                     DeleteInvite.deleteInvite(invite.id)
                 }

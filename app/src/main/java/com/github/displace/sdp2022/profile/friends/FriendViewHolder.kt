@@ -72,13 +72,13 @@ class FriendViewHolder(itemview: View) : RecyclerView.ViewHolder(itemview) {
             if(activeUser != null){
                 activePartialUser = activeUser.getPartialUser()
             }
-//            db.getDbReference("CompleteUsers/${activePartialUser.uid}/CompleteUser/friendsList").runTransaction(
-//                FriendDeleter(friend)
-//            )
+            db.getDbReference("CompleteUsers/${activePartialUser.uid}/CompleteUser/friendsList").runTransaction(
+                FriendDeleter(friend)
+            )
             db.getDbReference("CompleteUsers/${friend.uid}/CompleteUser/friendsList").runTransaction(
                 FriendDeleter(activePartialUser)
             )
-            activeUser?.removeFriend(friend)
+//            activeUser?.removeFriend(friend)
             friendNameView.visibility = View.GONE
             messageButton.visibility = View.GONE
             inviteButton.visibility = View.GONE
