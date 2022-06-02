@@ -394,6 +394,19 @@ class CompleteUser(
     }
 
     /**
+     * Updates the the users friend list, called by listener when there is a change in the database
+     * @param newList: list of friends in the database
+     */
+    fun updateFriendList( newList : MutableList<PartialUser>){
+        friendsList = if (newList.size == 0){
+            mutableListOf(
+                PartialUser("THE SYSTEM", "dummy_friend_id"))
+        } else {
+            newList
+        }
+    }
+
+    /**
      * Add the info of a new game in the game history
      * @param map: Map of the game
      * @param date: Date of the game
@@ -540,14 +553,5 @@ class CompleteUser(
         return partialUser.hashCode()
     }
 
-    fun updateFriendList( newList : MutableList<PartialUser>){
-        friendsList = if (newList.size == 0){
-            mutableListOf(
-                PartialUser("THE SYSTEM", "dummy_friend_id"))
-        } else {
-            newList
-        }
-
-    }
 
 }

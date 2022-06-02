@@ -162,4 +162,13 @@ class CompleteUserTest {
         assertTrue(hashCode != 0)
     }
 
+    @Test
+    fun friendListCorrectlyUpdated(){
+        val completeUser = CompleteUser(ApplicationProvider.getApplicationContext() as MyApplication,null, DatabaseFactory.MOCK_DB)
+        val newFriends = mutableListOf<PartialUser>( PartialUser("a" , "1"), PartialUser("b" , "2") ,PartialUser("c" , "3"))
+        completeUser.updateFriendList(newFriends)
+        val userFriends = completeUser.getFriendsList()
+        assertEquals(newFriends, userFriends)
+    }
+
 }
