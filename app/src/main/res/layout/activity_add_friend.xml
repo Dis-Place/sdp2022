@@ -8,9 +8,9 @@
 
     <Button
         android:id="@+id/sendFriendRequestButton"
-        android:layout_width="189dp"
+        android:layout_width="188dp"
         android:layout_height="0dp"
-        android:layout_marginBottom="346dp"
+        android:layout_marginBottom="388dp"
         android:onClick="sendFriendRequest"
         android:text="Add"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -23,40 +23,17 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="43dp"
-        android:layout_marginTop="184dp"
+        android:layout_marginTop="164dp"
         android:layout_marginEnd="43dp"
-        android:layout_marginBottom="192dp"
+        android:layout_marginBottom="55dp"
         android:ems="10"
         android:gravity="center"
         android:hint="Friend Name"
         android:inputType="textPersonName"
-        app:layout_constraintBottom_toTopOf="@+id/button5"
+        app:layout_constraintBottom_toTopOf="@+id/sendFriendRequestButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/button3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="68dp"
-        android:layout_marginEnd="82dp"
-        android:layout_marginBottom="68dp"
-        android:onClick="addRandomFriend"
-        android:text="addRandomFriend"
-        app:layout_constraintBottom_toTopOf="@+id/friendRequestEditText"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/button5"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="39dp"
-        android:layout_marginBottom="229dp"
-        android:text="addFriend"
-        android:onClick="addTheFriend"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/friendRequestEditText" />
 </androidx.constraintlayout.widget.ConstraintLayout>

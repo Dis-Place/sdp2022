@@ -116,36 +116,4 @@ class AddFriendActivity : AppCompatActivity() {
         return false
     }
 
-    private var count = 0
-    private var list = mutableListOf<PartialUser>()
-    fun addRandomFriend(view: View) {
-        val partialUser = PartialUser(count.toString() + 'a', count.toString() + 'a')
-        count++
-        list.add(partialUser)
-
-        val db = DatabaseFactory.getDB(intent)
-
-        db.update(
-            "CompleteUsers/mqzTU3dDlehhNgI5rKW5MBKfajt1/CompleteUser/friendsList",
-            list.map { f -> f.toMap() }
-        )
-        db.update(
-            "CompleteUsers/xsL6eS5xs2fMLglgUrt6TT75oQ43/CompleteUser/friendsList",
-            list.map { f -> f.toMap() }
-        )
-
-
-    }
-
-    fun addTheFriend(view: View) {
-        val app = applicationContext as MyApplication
-        val activeUser = app.getActiveUser()!!
-        val partialUser = PartialUser(count.toString() + 'a', count.toString() + 'a')
-        val pName = activeUser?.getPartialUser()?.uid ?: "defaultNotLoggedIn"
-
-        Log.d("Cuser" , "current partial $pName")
-        count++
-        activeUser.addFriend(partialUser, true)
-    }
-
 }

@@ -13,6 +13,14 @@ import com.github.displace.sdp2022.profile.messages.SendMessageActivity
 import com.github.displace.sdp2022.users.PartialUser
 import com.google.firebase.database.FirebaseDatabase
 
+
+/**
+ * (custom ViewHolder)
+ * provides a reference and all the functionality for new friends
+ * Wrapper around a View, and that view is managed by RecyclerView.
+ * @param itemview : the view where it will be displayed
+ * @param context : context to display the items in
+ */
 class NewFriendViewHolder(itemview: View, context: Context) : RecyclerView.ViewHolder(itemview) {
 
     val friendNameView: TextView = itemView.findViewById(R.id.friendName)
