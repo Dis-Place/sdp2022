@@ -28,6 +28,7 @@ import com.github.displace.sdp2022.database.FileStorageFactory
 import com.github.displace.sdp2022.users.CompleteUser
 import com.github.displace.sdp2022.users.PartialUser
 import com.github.displace.sdp2022.util.ProgressDialogsUtil
+import com.github.displace.sdp2022.util.ThemeManager
 import com.google.firebase.auth.*
 import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.google.firebase.database.*
@@ -87,6 +88,7 @@ class AccountSettingsActivity : AppCompatActivity() {
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        ThemeManager.applyChosenTheme(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_account_settings)
 

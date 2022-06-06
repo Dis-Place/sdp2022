@@ -16,6 +16,7 @@ import com.github.displace.sdp2022.map.PinpointsManager
 import com.github.displace.sdp2022.map.GoodPinpointsDBHandler
 import com.github.displace.sdp2022.sound.SoundsManager
 import com.github.displace.sdp2022.util.PreferencesUtil
+import com.github.displace.sdp2022.util.ThemeManager
 import com.github.displace.sdp2022.util.gps.GPSPositionManager
 import com.github.displace.sdp2022.util.gps.GPSPositionUpdater
 import com.github.displace.sdp2022.util.gps.GeoPointListener
@@ -44,6 +45,7 @@ class DemoMapActivity : AppCompatActivity() {
      * creates a map view with a marker, centered on EPFL position
      */
     override fun onCreate(savedInstanceState: Bundle?) {
+        ThemeManager.applyChosenTheme(this)
         super.onCreate(savedInstanceState)
         PreferencesUtil.initOsmdroidPref(this)
 

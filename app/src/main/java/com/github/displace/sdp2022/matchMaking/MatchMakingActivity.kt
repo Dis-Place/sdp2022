@@ -26,6 +26,7 @@ import com.github.displace.sdp2022.profile.friends.FriendViewAdapter
 import com.github.displace.sdp2022.users.CompleteUser
 import com.github.displace.sdp2022.users.PartialUser
 import com.github.displace.sdp2022.util.ProgressDialogsUtil
+import com.github.displace.sdp2022.util.ThemeManager
 import com.github.displace.sdp2022.util.gps.GPSPositionManager
 import com.github.displace.sdp2022.util.gps.GPSPositionUpdater
 import com.github.displace.sdp2022.util.gps.GeoPointListener
@@ -62,6 +63,7 @@ class MatchMakingActivity : MMView() {
      * - show the right group of UI elements : the ones for setup
      */
     override fun onCreate(savedInstanceState: Bundle?) {
+        ThemeManager.applyChosenTheme(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_match_making) //UI
 
