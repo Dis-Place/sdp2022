@@ -21,6 +21,7 @@ import androidx.test.rule.GrantPermissionRule
 import com.github.displace.sdp2022.database.DatabaseFactory
 import com.github.displace.sdp2022.database.MockDatabaseUtils
 import com.github.displace.sdp2022.map.MapViewManager
+import com.github.displace.sdp2022.matchMaking.MatchMakingActivity
 import com.github.displace.sdp2022.util.gps.MockGPS
 import org.junit.After
 import org.junit.Before
@@ -41,11 +42,9 @@ class GameMenuTest {
         app.setActiveUser(CompleteUser(app,null, DatabaseFactory.MOCK_DB))
 
         Intents.init()
-        intent = Intent(ApplicationProvider.getApplicationContext(),GameVersusViewActivity::class.java).apply {
+        intent = Intent(ApplicationProvider.getApplicationContext(),GameListActivity::class.java).apply {
             putExtra("DEBUG", true)
         }
-        MockGPS.specifyMock(intent, MOCK_GPS_POSITION)
-   //     MockDatabaseUtils.mockIntent(intent)
 
         app.setMessageHandler(MessageHandler(app.getActiveUser()!!.getPartialUser(),app,intent))
         Thread.sleep(1000)
@@ -54,140 +53,29 @@ class GameMenuTest {
     @After
     fun releaseIntents() {
         Intents.release()
-        /*val app = ApplicationProvider.getApplicationContext() as MyApplication
-        app.getActiveUser()?.removeUserFromDatabase()*/
     }
-
-
-    @get:Rule
-    val permissionRule = GrantPermissionRule.grant(
-        android.Manifest.permission.ACCESS_COARSE_LOCATION,
-        android.Manifest.permission.ACCESS_FINE_LOCATION
-    )
 
     @Test
     fun testPlayButton() {
-        intent.putExtra("gid","GameVersusTest")
-        intent.putExtra("uid","hCkhhJ0dkINs0BIpx8eqhLWzXw43")
-        intent.putExtra("nbPlayer",2)
-        intent.putExtra("gameMode","Versus")
-
-        ActivityScenario.launch<GameSummaryActivity>(intent).use {
-            onView(withId(R.id.TryText))
-                .check(matches(withText("remaining tries : 4")))
+        ActivityScenario.launch<GameListActivity>(intent).use {
+            onView(withId(R.id.playVersusButton)).perform(ViewActions.click())
+            Intents.intended(IntentMatchers.hasComponent(MatchMakingActivity::class.java.name))
         }
     }
 
     @Test
-    fun testMap() {
-        intent.putExtra("gid","GameVersusTest")
-        intent.putExtra("uid","hCkhhJ0dkINs0BIpx8eqhLWzXw43")
-        intent.putExtra("nbPlayer",2)
-        intent.putExtra("gameMode","Versus")
-
-        ActivityScenario.launch<GameVersusViewActivity>(intent).use {
-            onView(withId(R.id.map)).check(matches(ViewMatchers.isDisplayed()))
+    fun testPlay2Button() {
+        ActivityScenario.launch<GameListActivity>(intent).use {
+            onView(withId(R.id.playVersusButton2)).perform(ViewActions.click())
+            Intents.intended(IntentMatchers.hasComponent(MatchMakingActivity::class.java.name))
         }
     }
 
     @Test
-    fun testEndButton() {
-        intent.putExtra("gid","GameVersusTest")
-        intent.putExtra("uid","hCkhhJ0dkINs0BIpx8eqhLWzXw43")
-        intent.putExtra("nbPlayer",2)
-        intent.putExtra("dist",100000)
-        intent.putExtra("gameMode","Versus")
-
-        ActivityScenario.launch<GameSummaryActivity>(intent).use {
-            onView(withId(R.id.centerButton)).perform(ViewActions.click())
-            onView(withId(R.id.map)).perform(swipeUp())
-            onView(withId(R.id.map)).perform(ViewActions.longClick())
-            onView(withId(R.id.map)).perform(swipeUp())
-            onView(withId(R.id.map)).perform(ViewActions.longClick())
-            onView(withId(R.id.map)).perform(swipeUp())
-            onView(withId(R.id.map)).perform(ViewActions.longClick())
-            onView(withId(R.id.map)).perform(swipeUp())
-            onView(withId(R.id.map)).perform(ViewActions.longClick())
-
-            Intents.intended(IntentMatchers.hasComponent(GameSummaryActivity::class.java.name))
-
-        }
-    }
-
-    @Test
-    fun testFailButton() {
-        intent.putExtra("gid","GameVersusTest")
-        intent.putExtra("uid","hCkhhJ0dkINs0BIpx8eqhLWzXw43")
-        intent.putExtra("nbPlayer",2)
-        intent.putExtra("dist",100000)
-        intent.putExtra("gameMode","Versus")
-
-        ActivityScenario.launch<GameSummaryActivity>(intent).use {
-            onView(withId(R.id.map)).perform(swipeUp())
-            onView(withId(R.id.map)).perform(ViewActions.longClick())
-            onView(withId(R.id.TryText))
-                .check(matches(withText("wrong guess, remaining tries : 3")))
-
-        }
-    }
-
-    @Test
-    fun testWinButton() {
-
-        intent.putExtra("gid","GameVersusTest")
-        intent.putExtra("uid","hCkhhJ0dkINs0BIpx8eqhLWzXw43")
-        intent.putExtra("nbPlayer",2)
-        intent.putExtra("gameMode","Versus")
-
-        ActivityScenario.launch<GameSummaryActivity>(intent).use {
-            onView(withId(R.id.map)).perform(ViewActions.longClick())
-            //Intents.intended(IntentMatchers.hasComponent(GameSummaryActivity::class.java.name))
-        }
-    }
-
-    @Test
-    fun testQuitButton() {
-        Thread.sleep(3000)
-        intent.putExtra("gid","GameVersusTest")
-        intent.putExtra("uid","hCkhhJ0dkINs0BIpx8eqhLWzXw43")
-        intent.putExtra("nbPlayer",2)
-        intent.putExtra("gameMode","Versus")
-
-        ActivityScenario.launch<GameSummaryActivity>(intent).use {
-            onView(withId(R.id.closeButton)).perform(click())
-            Intents.intended(IntentMatchers.hasComponent(GameListActivity::class.java.name))
-        }
-    }
-
-    private fun swipeUp(): ViewAction? {
-        return GeneralSwipeAction(
-            Swipe.FAST, GeneralLocation.BOTTOM_CENTER,
-            GeneralLocation.TOP_CENTER, Press.FINGER
-        )
-    }
-
-    companion object {
-        val MOCK_GPS_POSITION = MapViewManager.DEFAULT_CENTER
-    }
-
-    @Test
-    fun testChatButton() {
-
-        intent.putExtra("gid","GameVersusTest")
-        intent.putExtra("uid","hCkhhJ0dkINs0BIpx8eqhLWzXw43")
-        intent.putExtra("nbPlayer",2)
-        intent.putExtra("gameMode","Versus")
-        ActivityScenario.launch<GameVersusViewActivity>(intent).use {
-
-            Thread.sleep(4000)
-            onView(withId(R.id.chatButton)).perform(click())
-            Thread.sleep(4000)
-            onView(withId(R.id.chatEditText)).perform(typeText("hh")).perform(closeSoftKeyboard())
-            Thread.sleep(1000)
-            onView(withId(R.id.sendChatMessage)).perform(click())
-            Thread.sleep(1000)
-            onView(withId(R.id.button4)).perform(click())
-
+    fun testPlay3Button() {
+        ActivityScenario.launch<GameListActivity>(intent).use {
+            onView(withId(R.id.playVersusButton4)).perform(ViewActions.click())
+            Intents.intended(IntentMatchers.hasComponent(MatchMakingActivity::class.java.name))
         }
     }
 
