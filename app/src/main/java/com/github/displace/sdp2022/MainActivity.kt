@@ -10,6 +10,7 @@ import com.github.displace.sdp2022.database.CleanUpGuests
 import com.github.displace.sdp2022.database.DatabaseFactory
 import com.github.displace.sdp2022.users.CompleteUser
 import com.github.displace.sdp2022.util.CheckConnectionUtil.checkForInternet
+import com.github.displace.sdp2022.util.ThemeManager
 import kotlin.random.Random
 
 /**
@@ -17,6 +18,7 @@ import kotlin.random.Random
  */
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+        ThemeManager.applyChosenTheme(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 

@@ -12,6 +12,7 @@ import com.github.displace.sdp2022.news.NewsActivity
 import com.github.displace.sdp2022.profile.ProfileActivity
 import com.github.displace.sdp2022.profile.messages.MessageHandler
 import com.github.displace.sdp2022.settings.SettingsActivity
+import com.github.displace.sdp2022.util.ThemeManager
 
 
 class MainMenuActivity : AppCompatActivity() {
@@ -23,6 +24,7 @@ class MainMenuActivity : AppCompatActivity() {
      */
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
+        ThemeManager.applyChosenTheme(this)
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_main_menu)

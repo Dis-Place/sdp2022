@@ -38,6 +38,7 @@ import com.github.displace.sdp2022.profile.statistics.Statistic
 import com.github.displace.sdp2022.users.CompleteUser
 import com.github.displace.sdp2022.users.PartialUser
 import com.github.displace.sdp2022.util.CheckConnectionUtil.checkForInternet
+import com.github.displace.sdp2022.util.ThemeManager
 import com.github.displace.sdp2022.util.listeners.Listener
 import com.google.firebase.database.*
 
@@ -54,6 +55,7 @@ class ProfileActivity : AppCompatActivity() {
     private lateinit var app: MyApplication
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        ThemeManager.applyChosenTheme(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile)
 

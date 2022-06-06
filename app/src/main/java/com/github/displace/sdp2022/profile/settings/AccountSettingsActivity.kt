@@ -19,6 +19,7 @@ import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.net.toFile
 import com.github.displace.sdp2022.ImageDatabase
 import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.R
@@ -27,6 +28,7 @@ import com.github.displace.sdp2022.database.FileStorageFactory
 import com.github.displace.sdp2022.users.CompleteUser
 import com.github.displace.sdp2022.users.PartialUser
 import com.github.displace.sdp2022.util.ProgressDialogsUtil
+import com.github.displace.sdp2022.util.ThemeManager
 import com.google.firebase.auth.*
 import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.google.firebase.database.*
@@ -86,6 +88,7 @@ class AccountSettingsActivity : AppCompatActivity() {
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        ThemeManager.applyChosenTheme(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_account_settings)
 
@@ -119,7 +122,7 @@ class AccountSettingsActivity : AppCompatActivity() {
      */
     fun getProfilePicFromDatabase() {
         // Temporary local file for the profile pic
-        val localFile = File.createTempFile("profilePic", "jpg")
+        val localFile = File.createTempFile("profilePic", ".jpg")
 
         // Gets profile pic from database
         ProgressDialogsUtil.showProgressDialog(this)    // Shows progress dialog to prevent the user from uploading twice
@@ -127,8 +130,11 @@ class AccountSettingsActivity : AppCompatActivity() {
         fileStorage.getThenCall(localFile,
             onSuccess = {
                 val pic = BitmapFactory.decodeFile(localFile.absolutePath)
-                activeUser.setProfilePic(pic)
-                profilePic.setImageBitmap(pic)
+                pic?.let {
+                    activeUser.setProfilePic(pic)
+                    profilePic.setImageBitmap(pic)
+                }
+                profilePic.setTag(R.id.profilePic, "initializedTag")   // Changes the tag so that the automatic tests know that the picture changed
                 ProgressDialogsUtil.dismissProgressDialog()
             },
             onFailure = {

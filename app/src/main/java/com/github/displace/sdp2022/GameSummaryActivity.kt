@@ -17,6 +17,7 @@ import com.github.displace.sdp2022.users.CompleteUser
 import com.github.displace.sdp2022.users.PartialUser
 import com.github.displace.sdp2022.profile.achievements.AchievementsLibrary
 import com.github.displace.sdp2022.util.DateTimeUtil
+import com.github.displace.sdp2022.util.ThemeManager
 import java.lang.Exception
 
 class GameSummaryActivity : AppCompatActivity() {
@@ -33,6 +34,7 @@ class GameSummaryActivity : AppCompatActivity() {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        ThemeManager.applyChosenTheme(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_game_summary)
 

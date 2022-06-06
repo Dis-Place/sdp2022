@@ -12,6 +12,7 @@ import com.github.displace.sdp2022.database.FirebaseDatabaseAdapter
 import com.github.displace.sdp2022.database.GoodDB
 import com.github.displace.sdp2022.profile.achievements.AchievementsLibrary
 import com.github.displace.sdp2022.profile.messages.MessageHandler
+import com.github.displace.sdp2022.util.ThemeManager
 
 /**
  * Activity showing the news of the application
@@ -24,6 +25,7 @@ class NewsActivity : AppCompatActivity() {
      * Creates the activity
      */
     override fun onCreate(savedInstanceState: Bundle?) {
+        ThemeManager.applyChosenTheme(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_news)
 
