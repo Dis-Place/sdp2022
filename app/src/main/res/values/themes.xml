@@ -17,7 +17,7 @@
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/greenPrimaryColor</item>
         <item name="colorPrimaryVariant">@color/greenPrimaryLightColor</item>
-        <item name="colorOnPrimary">@color/black</item>
+        <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/greenSecondaryColor</item>
         <item name="colorSecondaryVariant">@color/greenSecondaryLightColor</item>
