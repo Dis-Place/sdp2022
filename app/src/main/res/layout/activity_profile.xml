@@ -10,61 +10,70 @@
         android:id="@+id/profileUsername"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="104dp"
+        android:layout_marginTop="11dp"
+        android:layout_marginEnd="181dp"
+        android:layout_marginBottom="688dp"
         android:text="USERNAME"
         android:textAlignment="center"
         android:textSize="24sp"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.17000002" />
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="148dp"
+
+        android:layout_marginEnd="212dp"
+        android:text="STATUS"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/profileUsername" />
 
     <ImageButton
         android:id="@+id/profileSettingsButton"
         android:layout_width="65dp"
         android:layout_height="59dp"
-        android:layout_marginStart="355dp"
         android:contentDescription="pipo"
-
         android:onClick="settingsButton"
+
         app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/showQRButton"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@android:drawable/ic_menu_manage" />
-
-    <ImageView
-        android:id="@+id/onlineStatus"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
-        app:layout_constraintEnd_toStartOf="@+id/textView4"
-        app:layout_constraintHorizontal_bias="0.94"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/profileUsername"
-        app:srcCompat="@android:drawable/presence_online" />
 
     <ImageView
         android:id="@+id/offlineStatus"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="invisible"
+
         app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintEnd_toStartOf="@+id/textView4"
-        app:layout_constraintHorizontal_bias="0.94"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/scanQRButton"
         app:layout_constraintTop_toBottomOf="@+id/profileUsername"
         app:srcCompat="@android:drawable/presence_offline" />
 
-    <TextView
-        android:id="@+id/textView4"
+    <ImageView
+        android:id="@+id/onlineStatus"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="STATUS"
+
         app:layout_constraintBottom_toTopOf="@+id/linearLayout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/profileUsername" />
+        app:layout_constraintEnd_toStartOf="@+id/textView4"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/scanQRButton"
+        app:layout_constraintTop_toBottomOf="@+id/profileUsername"
+        app:srcCompat="@android:drawable/presence_online" />
 
     <LinearLayout
         android:layout_width="0dp"
@@ -279,11 +288,12 @@
 
     <Button
         android:id="@+id/scanQRButton"
-        android:layout_width="105dp"
-        android:layout_height="61dp"
+        android:layout_width="81dp"
+        android:layout_height="59dp"
         android:layout_weight="1"
         android:onClick="useScannerQR"
         android:text="scan"
+
         app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintEnd_toStartOf="@+id/profileUsername"
         app:layout_constraintHorizontal_bias="0.5"
@@ -293,10 +303,11 @@
     <Button
         android:id="@+id/showQRButton"
         android:layout_width="86dp"
-        android:layout_height="57dp"
+        android:layout_height="61dp"
         android:layout_weight="1"
         android:onClick="showQR"
         android:text="show"
+
         app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintEnd_toStartOf="@+id/profileSettingsButton"
         app:layout_constraintHorizontal_bias="0.5"
