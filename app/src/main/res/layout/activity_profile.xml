@@ -94,12 +94,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Achievements"
+                    android:text="Statistics"
                     android:textAlignment="center" />
 
                 <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recyclerAch"
                     android:layout_width="match_parent"
+                    android:id="@+id/recyclerStats"
                     android:layout_height="match_parent"
                     android:layout_weight="1">
 
@@ -109,11 +109,11 @@
                     android:id="@+id/textView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Statistics"
+                    android:text="Achievements"
                     android:textAlignment="center" />
 
                 <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recyclerStats"
+                    android:id="@+id/recyclerAch"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1" />
@@ -169,6 +169,8 @@
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/friendRequestRecyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
                     android:layout_marginStart="1dp"
                     android:layout_marginTop="1dp"
                     android:layout_marginEnd="1dp"
@@ -177,10 +179,9 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
                     tools:itemCount="5"
-                    tools:listitem="@layout/friend_request"/>
+                    tools:listitem="@layout/friend_request" />
+
             </LinearLayout>
         </ScrollView>
 
@@ -189,7 +190,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1">
-
 
 
             <LinearLayout
@@ -211,21 +211,6 @@
                     android:layout_weight="2"
                     android:orientation="horizontal">
 
-                    <Button
-                        android:id="@+id/scanQRButton"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:onClick="useScannerQR"
-                        android:text="scan" />
-
-                    <Button
-                        android:id="@+id/showQRButton"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:onClick="showQR"
-                        android:text="show" />
                 </LinearLayout>
 
                 <TextView
@@ -241,7 +226,6 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:orientation="horizontal">
-
 
 
                     <androidx.recyclerview.widget.RecyclerView
@@ -293,5 +277,36 @@
             android:text="FRIENDS" />
 
     </LinearLayout>
+
+    <Button
+        android:id="@+id/scanQRButton"
+        android:layout_width="82dp"
+        android:layout_height="46dp"
+        android:layout_marginStart="7dp"
+        android:layout_marginEnd="322dp"
+        android:layout_marginBottom="685dp"
+        android:layout_weight="1"
+        android:onClick="useScannerQR"
+        android:text="scan"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/showQRButton"
+        android:layout_width="82dp"
+        android:layout_height="42dp"
+        android:layout_marginStart="7dp"
+        android:layout_marginTop="38dp"
+        android:layout_marginEnd="322dp"
+        android:layout_marginBottom="651dp"
+        android:layout_weight="1"
+        android:onClick="showQR"
+        android:text="show"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
