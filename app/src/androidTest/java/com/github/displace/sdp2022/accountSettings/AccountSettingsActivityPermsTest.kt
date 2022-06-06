@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.provider.MediaStore
+import androidx.core.net.toFile
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
@@ -16,11 +17,17 @@ import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.withId
+import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.GrantPermissionRule
 import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.R
+import com.github.displace.sdp2022.authentication.AuthFactory
+import com.github.displace.sdp2022.authentication.MockAuthUtils
+import com.github.displace.sdp2022.authentication.MockAuthenticatedUser
+import com.github.displace.sdp2022.authentication.SignInActivity
 import com.github.displace.sdp2022.database.DatabaseFactory
+import com.github.displace.sdp2022.database.FileStorageFactory
 import com.github.displace.sdp2022.database.MockDatabaseUtils
 import com.github.displace.sdp2022.profile.messages.MessageHandler
 import com.github.displace.sdp2022.profile.settings.AccountSettingsActivity
@@ -32,25 +39,19 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import java.io.File
+import kotlin.random.Random
+import kotlin.random.nextUInt
 
 @RunWith(AndroidJUnit4::class)
 class AccountSettingsActivityPermsTest {
+    val resultData = Intent()
+    val app = ApplicationProvider.getApplicationContext() as MyApplication
+
     @Before
     fun login() {
-        val app = ApplicationProvider.getApplicationContext() as MyApplication
         DatabaseFactory.clearMockDB()
         app.setActiveUser(CompleteUser(app, null, DatabaseFactory.MOCK_DB))
-    }
-
-    @get:Rule
-    val permissionRule: GrantPermissionRule = GrantPermissionRule.grant(
-        android.Manifest.permission.CAMERA,
-        android.Manifest.permission.WRITE_EXTERNAL_STORAGE
-    )
-
-    @Test
-    fun pictureUpdatesCorrectlyFromGallery() {
-        val resultData = Intent()
         resultData.data = Uri.parse(
             ContentResolver.SCHEME_ANDROID_RESOURCE + "://"
                     + ApplicationProvider.getApplicationContext<Context?>().resources.getResourcePackageName(
@@ -64,6 +65,46 @@ class AccountSettingsActivityPermsTest {
             )
         )
 
+    }
+
+    @get:Rule
+    val permissionRule: GrantPermissionRule = GrantPermissionRule.grant(
+        android.Manifest.permission.CAMERA,
+        android.Manifest.permission.WRITE_EXTERNAL_STORAGE
+    )
+
+    @Test
+    fun getsPictureFromDatabaseOnCreate() {
+        AuthFactory.setupMock("dummy")
+        FileStorageFactory.setupMock(File.createTempFile("empty", ".jpg"))
+        val mockUser = MockAuthenticatedUser(Random.nextUInt().toString(),"user1", AuthFactory.mockAuth)
+        app.setActiveUser(CompleteUser(app, mockUser, DatabaseFactory.MOCK_DB))
+
+        val intent = Intent(ApplicationProvider.getApplicationContext(), AccountSettingsActivity::class.java)
+        MockDatabaseUtils.mockIntent(intent)
+
+        intent.putExtra(FileStorageFactory.MOCK_FILE_STORAGE_EXTRA_ID, "")
+
+        app.setMessageHandler(MessageHandler(app.getActiveUser()!!.getPartialUser(),app,intent))
+
+        val scenario = ActivityScenario.launch<AccountSettingsActivity>(intent)
+
+        scenario.use {
+            onView(withId(R.id.profilePic)).check(
+                ViewAssertions.matches(
+                    ViewMatchers.withTagKey(
+                        R.id.profilePic,
+                        CoreMatchers.`is`("initializedTag")
+                    )
+                )
+            )
+        }
+        // check que le tag est initialized
+    }
+
+    @Test
+    fun pictureUpdatesCorrectlyFromGallery() {
+
         Intents.init()
         try {
             val intent =
@@ -71,7 +112,6 @@ class AccountSettingsActivityPermsTest {
                     ApplicationProvider.getApplicationContext(),
                     AccountSettingsActivity::class.java
                 )
-            val app = ApplicationProvider.getApplicationContext() as MyApplication
             MockDatabaseUtils.mockIntent(intent)
             app.setMessageHandler(MessageHandler(app.getActiveUser()!!.getPartialUser(),app,intent))
             Thread.sleep(100)
@@ -100,20 +140,6 @@ class AccountSettingsActivityPermsTest {
 
     @Test
     fun pictureUpdatesCorrectlyFromCamera() {
-        val resultData = Intent()
-        resultData.data = Uri.parse(
-            ContentResolver.SCHEME_ANDROID_RESOURCE + "://"
-                    + ApplicationProvider.getApplicationContext<Context?>().resources.getResourcePackageName(
-                R.drawable.ic_launcher_foreground
-            )
-                    + '/' + ApplicationProvider.getApplicationContext<Context?>().resources.getResourceTypeName(
-                R.drawable.ic_launcher_foreground
-            )
-                    + '/' + ApplicationProvider.getApplicationContext<Context?>().resources.getResourceEntryName(
-                R.drawable.ic_launcher_foreground
-            )
-        )
-
         Intents.init()
         try {
             val intent =
@@ -121,6 +147,7 @@ class AccountSettingsActivityPermsTest {
                     ApplicationProvider.getApplicationContext(),
                     AccountSettingsActivity::class.java
                 )
+            app.setMessageHandler(MessageHandler(app.getActiveUser()!!.getPartialUser(),app,intent))
             val scenario = ActivityScenario.launch<AccountSettingsActivity>(intent)
             scenario.use {
                 val expectedIntent = IntentMatchers.hasAction(MediaStore.ACTION_IMAGE_CAPTURE)
@@ -151,6 +178,7 @@ class AccountSettingsActivityPermsTest {
             Intent(ApplicationProvider.getApplicationContext(), AccountSettingsActivity::class.java).apply {
                 putExtra("DEBUG", true)
             }
+        app.setMessageHandler(MessageHandler(app.getActiveUser()!!.getPartialUser(),app,intent))
         val scenario = ActivityScenario.launch<AccountSettingsActivity>(intent)
         scenario.use {
             onView(withId(R.id.usernameUpdate)).perform(click())
@@ -169,6 +197,7 @@ class AccountSettingsActivityPermsTest {
             Intent(ApplicationProvider.getApplicationContext(), AccountSettingsActivity::class.java).apply {
                 putExtra("DEBUG", true)
             }
+        app.setMessageHandler(MessageHandler(app.getActiveUser()!!.getPartialUser(),app,intent))
         val scenario = ActivityScenario.launch<AccountSettingsActivity>(intent)
         scenario.use {
             onView(withId(R.id.usernameUpdate)).perform(click())

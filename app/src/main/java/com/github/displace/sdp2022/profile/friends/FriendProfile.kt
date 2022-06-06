@@ -74,7 +74,7 @@ class FriendProfile : AppCompatActivity() {
                     histList.add(
                         History(
                             map["date"] as String,
-                            map["map"] as String,
+                            map["gameMode"] as String,
                             map["result"] as String
                         )
                     )
