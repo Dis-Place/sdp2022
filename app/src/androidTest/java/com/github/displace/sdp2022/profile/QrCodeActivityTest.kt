@@ -61,16 +61,12 @@ class QrCodeActivityTest {
 
     @Test
     fun testShowButton() {
-
         ActivityScenario.launch<ProfileActivity>(intent).use {
             Espresso.onView(ViewMatchers.withId(R.id.friendsButton)).perform(ViewActions.click())
             Espresso.onView(ViewMatchers.withId(R.id.showQRButton)).perform(ViewActions.click())
             Espresso.onView(ViewMatchers.withId(R.id.fullimage))
                 .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
-
-
         }
-
     }
 
     @Test
