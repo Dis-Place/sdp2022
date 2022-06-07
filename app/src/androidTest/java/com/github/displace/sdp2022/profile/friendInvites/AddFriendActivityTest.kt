@@ -85,20 +85,20 @@ class AddFriendActivityTest {
 
     }
 
-    @Test
-    fun sendFriendRequestTest(){
-        val partialUser = PartialUser("test","testUid")
-        val target = "dummy"
-        val mockContext = Mockito.mock(Context::class.java)
-        val mockDatabaseReference = Mockito.mock(DatabaseReference::class.java)
-        val mockInviteReference = Mockito.mock(DatabaseReference::class.java)
-        val mockCompleteUserReference = Mockito.mock(DatabaseReference::class.java)
-        `when`(mockDatabaseReference.child("Invites")).thenReturn(mockInviteReference)
-        `when`(mockDatabaseReference.child("CompleteUsers")).thenReturn(mockCompleteUserReference)
-        `when`(mockInviteReference.push()).thenReturn(mockInviteReference)
-        sendFriendRequest(mockContext, target, mockDatabaseReference, partialUser)
-
-    }
+//    @Test
+//    fun sendFriendRequestTest(){
+//        val partialUser = PartialUser("test","testUid")
+//        val target = "dummy"
+//        val mockContext = Mockito.mock(Context::class.java)
+//        val mockDatabaseReference = Mockito.mock(DatabaseReference::class.java)
+//        val mockInviteReference = Mockito.mock(DatabaseReference::class.java)
+//        val mockCompleteUserReference = Mockito.mock(DatabaseReference::class.java)
+//        `when`(mockDatabaseReference.child("Invites")).thenReturn(mockInviteReference)
+//        `when`(mockDatabaseReference.child("CompleteUsers")).thenReturn(mockCompleteUserReference)
+//        `when`(mockInviteReference.push()).thenReturn(mockInviteReference)
+//        sendFriendRequest(mockContext, target, mockDatabaseReference, partialUser)
+//
+//    }
 
 
 
