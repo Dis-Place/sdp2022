@@ -6,35 +6,32 @@
     android:layout_height="match_parent"
     tools:context=".profile.ProfileActivity">
 
-    <TextView
-        android:id="@+id/profileUsername"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="104dp"
-        android:layout_marginTop="11dp"
-        android:layout_marginEnd="181dp"
-        android:layout_marginBottom="688dp"
-        android:text="USERNAME"
-        android:textAlignment="center"
-        android:textSize="24sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+    <Button
+        android:id="@+id/scanQRButton"
+        android:layout_width="81dp"
+        android:layout_height="59dp"
+        android:layout_weight="1"
+        android:onClick="useScannerQR"
+        android:text="scan"
+
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+        app:layout_constraintEnd_toStartOf="@+id/profileUsername"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/textView4"
+        android:id="@+id/profileUsername"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="148dp"
-
-        android:layout_marginEnd="212dp"
-        android:text="STATUS"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:text="USERNAME"
+        android:textAlignment="center"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toTopOf="@+id/textView4"
+        app:layout_constraintEnd_toStartOf="@+id/showQRButton"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/profileUsername" />
+        app:layout_constraintStart_toEndOf="@+id/scanQRButton"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageButton
         android:id="@+id/profileSettingsButton"
@@ -42,6 +39,7 @@
         android:layout_height="59dp"
         android:contentDescription="pipo"
         android:onClick="settingsButton"
+
 
         app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintEnd_toEndOf="parent"
@@ -54,13 +52,16 @@
         android:id="@+id/offlineStatus"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="invisible"
+        android:layout_marginStart="106dp"
 
+
+        android:layout_marginEnd="289dp"
+        android:visibility="invisible"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout"
-        app:layout_constraintEnd_toStartOf="@+id/textView4"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/scanQRButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/profileUsername"
+        app:layout_constraintVertical_bias="0.478"
         app:srcCompat="@android:drawable/presence_offline" />
 
     <ImageView
@@ -68,12 +69,25 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 
+
         app:layout_constraintBottom_toTopOf="@+id/linearLayout"
-        app:layout_constraintEnd_toStartOf="@+id/textView4"
+        app:layout_constraintEnd_toStartOf="@+id/showQRButton"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/scanQRButton"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/profileUsername"
         app:srcCompat="@android:drawable/presence_online" />
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:text="STATUS"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+        app:layout_constraintEnd_toStartOf="@+id/showQRButton"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/offlineStatus"
+        app:layout_constraintTop_toBottomOf="@+id/profileUsername" />
 
     <LinearLayout
         android:layout_width="0dp"
@@ -139,8 +153,11 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1" />
+
+
             </LinearLayout>
         </ScrollView>
+
 
         <ScrollView
             android:id="@+id/InboxScroll"
@@ -287,22 +304,8 @@
     </LinearLayout>
 
     <Button
-        android:id="@+id/scanQRButton"
-        android:layout_width="81dp"
-        android:layout_height="59dp"
-        android:layout_weight="1"
-        android:onClick="useScannerQR"
-        android:text="scan"
-
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
-        app:layout_constraintEnd_toStartOf="@+id/profileUsername"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
         android:id="@+id/showQRButton"
-        android:layout_width="86dp"
+        android:layout_width="85dp"
         android:layout_height="61dp"
         android:layout_weight="1"
         android:onClick="showQR"
@@ -312,6 +315,7 @@
         app:layout_constraintEnd_toStartOf="@+id/profileSettingsButton"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/profileUsername"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.523" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
