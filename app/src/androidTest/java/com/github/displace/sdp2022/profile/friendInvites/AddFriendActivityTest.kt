@@ -23,10 +23,13 @@ import com.github.displace.sdp2022.profile.ProfileActivity
 import com.github.displace.sdp2022.profile.messages.MessageHandler
 import com.github.displace.sdp2022.users.CompleteUser
 import com.github.displace.sdp2022.users.PartialUser
+import com.google.firebase.database.DatabaseReference
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.Mockito
+import org.mockito.Mockito.`when`
 
 @RunWith(AndroidJUnit4::class)
 class AddFriendActivityTest {
@@ -81,6 +84,22 @@ class AddFriendActivityTest {
         }
 
     }
+
+    @Test
+    fun sendFriendRequestTest(){
+        val partialUser = PartialUser("test","testUid")
+        val target = "dummy"
+        val mockContext = Mockito.mock(Context::class.java)
+        val mockDatabaseReference = Mockito.mock(DatabaseReference::class.java)
+        val mockInviteReference = Mockito.mock(DatabaseReference::class.java)
+        val mockCompleteUserReference = Mockito.mock(DatabaseReference::class.java)
+        `when`(mockDatabaseReference.child("Invites")).thenReturn(mockInviteReference)
+        `when`(mockDatabaseReference.child("CompleteUsers")).thenReturn(mockCompleteUserReference)
+        `when`(mockInviteReference.push()).thenReturn(mockInviteReference)
+        sendFriendRequest(mockContext, target, mockDatabaseReference, partialUser)
+
+    }
+
 
 
 
