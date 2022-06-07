@@ -109,6 +109,12 @@ class AddFriendActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Verify that you are not already friends with requested user
+     * @param friends : current friends of active user
+     * @param target : user we want to add
+     * @return true if the target user is already in the friend list
+     */
     fun alreadyfriends(friends: List<PartialUser>, target  : String) : Boolean{
         for( friend in friends){
             if( friend.username == target){

@@ -1,6 +1,9 @@
 package com.github.displace.sdp2022.profile.friendInvites
 
+import android.content.Context
 import android.content.Intent
+import android.view.inputmethod.InputMethodManager
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso
@@ -78,6 +81,7 @@ class AddFriendActivityTest {
         }
 
     }
+
 
 
 }
