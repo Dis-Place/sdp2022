@@ -8,12 +8,14 @@ import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
+import com.github.displace.sdp2022.util.ThemeManager
 import java.io.IOException
 
 class UploadImageActivity : AppCompatActivity() {
     private lateinit var db: ImageDatabase
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        ThemeManager.applyChosenTheme(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_upload_image)
         db = ImageDatabase().instantiate("gs://displace-dd51e.appspot.com/",false) as ImageDatabase

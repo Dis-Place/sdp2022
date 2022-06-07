@@ -20,6 +20,7 @@ import com.github.displace.sdp2022.R
 import com.github.displace.sdp2022.database.DatabaseFactory
 import com.github.displace.sdp2022.users.CompleteUser
 import com.github.displace.sdp2022.util.ProgressDialogsUtil
+import com.github.displace.sdp2022.util.ThemeManager
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -46,6 +47,7 @@ class SignInActivity : AppCompatActivity() {
     private lateinit var app: MyApplication
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        ThemeManager.applyChosenTheme(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sign_in)
         auth = AuthFactory.getAuth(intent)

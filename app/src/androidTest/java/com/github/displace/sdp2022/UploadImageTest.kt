@@ -34,7 +34,7 @@ class UploadImageTest {
         intent = Intent(ApplicationProvider.getApplicationContext(),UploadImageActivity::class.java).apply {
             putExtra("DEBUG", true)
         }
-        MockGPS.specifyMock(intent, GameMenuTest.MOCK_GPS_POSITION)
+        MockGPS.specifyMock(intent, GameVersusTest.MOCK_GPS_POSITION)
         MockDatabaseUtils.mockIntent(intent)
 
         val app = ApplicationProvider.getApplicationContext() as MyApplication

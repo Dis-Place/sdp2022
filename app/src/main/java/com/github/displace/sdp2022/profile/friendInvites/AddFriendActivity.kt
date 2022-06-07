@@ -13,6 +13,7 @@ import com.github.displace.sdp2022.R
 import com.github.displace.sdp2022.database.DatabaseFactory
 import com.github.displace.sdp2022.profile.FriendRequest
 import com.github.displace.sdp2022.users.PartialUser
+import com.github.displace.sdp2022.util.ThemeManager
 import com.google.firebase.database.*
 
 
@@ -34,6 +35,7 @@ class AddFriendActivity : AppCompatActivity() {
      * @param savedInstanceState : the saved instance
      */
     override fun onCreate(savedInstanceState: Bundle?) {
+        ThemeManager.applyChosenTheme(this)
         Log.d(TAG, "Entering Activity")
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_friend)

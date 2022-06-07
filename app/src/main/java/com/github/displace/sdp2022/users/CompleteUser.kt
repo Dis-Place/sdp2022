@@ -286,7 +286,7 @@ class CompleteUser(
         if(guestBoolean) {
             if(authenticatedUser != null) {
                 CleanUpGuests.updateGuestIndexesAndCleanUpDatabase(db, "guest_${authenticatedUser.uid()}")
-                db.update("$dbReference/guestIndex", 0)    // Index for the guests in DB, useful for cleaning up the database from the unused guests
+                db.update("$dbReference/guestIndex", 0L)    // Index for the guests in DB, useful for cleaning up the database from the unused guests
             }
         }
     }

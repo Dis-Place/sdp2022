@@ -16,6 +16,7 @@ import com.github.displace.sdp2022.R
 import com.github.displace.sdp2022.profile.FriendRequest
 import com.github.displace.sdp2022.profile.ProfileActivity
 import com.github.displace.sdp2022.users.PartialUser
+import com.github.displace.sdp2022.util.ThemeManager
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.decodeFromString
@@ -29,6 +30,7 @@ class QrCodeScannerActivity : AppCompatActivity() {
      * Sets up the scanner, will be modularized after testing
      */
     override fun onCreate(savedInstanceState: Bundle?) {
+        ThemeManager.applyChosenTheme(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_qr_code_scanner)
 

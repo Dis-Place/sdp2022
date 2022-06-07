@@ -6,11 +6,13 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.github.displace.sdp2022.matchMaking.MatchMakingActivity
 import android.widget.Toast
+import com.github.displace.sdp2022.util.ThemeManager
 
 
 class GameListActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        ThemeManager.applyChosenTheme(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_game_list)
 
