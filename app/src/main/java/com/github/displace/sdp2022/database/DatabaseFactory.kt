@@ -6,7 +6,6 @@ import com.github.displace.sdp2022.database.DatabaseConstants.DB_URL
 /**
  * to instantiate a Database
  *
- * @author LeoLgdr
  * @see GoodDB
  */
 object DatabaseFactory {
@@ -20,9 +19,6 @@ object DatabaseFactory {
 
     const val MOCK_DB_EXTRA_ID = "MOCK_DB"
     const val DEBUG_EXTRA_ID = "DEBUG"
-
-
-    /*private const val IMAGE_DB_url = "gs://displace-dd51e.appspot.com/"*/
 
 
     private fun get(url: String, intent: Intent): GoodDB {
@@ -39,14 +35,6 @@ object DatabaseFactory {
     fun getDB(intent: Intent): GoodDB {
         return get(DB_URL, intent)
     }
-
-    /*/**
-     * @param intent specifies if the database should be mocked and/or in debug mode or not
-     * @return image database instance
-     */
-    fun getImageDB(intent: Intent): GoodDB {
-        return get(IMAGE_DB_url, intent)
-    }*/
 
     /**
      * clear the mock database contents

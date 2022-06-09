@@ -115,9 +115,8 @@ class QrCodeScannerActivity : AppCompatActivity() {
             }
 
             //...sending the request
-            FriendRequest.sendFriendRequest(this, partialUser.username, db,
-                activePartialUser
-            )
+
+            FriendRequest.sendFriendRequest(this, partialUser.username, db, activePartialUser)
 
             //...return to previous activity (for now, QrCodeTemp)
             startActivity(Intent(this.applicationContext, ProfileActivity::class.java))

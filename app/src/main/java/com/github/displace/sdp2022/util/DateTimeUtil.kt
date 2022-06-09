@@ -6,7 +6,6 @@ import java.util.*
 
 /**
  * util for current date & time retrieval
- * @author LeoLgdr
  */
 object DateTimeUtil {
     private const val TIME_PATTERN  = "dd-MM-yyyy HH:mm:ss"

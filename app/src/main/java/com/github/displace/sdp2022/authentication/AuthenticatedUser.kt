@@ -5,8 +5,6 @@ import com.google.android.gms.tasks.Task
 /**
  * represents basic information
  * about the current logged-in user
- *
- * @author LeoLgdr
  */
 interface AuthenticatedUser {
     /**

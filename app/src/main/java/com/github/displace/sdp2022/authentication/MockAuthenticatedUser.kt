@@ -8,8 +8,6 @@ import com.google.android.gms.tasks.Task
  * @property uid
  * @property displayName
  * @property mockAuth
- *
- * @author LeoLgdr
  */
 class MockAuthenticatedUser(private val uid: String, private val displayName: String?, private val mockAuth: MockAuth): AuthenticatedUser {
     override fun uid(): String {

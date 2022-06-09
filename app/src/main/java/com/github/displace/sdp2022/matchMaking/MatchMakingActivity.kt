@@ -4,37 +4,22 @@ package com.github.displace.sdp2022.matchMaking
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
-import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.Group
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.github.displace.sdp2022.GameListActivity
-import com.github.displace.sdp2022.GameVersusViewActivity
 import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.R
-import com.github.displace.sdp2022.database.DatabaseFactory
-import com.github.displace.sdp2022.database.GoodDB
-import com.github.displace.sdp2022.database.TransactionSpecification
 import com.github.displace.sdp2022.profile.achievements.AchievementsLibrary
 import com.github.displace.sdp2022.profile.friends.FriendViewAdapter
 import com.github.displace.sdp2022.users.CompleteUser
 import com.github.displace.sdp2022.users.PartialUser
 import com.github.displace.sdp2022.util.ProgressDialogsUtil
 import com.github.displace.sdp2022.util.ThemeManager
-import com.github.displace.sdp2022.util.gps.GPSPositionManager
-import com.github.displace.sdp2022.util.gps.GPSPositionUpdater
-import com.github.displace.sdp2022.util.gps.GeoPointListener
-import com.github.displace.sdp2022.util.listeners.Listener
-import com.github.displace.sdp2022.util.math.Constants
-import com.github.displace.sdp2022.util.math.CoordinatesUtil
-import org.osmdroid.util.GeoPoint
-import kotlin.random.Random
 
 /**
  * make matches with other players using the Database (DB)

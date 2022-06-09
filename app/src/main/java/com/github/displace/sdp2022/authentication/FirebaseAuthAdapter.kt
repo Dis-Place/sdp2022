@@ -6,6 +6,9 @@ import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
+/**
+ * adapter of FirebaseAuth to our Auth interface
+ */
 object FirebaseAuthAdapter: Auth {
     override fun currentUser(): AuthenticatedUser? {
         val firebaseUser = Firebase.auth.currentUser ?: return null

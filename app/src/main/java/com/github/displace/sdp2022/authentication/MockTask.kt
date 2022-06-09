@@ -12,8 +12,6 @@ import java.util.concurrent.Executor
  * It never fails and is never cancelled
  *
  * @param TResult task result
- *
- * @author LeoLgdr
  */
 class MockTask<TResult>(private val result: TResult?): Task<TResult>() {
 

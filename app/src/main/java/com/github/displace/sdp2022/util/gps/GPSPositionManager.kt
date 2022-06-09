@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.location.LocationManager
 import androidx.core.app.ActivityCompat
+import com.github.displace.sdp2022.util.listeners.ListenerManager
 
 import com.google.android.gms.location.LocationRequest.*
 import com.google.android.gms.tasks.CancellationTokenSource
@@ -21,18 +22,17 @@ import org.osmdroid.util.GeoPoint
 /**
  * provides an API for GPS Position retrieval
  * @param activity context in which to retrieve the GPS position
- * @author LeoLgdr
  */
 class GPSPositionManager(private val activity: Activity) {
     private var fusedLocationProviderClient: FusedLocationProviderClient
-    val listenersManager = GeoPointListenersManager()
+    val listenersManager = ListenerManager<GeoPoint>()
     private var isMocked = false
     private lateinit var mockLocation : GeoPoint
 
     /**
      * true iff the user enabled the required permissions for GPS
      */
-    fun isGPSDisabled(): Boolean {
+    private fun isGPSDisabled(): Boolean {
         return ActivityCompat.checkSelfPermission(
             activity,
             Manifest.permission.ACCESS_FINE_LOCATION

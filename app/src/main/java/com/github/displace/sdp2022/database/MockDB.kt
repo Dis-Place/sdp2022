@@ -8,7 +8,6 @@ import com.github.displace.sdp2022.util.listeners.Listener
  *
  * NOTE : use factory to get an instance
  *
- * @author LeoLgdr
  * @see DatabaseFactory
  * @see GoodDB
  */

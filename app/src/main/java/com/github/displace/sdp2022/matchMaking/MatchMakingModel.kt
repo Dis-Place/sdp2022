@@ -14,7 +14,6 @@ import com.github.displace.sdp2022.users.CompleteUser
 import com.github.displace.sdp2022.users.PartialUser
 import com.github.displace.sdp2022.util.gps.GPSPositionManager
 import com.github.displace.sdp2022.util.gps.GPSPositionUpdater
-import com.github.displace.sdp2022.util.gps.GeoPointListener
 import com.github.displace.sdp2022.util.listeners.Listener
 import com.github.displace.sdp2022.util.math.Constants
 import com.github.displace.sdp2022.util.math.CoordinatesUtil
@@ -223,7 +222,7 @@ class MatchMakingModel( val activity: MMView ){
     private fun checkOutLobby(toSearchId: String , private : Boolean) {
 
 
-        val checkOutWithPos = object : GeoPointListener {
+        val checkOutWithPos = object : Listener<GeoPoint> {
             override fun invoke(geoPoint: GeoPoint) {
                 gpsPositionManager.listenersManager.removeCall(this)
 
@@ -284,7 +283,7 @@ class MatchMakingModel( val activity: MMView ){
      */
     private fun createPublicLobby(id: String) {
 
-        val publicCreation = object : GeoPointListener {
+        val publicCreation = object : Listener<GeoPoint> {
             override fun invoke(geoPoint: GeoPoint) {
                 gpsPositionManager.listenersManager.removeCall(this)
 
@@ -317,7 +316,7 @@ class MatchMakingModel( val activity: MMView ){
             return
         }
 
-        val privateCreation = object : GeoPointListener {
+        val privateCreation = object : Listener<GeoPoint> {
             override fun invoke(geoPoint: GeoPoint) {
                 gpsPositionManager.listenersManager.removeCall(this)
                 val lobby = Lobby(currentLobbyId, nbPlayer, activePartialUser, geoPoint)
@@ -358,7 +357,7 @@ class MatchMakingModel( val activity: MMView ){
         if(id.isEmpty()){
             return
         }
-        val privateJoining = object : GeoPointListener {
+        val privateJoining = object : Listener<GeoPoint> {
             override fun invoke(geoPoint: GeoPoint) {
                 gpsPositionManager.listenersManager.removeCall(this)
 

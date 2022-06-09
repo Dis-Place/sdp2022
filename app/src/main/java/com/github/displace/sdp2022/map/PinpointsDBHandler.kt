@@ -1,20 +1,20 @@
 package com.github.displace.sdp2022.map
 
 import android.app.Activity
-import com.github.displace.sdp2022.*
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.ValueEventListener
+import android.util.Log
+import com.github.displace.sdp2022.database.GoodDB
+import com.github.displace.sdp2022.util.listeners.Listener
 import org.osmdroid.util.GeoPoint
 
 /**
  * to send and retrieve position guesses of players
  * @param db database to send/retrieve the pinpoints from
  * @param gameInstanceName
- * @author LeoLgdr
  */
-class PinpointsDBHandler(private val db: RealTimeDatabase, private val gameInstanceName: String, private val activity: Activity) {
-
+class PinpointsDBHandler(private val db: GoodDB, private val gameInstanceName: String, private val activity: Activity) {
+    private fun path(playerID: String): String  {
+        return "GameInstance/${gameInstanceName}/id:${playerID}/pinpoints"
+    }
     /**
      * to send the player's pinpoints
      * @param playerID local player's unique id
@@ -22,7 +22,7 @@ class PinpointsDBHandler(private val db: RealTimeDatabase, private val gameInsta
      */
     fun updateDBPinpoints(playerID: String, pinpointsRef: PinpointsManager.PinpointsRef){
         val positions = pinpointsRef.get()
-        db.update("GameInstance/${gameInstanceName}/id:${playerID}","pinpoints",
+        db.update(path(playerID),
             listOf(DUMMY_HEAD).plus(positions.map { p -> listOf(p.latitude,p.longitude) })
         )
     }
@@ -32,27 +32,24 @@ class PinpointsDBHandler(private val db: RealTimeDatabase, private val gameInsta
      * @param playerID opponent's ID (ie, the remote user in game with the local player)
      * @param pinpointsRef local reference to the pinpoints
      */
-    fun enableAutoupdateLocalPinpoints(playerID: String, pinpointsRef: PinpointsManager.PinpointsRef){
-        val pinpointListener = object : ValueEventListener {
+    fun enableAutoupdateLocalPinpoints(playerID: String, pinpointsRef: PinpointsManager.PinpointsRef) {
+        val pinpointListener = object : Listener<List<List<Double>>?> {
 
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                val r = (dataSnapshot.value ?: listOf<List<Double>>()) as List<List<Double>>
+            override fun invoke(value: List<List<Double>>?) {
                 if(activity.isDestroyed){
-                    db.removeList("GameInstance/${gameInstanceName}/id:${playerID}","pinpoints",this)
-                } else if(r.size > 1) {
+                    db.removeListener(path(playerID), this)
+                } else if(value != null && value.size > 1) {
                     pinpointsRef.set(
-                        r.subList(1,r.size).map { l ->
+                        value.subList(1,value.size).map { l ->
                             GeoPoint(l[0], l[1])
                         })
                 } else {
                     pinpointsRef.clear()
                 }
             }
-
-            override fun onCancelled(databaseError: DatabaseError) {}
         }
 
-        db.addList("GameInstance/${gameInstanceName}/id:${playerID}","pinpoints",pinpointListener)
+        db.addListener(path(playerID),pinpointListener)
         /*db.referenceGet("GameInstance/${gameInstanceName}/id:${playerID}","pinpoints").addOnSuccessListener { r ->
             val pinpointsPosList = (r.value ?: listOf<List<Double>>()) as List<List<Double>>
             if(pinpointsPosList.size > 1) {
@@ -70,7 +67,7 @@ class PinpointsDBHandler(private val db: RealTimeDatabase, private val gameInsta
      * @param playerID corresponding to the issuer of the Pinpoints
      */
     fun initializePinpoints(playerID: String){
-        db.update("GameInstance/${gameInstanceName}/id:${playerID}","pinpoints", listOf(DUMMY_HEAD))
+        db.update(path(playerID), listOf(DUMMY_HEAD))
     }
 
     companion object {

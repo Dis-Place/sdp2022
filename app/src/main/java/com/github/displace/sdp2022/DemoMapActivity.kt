@@ -1,7 +1,6 @@
 package com.github.displace.sdp2022
 
 import android.media.MediaPlayer
-import android.media.SoundPool
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -13,17 +12,19 @@ import com.github.displace.sdp2022.map.GPSLocationMarker
 import com.github.displace.sdp2022.map.MapViewManager
 import com.github.displace.sdp2022.map.MapViewManager.Companion.DEFAULT_CENTER
 import com.github.displace.sdp2022.map.PinpointsManager
-import com.github.displace.sdp2022.map.GoodPinpointsDBHandler
-import com.github.displace.sdp2022.sound.SoundsManager
+import com.github.displace.sdp2022.map.PinpointsDBHandler
 import com.github.displace.sdp2022.util.PreferencesUtil
 import com.github.displace.sdp2022.util.ThemeManager
 import com.github.displace.sdp2022.util.gps.GPSPositionManager
 import com.github.displace.sdp2022.util.gps.GPSPositionUpdater
-import com.github.displace.sdp2022.util.gps.GeoPointListener
+import com.github.displace.sdp2022.util.listeners.Listener
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
 
-
+/**
+ * dummy Activity mostly used for (manual) testing
+ * of maps functionalities
+ */
 class DemoMapActivity : AppCompatActivity() {
 
     private lateinit var mapView: MapView
@@ -31,14 +32,12 @@ class DemoMapActivity : AppCompatActivity() {
     private lateinit var gpsPositionUpdater: GPSPositionUpdater
     private lateinit var gpsPositionManager: GPSPositionManager
     private lateinit var gpsLocationMarker: GPSLocationMarker
-    private lateinit var markerListener: GeoPointListener
-    private lateinit var posToastListener: GeoPointListener
+    private lateinit var markerListener: Listener<GeoPoint>
+    private lateinit var posToastListener: Listener<GeoPoint>
     private lateinit var pinpointsManager: PinpointsManager
     lateinit var mockPinpointsRef: PinpointsManager.PinpointsRef
     lateinit var remoteMockPinpointsRef: PinpointsManager.PinpointsRef
-    private lateinit var dbHandler: GoodPinpointsDBHandler
-    private lateinit var s : List<Int>
-    private  lateinit var soundPool : SoundPool
+    private lateinit var dbHandler: PinpointsDBHandler
 
     /**
      * @param savedInstanceState
@@ -54,8 +53,8 @@ class DemoMapActivity : AppCompatActivity() {
         mapViewManager = MapViewManager(mapView)
         val clickSoundPlayer = MediaPlayer.create(this, R.raw.zapsplat_sound_design_hit_punchy_bright_71725)
         pinpointsManager = PinpointsManager(mapView,clickSoundPlayer)
-        markerListener = GeoPointListener {p -> pinpointsManager.putMarker(p)}
-        posToastListener = GeoPointListener { geoPoint -> Toast.makeText(this,String.format("( %.4f ; %.4f )",geoPoint.latitude,geoPoint.longitude),Toast.LENGTH_SHORT).show() }
+        markerListener = Listener<GeoPoint> {p -> pinpointsManager.putMarker(p)}
+        posToastListener = Listener<GeoPoint> { geoPoint -> Toast.makeText(this,String.format("( %.4f ; %.4f )",geoPoint.latitude,geoPoint.longitude),Toast.LENGTH_SHORT).show() }
         gpsPositionManager = GPSPositionManager(this)
         gpsPositionUpdater = GPSPositionUpdater(this,gpsPositionManager)
         gpsLocationMarker = GPSLocationMarker(mapView,gpsPositionManager)
@@ -68,7 +67,7 @@ class DemoMapActivity : AppCompatActivity() {
         // v
         val db = DatabaseFactory.getDB(intent)
 
-        dbHandler = GoodPinpointsDBHandler(db,MOCK_GAME_INSTANCE_NAME, this)
+        dbHandler = PinpointsDBHandler(db,MOCK_GAME_INSTANCE_NAME, this)
         dbHandler.initializePinpoints(MOCK_PLAYER.id)
         dbHandler.enableAutoupdateLocalPinpoints(MOCK_PLAYER.id,remoteMockPinpointsRef)
     }
@@ -85,15 +84,9 @@ class DemoMapActivity : AppCompatActivity() {
 
     @Suppress("UNUSED_PARAMETER")
     fun centerGPS(view: View) {
-
-        val centerListener = object : GeoPointListener {
-            override fun invoke(geoPoint: GeoPoint) {
-                    mapViewManager.center(geoPoint)
-                    gpsPositionManager.listenersManager.removeCall(this)
-                }
+        gpsPositionManager.listenersManager.addCallOnce{ geoPoint ->
+            mapViewManager.center(geoPoint)
         }
-
-        gpsPositionManager.listenersManager.addCall(centerListener)
         gpsPositionManager.updateLocation()
     }
 
@@ -114,7 +107,7 @@ class DemoMapActivity : AppCompatActivity() {
         mapViewManager.clearOnLongClickCalls()
     }
 
-    private fun listenerToggle(toggleButton: ToggleButton, listener: GeoPointListener) {
+    private fun listenerToggle(toggleButton: ToggleButton, listener: Listener<GeoPoint>) {
         if(toggleButton.isChecked){
             mapViewManager.addCallOnLongClick(listener)
         } else {
@@ -128,7 +121,7 @@ class DemoMapActivity : AppCompatActivity() {
         }
     }
 
-    fun mapViewListeners() : List<GeoPointListener>{
+    fun mapViewListeners() : List<Listener<GeoPoint>>{
         return mapViewManager.currentOnLongClickListeners()
     }
 

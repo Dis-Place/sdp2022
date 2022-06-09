@@ -5,8 +5,6 @@ import com.google.firebase.auth.EmailAuthProvider
 
 /**
  * to mock authentication in tests
- *
- * @author LeoLgdr
  */
 object MockAuthUtils {
     /**
