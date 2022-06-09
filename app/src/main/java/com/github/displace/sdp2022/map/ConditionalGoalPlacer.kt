@@ -1,6 +1,5 @@
 package com.github.displace.sdp2022.map
 
-import com.github.displace.sdp2022.gameComponents.Coordinates
 import com.github.displace.sdp2022.model.GameVersus
 import com.github.displace.sdp2022.util.math.CoordinatesUtil
 import org.osmdroid.util.GeoPoint
@@ -10,7 +9,6 @@ import org.osmdroid.views.MapView
  * to show the goal position if it is not in the game area
  * @param mapView to place the goal marker
  * @param gameInstance current GameVersus Instance
- * @author LeoLgdr
  */
 class ConditionalGoalPlacer(private val mapView: MapView, private var gameInstance: GameVersus, private var playerPos: GeoPoint) {
     private var goalPositionMarkers = listOf<GoalPositionMarker>()

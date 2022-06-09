@@ -4,8 +4,7 @@ import android.net.Uri
 import java.io.File
 
 /**
- * unique file storage
- * @author LeoLgdr
+ * abstraction of the storage of exactly one file
  */
 interface FileStorage {
 

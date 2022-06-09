@@ -6,8 +6,6 @@ import com.google.firebase.auth.AuthResult
 
 /**
  * englobes supported authentication mechanisms
- *
- * @author LeoLgdr
  */
 interface Auth { 
 

@@ -13,7 +13,6 @@ import org.osmdroid.views.overlay.ScaleDiskOverlay
 
 /***
  * Composite of a Marker + disk marking the area covered by a position guess
- * @author LeoLgdr
  * @param mapView where the Pinpoint will be displayed
  * @param pos geographic coordinates at which to display the Pinpoint
  * @param radius radius of the covered area in meters

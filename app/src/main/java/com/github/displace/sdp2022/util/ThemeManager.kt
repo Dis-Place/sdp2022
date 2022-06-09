@@ -6,7 +6,6 @@ import com.github.displace.sdp2022.R
 
 /**
  * to manage the theme (style) at the context (activity) level
- * @author LeoLgdr Blecoeur
  */
 object ThemeManager {
 

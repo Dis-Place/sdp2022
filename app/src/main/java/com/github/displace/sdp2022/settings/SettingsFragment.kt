@@ -9,8 +9,6 @@ import com.github.displace.sdp2022.R
  * Settings fragment
  *
  * Just a very simple settings fragment, that will be used to display the settings.
- *
- * @author blecoeur
  */
 class SettingsFragment : PreferenceFragmentCompat() {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {

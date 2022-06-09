@@ -4,6 +4,13 @@ import android.app.Activity
 import java.util.*
 
 
+/**
+ * polls a GPSPositionManager for updates at
+ * regular intervals of time
+ *
+ * @param activity
+ * @param gpsPositionManager
+ */
 class GPSPositionUpdater(private val activity: Activity, private val gpsPositionManager: GPSPositionManager) {
 
     lateinit var timer : Timer

@@ -1,7 +1,7 @@
 package com.github.displace.sdp2022.map
 
-import com.github.displace.sdp2022.util.gps.GeoPointListener
-import com.github.displace.sdp2022.util.gps.GeoPointListenersManager
+import com.github.displace.sdp2022.util.listeners.Listener
+import com.github.displace.sdp2022.util.listeners.ListenerManager
 import org.osmdroid.events.MapEventsReceiver
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
@@ -12,32 +12,31 @@ import org.osmdroid.views.overlay.MapEventsOverlay
 /**
  * class that handles a mapView and provides a lightened API for Activities
  * @param mapView
- * @author LeoLgdr
  */
 class MapViewManager(val mapView: MapView) {
-    val listenersManager = GeoPointListenersManager()
+    val listenersManager = ListenerManager<GeoPoint>()
 
     /**
      * @return current listeners called on long click
      */
-    fun currentOnLongClickListeners() : List<GeoPointListener>{
-        return listenersManager.current()
+    fun currentOnLongClickListeners() : List<Listener<GeoPoint>>{
+        return listenersManager.listeners()
     }
 
     /**
-     * add listeners to be called on longClick on mapView
-     * @param listeners added to the listeners
+     * add listener to be called on longClick on mapView
+     * @param listener added to the listeners
      */
-    fun addCallOnLongClick(vararg listeners : GeoPointListener){
-        listenersManager.addCall(*listeners)
+    fun addCallOnLongClick(listener: Listener<GeoPoint>){
+        listenersManager.addCall(listener)
     }
 
     /**
      * removes listeners to be called on longClick on mapView
      * @param listeners removed from listeners
      */
-    fun removeCallOnLongClick(vararg listeners : GeoPointListener){
-        listenersManager.removeCall(*listeners)
+    fun removeCallOnLongClick(listener: Listener<GeoPoint>){
+        listenersManager.removeCall(listener)
     }
 
     /**

@@ -9,7 +9,6 @@ import java.util.concurrent.locks.ReentrantLock
 /**
  * observable dynamic multilevel indexing map
  *
- * @author LeoLgdr
  * @see com.github.displace.sdp2022.database.MockDB
  */
 class ObservableMultiLevelMap {

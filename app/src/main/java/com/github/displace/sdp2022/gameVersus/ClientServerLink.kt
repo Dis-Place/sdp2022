@@ -1,6 +1,5 @@
 package com.github.displace.sdp2022.gameVersus
 
-import com.github.displace.sdp2022.RealTimeDatabase
 import com.github.displace.sdp2022.database.GoodDB
 import com.github.displace.sdp2022.gameComponents.Coordinates
 import com.github.displace.sdp2022.gameComponents.Point
@@ -9,16 +8,12 @@ import com.github.displace.sdp2022.gameVersus.GameVersusViewModel.Companion.LOSE
 import com.github.displace.sdp2022.gameVersus.GameVersusViewModel.Companion.WIN
 import com.github.displace.sdp2022.model.GameVersus
 import com.github.displace.sdp2022.util.listeners.Listener
+import com.github.displace.sdp2022.util.listeners.ListenerManager
 import com.github.displace.sdp2022.util.math.Constants
-import com.github.displace.sdp2022.util.math.CoordinatesUtil
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.ValueEventListener
-import com.google.firebase.database.DatabaseError
-import java.lang.reflect.TypeVariable
 
 class ClientServerLink(private val db : GoodDB, private val order: Long) {
 
-    val listenerManager: GameVersusListenerManager = GameVersusListenerManager()
+    val listenerManager: ListenerManager<GameVersus> = ListenerManager()
 
     private val initGoal = listOf(Point(3.0, 5.0))
     private var gid = ""

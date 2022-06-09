@@ -4,8 +4,6 @@ import com.github.displace.sdp2022.util.listeners.Listener
 
 /**
  * Database interface which abstracts over FireDB for convenient structure and mocking
- *
- * @author LeoLgdr
  */
 interface GoodDB {
 

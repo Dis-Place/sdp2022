@@ -1,5 +1,12 @@
 package com.github.displace.sdp2022.database
 
+/**
+ * This helper object is used to solve references in the MockDatabase
+ *
+ * @see GoodDB
+ * @see MockDB
+ * @see com.github.displace.sdp2022.util.collections.ObservableMultiLevelMap
+ */
 object ReferenceParser {
 
     /**

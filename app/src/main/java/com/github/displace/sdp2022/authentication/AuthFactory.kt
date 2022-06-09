@@ -5,8 +5,6 @@ import android.content.Intent
 /**
  * used to retrieve appropriate
  * authentication mechanism
- *
- * @author LeoLgdr
  */
 object AuthFactory {
 

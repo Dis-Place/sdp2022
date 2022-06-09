@@ -13,7 +13,6 @@ import com.google.firebase.database.*
  *
  * @see DatabaseFactory
  * @see GoodDB
- * @author LeoLgdr
  */
 class FirebaseDatabaseAdapter(referenceUrl: String, isDebug: Boolean) : GoodDB {
 
@@ -80,7 +79,7 @@ class FirebaseDatabaseAdapter(referenceUrl: String, isDebug: Boolean) : GoodDB {
     private fun <T> transactionHandler(specification: TransactionSpecification<T>): Transaction.Handler {
         return object : Transaction.Handler {
             override fun doTransaction(currentData: MutableData): Transaction.Result {
-                val old = currentData.value as T?// ?: return Transaction.success(currentData)
+                val old = currentData.value as T?
                 if(old == null || specification.preCheck(old)) {
                     currentData.value = specification.computeUpdatedData(old)
                     return Transaction.success(currentData)

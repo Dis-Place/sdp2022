@@ -2,7 +2,6 @@ package com.github.displace.sdp2022.util.listeners
 
 /**
  * handles multiple generic listeners
- * @author LeoLgdr
  */
 class ListenerManager<T> {
     private val listeners = mutableListOf<Listener<T>>()

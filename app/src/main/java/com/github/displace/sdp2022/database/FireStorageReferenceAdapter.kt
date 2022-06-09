@@ -9,11 +9,7 @@ import java.io.File
  * adapter of Firebase StorageReference
  * to interface FileStorage
  *
- * @property fileUrl
- * @constructor
- * TODO
- *
- * @param baseUrl
+ * @param fileUrl
  */
 class FireStorageReferenceAdapter(private val fileUrl: String) : FileStorage {
     private val storageReference = Firebase.storage.reference

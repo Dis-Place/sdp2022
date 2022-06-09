@@ -5,7 +5,6 @@ import org.osmdroid.util.GeoPoint
 
 /**
  * util for gps location mocking
- * @author LeoLgdr
  */
 object MockGPS {
 

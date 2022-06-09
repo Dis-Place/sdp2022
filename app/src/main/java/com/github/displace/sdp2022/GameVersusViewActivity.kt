@@ -23,14 +23,10 @@ import com.github.displace.sdp2022.util.PreferencesUtil
 import com.github.displace.sdp2022.util.ThemeManager
 import com.github.displace.sdp2022.util.gps.GPSPositionManager
 import com.github.displace.sdp2022.util.gps.GPSPositionUpdater
-import com.github.displace.sdp2022.util.gps.GeoPointListener
 import com.github.displace.sdp2022.util.gps.MockGPS
 import com.github.displace.sdp2022.util.listeners.Listener
 import com.github.displace.sdp2022.util.math.Constants
 import com.github.displace.sdp2022.util.math.CoordinatesUtil
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.ValueEventListener
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
 import java.io.Serializable
@@ -58,7 +54,7 @@ class GameVersusViewActivity : AppCompatActivity() {
     private lateinit var gpsPositionManager: GPSPositionManager
     private lateinit var other: Map<String, Any>
     private var others = listOf<List<String>>()
-    private lateinit var pinpointsDBHandler: GoodPinpointsDBHandler
+    private lateinit var pinpointsDBHandler: PinpointsDBHandler
     private lateinit var pinpointsManager: PinpointsManager
     private var otherPlayersPinpoints = listOf<PinpointsManager.PinpointsRef>()
     private lateinit var conditionalGoalPlacer: ConditionalGoalPlacer
@@ -84,16 +80,12 @@ class GameVersusViewActivity : AppCompatActivity() {
 
 
     //listener to initialise the goal
-    private val initGoalPlacer = object : GeoPointListener {
-        override fun invoke(geoPoint: GeoPoint) {
-            conditionalGoalPlacer = ConditionalGoalPlacer(mapView, game.getGameInstance(), geoPoint)
-            gpsPositionManager.listenersManager.removeCall(this)
-        }
-    }
+    private val initGoalPlacer =
+        Listener<GeoPoint> { geoPoint -> conditionalGoalPlacer = ConditionalGoalPlacer(mapView, game.getGameInstance(), geoPoint) }
 
     //listener that verify if the guess found or missed the other player.
     // 3 possibility : win => guess == position of the goal, continue => guess != position and lost => you missed the max number of time and lost
-    private val guessListener = GeoPointListener { geoPoint ->
+    private val guessListener = Listener<GeoPoint> { geoPoint ->
         run {
             if (CoordinatesUtil.distance(
                     game.getPos(),
@@ -190,10 +182,10 @@ class GameVersusViewActivity : AppCompatActivity() {
     private fun initMap(){
         mapView = findViewById(R.id.map)
         mapViewManager = MapViewManager(mapView)
-        pinpointsDBHandler = GoodPinpointsDBHandler(db, "Game" + intent.getStringExtra("gid")!!, this)
+        pinpointsDBHandler = PinpointsDBHandler(db, "Game" + intent.getStringExtra("gid")!!, this)
         pinpointsDBHandler.initializePinpoints(intent.getStringExtra("uid")!!)
         gpsPositionManager = GPSPositionManager(this)
-        gpsPositionManager.listenersManager.addCall(initGoalPlacer)
+        gpsPositionManager.listenersManager.addCallOnce(initGoalPlacer)
         gpsPositionUpdater = GPSPositionUpdater(this, gpsPositionManager)
     }
 
@@ -216,18 +208,18 @@ class GameVersusViewActivity : AppCompatActivity() {
         MockGPS.mockIfNeeded(intent, gpsPositionManager)
 
         //update the actual position of the player on the database
-        gpsPositionManager.listenersManager.addCall(GeoPointListener { geoPoint ->
+        gpsPositionManager.listenersManager.addCall { geoPoint ->
             game.handleEvent(
                 GameEvent.OnUpdate(
                     intent.getStringExtra("uid")!!,
                     CoordinatesUtil.coordinates(geoPoint)
                 )
             )
-        })
+        }
 
-        gpsPositionManager.listenersManager.addCall(GeoPointListener { geoPoint ->
+        gpsPositionManager.listenersManager.addCall { geoPoint ->
             addTotals(geoPoint) // update the distance you moved this game
-        })
+        }
 
         gpsPositionManager.updateLocation() // update your position
         GPSLocationMarker(mapView, gpsPositionManager).add() // and add a maker that show were you are
@@ -237,12 +229,12 @@ class GameVersusViewActivity : AppCompatActivity() {
     }
 
     private fun initOnlineVal(){
-        gpsPositionManager.listenersManager.addCall(GeoPointListener { gp ->
+        gpsPositionManager.listenersManager.addCall { gp ->
             if (this::conditionalGoalPlacer.isInitialized) {
                 conditionalGoalPlacer.update(gp)
             }
 
-        })
+        }
 
         clientServerLink.listenerManager.addCall { gameInstance ->
             if (this::conditionalGoalPlacer.isInitialized) {
@@ -322,20 +314,15 @@ class GameVersusViewActivity : AppCompatActivity() {
         clientServerLink.listenerManager.clearAllCalls()
         val intent = Intent(this, GameListActivity::class.java)
         startActivity(intent)
+        finish()
     }
 
     //center the screen around the player position
     @Suppress("UNUSED_PARAMETER")
     fun centerButton(view: View) {
-
-        val centerListener = object : GeoPointListener {
-            override fun invoke(geoPoint: GeoPoint) {
-                mapViewManager.center(geoPoint)
-                gpsPositionManager.listenersManager.removeCall(this)
-            }
+        gpsPositionManager.listenersManager.addCallOnce{ geoPoint ->
+            mapViewManager.center(geoPoint)
         }
-
-        gpsPositionManager.listenersManager.addCall(centerListener)
         gpsPositionManager.updateLocation()
     }
 
@@ -363,6 +350,7 @@ class GameVersusViewActivity : AppCompatActivity() {
         intent.putExtra("totalDist",totalDist)
 
         startActivity(intent)
+        finish()
     }
 
     //initialise the game

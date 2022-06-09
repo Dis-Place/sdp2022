@@ -2,8 +2,6 @@ package com.github.displace.sdp2022.util.math
 
 /**
  * Constants used in the SDP2022 app
- *
- * @author yes
  */
 object Constants {
     /*
