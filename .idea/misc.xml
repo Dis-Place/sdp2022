@@ -18,6 +18,7 @@
         <entry key="..\:/EPFL/B3 S2/SDP/sdp2022/app/src/main/res/layout/activity_qr_code_temp.xml" value="0.3473053892215569" />
         <entry key="..\:/EPFL/B3 S2/SDP/sdp2022/app/src/main/res/layout/activity_send_message.xml" value="0.22" />
         <entry key="..\:/EPFL/B3 S2/SDP/sdp2022/app/src/main/res/layout/activity_settings.xml" value="0.358695652173913" />
+        <entry key="..\:/EPFL/B3 S2/SDP/sdp2022/app/src/main/res/layout/activity_sign_in.xml" value="0.21557971014492755" />
         <entry key="..\:/EPFL/B3 S2/SDP/sdp2022/app/src/main/res/layout/activity_upload_image.xml" value="0.11347517730496454" />
         <entry key="..\:/EPFL/B3 S2/SDP/sdp2022/app/src/main/res/layout/custom_image_dialog.xml" value="0.18" />
         <entry key="..\:/EPFL/B3 S2/SDP/sdp2022/app/src/main/res/layout/friend.xml" value="0.3625" />
@@ -77,17 +78,14 @@
         <entry key="..\:/Users/Leo/Documents/EPFLBA6/sdp/sdp2022/app/src/main/res/layout/activity_main_menu.xml" value="0.1" />
         <entry key="..\:/Users/Leo/Documents/EPFLBA6/sdp/sdp2022/app/src/main/res/layout/activity_play.xml" value="0.1" />
         <entry key="..\:/Users/Leo/Documents/EPFLBA6/sdp/sdp2022/app/src/main/res/layout/activity_test_db.xml" value="0.2" />
-        <entry key="..\:/Users/Leo/Documents/EPFLBA6/sdp/sdp2022/app/src/main/res/xml/preferences.xml" value="0.3875" />
         <entry key="..\:/Users/bapti/AndroidStudioProjects/Bootcamp/app/src/main/res/layout/activity_greeting.xml" value="0.29030797101449274" />
         <entry key="..\:/Users/bapti/AndroidStudioProjects/Bootcamp/app/src/main/res/layout/activity_main.xml" value="0.24094202898550723" />
         <entry key="..\:/Users/bapti/BA6/SDP/sdp2022/app/src/main/res/layout/activity_account_settings.xml" value="0.296195652173913" />
         <entry key="..\:/Users/bapti/BA6/SDP/sdp2022/app/src/main/res/layout/activity_login_menu.xml" value="0.15208333333333332" />
         <entry key="..\:/Users/bapti/BA6/SDP/sdp2022/app/src/main/res/layout/activity_main.xml" value="0.296195652173913" />
         <entry key="..\:/Users/bapti/BA6/SDP/sdp2022/app/src/main/res/layout/activity_main_menu.xml" value="0.1859375" />
-        <entry key="..\:/Users/bapti/BA6/SDP/sdp2022/app/src/main/res/layout/activity_match_making.xml" value="0.15" />
         <entry key="..\:/Users/bapti/BA6/SDP/sdp2022/app/src/main/res/layout/activity_new_main.xml" value="0.14791666666666667" />
-        <entry key="..\:/Users/bapti/BA6/SDP/sdp2022/app/src/main/res/layout/activity_profile.xml" value="0.2264151024877837" />
-        <entry key="..\:/Users/bapti/BA6/SDP/sdp2022/app/src/main/res/layout/activity_qr_code_scanner.xml" value="0.3145833333333333" />
+        <entry key="..\:/Users/bapti/BA6/SDP/sdp2022/app/src/main/res/layout/activity_profile.xml" value="0.18227848101265823" />
         <entry key="..\:/Users/bapti/BA6/SDP/sdp2022/app/src/main/res/layout/activity_search_dummy_user.xml" value="0.153125" />
         <entry key="..\:/Users/bapti/BA6/SDP/sdp2022/app/src/main/res/layout/activity_sign_in.xml" value="0.19924529018924966" />
         <entry key="..\:/Users/bapti/BA6/SDP/sdp2022/app/src/main/res/layout/activity_sign_out.xml" value="0.15208333333333332" />

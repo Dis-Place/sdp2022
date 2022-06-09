@@ -50,12 +50,9 @@ class ReceiveFriendRequestTest {
 
     @Test
     fun getInvitesTest(){
-        val u1 = PartialUser("a", "1")
-        val u2 = PartialUser("b", "2")
-        val data = mapOf( "asdf" to mapOf("source" to u1.toMap(), "target" to u2.toMap()))
-
-        val result = ReceiveFriendRequests.getInvites(data)
-        assertEquals(mutableListOf<InviteWithId>(  InviteWithId(Invite(u1,u2), "asdf")), result)
+        val mockDataSnapshot = Mockito.mock(DataSnapshot::class.java)
+        val result = ReceiveFriendRequests.getInvites(mockDataSnapshot)
+        assertEquals(mutableListOf<InviteWithId>(), result)
     }
 
 }

@@ -162,13 +162,6 @@ class MainMenuActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    //TODO() : DELETE
-    @Suppress("UNUSED_PARAMETER")
-    fun openMap(view: View) {
-        val intent =
-            Intent(this, DemoMapActivity::class.java).apply { }
-        startActivity(intent)
-    }
 
     /**
      * When back is pressed in the main menu : log out

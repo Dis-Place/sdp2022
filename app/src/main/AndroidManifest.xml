@@ -34,6 +34,9 @@
                 android:value=".MainActivity" />
         </activity>
         <activity
+            android:name=".profile.friendInvites.FriendRequest"
+            android:exported="false" />
+        <activity
             android:name=".profile.friendInvites.AddFriendActivity"
             android:exported="false" />
         <activity

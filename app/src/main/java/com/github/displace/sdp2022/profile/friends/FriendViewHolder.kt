@@ -17,13 +17,6 @@ import com.github.displace.sdp2022.profile.messageUpdater
 import com.github.displace.sdp2022.profile.messages.SendMessageActivity
 import com.github.displace.sdp2022.users.PartialUser
 
-
-/**
- * (custom ViewHolder)
- * provides a reference and all the functionality for friends
- * Wrapper around a View, and that view is managed by RecyclerView.
- * @param itemview : the view where it will be displayed
- */
 class FriendViewHolder(itemview: View) : RecyclerView.ViewHolder(itemview) {
 
     val friendNameView: TextView = itemView.findViewById(R.id.friendName)
@@ -34,7 +27,6 @@ class FriendViewHolder(itemview: View) : RecyclerView.ViewHolder(itemview) {
     lateinit var friend: PartialUser
     var tapUser : Boolean = false
 
-    // sets up clicks on buttons listeners and their respective functionality
     init {
         messageButton.setOnClickListener { v ->
             val intent = Intent(v.context, SendMessageActivity::class.java).apply {
@@ -70,8 +62,6 @@ class FriendViewHolder(itemview: View) : RecyclerView.ViewHolder(itemview) {
             v.context.startActivity(intent)
         }
 
-
-        // remove friend button
         removeFriendButton.setOnClickListener { v ->
             Toast.makeText(removeFriendButton.context,"REMOVE FRIEND ${friend.username}", Toast.LENGTH_LONG).show()
 
@@ -83,12 +73,13 @@ class FriendViewHolder(itemview: View) : RecyclerView.ViewHolder(itemview) {
             if(activeUser != null){
                 activePartialUser = activeUser.getPartialUser()
             }
-            db.getDbReference("CompleteUsers/${activePartialUser.uid}/CompleteUser/friendsList").runTransaction(
-                FriendDeleter(friend)
-            )
+//            db.getDbReference("CompleteUsers/${activePartialUser.uid}/CompleteUser/friendsList").runTransaction(
+//                FriendDeleter(friend)
+//            )
             db.getDbReference("CompleteUsers/${friend.uid}/CompleteUser/friendsList").runTransaction(
                 FriendDeleter(activePartialUser)
             )
+            activeUser?.removeFriend(friend)
             friendNameView.visibility = View.GONE
             messageButton.visibility = View.GONE
             inviteButton.visibility = View.GONE

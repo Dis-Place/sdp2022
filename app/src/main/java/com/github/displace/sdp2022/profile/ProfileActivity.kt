@@ -130,7 +130,7 @@ class ProfileActivity : AppCompatActivity() {
      */
     private fun setFriends() {
         updateFriendListView()
-        db.addListener("CompleteUsers/" + activePartialUser.uid + "/CompleteUser/friendsList",friendListListener)
+        db.addListener("CompleteUsers/" + activePartialUser.uid + "/friendsList",friendListListener)
     }
 
     /**
@@ -181,6 +181,28 @@ class ProfileActivity : AppCompatActivity() {
             changeUi(R.id.FriendsScroll)
         }
 
+
+//    @Suppress("UNUSED_PARAMETER")
+//    fun inboxButton(view: View) {
+//        val app = applicationContext as MyApplication
+//        val activeUser = app.getActiveUser()
+//        var partialUser = PartialUser("defaultName","dummy_id")
+//        if(activeUser != null){
+//            partialUser = activeUser.getPartialUser()
+//        }
+//        observeInbox(partialUser)
+//        findViewById<ScrollView>(R.id.ProfileScroll).visibility = View.GONE
+//        findViewById<ScrollView>(R.id.InboxScroll).visibility = View.VISIBLE
+//        findViewById<ScrollView>(R.id.FriendsScroll).visibility = View.GONE
+//    }
+//
+//    @Suppress("UNUSED_PARAMETER")
+//    fun friendsButton(view: View) {
+//        updateFriendListView()
+//        findViewById<ScrollView>(R.id.ProfileScroll).visibility = View.GONE
+//        findViewById<ScrollView>(R.id.InboxScroll).visibility = View.GONE
+//        findViewById<ScrollView>(R.id.FriendsScroll).visibility = View.VISIBLE
+//=======
     }
 
     /**
@@ -256,24 +278,8 @@ class ProfileActivity : AppCompatActivity() {
 
     /**
      * The listener for when a new friend is added to the user
-     */                                                         // Unit?
-    private val friendListListener = Listener<ArrayList<HashMap<String, Any>>?>{ value ->
-
-        Log.d("FriendListener", " we get update $value")
-
-        if(value != null) {
-//            activeUser.emptyriendList()
-            val arr: ArrayList<PartialUser> = arrayListOf()
-            for (map in value) {
-                val friend = PartialUser(map["username"] as String, map["uid"] as String)
-                arr.add(friend)
-//                .addFriend(friend, false)
-            }
-            activeUser.updateFriendList(arr)
-        }
-        updateFriendListView()
-
-    }
+     */
+    private val friendListListener = Listener<Unit?>{ updateFriendListView() }
 
     /**
      * Listener for when a new message is received
@@ -290,7 +296,6 @@ class ProfileActivity : AppCompatActivity() {
         val friendRecyclerView = findViewById<RecyclerView>(R.id.recyclerFriend)
         val app = applicationContext as MyApplication
         val activeUser = app.getActiveUser()
-//        activeUser.updateFriendList()
 
         val friends = activeUser?.getFriendsList() ?: listOf()
         Log.d("UpdateFriendList", "current friends $friends")
@@ -410,8 +415,7 @@ class ProfileActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         findViewById<TextView>(R.id.profileUsername).text = activeUser.getPartialUser().username
-//        updateFriendListView()
-        db.addListener("CompleteUsers/" + activePartialUser.uid + "/CompleteUser/friendsList",friendListListener)
+
         app.getMessageHandler().checkForNewMessages()
     }
 
@@ -422,12 +426,12 @@ class ProfileActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
-        db.removeListener("CompleteUsers/" + activePartialUser.uid + "/CompleteUser/friendsList",friendListListener)
+        db.removeListener("CompleteUsers/" + activePartialUser.uid + "/friendsList",friendListListener)
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        db.removeListener("CompleteUsers/" + activePartialUser.uid + "/CompleteUser/friendsList",friendListListener)
+        db.removeListener("CompleteUsers/" + activePartialUser.uid + "/friendsList",friendListListener)
     }
 
 }
