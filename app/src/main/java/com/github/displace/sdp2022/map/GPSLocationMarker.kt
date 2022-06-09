@@ -16,7 +16,6 @@ import org.osmdroid.views.overlay.ScaleDiskOverlay
  * marks the user's gps position
  * @param gpsPositionManager to attach the Marker updates
  * @param mapView used to display the Marker
- * @author LeoLgdr
  */
 class GPSLocationMarker(private val mapView: MapView, private val gpsPositionManager: GPSPositionManager) {
 

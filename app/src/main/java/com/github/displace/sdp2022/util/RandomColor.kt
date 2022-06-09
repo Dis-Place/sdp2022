@@ -5,7 +5,6 @@ import kotlin.random.Random
 
 /**
  * generates random Paints
- * @author LeoLgdr
  */
 object RandomColor {
 

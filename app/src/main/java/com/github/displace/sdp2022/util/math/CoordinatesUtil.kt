@@ -8,7 +8,6 @@ import java.lang.IllegalArgumentException
 
 /**
  * Utility for coordinates conversion (model <-> gui map) and distance computation
- * @author LeoLgdr
  */
 object CoordinatesUtil {
 

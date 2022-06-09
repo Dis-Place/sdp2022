@@ -26,7 +26,6 @@ class TransactionSpecification<T> private constructor(
      * @param T data type
      * @param computeUpdatedData update data based on the old data found
      *
-     * @author LeoLgdr
      * @see TransactionSpecification
      * @see GoodDB
      */

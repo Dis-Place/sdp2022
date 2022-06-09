@@ -7,7 +7,6 @@ import org.osmdroid.config.Configuration
 /**
  * Utility class for initing preferences.
  *
- * @author LeoLgdr
  */
 object PreferencesUtil {
     /**

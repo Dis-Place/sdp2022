@@ -12,7 +12,6 @@ import org.osmdroid.views.overlay.MapEventsOverlay
 /**
  * class that handles a mapView and provides a lightened API for Activities
  * @param mapView
- * @author LeoLgdr
  */
 class MapViewManager(val mapView: MapView) {
     val listenersManager = ListenerManager<GeoPoint>()

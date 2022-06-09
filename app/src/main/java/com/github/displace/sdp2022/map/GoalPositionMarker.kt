@@ -10,7 +10,6 @@ import org.osmdroid.views.overlay.Marker
  * represents a goal position on a mapView as a special marker
  * @param mapView to place the marker on
  * @param pos where to place the marker
- * @author LeoLgdr
  */
 class GoalPositionMarker(private val mapView: MapView, private val pos: GeoPoint) {
 

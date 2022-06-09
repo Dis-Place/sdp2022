@@ -11,7 +11,6 @@ import org.osmdroid.util.GeoPoint
  * to send and retrieve position guesses of players
  * @param db database to send/retrieve the pinpoints from
  * @param gameInstanceName
- * @author LeoLgdr
  */
 class PinpointsDBHandler(private val db: RealTimeDatabase, private val gameInstanceName: String, private val activity: Activity) {
 

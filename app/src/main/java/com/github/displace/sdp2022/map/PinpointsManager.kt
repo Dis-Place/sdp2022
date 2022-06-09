@@ -12,7 +12,6 @@ import org.osmdroid.views.MapView
  * be done through this class, which provides several methods
  * and abstracts over OSMdroid's API
  * @param mapView on which we put the markers
- * @author LeoLgdr
  */
 class PinpointsManager(private val mapView: MapView, private val clickSoundPlayer: MediaPlayer? = null) {
     private var pinPointsMap = mutableMapOf<PinpointsRef,List<Pinpoint>>()
