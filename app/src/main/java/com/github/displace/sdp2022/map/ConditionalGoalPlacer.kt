@@ -1,6 +1,5 @@
 package com.github.displace.sdp2022.map
 
-import com.github.displace.sdp2022.gameComponents.Coordinates
 import com.github.displace.sdp2022.model.GameVersus
 import com.github.displace.sdp2022.util.math.CoordinatesUtil
 import org.osmdroid.util.GeoPoint
