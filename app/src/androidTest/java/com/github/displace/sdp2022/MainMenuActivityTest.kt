@@ -133,23 +133,5 @@ class MainMenuActivityTest {
         Intents.release()
     }
 
-    @Test
-    fun mapButtonGoesToDemoMapActivity() {
-        getInstrumentation().uiAutomation.executeShellCommand(
-            "pm grant " + getTargetContext().packageName
-                    + " android.permission.ACCESS_FINE_LOCATION"
-        )
-        val intent =
-            Intent(ApplicationProvider.getApplicationContext(), MainMenuActivity::class.java).apply {
-                putExtra("DEBUG", true)
-            }
-        val scenario = ActivityScenario.launch<MainMenuActivity>(intent)
-
-        scenario.use {
-            Espresso.onView(withId(R.id.mapButton)).perform(click())
-            Espresso.onView(withId(R.id.map))
-                .check(matches(ViewMatchers.isDisplayed()))
-        }
-    }
 
 }

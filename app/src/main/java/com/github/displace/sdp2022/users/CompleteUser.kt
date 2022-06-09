@@ -3,7 +3,6 @@ package com.github.displace.sdp2022.users
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
-import android.util.Log
 import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.authentication.AuthenticatedUser
 import com.github.displace.sdp2022.authentication.SignInActivity
@@ -37,8 +36,9 @@ class CompleteUser(
     val remembered: Boolean = false,
     val activity: SignInActivity? = null
 ) {
+
     // Reference of the CompleteUser in the database
-    private var dbReference: String = if (authenticatedUser != null) {
+    private val dbReference: String = if (authenticatedUser != null) {
         if(guestBoolean) {
             "CompleteUsers/guest_${authenticatedUser.uid()}/CompleteUser"  // We add "guest-" to retain the fact it is a guest in the database
         } else {
@@ -76,12 +76,6 @@ class CompleteUser(
             initializeUserWithLocalMemory()
         } else {    // Initialization if the user is online and not cached, we have to search the infos in the database
             initializeUserFromDB()
-            Log.d("dbReference", "before $dbReference")
-            val regex = """"CompleteUsers/guest_*/CompleteUser"""".toRegex()
-            if( regex.containsMatchIn(dbReference) && partialUser != null){
-                dbReference = "CompleteUsers/${partialUser.uid}/CompleteUser"
-            }
-            Log.d("dbReference", "after $dbReference")
         }
     }
 
@@ -355,19 +349,13 @@ class CompleteUser(
      * Adds a friend to the friend's list
      * @param partialU: Basic infos of the new friend
      */
-    fun addFriend(partialU: PartialUser, toDb : Boolean) {
+    fun addFriend(partialU: PartialUser) {
         if (offlineMode)        // Can't add a friend when offline
             return
 
         if (!containsPartialUser(friendsList, partialU)) {
             friendsList.add(partialU)
-            Log.d("Cuser", " friends $friendsList")
-            if( toDb){
-                Log.d("Cuser", "adding friend $partialU")
-                Log.d("Cuser", "reference $dbReference/friendsList")
-                db.update("$dbReference/friendsList", friendsList.map { f -> f.toMap() })    // We modify the entire list of stats because it's better practice
-
-            }
+            db.update("$dbReference/friendsList", friendsList.map { f -> f.toMap() })    // We modify the entire list of stats because it's better practice
                                                                                                 // when using the database
 
             if(!guestBoolean) { // if the user is a guest, we do not cache the friends' list since at the next use of the application it will be erased
@@ -390,19 +378,6 @@ class CompleteUser(
                 offlineUserFetcher.setOfflineFriendsList(friendsList)
             }
             db.update("$dbReference/friendsList", friendsList.map { f -> f.toMap() })
-        }
-    }
-
-    /**
-     * Updates the the users friend list, called by listener when there is a change in the database
-     * @param newList: list of friends in the database
-     */
-    fun updateFriendList( newList : MutableList<PartialUser>){
-        friendsList = if (newList.size == 0){
-            mutableListOf(
-                PartialUser("THE SYSTEM", "dummy_friend_id"))
-        } else {
-            newList
         }
     }
 
@@ -552,6 +527,5 @@ class CompleteUser(
     override fun hashCode(): Int {
         return partialUser.hashCode()
     }
-
 
 }
