@@ -1,7 +1,6 @@
 package com.github.displace.sdp2022
 
 import android.media.MediaPlayer
-import android.media.SoundPool
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -13,7 +12,7 @@ import com.github.displace.sdp2022.map.GPSLocationMarker
 import com.github.displace.sdp2022.map.MapViewManager
 import com.github.displace.sdp2022.map.MapViewManager.Companion.DEFAULT_CENTER
 import com.github.displace.sdp2022.map.PinpointsManager
-import com.github.displace.sdp2022.map.GoodPinpointsDBHandler
+import com.github.displace.sdp2022.map.PinpointsDBHandler
 import com.github.displace.sdp2022.util.PreferencesUtil
 import com.github.displace.sdp2022.util.ThemeManager
 import com.github.displace.sdp2022.util.gps.GPSPositionManager
@@ -38,7 +37,7 @@ class DemoMapActivity : AppCompatActivity() {
     private lateinit var pinpointsManager: PinpointsManager
     lateinit var mockPinpointsRef: PinpointsManager.PinpointsRef
     lateinit var remoteMockPinpointsRef: PinpointsManager.PinpointsRef
-    private lateinit var dbHandler: GoodPinpointsDBHandler
+    private lateinit var dbHandler: PinpointsDBHandler
 
     /**
      * @param savedInstanceState
@@ -68,7 +67,7 @@ class DemoMapActivity : AppCompatActivity() {
         // v
         val db = DatabaseFactory.getDB(intent)
 
-        dbHandler = GoodPinpointsDBHandler(db,MOCK_GAME_INSTANCE_NAME, this)
+        dbHandler = PinpointsDBHandler(db,MOCK_GAME_INSTANCE_NAME, this)
         dbHandler.initializePinpoints(MOCK_PLAYER.id)
         dbHandler.enableAutoupdateLocalPinpoints(MOCK_PLAYER.id,remoteMockPinpointsRef)
     }
