@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.R
+import com.github.displace.sdp2022.database.DatabaseConstants.DB_URL
 import com.github.displace.sdp2022.profile.FriendRequest
 import com.github.displace.sdp2022.profile.messages.SendMessageActivity
 import com.github.displace.sdp2022.users.PartialUser
@@ -40,7 +41,7 @@ class NewFriendViewHolder(itemview: View, context: Context) : RecyclerView.ViewH
                 activePartialUser = activeUser.getPartialUser()
             }
 
-            FriendRequest.sendFriendRequest(context, friend.username, FirebaseDatabase.getInstance("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/").reference,
+            FriendRequest.sendFriendRequest(context, friend.username, FirebaseDatabase.getInstance(DB_URL).reference,
                 activePartialUser
             )
         }

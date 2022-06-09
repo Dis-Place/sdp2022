@@ -19,7 +19,6 @@ import com.github.displace.sdp2022.util.ThemeManager
  */
 class NewsActivity : AppCompatActivity() {
 
-    //private val db : RealTimeDatabase = RealTimeDatabase().instantiate("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",false) as RealTimeDatabase
     private lateinit var db : GoodDB
     /**
      * Creates the activity

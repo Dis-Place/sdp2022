@@ -2,6 +2,7 @@ package com.github.displace.sdp2022.settings
 
 import android.os.Bundle
 import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.PreferenceManager
 import com.github.displace.sdp2022.R
 
 /**

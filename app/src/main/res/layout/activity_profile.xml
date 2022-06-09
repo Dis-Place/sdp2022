@@ -94,11 +94,11 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Achievements"
+                    android:text="Statistics"
                     android:textAlignment="center" />
 
                 <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recyclerAch"
+                    android:id="@+id/recyclerStats"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1">
@@ -109,11 +109,11 @@
                     android:id="@+id/textView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Statistics"
+                    android:text="Achievements"
                     android:textAlignment="center" />
 
                 <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recyclerStats"
+                    android:id="@+id/recyclerAch"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1" />
