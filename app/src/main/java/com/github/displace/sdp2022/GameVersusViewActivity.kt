@@ -314,6 +314,7 @@ class GameVersusViewActivity : AppCompatActivity() {
         clientServerLink.listenerManager.clearAllCalls()
         val intent = Intent(this, GameListActivity::class.java)
         startActivity(intent)
+        finish()
     }
 
     //center the screen around the player position
@@ -349,6 +350,7 @@ class GameVersusViewActivity : AppCompatActivity() {
         intent.putExtra("totalDist",totalDist)
 
         startActivity(intent)
+        finish()
     }
 
     //initialise the game
