@@ -16,9 +16,16 @@ import com.github.displace.sdp2022.profile.achievements.Achievement
 import com.github.displace.sdp2022.profile.history.History
 import com.github.displace.sdp2022.profile.statistics.Statistic
 
+
+/**
+ * Activity to be to see the profile of a friend
+ */
 class FriendProfile : AppCompatActivity() {
 
-
+    /**
+     * loads and shows informations about friend from database
+     * @param savedInstanceState : the saved instance
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_friend_profile)
@@ -92,6 +99,9 @@ class FriendProfile : AppCompatActivity() {
 
     }
 
+    /**
+     * After returning to the activity we check for new messages
+     */
     override fun onResume() {
         super.onResume()
 

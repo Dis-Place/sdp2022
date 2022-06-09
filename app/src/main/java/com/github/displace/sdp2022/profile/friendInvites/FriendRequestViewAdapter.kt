@@ -15,15 +15,20 @@ import com.github.displace.sdp2022.RealTimeDatabase
 import com.github.displace.sdp2022.profile.*
 import com.github.displace.sdp2022.util.CheckConnectionUtil.checkForInternet
 
-
+/**
+ * Adapter Class that associates the friend requests with the ViewHolder views.
+ * @param dataSet : list of friend requests
+ * @param context : context where the view holder will be displayed
+ */
 class FriendRequestViewAdapter(private var dataSet: MutableList<InviteWithId>, private val context: ProfileActivity?) :
     RecyclerView.Adapter<FriendRequestViewAdapter.ViewHolder>() {
 
-    val TAG : String = "FriendRequestViewAdapter"
+    val TAG : String = "FriendRequestViewAdapter" // tag for debugging
 
     /**
-     * Provide a reference to the type of views that you are using
-     * (custom ViewHolder).
+     * (custom ViewHolder)
+     * provides a reference and all the functionality for friend requests.
+     * Wrapper around a View, and that view is managed by RecyclerView.
      */
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
@@ -31,7 +36,10 @@ class FriendRequestViewAdapter(private var dataSet: MutableList<InviteWithId>, p
         val acceptButton : Button = itemView.findViewById<Button>(R.id.acceptRequestButton)
         val textView: TextView = view.findViewById(R.id.requestSourceText)
 
+
+        // set on on click listeners for the different buttons
         init{
+            // button to reject a friend request, will delete the invite from the database as well
             rejectButton.setOnClickListener{
                 if(context != null && !checkForInternet(context)) {
                     context.setStatus(false)
@@ -41,9 +49,9 @@ class FriendRequestViewAdapter(private var dataSet: MutableList<InviteWithId>, p
                     val inviteId = deleteRequest(adapterPosition)
                     DeleteInvite.deleteInvite(inviteId.id)
                 }
-
-
             }
+
+            // button to accept the friend request
             acceptButton.setOnClickListener{
                 if(!checkForInternet(context as Context)) {
                     Toast.makeText(context, "You're offline ! Please connect to the internet", Toast.LENGTH_LONG).show()
@@ -51,10 +59,6 @@ class FriendRequestViewAdapter(private var dataSet: MutableList<InviteWithId>, p
                     Log.d(TAG, " ACCEPTING FRIEND OFFER")
                     val invite = deleteRequest(adapterPosition)
 
-
-//                val app = acceptButton.context.applicationContext as MyApplication
-//                val user = app.getActiveUser()!!
-//                user.addFriend(invite.invite.source)
 
                     val db: RealTimeDatabase = RealTimeDatabase().noCacheInstantiate(
                         "https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",
@@ -70,7 +74,8 @@ class FriendRequestViewAdapter(private var dataSet: MutableList<InviteWithId>, p
 //                        )
                     val app = acceptButton.context.applicationContext as MyApplication
                     val user = app.getActiveUser()!!
-                    user.addFriend(invite.invite.source)
+                    Log.d("Friend", "add friend : ${invite.invite.source} ")
+                    user.addFriend(invite.invite.source, true)
 
                     DeleteInvite.deleteInvite(invite.id)
                 }
@@ -78,33 +83,50 @@ class FriendRequestViewAdapter(private var dataSet: MutableList<InviteWithId>, p
         }
     }
 
-
-    // Create new views (invoked by the layout manager)
+    /**
+     *  Create new views (invoked by the layout manager)
+     *  @param viewGroup : parent of the created views
+     *  @param viewType : type of the view
+     *  @return ViewHolder : holds the views
+     */
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
-        // Create a new view, which defines the UI of the list item
+        // Create a new view, which defines the UI of the list item : friend_request
         val view = LayoutInflater.from(viewGroup.context)
             .inflate(R.layout.friend_request, viewGroup, false)
 
         return ViewHolder(view)
     }
 
-    // Replace the contents of a view (invoked by the layout manager)
+
+    /**
+     * Replace the contents of a view (invoked by the layout manager)
+     * @param viewHolder : provides functionality to the view
+     * @param position : position of the element in the list
+     */
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
 
         // Get element from your dataset at this position and replace the
         // contents of the view with that element
-        viewHolder.textView.text = dataSet[position].invite.source.username.toString()
+        viewHolder.textView.text = dataSet[position].invite.source.username
 
     }
 
-    // Return the size of your dataset (invoked by the layout manager)
+
+    /**
+     * Return the size of your dataset (invoked by the layout manager)
+     * @return number of items in the dataset
+     */
     override fun getItemCount() = dataSet.size
 
+    /**
+     * deletes a request from the the adapter and returns the deleted inviteWithId
+     * @param index : index of the element to remove
+     * @return the invite we just deleted from the adapter
+     */
     fun deleteRequest(index: Int) : InviteWithId {
         val inviteWithIdToDelete = dataSet[index]
         dataSet.removeAt(index)
         notifyDataSetChanged()
         return inviteWithIdToDelete
     }
-
 }

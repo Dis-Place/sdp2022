@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import android.widget.Toast
+import com.github.displace.sdp2022.database.GoodDB
 
 import com.github.displace.sdp2022.database.TransactionSpecification
 import com.github.displace.sdp2022.profile.friendInvites.Invite
@@ -36,33 +37,41 @@ class FriendRequest {
 
         private const val TAG = "FriendRequest"
         private var invitesLiveData = MutableLiveData<MutableList<InviteWithId>>()
-        private lateinit var rootRef : DatabaseReference
+        private lateinit var db : GoodDB
 
         // target is the user name
         fun sendFriendRequest(
             context : Context,
             target: String,
-            rootRef: DatabaseReference,
+            db: GoodDB,
             currentUser: PartialUser
         ) {
 
-            this.rootRef = rootRef
+            this.db = db
 
-            Log.d(TAG, "CHECK if $target exists")
-            val usersRef: DatabaseReference = rootRef.child("CompleteUsers")
-            val InvitesRef : DatabaseReference = rootRef.child("Invites")
+            val dbInviteReference = "Invites"
+            db.getThenCall<Map<String, *>>(dbInviteReference) { invites ->
+                if (invites != null) {
+                    var invites = ReceiveFriendRequests.getInvites(invites)
+                    invitesLiveData.value = invites
+                }
+            }
 
-            val eventListener: ValueEventListener = object : ValueEventListener {
-                override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    var partialUsers = getPartialUsers(dataSnapshot)
-                    if (checkUserExists(partialUsers, target)) {
+            val dbReferenceUsers = "CompleteUsers"
+            db.getThenCall<Map<String, *>>(dbReferenceUsers) { completeUsers ->
+                if (completeUsers != null){
+                    var partialUsers = getPartialUsers(completeUsers)
+                    Log.d(TAG, "users $partialUsers")
+                    if( checkUserExists(partialUsers, target)){
+                        Log.d(TAG, "target $target exists")
                         val source = currentUser
                         val target = getTargetUser( partialUsers, target)
-                        if( alreadyInvited(FriendRequest.invitesLiveData, source, target)){
+                        Log.d(TAG, "live data check  ${invitesLiveData.value}")
+                        if( alreadyInvited(invitesLiveData, source, target)){
                             Toast.makeText(context,"Already invited ${target.username} ", Toast.LENGTH_LONG).show()
                         }
                         else{
-                            sendInvite(source, target)
+                            sendInvite(invitesLiveData.value, source, target)
                             Toast.makeText(context,"Invite to ${target.username} sent", Toast.LENGTH_LONG).show()
 
                             }
@@ -72,31 +81,32 @@ class FriendRequest {
                         Toast.makeText(context,"User $target does not exist", Toast.LENGTH_LONG).show()
                     }
                 }
-
-                override fun onCancelled(databaseError: DatabaseError) {}
             }
-
-            val eventInviteListener: ValueEventListener = object : ValueEventListener {
-                override fun onDataChange(dataSnapshot: DataSnapshot){
-                    var invites = ReceiveFriendRequests.getInvites(dataSnapshot)
-
-                    invitesLiveData.value = invites
-                }
-                override fun onCancelled(databaseError: DatabaseError) {}
-            }
-            InvitesRef.addListenerForSingleValueEvent(eventInviteListener)
-
-
-
-            usersRef.addListenerForSingleValueEvent(eventListener)
-
-
         }
 
-        fun sendInvite(source : PartialUser, target : PartialUser){
-            val inviteDbRef = rootRef.child("Invites")
-            val invite = Invite(source, target)
-            inviteDbRef.push().setValue(invite)
+        fun getPartialUsers(completeUsers: Map<String, *>) : MutableList<PartialUser>{
+            var partialUsers = mutableListOf<PartialUser>()
+            for (user  in completeUsers.keys ) {
+
+                val aCompleteUser = completeUsers[user] as Map<String, *>
+
+                val ownCompleteUser = aCompleteUser["CompleteUser"] as Map<String, *>
+                Log.d(TAG, "Complete user $ownCompleteUser")
+                if( user != "dummy_id"){
+                    val almostPartialUser = ownCompleteUser["partialUser"] as Map<String, String>
+                    val partialUser = PartialUser( almostPartialUser["username"]!!, almostPartialUser["uid"]!! )
+                    partialUsers.add(partialUser)
+                }
+            }
+            return partialUsers
+        }
+
+        fun sendInvite( invites : MutableList<InviteWithId>?, source : PartialUser, target : PartialUser){
+
+            val invitewithId = InviteWithId( Invite(source, target), invites!!.size.toString())
+            invites.add(invitewithId)
+            db.update("Invites", invites.map { f -> f.toMap() })
+
         }
 
         fun checkUserExists(users: List<PartialUser>, target: String): Boolean {
@@ -109,18 +119,7 @@ class FriendRequest {
             return false
         }
 
-        fun getPartialUsers(dataSnapshot: DataSnapshot) : MutableList<PartialUser>{
-            var partialUsers = mutableListOf<PartialUser>()
-            for (ds in dataSnapshot.children) {
-                val uid = ds.child("CompleteUser").child("partialUser").child("uid").value.toString()
-                val username = ds.child("CompleteUser").child("partialUser").child("username").value.toString()
 
-                val partialUser = PartialUser(username,uid)
-//                    Log.d(TAG, partialUser.toString())
-                partialUsers.add(partialUser)
-            }
-            return partialUsers
-        }
 
         fun getTargetUser( users : List<PartialUser>, target : String) : PartialUser {
             for (user in users) {
@@ -151,6 +150,10 @@ class FriendRequest {
 
 
 
+
+
+
+
 class ReceiveFriendRequests {
     companion object {
 
@@ -168,9 +171,9 @@ class ReceiveFriendRequests {
 
             val eventListener: ValueEventListener = object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot){
-                    var invites = getInvites(dataSnapshot)
-                    currentUserInvites = getUserInvites(invites, currentUser.uid)
-                    invitesLiveData.value = currentUserInvites
+//                    var invites = getInvites(dataSnapshot)
+//                    currentUserInvites = getUserInvites(invites, currentUser.uid)
+//                    invitesLiveData.value = currentUserInvites
                 }
                 override fun onCancelled(databaseError: DatabaseError) {}
             }
@@ -190,21 +193,40 @@ class ReceiveFriendRequests {
             return userInvites
         }
 
-        fun getInvites(dataSnapshot: DataSnapshot) : MutableList<InviteWithId>{
+        fun getInvites(invitesMap : Map<String, *>) : MutableList<InviteWithId>{
             var invites = mutableListOf<InviteWithId>()
 
-            for (ds in dataSnapshot.children) {
-                Log.d(TAG,"Invite ID: ${ds.key.toString()}")
+            for (inviteKey in invitesMap.keys) {
+                val inviteMap = invitesMap[inviteKey] as Map<String, *>
+                val sourceMap = inviteMap["source"] as Map<String, String>
+                val targetMap = inviteMap["target"] as Map<String, String>
 
-                val uidSource =  ds.child("source").child("uid").value.toString()
-                val usernameSource = ds.child("source").child("username").value.toString()
-                val source = PartialUser(usernameSource,uidSource)
-                val uidTarget = ds.child("target").child("uid").value.toString()
-                val usernameTarget = ds.child("target").child("username").value.toString()
-                val target = PartialUser(usernameTarget, uidTarget)
+                val source = PartialUser(sourceMap["username"]!!, sourceMap["uid"]!! )
+                val target = PartialUser(targetMap["username"]!!, targetMap["uid"]!! )
                 val currentInvite = Invite(source, target)
-                invites.add( InviteWithId(currentInvite, ds.key.toString()))
-            }
+                invites.add( InviteWithId(currentInvite, inviteKey ) )
+                }
+
+//
+//                val temp = invite as Map<String,*>
+//                val sourceMap = temp["source"] as Map<String,PartialUser>
+//                val targetMap = temp["target"] as Map<String,PartialUser>
+////                Log.d(TAG,"Invite ID: ${invite.keys}")
+//
+//
+//
+////                val uidSource =  ds.child("source").child("uid").value.toString()
+////                val usernameSource = ds.child("source").child("username").value.toString()
+//
+//
+//                val source = PartialUser(invite["source"][],uidSource)
+//
+//                val uidTarget = ds.child("target").child("uid").value.toString()
+//                val usernameTarget = ds.child("target").child("username").value.toString()
+//                val target = PartialUser(usernameTarget, uidTarget)
+//                val currentInvite = Invite(source, target)
+//                invites.add( InviteWithId(currentInvite, temp.keys.toList()[0]))
+//            }
             return invites
         }
     }

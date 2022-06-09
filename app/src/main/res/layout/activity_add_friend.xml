@@ -8,9 +8,9 @@
 
     <Button
         android:id="@+id/sendFriendRequestButton"
-        android:layout_width="173dp"
-        android:layout_height="89dp"
-        android:layout_marginBottom="227dp"
+        android:layout_width="188dp"
+        android:layout_height="70dp"
+        android:layout_marginBottom="388dp"
         android:onClick="sendFriendRequest"
         android:text="Add"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -20,12 +20,12 @@
 
     <EditText
         android:id="@+id/friendRequestEditText"
-        android:layout_width="324dp"
-        android:layout_height="50dp"
-        android:layout_marginStart="49dp"
-        android:layout_marginTop="209dp"
-        android:layout_marginEnd="49dp"
-        android:layout_marginBottom="178dp"
+        android:layout_width="300dp"
+        android:layout_height="70dp"
+        android:layout_marginStart="43dp"
+        android:layout_marginTop="164dp"
+        android:layout_marginEnd="43dp"
+        android:layout_marginBottom="55dp"
         android:ems="10"
         android:gravity="center"
         android:hint="Friend Name"
@@ -34,4 +34,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

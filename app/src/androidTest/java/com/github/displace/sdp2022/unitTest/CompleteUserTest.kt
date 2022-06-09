@@ -45,7 +45,7 @@ class CompleteUserTest {
         }
 
         val friendListBefore = completeUser.getFriendsList().size
-        completeUser.addFriend(PartialUser("friend1", "aaaa"))
+        completeUser.addFriend(PartialUser("friend1", "aaaa"), false)
         assertTrue(completeUser.getFriendsList().size == friendListBefore)
 
         completeUser.removeFriend(PartialUser("friend1", "aaaa"))
@@ -115,7 +115,7 @@ class CompleteUserTest {
         val completeUser = CompleteUser(ApplicationProvider.getApplicationContext() as MyApplication, null, DatabaseFactory.MOCK_DB)
         val friendsSize = completeUser.getFriendsList().size
         val partialUser = PartialUser("dummy_name", "dummy_other_id")
-        completeUser.addFriend(partialUser)
+        completeUser.addFriend(partialUser, false)
         assertEquals(partialUser, completeUser.getFriendsList()[friendsSize])
         completeUser.removeFriend(partialUser)
         assertEquals(friendsSize, completeUser.getFriendsList().size)
@@ -125,9 +125,9 @@ class CompleteUserTest {
     fun addExistingFriendDoesNothing() {
         val completeUser = CompleteUser(ApplicationProvider.getApplicationContext() as MyApplication, null, DatabaseFactory.MOCK_DB)
         val partialUser = PartialUser("dummy_username", "dummy_id")
-        completeUser.addFriend(partialUser)
+        completeUser.addFriend(partialUser, false)
         val friendsSize = completeUser.getFriendsList().size
-        completeUser.addFriend(partialUser)
+        completeUser.addFriend(partialUser, false)
 
         assertEquals(friendsSize, completeUser.getFriendsList().size)
     }
@@ -160,6 +160,15 @@ class CompleteUserTest {
         val completeUser = CompleteUser(ApplicationProvider.getApplicationContext() as MyApplication,null, DatabaseFactory.MOCK_DB)
         val hashCode = completeUser.hashCode()
         assertTrue(hashCode != 0)
+    }
+
+    @Test
+    fun friendListCorrectlyUpdated(){
+        val completeUser = CompleteUser(ApplicationProvider.getApplicationContext() as MyApplication,null, DatabaseFactory.MOCK_DB)
+        val newFriends = mutableListOf<PartialUser>( PartialUser("a" , "1"), PartialUser("b" , "2") ,PartialUser("c" , "3"))
+        completeUser.updateFriendList(newFriends)
+        val userFriends = completeUser.getFriendsList()
+        assertEquals(newFriends, userFriends)
     }
 
 }

@@ -10,14 +10,19 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.R
+import com.github.displace.sdp2022.database.DatabaseFactory
+import com.github.displace.sdp2022.database.GoodDB
 import com.github.displace.sdp2022.profile.FriendRequest
 import com.github.displace.sdp2022.users.PartialUser
 import com.github.displace.sdp2022.util.ThemeManager
 import com.google.firebase.database.*
 
 
-private const val TAG = "AddFriendActivity"
+private const val TAG = "AddFriendActivity"  // tag for debugging
 
+/**
+ * Activity to be to send friend requests manually
+ */
 class AddFriendActivity : AppCompatActivity() {
 
 
@@ -25,11 +30,20 @@ class AddFriendActivity : AppCompatActivity() {
     private lateinit var currentUser : PartialUser
     private var currentUserFriends : List<PartialUser> = listOf<PartialUser>()
 
+    private lateinit var db : GoodDB
+
+    /**
+     * Gets the root reference to the database
+     * As well as the partial user of the current user if there is one
+     * @param savedInstanceState : the saved instance
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         ThemeManager.applyChosenTheme(this)
         Log.d(TAG, "Entering Activity")
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_friend)
+
+        db = DatabaseFactory.getDB(intent)
 
         rootRef = FirebaseDatabase.
             getInstance("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app").
@@ -45,10 +59,16 @@ class AddFriendActivity : AppCompatActivity() {
         currentUser = activeUser?.getPartialUser() ?: PartialUser("dummy", "dummy")
     }
 
+    /**
+     * Reads the user input from the text view
+     * checks if the input is valid
+     * And sends a friend request
+     * @param view : the view of the activity, will not be used
+     */
+    @Suppress("UNUSED_PARAMETER")
     fun sendFriendRequest(view: View) {
         closeKeyBoard()
         val editText = findViewById<View>(R.id.friendRequestEditText) as EditText
-
 
         val target = editText.text.toString()
 
@@ -68,11 +88,10 @@ class AddFriendActivity : AppCompatActivity() {
             }
             regex.containsMatchIn(target) -> Toast.makeText(this , "Cannot add a guest as friend", Toast.LENGTH_LONG).show()
             else -> {
-                FriendRequest.sendFriendRequest(this, target, rootRef, currentUser)
+                FriendRequest.sendFriendRequest(this, target, db, currentUser)
+//                FriendRequest.sendFriendRequest(this, target, rootRef, currentUser)
             }
         }
-
-
 
 
 
@@ -85,6 +104,9 @@ class AddFriendActivity : AppCompatActivity() {
 
     }
 
+    /**
+     * Quick method to close the keyboard
+     */
     fun closeKeyBoard() {
         val view = this.currentFocus
         if (view != null) {
@@ -93,6 +115,12 @@ class AddFriendActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Verify that you are not already friends with requested user
+     * @param friends : current friends of active user
+     * @param target : user we want to add
+     * @return true if the target user is already in the friend list
+     */
     fun alreadyfriends(friends: List<PartialUser>, target  : String) : Boolean{
         for( friend in friends){
             if( friend.username == target){
