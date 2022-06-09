@@ -13,6 +13,8 @@ import org.osmdroid.views.overlay.Marker
  */
 class GoalPositionMarker(private val mapView: MapView, private val pos: GeoPoint) {
 
+    // marker should only be set and placed if mapView is in a correct state,
+    // i.e., when there is no exception when instantiating the marker
     private val marker : Marker? = try {Marker(mapView)} catch (e: Exception) {null}
 
     init {
