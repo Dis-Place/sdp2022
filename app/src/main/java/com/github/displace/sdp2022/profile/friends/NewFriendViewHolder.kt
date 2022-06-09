@@ -8,6 +8,8 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.R
+import com.github.displace.sdp2022.database.DatabaseFactory
+import com.github.displace.sdp2022.database.FirebaseDatabaseAdapter
 import com.github.displace.sdp2022.profile.FriendRequest
 import com.github.displace.sdp2022.profile.messages.SendMessageActivity
 import com.github.displace.sdp2022.users.PartialUser
@@ -41,14 +43,13 @@ class NewFriendViewHolder(itemview: View, context: Context) : RecyclerView.ViewH
 
         inviteButton.setOnClickListener { v ->
             val app = v.context.applicationContext as MyApplication
-
             val activeUser = app.getActiveUser()
             var activePartialUser = PartialUser("defaultName","dummy_id")
             if(activeUser != null){
                 activePartialUser = activeUser.getPartialUser()
             }
 
-            FriendRequest.sendFriendRequest(context, friend.username, FirebaseDatabase.getInstance("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/").reference,
+            FriendRequest.sendFriendRequest(context, friend.username, DatabaseFactory.getDB(Intent()),
                 activePartialUser
             )
         }

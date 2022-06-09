@@ -21,6 +21,14 @@ data class Invite(val source: PartialUser, val target : PartialUser){
     override fun hashCode(): Int {
         return source.hashCode()
     }
+
+    /**
+    * Translates the Invite to a map
+    * Adapts it to the database
+    */
+    fun toMap() : Map<String, *>{
+        return mapOf(Pair("source", source.toMap()), Pair("target", target.toMap()))
+    }
 }
 
 /**
@@ -29,5 +37,14 @@ data class Invite(val source: PartialUser, val target : PartialUser){
  * @param invite : invite
  * @param id : id of the invite in the database
  */
-data class InviteWithId(val invite: Invite, val id : String)
+data class InviteWithId(val invite: Invite, val id : String){
+
+    /**
+     * Translates the Invite to a map
+     * Adapts it to the database
+     */
+    fun toMap() : Map<String, *>{
+        return mapOf(id to invite.toMap())
+    }
+}
 

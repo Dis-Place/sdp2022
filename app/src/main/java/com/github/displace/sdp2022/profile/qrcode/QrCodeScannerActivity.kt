@@ -13,6 +13,8 @@ import com.budiyev.android.codescanner.ErrorCallback
 import com.budiyev.android.codescanner.ScanMode
 import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.R
+import com.github.displace.sdp2022.database.DatabaseFactory
+import com.github.displace.sdp2022.database.GoodDB
 import com.github.displace.sdp2022.profile.FriendRequest
 import com.github.displace.sdp2022.profile.ProfileActivity
 import com.github.displace.sdp2022.users.PartialUser
@@ -26,6 +28,8 @@ class QrCodeScannerActivity : AppCompatActivity() {
     private lateinit var codeScanner : CodeScanner
     private lateinit var scannerView : CodeScannerView
 
+    lateinit var db : GoodDB
+
     /**
      * Sets up the scanner, will be modularized after testing
      */
@@ -38,6 +42,7 @@ class QrCodeScannerActivity : AppCompatActivity() {
 
         codeScanner = CodeScanner(this, scannerView)
 
+        db = DatabaseFactory.getDB(intent)
         /**
          * setups parameters
          */
@@ -110,7 +115,7 @@ class QrCodeScannerActivity : AppCompatActivity() {
             }
 
             //...sending the request
-            FriendRequest.sendFriendRequest(this, partialUser.username, FirebaseDatabase.getInstance("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/").reference,
+            FriendRequest.sendFriendRequest(this, partialUser.username, db,
                 activePartialUser
             )
 

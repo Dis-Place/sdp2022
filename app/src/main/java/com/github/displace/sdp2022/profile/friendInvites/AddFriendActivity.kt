@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.R
 import com.github.displace.sdp2022.database.DatabaseFactory
+import com.github.displace.sdp2022.database.GoodDB
 import com.github.displace.sdp2022.profile.FriendRequest
 import com.github.displace.sdp2022.users.PartialUser
 import com.github.displace.sdp2022.util.ThemeManager
@@ -29,6 +30,8 @@ class AddFriendActivity : AppCompatActivity() {
     private lateinit var currentUser : PartialUser
     private var currentUserFriends : List<PartialUser> = listOf<PartialUser>()
 
+    private lateinit var db : GoodDB
+
     /**
      * Gets the root reference to the database
      * As well as the partial user of the current user if there is one
@@ -39,6 +42,8 @@ class AddFriendActivity : AppCompatActivity() {
         Log.d(TAG, "Entering Activity")
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_friend)
+
+        db = DatabaseFactory.getDB(intent)
 
         rootRef = FirebaseDatabase.
             getInstance("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app").
@@ -83,7 +88,8 @@ class AddFriendActivity : AppCompatActivity() {
             }
             regex.containsMatchIn(target) -> Toast.makeText(this , "Cannot add a guest as friend", Toast.LENGTH_LONG).show()
             else -> {
-                FriendRequest.sendFriendRequest(this, target, rootRef, currentUser)
+                FriendRequest.sendFriendRequest(this, target, db, currentUser)
+//                FriendRequest.sendFriendRequest(this, target, rootRef, currentUser)
             }
         }
 
