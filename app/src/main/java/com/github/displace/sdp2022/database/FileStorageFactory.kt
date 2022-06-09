@@ -6,8 +6,6 @@ import java.lang.UnsupportedOperationException
 
 /**
  * to retrieve a FileStorage (mocked or firebase file bucket)
- *
- * @author LeoLgdr
  */
 object FileStorageFactory {
     const val MOCK_FILE_STORAGE_EXTRA_ID = "MOCK_FS"

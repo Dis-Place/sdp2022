@@ -10,7 +10,6 @@ package com.github.displace.sdp2022.database
  * @param computeUpdatedData update data based on the old data found
  * @param onCompleteCallback called after transaction completion
  *
- * @author LeoLgdr
  * @see Builder
  * @see GoodDB
  */
