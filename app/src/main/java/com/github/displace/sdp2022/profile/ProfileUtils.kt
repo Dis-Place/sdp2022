@@ -13,6 +13,8 @@ import com.github.displace.sdp2022.profile.messages.Message
 import com.github.displace.sdp2022.users.PartialUser
 import com.github.displace.sdp2022.util.DateTimeUtil
 import com.google.firebase.database.*
+import java.util.*
+import kotlin.random.Random
 
 /**
  * A class that represent the transaction done while sending a message
@@ -54,6 +56,7 @@ class FriendRequest {
                 if (invites != null) {
                     var invites = ReceiveFriendRequests.getInvites(invites)
                     invitesLiveData.value = invites
+
                 }
             }
 
@@ -103,9 +106,18 @@ class FriendRequest {
 
         fun sendInvite( invites : MutableList<InviteWithId>?, source : PartialUser, target : PartialUser){
 
-            val invitewithId = InviteWithId( Invite(source, target), invites!!.size.toString())
-            invites.add(invitewithId)
-            db.update("Invites", invites.map { f -> f.toMap() })
+            val id = Random.nextLong(-10000000000L, 10000000000L).toString()
+
+            val invitewithId = InviteWithId( Invite(source, target), id )
+
+            /* invites!!.add(invitewithId)
+             var newInvitesMap = mapOf<String,Any>()
+
+             for(inv in invites){
+                 newInvitesMap = inv.toMap()
+             }
+ */
+            db.update("Invites/$id", invitewithId.invite.toMap() )
 
         }
 
@@ -133,6 +145,9 @@ class FriendRequest {
         fun alreadyInvited(invitesWithId : MutableLiveData<MutableList<InviteWithId>>, source: PartialUser, target: PartialUser ) : Boolean {
             val inviteDirection1 = Invite(source, target)
             val inviteDirection2 = Invite(target, source)
+            if(invitesWithId.value == null){
+                return false
+            }
             for( inviteWithId in invitesWithId.value!!){
                 if(inviteWithId.invite == inviteDirection1 ||  inviteWithId.invite == inviteDirection2){
                     return true
@@ -252,7 +267,19 @@ class DeleteInvite {
 }
 
 
-class RequestAcceptor(val source : PartialUser) : Transaction.Handler {
+fun requestAcceptor( source : PartialUser) : TransactionSpecification<List<Map<String,Any>>> =
+    TransactionSpecification.Builder<List<Map<String,Any>>> { ls ->
+        if(ls == null){
+            return@Builder ls
+        }
+        var newList = ls
+
+        newList = newList + source.toMap()
+
+        return@Builder newList
+    }.build()
+
+/*
 
     override fun doTransaction(currentData: MutableData): Transaction.Result {
         val ls = currentData.value as ArrayList<MutableMap<String,Any>>?
@@ -277,10 +304,22 @@ class RequestAcceptor(val source : PartialUser) : Transaction.Handler {
     }
 
 }
+*/
+
+fun friendDeleter(toRemove : PartialUser) : TransactionSpecification<List<Map<String,Any>>> =
+    TransactionSpecification.Builder<List<Map<String,Any>>> { ls ->
+        if(ls == null){
+            return@Builder ls
+        }
+        var newList = ls
+
+        newList = newList - toRemove.toMap()
+
+        return@Builder newList
+    }.build()
 
 
-class FriendDeleter(val toRemove : PartialUser) : Transaction.Handler {
-    private val TAG = "FriendDeleter"
+  /*  private val TAG = "FriendDeleter"
 
     override fun doTransaction(currentData: MutableData): Transaction.Result {
         val ls = currentData.value as ArrayList<MutableMap<String,Any>>?
@@ -314,7 +353,7 @@ class FriendDeleter(val toRemove : PartialUser) : Transaction.Handler {
     ) {
     }
 
-}
+}*/
 
 
 

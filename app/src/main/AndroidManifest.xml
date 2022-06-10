@@ -35,7 +35,8 @@
         </activity>
         <activity
             android:name=".profile.friendInvites.AddFriendActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:parentActivityName=".profile.ProfileActivity" />
         <activity
             android:name=".settings.SettingsActivity"
             android:exported="false"
@@ -53,14 +54,16 @@
             android:exported="false" />
         <activity
             android:name=".profile.friends.FriendProfile"
-            android:exported="false" />
+            android:exported="false"
+            android:parentActivityName=".profile.ProfileActivity" />
         <activity
             android:name=".profile.messages.SendMessageActivity"
             android:exported="false"
             android:parentActivityName=".profile.ProfileActivity" />
         <activity
             android:name=".profile.settings.AccountSettingsActivity"
-            android:exported="false">
+            android:exported="false"
+            android:parentActivityName=".profile.ProfileActivity" >
 
             <!-- The meta-data tag is required if you support API level 15 and lower -->
             <meta-data
@@ -69,7 +72,9 @@
         </activity>
         <activity
             android:name=".profile.ProfileActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:parentActivityName=".MainMenuActivity"
+            />
         <activity
             android:name=".DemoMapActivity"
             android:exported="false" />
@@ -84,25 +89,8 @@
                 android:value=".MainActivity" />
         </activity>
         <activity
-            android:name=".PlayActivity"
-            android:exported="false"
-            android:parentActivityName=".MainMenuActivity">
-
-            <!-- The meta-data tag is required if you support API level 15 and lower -->
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
-        </activity>
-        <activity
             android:name=".MainMenuActivity"
-            android:exported="false"
-            android:parentActivityName=".MainActivity">
-
-            <!-- The meta-data tag is required if you support API level 15 and lower -->
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
-        </activity>
+            android:exported="false"/>
         <activity
             android:name=".GameListActivity"
             android:exported="false"

@@ -11,7 +11,8 @@ import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.R
-import com.github.displace.sdp2022.RealTimeDatabase
+import com.github.displace.sdp2022.database.DatabaseFactory
+import com.github.displace.sdp2022.database.GoodDB
 import com.github.displace.sdp2022.profile.*
 import com.github.displace.sdp2022.util.CheckConnectionUtil.checkForInternet
 
@@ -60,18 +61,9 @@ class FriendRequestViewAdapter(private var dataSet: MutableList<InviteWithId>, p
                     val invite = deleteRequest(adapterPosition)
 
 
-                    val db: RealTimeDatabase = RealTimeDatabase().noCacheInstantiate(
-                        "https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app/",
-                        false
-                    ) as RealTimeDatabase
-                    db.getDbReference("CompleteUsers/${invite.invite.source.uid}/CompleteUser/friendsList")
-                        .runTransaction(
-                            RequestAcceptor(invite.invite.target)
-                        )
-//                    db.getDbReference("CompleteUsers/${invite.invite.target.uid}/CompleteUser/friendsList")
-//                        .runTransaction(
-//                            RequestAcceptor(invite.invite.source)
-//                        )
+                    val db : GoodDB = DatabaseFactory.getDB(context.intent)
+                    db.runTransaction("CompleteUsers/${invite.invite.source.uid}/CompleteUser/friendsList",requestAcceptor(invite.invite.target))
+
                     val app = acceptButton.context.applicationContext as MyApplication
                     val user = app.getActiveUser()!!
                     Log.d("Friend", "add friend : ${invite.invite.source} ")

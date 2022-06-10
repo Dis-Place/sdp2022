@@ -359,7 +359,7 @@ class CompleteUser(
         if (offlineMode)        // Can't add a friend when offline
             return
 
-        if (!containsPartialUser(friendsList, partialU)) {
+    //    if (!containsPartialUser(friendsList, partialU)) {
             friendsList.add(partialU)
             Log.d("Cuser", " friends $friendsList")
             if( toDb){
@@ -374,7 +374,7 @@ class CompleteUser(
                 offlineUserFetcher.setOfflineFriendsList(friendsList)
             }
 
-        }
+    //    }
     }
 
     /**

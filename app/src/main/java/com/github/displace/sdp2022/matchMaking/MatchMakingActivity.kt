@@ -86,7 +86,8 @@ class MatchMakingActivity : MMView() {
         val friendAdapter = FriendViewAdapter(
             applicationContext,
             friends,
-            1
+            1,
+            intent
         )
         friendRecyclerView.adapter = friendAdapter
         friendRecyclerView.layoutManager = LinearLayoutManager(applicationContext)
@@ -117,7 +118,8 @@ class MatchMakingActivity : MMView() {
             (model.lobbyMap["lobbyPlayers"] as List<Map<String, Any>>).map { p ->
                 PartialUser(p["username"] as String, p["uid"] as String)
             },
-            2
+            2,
+            intent
         )
         friendRecyclerView.adapter = friendAdapter
         friendRecyclerView.layoutManager = LinearLayoutManager(applicationContext)

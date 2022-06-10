@@ -122,17 +122,6 @@ class CompleteUserTest {
     }
 
     @Test
-    fun addExistingFriendDoesNothing() {
-        val completeUser = CompleteUser(ApplicationProvider.getApplicationContext() as MyApplication, null, DatabaseFactory.MOCK_DB)
-        val partialUser = PartialUser("dummy_username", "dummy_id")
-        completeUser.addFriend(partialUser, false)
-        val friendsSize = completeUser.getFriendsList().size
-        completeUser.addFriend(partialUser, false)
-
-        assertEquals(friendsSize, completeUser.getFriendsList().size)
-    }
-
-    @Test
     fun removeNonExistingFriendDoesNothing() {
         val completeUser = CompleteUser(ApplicationProvider.getApplicationContext() as MyApplication, null, DatabaseFactory.MOCK_DB)
         val friendsSize = completeUser.getFriendsList().size
