@@ -24,6 +24,7 @@ import com.github.displace.sdp2022.profile.achievements.Achievement
 import com.github.displace.sdp2022.profile.achievements.AchievementsLibrary
 import com.github.displace.sdp2022.profile.friendInvites.AddFriendActivity
 import com.github.displace.sdp2022.profile.friendInvites.FriendRequestViewAdapter
+import com.github.displace.sdp2022.profile.friendInvites.Invite
 import com.github.displace.sdp2022.profile.friendInvites.InviteWithId
 import com.github.displace.sdp2022.profile.friends.FriendViewAdapter
 import com.github.displace.sdp2022.profile.history.History
@@ -257,21 +258,20 @@ class ProfileActivity : AppCompatActivity() {
     /**
      * The listener for when a new friend is added to the user
      */                                                         // Unit?
-    private val friendListListener = Listener<ArrayList<HashMap<String, Any>>?>{ value ->
+    private val friendListListener = Listener<List<Map<String, Any>>?>{ value ->
 
         Log.d("FriendListener", " we get update $value")
 
         if(value != null) {
-//            activeUser.emptyriendList()
-            val arr: ArrayList<PartialUser> = arrayListOf()
+            var arr: List<PartialUser> = listOf()
             for (map in value) {
                 val friend = PartialUser(map["username"] as String, map["uid"] as String)
-                arr.add(friend)
-//                .addFriend(friend, false)
+                arr = arr + friend
+
             }
-            activeUser.updateFriendList(arr)
+            activeUser.updateFriendList(arr.toMutableList())
+            updateFriendListView()
         }
-        updateFriendListView()
 
     }
 
@@ -297,7 +297,8 @@ class ProfileActivity : AppCompatActivity() {
         val friendAdapter = FriendViewAdapter(
             applicationContext,
             friends.reversed(),
-            0
+            0,
+            intent
         )
         friendRecyclerView.adapter = friendAdapter
         friendRecyclerView.layoutManager = LinearLayoutManager(applicationContext)
@@ -387,6 +388,27 @@ class ProfileActivity : AppCompatActivity() {
         if(activeUser != null){
             currentUser = activeUser.getPartialUser()
         }
+
+        db.addListener("Invites",Listener<Map<String,Any>?>{ invites ->
+            if(invites == null){
+                return@Listener
+            }
+            val ls = mutableListOf<InviteWithId>()
+            for(map in invites){
+                val transMap = map.value as Map<String,Any>
+                val transTarget = transMap["target"] as Map<String,Any>
+                val transSource = transMap["source"] as Map<String,Any>
+                val uid = transTarget["uid"] as String
+                if(uid == activePartialUser.uid){
+                    ls.add(InviteWithId( Invite(PartialUser(transSource["username"] as String, transSource["uid"] as String)  , PartialUser(transTarget["username"] as String, transTarget["uid"] as String)) , map.key ))
+                }
+            }
+            val recyclerview = findViewById<RecyclerView>(R.id.friendRequestRecyclerView)
+            val adapter = FriendRequestViewAdapter(ls, this)
+            recyclerview.adapter = adapter
+        })
+/*
+
         val rootRef = FirebaseDatabase.
         getInstance("https://displace-dd51e-default-rtdb.europe-west1.firebasedatabase.app").reference
         val recyclerview = findViewById<RecyclerView>(R.id.friendRequestRecyclerView)
@@ -397,7 +419,7 @@ class ProfileActivity : AppCompatActivity() {
                 // Setting the Adapter with the recyclerview
                 recyclerview.adapter = adapter
 
-            })
+            })*/
     }
 
     companion object {

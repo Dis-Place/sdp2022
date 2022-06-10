@@ -8,11 +8,9 @@ import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.R
-import com.github.displace.sdp2022.RealTimeDatabase
-import com.github.displace.sdp2022.database.DatabaseConstants.DB_URL
 import com.github.displace.sdp2022.database.DatabaseFactory
 import com.github.displace.sdp2022.database.GoodDB
-import com.github.displace.sdp2022.profile.FriendDeleter
+import com.github.displace.sdp2022.profile.friendDeleter
 import com.github.displace.sdp2022.profile.messageUpdater
 import com.github.displace.sdp2022.profile.messages.SendMessageActivity
 import com.github.displace.sdp2022.users.PartialUser
@@ -24,7 +22,7 @@ import com.github.displace.sdp2022.users.PartialUser
  * Wrapper around a View, and that view is managed by RecyclerView.
  * @param itemview : the view where it will be displayed
  */
-class FriendViewHolder(itemview: View) : RecyclerView.ViewHolder(itemview) {
+class FriendViewHolder(itemview: View, intent : Intent) : RecyclerView.ViewHolder(itemview) {
 
     val friendNameView: TextView = itemView.findViewById(R.id.friendName)
     val messageButton: ImageButton = itemView.findViewById(R.id.messageButton)
@@ -49,7 +47,6 @@ class FriendViewHolder(itemview: View) : RecyclerView.ViewHolder(itemview) {
             val lobbyID = app.getLobbyID()
             val message: String = lobbyID
 
-            val intent : Intent = Intent() //TODO()
             val db : GoodDB = DatabaseFactory.getDB(intent)
             val activeUser = app.getActiveUser()
             var activePartialUser = PartialUser("defaultName","dummy_id")
@@ -76,19 +73,22 @@ class FriendViewHolder(itemview: View) : RecyclerView.ViewHolder(itemview) {
             Toast.makeText(removeFriendButton.context,"REMOVE FRIEND ${friend.username}", Toast.LENGTH_LONG).show()
 
 
-            val db : RealTimeDatabase = RealTimeDatabase().noCacheInstantiate(DB_URL,false) as RealTimeDatabase
+        //    val db : RealTimeDatabase = RealTimeDatabase().noCacheInstantiate(DB_URL,false) as RealTimeDatabase
+            val db : GoodDB = DatabaseFactory.getDB(intent)
             val app = v.context.applicationContext as MyApplication
             val activeUser = app.getActiveUser()
             var activePartialUser = PartialUser("defaultName","dummy_id")
             if(activeUser != null){
                 activePartialUser = activeUser.getPartialUser()
             }
-            db.getDbReference("CompleteUsers/${activePartialUser.uid}/CompleteUser/friendsList").runTransaction(
+            db.runTransaction("CompleteUsers/${activePartialUser.uid}/CompleteUser/friendsList",friendDeleter(friend))
+            db.runTransaction("CompleteUsers/${friend.uid}/CompleteUser/friendsList",friendDeleter(activePartialUser))
+     /*       db.getDbReference("CompleteUsers/${activePartialUser.uid}/CompleteUser/friendsList").runTransaction(
                 FriendDeleter(friend)
             )
             db.getDbReference("CompleteUsers/${friend.uid}/CompleteUser/friendsList").runTransaction(
                 FriendDeleter(activePartialUser)
-            )
+            )*/
             friendNameView.visibility = View.GONE
             messageButton.visibility = View.GONE
             inviteButton.visibility = View.GONE

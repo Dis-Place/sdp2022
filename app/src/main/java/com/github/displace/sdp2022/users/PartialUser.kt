@@ -13,7 +13,7 @@ data class PartialUser(var username: String, val uid: String) { // profile pictu
      * Translates the partial user to a map
      * Adapts it to the database
      */
-    fun toMap(): Map<String, *> {
+    fun toMap(): Map<String, Any> {
         return mapOf(Pair("username", username), Pair("uid", uid))
     }
 

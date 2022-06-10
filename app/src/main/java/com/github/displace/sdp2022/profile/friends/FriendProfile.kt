@@ -10,7 +10,6 @@ import com.github.displace.sdp2022.profile.achievements.AchViewAdapter
 import com.github.displace.sdp2022.profile.history.HistoryViewAdapter
 import com.github.displace.sdp2022.profile.statistics.StatViewAdapter
 import com.github.displace.sdp2022.R
-import com.github.displace.sdp2022.RealTimeDatabase
 import com.github.displace.sdp2022.database.DatabaseFactory
 import com.github.displace.sdp2022.profile.achievements.Achievement
 import com.github.displace.sdp2022.profile.history.History

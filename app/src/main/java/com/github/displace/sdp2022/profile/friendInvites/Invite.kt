@@ -43,7 +43,8 @@ data class InviteWithId(val invite: Invite, val id : String){
      * Translates the Invite to a map
      * Adapts it to the database
      */
-    fun toMap() : Map<String, *>{
+    fun toMap() : Map<String, Any>{
+
         return mapOf(id to invite.toMap())
     }
 }

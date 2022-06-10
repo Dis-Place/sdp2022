@@ -1,6 +1,7 @@
 package com.github.displace.sdp2022.profile.friends
 
 import android.content.Context
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,7 +19,8 @@ import com.github.displace.sdp2022.users.PartialUser
 class FriendViewAdapter(
     val context: Context,
     private val data: List<PartialUser>,
-    private val MM : Int
+    private val MM : Int,
+    private val intent : Intent
 ) : RecyclerView.Adapter<FriendViewHolder>() {
     private lateinit var curHolder : FriendViewHolder
 
@@ -34,7 +36,7 @@ class FriendViewAdapter(
         val inflater = LayoutInflater.from(parentContext)
 
         val photoView: View = inflater.inflate(R.layout.friend, parent, false)
-        return FriendViewHolder(photoView)
+        return FriendViewHolder(photoView,intent)
     }
 
 

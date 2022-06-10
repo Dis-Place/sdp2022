@@ -9,17 +9,11 @@ import android.content.Intent
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.os.Build
-import com.github.displace.sdp2022.MainMenuActivity
 import com.github.displace.sdp2022.MyApplication
 import com.github.displace.sdp2022.R
-import com.github.displace.sdp2022.RealTimeDatabase
 import com.github.displace.sdp2022.database.DatabaseFactory
 import com.github.displace.sdp2022.profile.ProfileActivity
 import com.github.displace.sdp2022.users.PartialUser
-import com.github.displace.sdp2022.util.listeners.Listener
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.ValueEventListener
 
 class MessageHandler(private val activePartialUser : PartialUser, app : MyApplication , intent : Intent ) {
 
